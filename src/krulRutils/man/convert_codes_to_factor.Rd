@@ -10,7 +10,8 @@ convert_codes_to_factor(
   lookup_tbl,
   lookup_code_col,
   lookup_label_col,
-  factor_levels = NULL
+  factor_levels = NULL,
+  label_col = label
 )
 }
 \arguments{

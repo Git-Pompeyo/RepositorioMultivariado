@@ -55,9 +55,16 @@ convert_codes_to_factor <- function(data_tbl,
     mutate({{ label_col }} := factor(labels_vec, levels = factor_levels))
 }
 
-library(dplyr)
-library(tidyr)
-
+#' Summarise numeric variables in a tidy format
+#'
+#' Computes min, quartiles, median, mean, and max for all numeric columns,
+#' returning a tibble with statistics as rows and variables as columns.
+#'
+#' @param df A data frame or tibble.
+#' @param na.rm Logical, whether to remove NA values. Default TRUE.
+#'
+#' @return A tibble with rows = statistics and columns = variables.
+#' @export
 summarise_numeric_tidy <- function(df, na.rm = TRUE) {
   # Check input
   if (!is.data.frame(df)) {
