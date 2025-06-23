@@ -54,3 +54,58 @@ convert_codes_to_factor <- function(data_tbl,
   data_tbl %>%
     mutate({{ label_col }} := factor(labels_vec, levels = factor_levels))
 }
+
+library(dplyr)
+library(tidyr)
+
+summarise_numeric_tidy <- function(df, na.rm = TRUE) {
+  # Check input
+  if (!is.data.frame(df)) {
+    stop("Input must be a data.frame or tibble.")
+  }
+  
+  num_cols <- df %>% select(where(is.numeric)) %>% names()
+  
+  if (length(num_cols) == 0) {
+    stop("No numeric columns found in input.")
+  }
+  
+  # Define summary functions with safe wrappers
+  safe_min <- function(x) if (all(is.na(x))) NA_real_ else min(x, na.rm = na.rm)
+  safe_q1 <- function(x) if (all(is.na(x))) NA_real_ else quantile(x, 0.25, na.rm = na.rm)
+  safe_median <- function(x) if (all(is.na(x))) NA_real_ else median(x, na.rm = na.rm)
+  safe_mean <- function(x) if (all(is.na(x))) NA_real_ else mean(x, na.rm = na.rm)
+  safe_q3 <- function(x) if (all(is.na(x))) NA_real_ else quantile(x, 0.75, na.rm = na.rm)
+  safe_max <- function(x) if (all(is.na(x))) NA_real_ else max(x, na.rm = na.rm)
+  
+  # Compute summaries wide, then reshape long and wide as requested
+  df %>%
+    summarise(
+      across(
+        all_of(num_cols),
+        list(
+          min = safe_min,
+          q1 = safe_q1,
+          median = safe_median,
+          mean = safe_mean,
+          q3 = safe_q3,
+          max = safe_max
+        ),
+        .names = "{.col}_{.fn}"
+      )
+    ) %>%
+    pivot_longer(
+      everything(),
+      names_to = c("variable", "statistic"),
+      names_sep = "_",
+      values_to = "value"
+    ) %>%
+    pivot_wider(
+      names_from = variable,
+      values_from = value
+    ) %>%
+    mutate(
+      statistic = factor(statistic, levels = c("min", "q1", "median", "mean", "q3", "max"))
+    ) %>%
+    arrange(statistic)
+}

@@ -7,16 +7,21 @@ employee_type_vector <- c(
   "Area manager",
   "General manager"
 )
-employee_salary_vector <- c("7000", "25000", "60000", "100000")
+
+employee_salary_vector <- c(7000, 25000, 60000, 100000)
+
+employee_frequency_vector <- c(50L, 35L, 16L, 1L)
+
 employee_salary_tbl <- tibble(
   employee_type = employee_type_vector,
-  employee_salary = employee_salary_vector
+  employee_salary = employee_salary_vector,
+  employee_frequency = employee_frequency_vector
 )
 
 create_employee_tbl <- function(frequency_vector) {
   tibble(
-    employee_type = factor(rep(employee_type_vector, frequency_vector), 
-                            levels = employee_type_vector),
+    employee_type = factor(rep(employee_type_vector, frequency_vector),
+                           levels = employee_type_vector),
     Salaries = factor(rep(employee_type_vector, frequency_vector),
                       levels = employee_type_vector,
                       labels = employee_salary_vector)
