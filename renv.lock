@@ -2021,7 +2021,7 @@
         "tidyverse"
       ],
       "RemoteType": "local",
-      "RemoteUrl": "./src//krulRutils"
+      "RemoteUrl": "./src/krulRutils"
     },
     "labeling": {
       "Package": "labeling",
