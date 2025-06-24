@@ -1,0 +1,156 @@
+---
+title: |
+  An Introduction to Statistical Learning 
+  
+  with Applications in R 
+  
+  Chapter 2 Exercises
+
+format:
+  pdf:
+    pdf-engine: pdflatex
+    fontsize: 11pt
+
+highlight-style: tango 
+
+execute:
+  echo: true  # Set to false if you don't want code displayed
+---
+We will start by loading the required libraries:
+```{r}
+#| output: false
+library("tidyverse")
+library("krulRutils")
+library("here")
+library("ISLR2")
+options(scipen = 999) # Disable scientific notation
+```
+
+# College dataset
+
+For this dataset, we will print a list of all the "elite universities" where we say that a university is elite if more than half of its students were in the top 10 percentile as highschool students. To do that, first we save the list of elite universities in a table:
+```{r}
+#| output: false
+elite_college_tbl <- read_csv(here("data","College.csv")) %>%
+  rename(college_name = 1) %>%
+  mutate(elite = if_else(Top10perc > 50, "Yes", "No")) %>%
+  filter(elite == "Yes") %>%
+  select(college_name)
+```
+Now that we have the required list, we simply print this information:
+```{r}
+elite_college_tbl %>%
+  print(n = Inf)
+```
+
+# Auto dataset 
+
+For this dataset, the "horsepower" variable contains some missing data which makes R take the column as a "character" variable, rather than a "numeric" variable. So we start by cleaning this dataset:
+```{r}
+#| output: false
+auto_tbl <- read_csv(here("data","Auto.csv")) %>%
+  mutate(horsepower = as.numeric(horsepower)) %>%
+  drop_na()
+```
+We nos show a summary of the numeric variables of this dataset:
+```{r}
+summary_auto_tbl <- summarise_numeric_tidy(auto_tbl)
+summary_auto_tbl
+```
+In particular, to find the mean of the "origin" variable, we can do:
+```{r}
+summary_auto_tbl %>%
+  filter(statistic == "mean") %>%
+  select(statistic, origin)
+```
+Now we want to remove the 10th through 85th observations and repeat the above analysis:
+```{r}
+summary_sliced_auto_tbl <- auto_tbl %>%
+  slice(-10:-85) %>%
+  summarise_numeric_tidy()
+
+summary_sliced_auto_tbl
+
+summary_sliced_auto_tbl %>%
+  filter(statistic == "mean") %>%
+  select(statistic,origin)
+```
+
+# Boston dataset
+
+This dataset can be obtained directly from the ISLR2 library:
+```{r}
+data(Boston)
+boston_tbl <- tibble(Boston)
+```
+We start by obtaining a summary of the information contained in this dataset:
+```{r}
+summary_boston_tbl <- boston_tbl %>%
+  summarise_numeric_tidy()
+
+summary_boston_tbl
+```
+We are now ask for the tracts that have high crime rates, tax rates and pupil-teacher ratios. For this we simply construct the corresponding tables:
+```{r}
+q3_boston_tbl <- summary_boston_tbl %>%
+  filter(statistic =="q3")
+
+high_crime_rate <- q3_boston_tbl %>%
+  pull(crim)
+
+high_tax_rate <- q3_boston_tbl %>%
+  pull(tax)
+
+high_student_teacher_ratio <- q3_boston_tbl %>%
+  pull(ptratio)
+
+high_crime_boston_tbl <- boston_tbl %>%
+  filter(crim > high_crime_rate)
+
+high_tax_boston_tbl <- boston_tbl %>%
+  filter(tax > high_tax_rate)
+
+high_student_teacher_boston_tbl <- boston_tbl %>%
+  filter(ptratio > high_student_teacher_ratio)
+```
+Now we can simply print these tables:
+```{r}
+high_crime_boston_tbl %>%
+  print(n = Inf)
+
+high_tax_boston_tbl %>%
+  print(n = Inf)
+
+high_student_teacher_boston_tbl %>%
+  print(n = Inf)
+```
+We now want to compute how many tracts bound the Charles river, for this we simply compute:
+```{r}
+boston_tbl %>%
+  filter(chas == 1) %>%
+  nrow()
+```
+To find the median student-teacher ratio among these tracts, we simply use the data that we have already stored in our summary table:
+```{r}
+summary_boston_tbl %>%
+  filter(statistic == "median") %>%
+  select(statistic, ptratio)
+```
+We are now asked for the tracts that average more than 7 rooms per dwelling, so we simply count:
+```{r}
+boston_tbl %>%
+  filter(rm > 7) %>%
+  nrow()
+```
+Finally, we want to make a comment on the tracts that average more than 8 rooms per dwelling. For that we will simply construct the corresponding table and print it:
+```{r}
+high_room_boston_tbl <- boston_tbl %>%
+  filter(rm > 8) %>%
+  print(n = Inf)
+```
+Finally, to find the tracts whose houses have the lowest mean value, we construct the corresponding table and print it:
+```{r}
+lowest_value_boston_tbl <- boston_tbl %>%
+  slice_min(medv, with_ties = TRUE) %>%
+  print(n=Inf)
+```

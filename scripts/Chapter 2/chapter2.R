@@ -1,6 +1,7 @@
 library("ISLR2")
 library("tidyverse")
 library("krulRutils")
+
 # Load the dataset
 data("Auto")
 
