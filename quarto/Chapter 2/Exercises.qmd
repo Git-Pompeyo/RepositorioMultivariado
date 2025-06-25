@@ -75,6 +75,47 @@ summary_sliced_auto_tbl %>%
   filter(statistic == "mean") %>%
   select(statistic,origin)
 ```
+Finally, we will make a bar plot counting the number of vehicles with a given number of cylinders. We start by creating the corresponding table:
+```{r}
+cylinder_frequency_tbl <- auto_tbl %>%
+  count(cylinders, name = "frequency") %>%
+  mutate(cylinders = factor(cylinders)) %>% 
+  print(n = Inf)
+```
+We now plot this information:
+```{r}
+#| fig-width: 8
+#| fig-height: 6 
+
+cylinder_colors <- c(
+  "#d62728",
+  "#ff7f0e", 
+  "#2ca02c",
+  "#1f77b4",
+  "#7570b3"
+)
+
+cylinder_frequency_plot <- (cylinder_frequency_tbl %>%
+  ggplot(
+    aes(
+      x = cylinders,
+      y = frequency, 
+      fill = cylinders, 
+      label = frequency
+    )
+  ) + 
+  geom_col(color = "black") +
+  geom_text(vjust = -0.5) +
+  scale_fill_manual( values = cylinder_colors) + 
+  labs(
+    title = "Cylinder Frequency Plot for the Auto Dataset",
+    x = "Number of Cylinders",
+    y = "Frequency",
+    fill = "Number of Cylinders"
+    )) %>%
+  print()
+```
+
 
 # Boston dataset
 
