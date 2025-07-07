@@ -1,4 +1,4 @@
----
+--- 
 title: |
   An Introduction to Statistical Learning 
   
@@ -31,7 +31,7 @@ options(scipen = 999) # Disable scientific notation
 For this dataset, we will print a list of all the "elite universities" where we say that a university is elite if more than half of its students were in the top 10 percentile as highschool students. To do that, first we save the list of elite universities in a table:
 ```{r}
 #| output: false
-elite_college_tbl <- read_csv(here("data","College.csv")) %>%
+elite_college_tbl <- read_csv(here("data", "College.csv")) %>%
   rename(college_name = 1) %>%
   mutate(elite = if_else(Top10perc > 50, "Yes", "No")) %>%
   filter(elite == "Yes") %>%
@@ -48,7 +48,7 @@ elite_college_tbl %>%
 For this dataset, the "horsepower" variable contains some missing data which makes R take the column as a "character" variable, rather than a "numeric" variable. So we start by cleaning this dataset:
 ```{r}
 #| output: false
-auto_tbl <- read_csv(here("data","Auto.csv")) %>%
+auto_tbl <- read_csv(here("data", "Auto.csv")) %>%
   mutate(horsepower = as.numeric(horsepower)) %>%
   drop_na()
 ```
@@ -73,23 +73,23 @@ summary_sliced_auto_tbl
 
 summary_sliced_auto_tbl %>%
   filter(statistic == "mean") %>%
-  select(statistic,origin)
+  select(statistic, origin)
 ```
 Finally, we will make a bar plot counting the number of vehicles with a given number of cylinders. We start by creating the corresponding table:
 ```{r}
 cylinder_frequency_tbl <- auto_tbl %>%
   count(cylinders, name = "frequency") %>%
-  mutate(cylinders = factor(cylinders)) %>% 
+  mutate(cylinders = factor(cylinders)) %>%
   print(n = Inf)
 ```
 We now plot this information:
 ```{r}
 #| fig-width: 8
-#| fig-height: 6 
+#| fig-height: 6
 
 cylinder_colors <- c(
   "#d62728",
-  "#ff7f0e", 
+  "#ff7f0e",
   "#2ca02c",
   "#1f77b4",
   "#7570b3"
@@ -99,20 +99,24 @@ cylinder_frequency_plot <- (cylinder_frequency_tbl %>%
   ggplot(
     aes(
       x = cylinders,
-      y = frequency, 
-      fill = cylinders, 
+      y = frequency,
+      fill = cylinders,
       label = frequency
     )
-  ) + 
-  geom_col(color = "black") +
+  ) +
+  geom_col(color = "gray") +
   geom_text(vjust = -0.5) +
-  scale_fill_manual( values = cylinder_colors) + 
+  scale_fill_manual(values = cylinder_colors) +
+  theme(
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray80")
+  ) +
   labs(
     title = "Cylinder Frequency Plot for the Auto Dataset",
     x = "Number of Cylinders",
     y = "Frequency",
     fill = "Number of Cylinders"
-    )) %>%
+  )) %>%
   print()
 ```
 
@@ -134,7 +138,7 @@ summary_boston_tbl
 We are now ask for the tracts that have high crime rates, tax rates and pupil-teacher ratios. For this we simply construct the corresponding tables:
 ```{r}
 q3_boston_tbl <- summary_boston_tbl %>%
-  filter(statistic =="q3")
+  filter(statistic == "q3")
 
 high_crime_rate <- q3_boston_tbl %>%
   pull(crim)
@@ -151,7 +155,7 @@ high_crime_boston_tbl <- boston_tbl %>%
 high_tax_boston_tbl <- boston_tbl %>%
   filter(tax > high_tax_rate)
 
-high_student_teacher_boston_tbl <- boston_tbl %>%
+high_student_teacher_tbl <- boston_tbl %>%
   filter(ptratio > high_student_teacher_ratio)
 ```
 Now we can simply print these tables:
@@ -162,7 +166,7 @@ high_crime_boston_tbl %>%
 high_tax_boston_tbl %>%
   print(n = Inf)
 
-high_student_teacher_boston_tbl %>%
+high_student_teacher_tbl %>%
   print(n = Inf)
 ```
 We now want to compute how many tracts bound the Charles river, for this we simply compute:
@@ -193,5 +197,5 @@ Finally, to find the tracts whose houses have the lowest mean value, we construc
 ```{r}
 lowest_value_boston_tbl <- boston_tbl %>%
   slice_min(medv, with_ties = TRUE) %>%
-  print(n=Inf)
+  print(n = Inf)
 ```
