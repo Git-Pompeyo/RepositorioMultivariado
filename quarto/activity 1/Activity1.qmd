@@ -149,7 +149,7 @@ employee_salary_freq_plot <- ggplot(
   )
 ) +
   geom_col(
-    color = "black",
+    color = "grey",
     position = position_dodge(width = 0.9)
   ) +
   geom_text(
