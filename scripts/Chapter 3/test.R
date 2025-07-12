@@ -8,4 +8,5 @@ library("ISLR2")
 
 # Load the Advertising dataset
 
-advertising_tbl <- read_csv(here("data", "Advertising.csv"))
+advertising_tbl <- read_csv(here("data", "Advertising.csv")) %>%
+  select(-1)
