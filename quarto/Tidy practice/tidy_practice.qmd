@@ -240,17 +240,18 @@ pew_tidy <- pew %>%
 Before generating the plot, we will change the names of the variables to make them shorter and generate the corresponding colors and factors:
 ```{r}
 income_colors <- c(
-  "$10k" = "#d62728",
-  "$10–20k" = "#ff7f0e",
+  "$30–40k" = "#1f77b4",
   "$20–30k" = "#2ca02c",
-  "$30–40k" = "#1f77b4"
+  "$10–20k" = "#ff7f0e",
+  "$10k" = "#d62728"
+
 )
 
 income_levels <- c(
-  "$10k",
-  "$10–20k",
+  "$30–40k",
   "$20–30k",
-  "$30–40k"
+  "$10–20k",
+  "$10k"
 )
 
 pew_tidy <- pew_tidy %>%
@@ -283,11 +284,15 @@ pew_grouped <- pew_tidy %>%
 With this tibble, we can now generate the required plot: 
 ```{r} 
 pew_plot <- pew_grouped %>%
-  ggplot(aes(x = fct_reorder(religion, count, .desc = TRUE), y = count, fill = income)) +
-  geom_col() +
+  ggplot(aes(
+    x = fct_reorder(religion, count, .desc = TRUE),
+    y = count,
+    fill = income
+  )) +
+  geom_col(position = "dodge") +
   scale_fill_manual(values = income_colors) +
   labs(
-    title = "Distribution of Religions per Income bracket",
+    title = "Distribution of income brackets per religion",
     x = "Religion",
     y = "Followers",
     fill = "Income Bracket"
@@ -298,13 +303,13 @@ pew_plot <- pew_grouped %>%
 Finally, we can save and plot the graph: 
 ```{r}
 #| fig-width: 12
-#| fig-height: 6
-#| fig-cap: "\\small This plot shows the distribution of religions per income bracket. As we can see, the majority of the respondents are in the $10–20k and $20–30k income brackets, with a significant number of respondents in the $30–40k income bracket as well. The $10k income bracket has the lowest number of respondents." 
+#| fig-height: 12
+#| fig-cap: "\\small This plot shows the distribution of income brackets per religions. We can observe some differences in the distribution of these income brackets associated to the different social environments were the different religions thrive."
 ggsave(
   filename = here("images", "pew_plot.png"),
   plot = pew_plot,
   width = 12,
-  height = 6,
+  height = 12,
   dpi = 300
 )
 
@@ -315,4 +320,4 @@ In this document, we have practiced cleaning datasets and generating basic plots
 
 1. For the WHO dataset we generated a column plot and made sure that the bars for sex were separated.
 2. For the Billboard dataset, we generated a plot that kept track of the performance of a given song.
-3. For the Pew dataset, we generated a column plot, but in this case we stacked the bars for easy reference. I also flipped the axes to make the plot more readable. 
+3. For the Pew dataset, we generated a column plot, but in this case we stacked the bars for easy reference. (Although having them separated acutally looks good, and now that I have flipped the axese, it fits.) I also flipped the axes to make the plot more readable. 
