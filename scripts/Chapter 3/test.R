@@ -30,7 +30,7 @@ who_tidy <- who %>%
   separate(sexage, into = c("sex", "age"), sep = 1) %>%
   select(-new) %>%
   mutate(
-    sex = recode(sex, f = "female", m = "male"),
+    sex = recode(sex, f = "Female", m = "Male"),
     age = case_when(
       age == "014" ~ "0-14",
       age == "1524" ~ "15-24",
@@ -40,6 +40,13 @@ who_tidy <- who %>%
       age == "5564" ~ "55-64",
       age == "65" ~ "65+",
       TRUE ~ age
+    ),
+    type = recode(
+      type,
+      ep = "Extrapulmonary TB",
+      rel = "Relapse case",
+      sn = "Smear-Negative pulmonary TB",
+      sp = "Smear-Positive pulmonary TB"
     ),
     cases = as.integer(cases)
   ) %T>%
