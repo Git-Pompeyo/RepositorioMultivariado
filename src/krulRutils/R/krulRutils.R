@@ -15,13 +15,15 @@ library(dplyr)
 #' @return A factor vector with labels corresponding to codes, same length/order as `data_tbl`.
 #'         Codes not found in the lookup table result in NA and trigger a warning.
 #' @export
-convert_codes_to_factor <- function(data_tbl,
-                                    code_col,
-                                    lookup_tbl,
-                                    lookup_code_col,
-                                    lookup_label_col,
-                                    factor_levels = NULL,
-                                    label_col = label) {
+convert_codes_to_factor <- function(
+  data_tbl,
+  code_col,
+  lookup_tbl,
+  lookup_code_col,
+  lookup_label_col,
+  factor_levels = NULL,
+  label_col = label
+ ) {
   # Join on the code columns
   joined_tbl <- data_tbl %>%
     left_join(
@@ -71,13 +73,13 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
   if (!is.data.frame(df)) {
     stop("Input must be a data.frame or tibble.")
   }
-  
+
   num_cols <- df %>% select(where(is.numeric)) %>% names()
-  
+
   if (length(num_cols) == 0) {
     stop("No numeric columns found in input.")
   }
-  
+
   # Define summary functions with safe wrappers
   safe_min <- function(x) if (all(is.na(x))) NA_real_ else min(x, na.rm = na.rm)
   safe_q1 <- function(x) if (all(is.na(x))) NA_real_ else quantile(x, 0.25, na.rm = na.rm)
@@ -85,7 +87,7 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
   safe_mean <- function(x) if (all(is.na(x))) NA_real_ else mean(x, na.rm = na.rm)
   safe_q3 <- function(x) if (all(is.na(x))) NA_real_ else quantile(x, 0.75, na.rm = na.rm)
   safe_max <- function(x) if (all(is.na(x))) NA_real_ else max(x, na.rm = na.rm)
-  
+
   # Compute summaries wide, then reshape long and wide as requested
   df %>%
     summarise(
@@ -117,3 +119,16 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
     ) %>%
     arrange(statistic)
 }
+
+
+#' Modifies the color of the grid lines in ggplot2 plots
+#' @export
+theme_krul <- function() {
+  theme(
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray80")
+  )
+}
+
+
+
