@@ -115,7 +115,10 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
       values_from = value
     ) %>%
     mutate(
-      statistic = factor(statistic, levels = c("min", "q1", "median", "mean", "q3", "max"))
+      statistic = factor(
+        statistic,
+        levels = c("min", "q1", "median", "mean", "q3", "max")
+      )
     ) %>%
     arrange(statistic)
 }
@@ -125,6 +128,7 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
 #' @export
 theme_krul <- function() {
   theme(
+    plot.title = element_text(size = 18, face = "bold"),
     panel.grid.major = element_line(color = "gray80"),
     panel.grid.minor = element_line(color = "gray80")
   )
