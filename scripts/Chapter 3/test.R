@@ -82,10 +82,7 @@ great_beyond_plot <- ggplot(the_great_beyond_path, aes(x = date, y = ranking)) +
     x = "Date",
     y = "Billboard Hot 100 Ranking"
   ) +
-  theme(
-    panel.grid.major = element_line(color = "gray80"),
-    panel.grid.minor = element_line(color = "gray80")
-  )
+  theme_krul()
 
 
 pew <- tibble(
@@ -164,7 +161,7 @@ pew_grouped <- pew_tidy %>%
 
 pew_plot <- pew_grouped %>%
   ggplot(aes(x = religion, y = count, fill = income)) +
-  geom_col(color = "gray") +
+  geom_col() +
   scale_fill_manual(values = income_colors) +
   labs(
     title = "Distribution of Religions per Income bracket",
@@ -172,7 +169,4 @@ pew_plot <- pew_grouped %>%
     y = "count",
     fill = "Income Bracket"
   ) +
-  theme(
-    panel.grid.major = element_line(color = "gray80"),
-    panel.grid.minor = element_line(color = "gray80")
-  )
+  theme_krul()
