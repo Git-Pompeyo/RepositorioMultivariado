@@ -134,7 +134,8 @@ employee_salary_freq_tbl <- employee_salary_tbl %>%
   mutate(employee_salary = factor(
     employee_salary,
     levels = employee_salary_vector,
-  )) 
+  )) %>%
+  select(-employee_code)
 ```
 Using this table, we can generate the corresponding plot:
 ```{r}
