@@ -104,13 +104,9 @@ cylinder_frequency_plot <- (cylinder_frequency_tbl %>%
       label = frequency
     )
   ) +
-  geom_col(color = "gray") +
-  geom_text(vjust = -0.5) +
+  geom_col() +
   scale_fill_manual(values = cylinder_colors) +
-  theme(
-    panel.grid.major = element_line(color = "gray80"),
-    panel.grid.minor = element_line(color = "gray80")
-  ) +
+  theme_krul() +
   labs(
     title = "Cylinder Frequency Plot for the Auto Dataset",
     x = "Number of Cylinders",

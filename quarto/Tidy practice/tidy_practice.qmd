@@ -8,6 +8,7 @@ format:
   pdf:
     pdf-engine: pdflatex
     fontsize: 11pt
+    number-sections: true
 
 output-dir: reports/
 
@@ -239,10 +240,10 @@ pew_tidy <- pew %>%
 Before generating the plot, we will change the names of the variables to make them shorter and generate the corresponding colors and factors:
 ```{r}
 income_colors <- c(
-  "$10k" = "#1f77b4",
+  "$10k" = "#d62728",
   "$10–20k" = "#ff7f0e",
   "$20–30k" = "#2ca02c",
-  "$30–40k" = "#d62728"
+  "$30–40k" = "#1f77b4"
 )
 
 income_levels <- c(
@@ -282,48 +283,36 @@ pew_grouped <- pew_tidy %>%
 With this tibble, we can now generate the required plot: 
 ```{r} 
 pew_plot <- pew_grouped %>%
-  ggplot(aes(x = religion, y = count, fill = income)) +
+  ggplot(aes(x = fct_reorder(religion, count, .desc = TRUE), y = count, fill = income)) +
   geom_col() +
   scale_fill_manual(values = income_colors) +
   labs(
     title = "Distribution of Religions per Income bracket",
     x = "Religion",
-    y = "count",
+    y = "Followers",
     fill = "Income Bracket"
   ) +
-  theme_krul()
+  theme_krul() +
+  coord_flip()
 ``` 
 Finally, we can save and plot the graph: 
 ```{r}
-#| fig-width: 24
-#| fig-height: 12
+#| fig-width: 12
+#| fig-height: 6
 #| fig-cap: "\\small This plot shows the distribution of religions per income bracket. As we can see, the majority of the respondents are in the $10–20k and $20–30k income brackets, with a significant number of respondents in the $30–40k income bracket as well. The $10k income bracket has the lowest number of respondents." 
 ggsave(
   filename = here("images", "pew_plot.png"),
   plot = pew_plot,
-  width = 24,
-  height = 12,
+  width = 12,
+  height = 6,
   dpi = 300
 )
 
 pew_plot
 ```
+# Conclusions 
+In this document, we have practiced cleaning datasets and generating basic plots using the "tidyverse" package in R. This covers the basics of "Exploratory Data Analysis", for discrete datasets. I still need to look into histograms and boxplots for continuous datasets. We have worked with three different datasets:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+1. For the WHO dataset we generated a column plot and made sure that the bars for sex were separated.
+2. For the Billboard dataset, we generated a plot that kept track of the performance of a given song.
+3. For the Pew dataset, we generated a column plot, but in this case we stacked the bars for easy reference. I also flipped the axes to make the plot more readable. 
