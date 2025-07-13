@@ -149,7 +149,6 @@ employee_salary_freq_plot <- ggplot(
   )
 ) +
   geom_col(
-    color = "grey",
     position = position_dodge(width = 0.9)
   ) +
   geom_text(
@@ -164,7 +163,8 @@ employee_salary_freq_plot <- ggplot(
     x = "Employee Types",
     y = "Frequency",
     fill = "Employee Salaries"
-  )
+  ) +
+  theme_krul()
 ```
 With all this information at hand, we can now proceed to answer the questions given in this activity.
 
@@ -181,7 +181,7 @@ The values that we are looking for are:
 
 b) Which measure of centralization is better to represent the salaries of the company employees
 
-In this case our data is very skewed as it can be seen from the following graph:
+In this case our data is very skewed as can be seen from the following graph:
 ```{r echo=FALSE}
 #| fig-width: 8
 #| fig-height: 6 
