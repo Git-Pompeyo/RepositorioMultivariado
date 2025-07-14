@@ -81,33 +81,33 @@ employee_salary_tbl <- tibble(
 
 Using this table, we compute the mean, median and range:
 ```{r}
-salaries = employee_salary_tbl$employee_salary
-salaries_mean = mean(salaries)
-salaries_median = median(salaries)
-salaries_range = range(salaries)
+salaries <- employee_salary_tbl$employee_salary
+salaries_mean <- mean(salaries)
+salaries_median <- median(salaries)
+salaries_range <- range(salaries)
 ```
 
 To compute the mode, we first need to define the corresponding function and then we apply it to our data vector:
 ```{r}
 mode <- function(x) {
-   return(as.numeric(names(which.max(table(x)))))
+  as.numeric(names(which.max(table(x))))
 }
-salaries_mode=mode(salaries)
+salaries_mode <- mode(salaries)
 ```
 
 We now proceed to compute the variance and the standard deviation:
 ```{r}
-salaries_sd=sd(salaries)
-salaries_var=var(salaries)
+salaries_sd <- sd(salaries)
+salaries_var <- var(salaries)
 ```
 
 To find the percentage of data within one standard deviation of the mean, we first build a data vector containing only those elements satisfying the aforementioned condition:
 ```{r}
-salaries_within_sd=salaries[abs(salaries - salaries_mean) <= salaries_sd]
+salaries_within_sd <- salaries[abs(salaries - salaries_mean) <= salaries_sd]
 ```
 After that, we simply compare the lenghts of the corresponding vectors:
 ```{r}
-percentage_within_sd=length(salaries_within_sd)/length(salaries)*100
+percentage_within_sd <- (length(salaries_within_sd) / length(salaries)) * 100
 ```
 We will also want to graph this information, we start by assigning colors to our employee salaries:
 ```{r}
@@ -155,7 +155,6 @@ employee_salary_freq_plot <- ggplot(
   geom_text(
     stat = "identity",
     vjust = -0.5,
-    #position = position_stack(vjust = 1)
     position = position_dodge(width = 0.9)
   ) +
   scale_fill_manual(values = employee_salary_colors) +
@@ -185,8 +184,7 @@ b) Which measure of centralization is better to represent the salaries of the co
 In this case our data is very skewed as can be seen from the following graph:
 ```{r echo=FALSE}
 #| fig-width: 8
-#| fig-height: 6 
-
+#| fig-height: 6
 employee_salary_freq_plot
 ```
 

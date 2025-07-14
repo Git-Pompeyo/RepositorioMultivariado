@@ -4,10 +4,14 @@ library(krulRutils)
 
 # Lookup table
 month_lookup_tbl <- tibble(
-  code = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-           "Jul", "Ago", "Sep", "Oct", "Nov", "Dec"),
-  label = c("January", "February", "March", "April", "May", "June", 
-            "July", "August", "September", "October", "November", "December")
+  code = c(
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Ago", "Sep", "Oct", "Nov", "Dec"
+  ),
+  label = c(
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  )
 )
 
 # Example raw data (codes only)
@@ -23,7 +27,7 @@ data_labeled_tbl <- data_tbl %>%
     lookup_tbl = month_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label
-  ) 
+  )
 
 # Pre-count frequencies with .drop = FALSE to keep missing levels
 plot_tbl_1 <- data_labeled_tbl %>%
@@ -56,3 +60,4 @@ months_recorded_plot <- ggplot(plot_tbl, aes(x = label, y = n, fill = label)) +
     title = "Canonical Tidyverse Bar Plot",
     fill = "Months"
   )
+
