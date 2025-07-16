@@ -15,7 +15,9 @@ convert_codes_to_factor <- function(
 
   # Determine the name of the new factor column
   if (is.null(new_factor_col_name)) {
-    new_factor_col_name_sym <- rlang::sym(paste0(rlang::as_label(lookup_label_col_sym), "_factor"))
+    new_factor_col_name_sym <- rlang::sym(
+      paste0(rlang::as_label(lookup_label_col_sym), "_factor")
+    )
   } else {
     new_factor_col_name_sym <- rlang::ensym(new_factor_col_name)
   }
@@ -58,7 +60,12 @@ convert_codes_to_factor <- function(
 
   # Add the labeled factor column
   final_tbl <- joined_tbl %>%
-    mutate(!!new_factor_col_name_sym := factor(!!lookup_label_col_sym, levels = factor_levels))
+    mutate(
+      !!new_factor_col_name_sym := factor(
+        !!lookup_label_col_sym,
+        levels = factor_levels
+      )
+    )
 
   # Now, select the desired columns: original columns + the new factor column.
   # We need to explicitly pick the *original* columns that were in data_tbl,
@@ -66,7 +73,7 @@ convert_codes_to_factor <- function(
   # The label column from the lookup_tbl that was joined is temporary.
   final_tbl <- final_tbl %>%
     select(
-      all_of(original_col_names), # Selects all columns that were in the original data_tbl
+      all_of(original_col_names), # Selects all columns from the original data
       !!new_factor_col_name_sym # Add the newly created factor column
     )
 
@@ -126,13 +133,13 @@ my_data_processed <- my_data %>%
     lookup_tbl = gender_lookup,
     lookup_code_col = code,
     lookup_label_col = label,
-    new_factor_col_name = "gender_factor_nice" # <--- CHANGED THIS TO A STRING
+    new_factor_col_name = "gender_factor_nice"
   ) %>%
   convert_codes_to_factor(
     code_col = enrollment_status_code,
     lookup_tbl = enrollment_lookup,
     lookup_code_col = code,
     lookup_label_col = label,
-    new_factor_col_name = "enrollment_status_factor_nice" # <--- CHANGED THIS TO A STRING
+    new_factor_col_name = "enrollment_status_factor_nice"
   )
 print(my_data_processed)
