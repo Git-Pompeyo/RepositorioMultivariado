@@ -106,12 +106,17 @@ enrollment_lookup <- tibble(
 
 test_that("convert_codes_to_factor correctly converts gender codes to factors", {
   # Call the function
-  result <- convert_codes_to_factor(
-    data_tbl = my_data,
-    code_col = gender_code,
-    lookup_tbl = gender_lookup,
-    lookup_code_col = code,
-    lookup_label_col = label
+  expect_warning(
+    {
+      result <- convert_codes_to_factor(
+        data_tbl = my_data,
+        code_col = gender_code,
+        lookup_tbl = gender_lookup,
+        lookup_code_col = code,
+        lookup_label_col = label
+      )
+    },
+    "The following codes were not found in the lookup table.*X"
   )
 
   # 1. Check if the output is a tibble
@@ -141,14 +146,19 @@ test_that("convert_codes_to_factor correctly converts gender codes to factors", 
 })
 
 test_that("convert_codes_to_factor handles custom column names and factor levels", {
-  result <- convert_codes_to_factor(
-    data_tbl = my_data,
-    code_col = enrollment_status_code,
-    lookup_tbl = enrollment_lookup,
-    lookup_code_col = code,
-    lookup_label_col = label,
-    factor_levels = c("Part-Time", "Full-Time"), # Custom order
-    new_factor_col_name = "enrollment_status_factor" # Custom name
+  expect_warning(
+    {
+      result <- convert_codes_to_factor(
+        data_tbl = my_data,
+        code_col = enrollment_status_code,
+        lookup_tbl = enrollment_lookup,
+        lookup_code_col = code,
+        lookup_label_col = label,
+        factor_levels = c("Part-Time", "Full-Time"), # Custom order
+        new_factor_col_name = "enrollment_status_factor" # Custom name
+      )
+    },
+    "The following codes were not found in the lookup table.*NA"
   )
 
   expect_s3_class(result, "tbl_df")
@@ -191,27 +201,44 @@ test_that("convert_codes_to_factor issues warnings for missing codes", {
 })
 
 test_that("convert_codes_to_factor handles multiple calls in a pipe", {
-  result <- my_data %>%
-    convert_codes_to_factor(
-      code_col = gender_code,
-      lookup_tbl = gender_lookup,
-      lookup_code_col = code,
-      lookup_label_col = label,
-      new_factor_col_name = "gender_factor_nice"
-    ) %>%
-    convert_codes_to_factor(
-      code_col = enrollment_status_code,
-      lookup_tbl = enrollment_lookup,
-      lookup_code_col = code,
-      lookup_label_col = label,
-      new_factor_col_name = "enrollment_status_factor_nice"
-    )
+  # Expect the first warning (for 'X' in gender_code)
+  expect_warning(
+    {
+      result <- my_data %>%
+        convert_codes_to_factor(
+          code_col = gender_code,
+          lookup_tbl = gender_lookup,
+          lookup_code_col = code,
+          lookup_label_col = label,
+          new_factor_col_name = "gender_factor_nice"
+        )
+    },
+    "The following codes were not found in the lookup table and will be set to NA in the factor: X"
+  )
 
+  # Now, apply the second conversion, expecting the second warning
+  # (for 'NA' in enrollment_status_code)
+  expect_warning(
+    {
+      result <- result %>% # Continue the pipe from the previous result
+        convert_codes_to_factor(
+          code_col = enrollment_status_code,
+          lookup_tbl = enrollment_lookup,
+          lookup_code_col = code,
+          lookup_label_col = label,
+          new_factor_col_name = "enrollment_status_factor_nice"
+        )
+    },
+    "The following codes were not found in the lookup table and will be set to NA in the factor: NA"
+  )
+
+
+  # Now, add your existing expectations for the result
   expect_true("gender_factor_nice" %in% names(result))
   expect_true("enrollment_status_factor_nice" %in% names(result))
   expect_true(is.factor(result$gender_factor_nice))
   expect_true(is.factor(result$enrollment_status_factor_nice))
   expect_equal(levels(result$gender_factor_nice), c("Male", "Female"))
-  expect_equal(levels(result$enrollment_status_factor_nice), c("Full-Time", "Part-Time")) # Default order
+  expect_equal(levels(result$enrollment_status_factor_nice), c("Full-Time", "Part-Time"))
   expect_s3_class(result, "tbl_df")
 })
