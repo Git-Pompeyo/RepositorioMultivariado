@@ -46,55 +46,92 @@ who_tidy <- who %>%
     values_to = "cases",
     values_drop_na = TRUE
   ) %>%
-  # The variable "newrel" doesn't have the same pattern as the others,
-  #so we need to rename it
   mutate(
     key = if_else(
       startsWith(key, "newrel"),
       sub("newrel", "new_rel", key),
       key
-    )
-  ) %>%
-  # We can now separate the variable "key" into "type","sex" and "age"
-  separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
-  separate(sexage, into = c("sex", "age"), sep = 1) %>%
-  select(-new) %>%
-  # We now reformat the values of these variables to make them more readable
-  mutate(
-    sex = recode(sex, f = "Female", m = "Male"),
-    age = case_when(
-      age == "014" ~ "0-14",
-      age == "1524" ~ "15-24",
-      age == "2534" ~ "25-34",
-      age == "3544" ~ "35-44",
-      age == "4554" ~ "45-54",
-      age == "5564" ~ "55-64",
-      age == "65" ~ "65+",
-      TRUE ~ age
-    ),
-    type = recode(
-      type,
-      ep = "Extrapulmonary TB",
-      rel = "Relapse case",
-      sn = "Smear-Negative pulmonary TB",
-      sp = "Smear-Positive pulmonary TB"
     ),
     cases = as.integer(cases)
-  ) %T>%
+  ) %>%
+  separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
+  separate(sexage, into = c("sex", "age"), sep = 1) %>%
+  select(-new, -iso2, - iso3)  %T>%
   # Finally, we save the tidy data in both RDS and CSV formats
   saveRDS(here("data", "who_tidy.rds")) %>%
-  write_csv(here("data", "who_tidy.csv"))
+  write_csv(here("data", "who_tidy.csv")) %>%
+  glimpse()
 ```
-We now generate the associated plot for the cleaned WHO dataset. I want to generate a bar plot showing the number of cases grouped by type and sex. To start with, I generate a tibble that contains this information:
+We now want to convert the columns "type", "sex", and "age" into factors. We start by constructing the following lookup tables:
 ```{r}
-who_type_sex_count <- who_tidy %>%
-  group_by(type, sex) %>%
-  summarise(cases = sum(cases, na.rm = TRUE), .groups = "drop")
+who_type_lookup_tbl <- tibble(
+  code = c("ep", "rel", "sn", "sp"),
+  label = c(
+    "Extrapulmonary TB",
+    "Relapse case",
+    "Smear-Negative pulmonary TB",
+    "Smear-Positive pulmonary TB"
+  )
+)
+
+who_sex_lookup_tbl <- tibble(
+  code = c("f", "m"),
+  label = c("Female", "Male")
+)
+
+who_age_lookup_tbl <- tibble(
+  code = c(
+    "014",
+    "1524",
+    "2534",
+    "3544",
+    "4554",
+    "5564",
+    "65"
+  ),
+  label = c(
+    "0-14",
+    "15-24",
+    "25-34",
+    "35-44",
+    "45-54",
+    "55-64",
+    "65+"
+  )
+)
+```
+We can now append factor columns for the corresponding variables in the WHO dataset: 
+```{r}
+who_factor <- who_tidy %>%
+  convert_codes_to_factor(
+    code_col = type,
+    lookup_tbl = who_type_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+  ) %>%
+  convert_codes_to_factor(
+    code_col = sex,
+    lookup_tbl = who_sex_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+  ) %>%
+  convert_codes_to_factor(
+    code_col = age,
+    lookup_tbl = who_age_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+  ) %>%
+  glimpse()
+``` 
+We now generate the associated plot for the cleaned WHO dataset. We want to generate a bar plot showing the number of cases grouped by type and sex. To start with, I generate a tibble that contains this information:
+```{r}
+who_type_sex_tbl <- who_factor %>%
+  count(type_factor, sex_factor, wt = cases, name = "cases")
 ```
 We can now use this tibble to generate the required plot:
 ```{r}
-who_type_sex_plot <- who_type_sex_count %>%
-  ggplot(aes(x = type, y = cases, fill = sex)) +
+who_type_sex_plot <- who_type_sex_tbl %>%
+  ggplot(aes(x = type_factor, y = cases, fill = sex_factor)) +
   geom_col(position = "dodge") +
   scale_fill_manual(
     values = c(
@@ -104,7 +141,7 @@ who_type_sex_plot <- who_type_sex_count %>%
   ) +
   labs(
     title = "Tuberculosis Cases by Type and Sex",
-    x = "Type",
+    x = "Tuberculosis Type",
     y = "Cases",
     fill = "Sex"
   ) +

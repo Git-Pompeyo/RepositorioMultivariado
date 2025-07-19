@@ -31,15 +31,14 @@ convert_codes_to_factor <- function(
   lookup_code_col_sym <- rlang::ensym(lookup_code_col)
   lookup_label_col_sym <- rlang::ensym(lookup_label_col)
 
-  # Determine the name of the new factor column
-  if (is.null(new_factor_col_name)) {
+  new_factor_col_name_input <- rlang::enquo(new_factor_col_name)
+  if (rlang::quo_is_null(new_factor_col_name_input)) {
     new_factor_col_name_sym <- rlang::sym(
-      paste0(rlang::as_label(lookup_label_col_sym), "_factor")
+      paste0(rlang::as_label(code_col_sym), "_factor")
     )
   } else {
-    new_factor_col_name_sym <- rlang::ensym(new_factor_col_name)
+    new_factor_col_name_sym <- rlang::sym(rlang::as_label(new_factor_col_name_input))
   }
-
   # Store original column names to ensure they are kept
   original_col_names <- names(data_tbl)
 
