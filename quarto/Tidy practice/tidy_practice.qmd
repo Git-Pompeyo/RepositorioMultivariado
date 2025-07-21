@@ -26,6 +26,7 @@ Before starting, we need to load the required libraries and load the WHO dataset
 library("tidyverse")
 library("here")
 library("cowplot")
+library("patchwork")
 library("krulRutils")
 library("ISLR2")
 library("magrittr")
