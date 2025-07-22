@@ -37,7 +37,9 @@ convert_codes_to_factor <- function(
       paste0(rlang::as_label(code_col_sym), "_factor")
     )
   } else {
-    new_factor_col_name_sym <- rlang::sym(rlang::as_label(new_factor_col_name_input))
+    new_factor_col_name_sym <- rlang::sym(
+      rlang::as_label(new_factor_col_name_input)
+    )
   }
   # Store original column names to ensure they are kept
   original_col_names <- names(data_tbl)
@@ -154,15 +156,6 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
     }
   }
 
-  # Function for finding the mean value
-  safe_mean <- function(x) {
-    if (all(is.na(x))) {
-      NA_real_
-    } else {
-      mean(x, na.rm = na.rm)
-    }
-  }
-
   # Function for finding the third quartile
   safe_q3 <- function(x) {
     if (all(is.na(x))) {
@@ -181,6 +174,24 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
     }
   }
 
+  # Function for finding the mean value
+  safe_mean <- function(x) {
+    if (all(is.na(x))) {
+      NA_real_
+    } else {
+      mean(x, na.rm = na.rm)
+    }
+  }
+
+  # Function for finding the mean value
+  safe_var <- function(x) {
+    if (all(is.na(x))) {
+      NA_real_
+    } else {
+      var(x, na.rm = na.rm)
+    }
+  }
+
 
   # Compute summaries wide, then reshape long and wide as requested
   df %>%
@@ -191,9 +202,10 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
           min = safe_min,
           q1 = safe_q1,
           median = safe_median,
-          mean = safe_mean,
           q3 = safe_q3,
-          max = safe_max
+          max = safe_max,
+          mean = safe_mean,
+          var = safe_var
         ),
         .names = "{.col}_{.fn}"
       )
@@ -211,7 +223,7 @@ summarise_numeric_tidy <- function(df, na.rm = TRUE) {
     mutate(
       statistic = factor(
         statistic,
-        levels = c("min", "q1", "median", "mean", "q3", "max")
+        levels = c("min", "q1", "median", "q3", "max", "mean", "var")
       )
     ) %>%
     arrange(statistic)
