@@ -2,10 +2,15 @@
 % Please edit documentation in R/krulRutils.R
 \name{theme_krul}
 \alias{theme_krul}
-\title{Modifies the color of the grid lines in ggplot2 plots}
+\title{Modifies the color of the grid lines in ggplot2 plots
+and sets the title size and face.}
 \usage{
 theme_krul()
 }
+\value{
+A ggplot2 theme with modified grid line colors.
+}
 \description{
 Modifies the color of the grid lines in ggplot2 plots
+and sets the title size and face.
 }

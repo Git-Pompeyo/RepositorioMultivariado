@@ -1,0 +1,50 @@
+--- 
+title: |
+  Practice with continous variables in R,
+
+  Histograms, Box Plots, and Density Plots
+
+format:
+  pdf:
+    pdf-engine: pdflatex
+    fontsize: 11pt
+    number-sections: true
+
+output-dir: reports/
+
+highlight-style: tango 
+
+execute:
+  echo: true  # Set to false if you don't want code displayed
+---
+
+# Continuous Variables in R 
+
+In this notes, we will practice with continuous variables in R, focusing on histograms, box plots, and density plots. We will start by loading the necessary libraries and the "diamond" dataset.
+```{r}
+#| output: false
+library("tidyverse")
+library("here")
+library("patchwork")
+library("krulRutils")
+
+options(scipen = 999) # Disable scientific notation
+data(diamonds)
+```
+
+## Box Plots
+Box plots are a great way to visualize the distribution of continuous variables. The following figure shows the main components of a box plot:
+```{r}
+#| fig-width: 6
+#| fig-height: 12
+#| fig-cap: "\\small Description of the main components of a boxplot"
+boxplot_explanation_plot <- ggplot_box_legend()
+ggsave(
+  filename = here("images", "boxplot_explanation.png"),
+  plot = boxplot_explanation_plot,
+  width = 6,
+  height = 12,
+  dpi = 300
+)
+boxplot_explanation_plot
+```
