@@ -433,3 +433,51 @@ ggplot_box_legend <- function(family = "serif") {
 
   return(explain_plot)
 }
+
+#' Color palette from the 'Carnelian' color theme
+#'
+#' @export
+c_palette <- c(
+  `C red`          = "#B31B1B",
+  `C orange`       = "#67411B",
+  `C yellow`       = "#4F4F1B",
+  `C chartreuse`   = "#3A591B",
+  `C green`        = "#1B681B",
+  `C spring green` = "#1B623E",
+  `C cyan`         = "#1B5C5C",
+  `C azure`        = "#1B548C",
+  `C blue`         = "#3B3BBB",
+  `C violet`       = "#6D21BB",
+  `C magenta`      = "#8A1B8A",
+  `C rose`         = "#9C1B5B",
+  `C grey`         = "#494949"
+)
+
+#' Custom color palette for C colors
+#'
+#' Returns a named vector of hexadecimal color values.
+#' @param ... Optional names of specific colors to return
+#' @export
+c_pal <- function(...) {
+  cols <- c(...)
+  if (length(cols) == 0) return(c_palette)
+  c_palette[cols]
+}
+
+#' Integration with ggplot2 'scale_fill_manual()' function
+#'
+#' @param ... Optional colors to be chosen from the palette
+#' @export
+c_scale_fill <- function(...) {
+  scale_fill_manual(values =  unname(c_pal(...)))
+}
+
+
+
+#' Integration with ggplot2 'scale_color_manual()' function
+#'
+#' @param ... Optional colors to be chosen from the palette
+#' @export
+c_scale_color <- function(...) {
+  scale_color_manual(values = unname(c_pal(...)))
+}
