@@ -70,9 +70,9 @@ ggpairs_plot
 
 We notice that the variables with the strongest correlation are "Ozone" and "Temperature". So we now focus on these two variables to create a more detailed scatter plot with a fitted regression line:
 ```{r}
-#| fig-width: 8 
-#| fig-height: 6 
-#| fig-cap: "\\small Scatter plot of Ozone vs Temperature with regression line" 
+#| fig-width: 8
+#| fig-height: 6
+#| fig-cap: "\\small Scatter plot of Ozone vs Temperature with regression line"
 ozone_temp_plot <- airquality_tbl %>%
   ggplot(aes(x = Temp, y = Ozone)) +
   geom_smooth(
@@ -100,12 +100,12 @@ Finally, we show a time series showing the temperature in New York City during t
 ```{r}
 #| fig-width: 8
 #| fig-height: 4
-#| fig-cap: "\\small Time series of temperature in New York City (May to September 1973)"
+#| fig-cap: "\\small Temperature in New York City from May to September 1973"
 temp_time_series_plot <- airquality_tbl %>%
   ggplot(aes(x = Date, y = Temp)) +
   geom_line(color = c_pal("C blue"), linewidth = 0.5) +
   labs(
-    title = "Temperature in New York City (May to September 1973)",
+    title = "Temperature in New York City (1973)",
     x = "Date",
     y = "Temperature (°F)"
   ) +
