@@ -4,8 +4,7 @@
 # Load required packages
 library(tidyverse)
 library(devtools)
-library(dplyr)
-
+library(GGally)
 
 
 #' Convert codes in a tibble column to a labeled factor using a lookup table
@@ -248,6 +247,25 @@ theme_krul <- function() {
   )
 }
 
+#' Applies the 'krul' theme to a GGally matrix
+#'
+#' @param ggpairs_obj A GGally ggpairs object.
+#' @return The modified ggpairs object with the 'krul' theme applied.
+#' @export
+theme_krul_ggpairs <- function(ggpairs_obj) {
+  n <- length(ggpairs_obj$xAxisLabels)
+
+  for (i in 1:n) {
+    for (j in 1:i) {
+      ggpairs_obj[i, j] <- ggpairs_obj[i, j] +
+        theme_krul()
+    }
+  }
+
+  ggpairs_obj
+}
+
+
 
 
 
@@ -460,7 +478,9 @@ c_palette <- c(
 #' @export
 c_pal <- function(...) {
   cols <- c(...)
-  if (length(cols) == 0) return(c_palette)
+  if (length(cols) == 0) {
+    return(c_palette)
+  }
   c_palette[cols]
 }
 
@@ -469,7 +489,7 @@ c_pal <- function(...) {
 #' @param ... Optional colors to be chosen from the palette
 #' @export
 c_scale_fill <- function(...) {
-  scale_fill_manual(values =  unname(c_pal(...)))
+  scale_fill_manual(values = unname(c_pal(...)))
 }
 
 
