@@ -501,3 +501,26 @@ c_scale_fill <- function(...) {
 c_scale_color <- function(...) {
   scale_color_manual(values = unname(c_pal(...)))
 }
+
+
+#' Compute the Statistical Mode
+#'
+#' Returns the mode (most frequent value) of a numeric or character vector.
+#' If there are multiple modes, the first one encountered is returned.
+#'
+#' @param x A vector of numeric or character values.
+#'
+#' @return A single value representing the mode of the input vector.
+#'
+#' @examples
+#' kmode(c(1, 2, 2, 3, 3, 3, 4))
+#' # Returns: 3
+#'
+#' kmode(c("apple", "banana", "apple", "orange"))
+#' # Returns: "apple"
+#'
+#' @export
+kmode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
