@@ -8,7 +8,7 @@ library(patchwork)
 library(GGally)
 library(janitor)
 
-pacemaker_tbl <- read_csv(here("data", "marcapasos.csv")) %>%
+pacemaker_tbl <- read_csv(here("data", "pacemaker.csv")) %>%
   drop_na() %>%
   clean_names()
 
