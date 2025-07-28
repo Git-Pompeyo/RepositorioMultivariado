@@ -6,6 +6,60 @@ library(krulRutils)
 library(ISLR2)
 library(patchwork)
 library(GGally)
+library(janitor)
+
+pacemaker_tbl <- read_csv(here("data", "marcapasos.csv")) %>%
+  drop_na() %>%
+  clean_names()
+
+pacemaker_lookup_tbl <- tibble(
+  code = c("Sin MP", "Con MP"),
+  label = c("With Pacemaker", "Without Pacemaker")
+)
+
+pacemaker_factor <- pacemaker_tbl %>%
+  convert_codes_to_factor(
+    code_col = marcapasos,
+    lookup_tbl = pacemaker_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label
+  )
+
+pacemaker_period_ci_tbl <- pacemaker_factor %>%
+  group_by(marcapasos_factor) %>%
+  summarise(
+    x_bar = mean(periodo_entre_pulsos),
+    lci = t.test(periodo_entre_pulsos, conf.level = 0.95)$conf.int[1],
+    uci = t.test(periodo_entre_pulsos, conf.level = 0.95)$conf.int[2]
+  ) %>%
+  rename(
+    pacemaker = marcapasos_factor
+  )
+
+pacemaker_period_ci_plot <- pacemaker_period_ci_tbl %>%
+  ggplot(aes(x = x_bar, y = pacemaker, xmin = lci, xmax = uci)) +
+  geom_errorbar(
+    width = 0.1,
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_point(
+    color = c_pal("C red"),
+    size = 3,
+    alpha = 1
+  ) +
+  labs(
+    title = paste0(
+      "Confidence intervals for the period between pulses with\n",
+      "a confidence level of 0.95"
+    ),
+    x = "Period between pulses",
+    y = ""
+  ) +
+  theme_krul()
+
+
+
 
 airquality_tbl <- airquality %>%
   as_tibble() %>%
@@ -16,7 +70,7 @@ airquality_tbl <- airquality %>%
   )
 
 data <- iris %>%
-  as_tibble %>%
+  as_tibble() %>%
   select(Species, Sepal.Length)
 
 dt <- data %>%
