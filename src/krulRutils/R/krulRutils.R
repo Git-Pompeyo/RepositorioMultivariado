@@ -549,3 +549,55 @@ compute_group_ci <- function(data, group_col, value_col, conf_level = 0.95) {
     ) %>%
     ungroup()
 }
+
+#' Density function for location-scale t-distribution
+#'
+#' @param x Vector of quantiles.
+#' @param df Degrees of freedom.
+#' @param mu Location parameter.
+#' @param sigma Scale parameter (σ > 0).
+#'
+#' @return Vector of density values.
+#' @export
+dlst <- function(mu, df, x_bar = 0, s_n = 1) {
+  dt((mu - x_bar) / s_n, df) / s_n
+}
+
+#' Cumulative distribution function for location-scale t-distribution
+#'
+#' @param q Vector of quantiles.
+#' @param df Degrees of freedom.
+#' @param mu Location parameter.
+#' @param sigma Scale parameter (σ > 0).
+#'
+#' @return Vector of probabilities.
+#' @export
+plst <- function(q, df, x_bar = 0, s_n = 1) {
+  pt((q - x_bar) / s_n, df)
+}
+
+#' Quantile function for location-scale t-distribution
+#'
+#' @param p Vector of probabilities.
+#' @param df Degrees of freedom.
+#' @param mu Location parameter.
+#' @param sigma Scale parameter (σ > 0).
+#'
+#' @return Vector of quantiles.
+#' @export
+qlst <- function(p, df, x_bar = 0, s_n = 1) {
+  x_bar + s_n * qt(p, df)
+}
+
+#' Random generation from location-scale t-distribution
+#'
+#' @param n Number of observations.
+#' @param df Degrees of freedom.
+#' @param mu Location parameter.
+#' @param sigma Scale parameter (σ > 0).
+#'
+#' @return Vector of random deviates.
+#' @export
+rlst <- function(m, df, x_bar = 0, s_n = 1) {
+  x_bar + s_n * rt(m, df)
+}
