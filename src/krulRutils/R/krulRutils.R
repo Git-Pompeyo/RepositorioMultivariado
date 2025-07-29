@@ -524,3 +524,28 @@ kmode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }
+
+
+#' Compute groupwise means and confidence intervals using t-tests
+#'
+#' @param data A data frame or tibble.
+#' @param group_col A bare (unquoted) grouping variable.
+#' @param value_col A bare (unquoted) numeric variable.
+#' @param conf_level Confidence level for the t-test (default = 0.95).
+#'
+#' @return A tibble with group means and confidence intervals.
+#' @export
+compute_group_ci <- function(data, group_col, value_col, conf_level = 0.95) {
+  data %>%
+    group_by({{ group_col }}) %>%
+    summarise(
+      tidy(t.test({{ value_col }}, conf.level = conf_level))
+    ) %>%
+    select(
+      {{ group_col }},
+      x_bar = estimate,
+      ci_lower = conf.low,
+      ci_upper = conf.high
+    ) %>%
+    ungroup()
+}

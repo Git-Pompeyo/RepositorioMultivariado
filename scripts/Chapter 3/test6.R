@@ -59,6 +59,21 @@ pacemaker_period_ci_plot <- pacemaker_period_ci_tbl %>%
   theme_krul()
 
 
+compute_group_ci <- function(data, group_col, value_col, conf_level = 0.95) {
+  data %>%
+    group_by({{ group_col }}) %>%
+    summarise(
+      tidy(t.test({{ value_col }}, conf.level = conf_level))
+    ) %>%
+    select(
+      {{ group_col }},
+      x_bar = estimate,
+      ci_lower = conf.low,
+      ci_upper = conf.high
+    ) %>%
+    ungroup()
+}
+
 
 
 airquality_tbl <- airquality %>%
