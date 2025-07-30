@@ -535,21 +535,20 @@ kmode <- function(x) {
 #'
 #' @return A tibble with group means and confidence intervals.
 #' @export
-compute_group_ci <- function(data, group_col, value_col, conf_level = 0.95) {
+compute_group_ci <- function(data, ..., value_col, conf_level = 0.95) {
   data %>%
-    group_by({{ group_col }}) %>%
+    group_by(...) %>%
     summarise(
-      tidy(t.test({{ value_col }}, conf.level = conf_level))
+      tidy(t.test({{ value_col }}, conf.level = conf_level)),
+      .groups = "drop"
     ) %>%
     select(
-      {{ group_col }},
-      x_bar = estimate,
+      ...,
       ci_lower = conf.low,
+      x_bar = estimate,
       ci_upper = conf.high
-    ) %>%
-    ungroup()
+    )
 }
-
 #' Density function for location-scale t-distribution
 #'
 #' @param x Vector of quantiles.
