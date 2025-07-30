@@ -91,7 +91,7 @@ period_density_plot <- period_density_tbl %>%
     angle = 0,
     hjust = 0.5,
     vjust = 0.5,
-    size = 3,
+    size = 4,
     color = c_pal("C red")
   ) +
   geom_label(

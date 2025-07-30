@@ -88,7 +88,7 @@ pacemaker_period_histogram <- pacemaker_factor %>%
 
 pacemaker_period_histogram
 ```
-As we can see, the patients with the pacemaker have a more uneven distribution of the "period" variable, while the patients without the pacemaker have a more normal distribution. In particular, there are quite a number of outliers in the "With Pacemaker" group, which might not be beneficial for the patients. We will check this by looking at the boxplots of the "period" variable for both groups of patients.
+As we can see, the patients without the pacemaker have a more uneven distribution of the "period" variable, while the patients with the pacemaker have a more normal distribution. In particular, there are quite a number of outliers in the "Without Pacemaker" group, which might not be beneficial for the patients. We will check this by looking at the boxplots of the "period" variable for both groups of patients.
 
 ## Boxplot of the "period" variable
 As we mentioned, we will now create boxplots of the "period" variable for both groups of patients, this will help us visualize the distribution of this variable and identify any potential outliers.
@@ -131,7 +131,7 @@ pacemaker_period_boxplot <- pacemaker_factor %>%
 
 pacemaker_period_boxplot
 ```
-Notice that this plot confirms our previous observation that the "With Pacemaker" group has a more uneven distribution of the "period" variable, with some outliers that might not be beneficial for the patients.
+Notice that this plot confirms our previous observation that the "Without Pacemaker" group has a more uneven distribution of the "period" variable, with some outliers that might not be beneficial for the patients.
 
 
 ## Confidence intervals for the mean of the "period" variable
@@ -171,7 +171,7 @@ pacemaker_period_ci_plot <- pacemaker_period_ci %>%
 
 pacemaker_period_ci_plot
 ```
-From this plot, we can see that the confidence intervals for the mean of the "period" variable for both groups of patients do not overlap. This suggests that there is a significant difference between the two groups, and that the pacemaker does have an effect on the "period" variable. However, it is not clear if the slower period induced by the pacemaker is beneficial for the patients, specially taking into account the outliers we observed in the previous plots.
+From this plot, we can see that the confidence intervals for the mean of the "period" variable for both groups of patients do not overlap. This suggests that there is a significant difference between the two groups, and that the pacemaker does have an effect on the "period" variable. In particular, we can assert (wih 95% confidence) that the pacemaker indeed reduces the mean period between pulses.
 
 # Analysis of the "intensity" variable 
 We will now focus on the "intensity" variable, which represents the intensity of the pulse in milliamperes.
@@ -205,7 +205,7 @@ pacemaker_intensity_histogram <- pacemaker_factor %>%
 
 pacemaker_intensity_histogram
 ```
-As we can see, the patients with the pacemaker have a more uneven distribution of the "intensity" variable, while the patients without the pacemaker have a more normal distribution. In particular, there are quite a number of outliers in the "With Pacemaker" group, which might not be beneficial for the patients. We will check this by looking at the boxplots of the "intensity" variable for both groups of patients. 
+As we can see, the patients with the pacemaker have a more uneven distribution of the "intensity" variable, while the patients without the pacemaker have a more normal distribution. In particular, there are quite a number of outliers in the "Without Pacemaker" group, which might not be beneficial for the patients. We will check this by looking at the boxplots of the "intensity" variable for both groups of patients. 
 
 ## Boxplot of the "intensity" variable 
 
@@ -249,7 +249,7 @@ pacemaker_intensity_boxplot <- pacemaker_factor %>%
 
 pacemaker_intensity_boxplot
 ```
-Notice that this plot confirms our previous observation that the "With Pacemaker" group has a more uneven distribution of the "intensity" variable, with some outliers that might not be beneficial for the patients.
+Notice that this plot confirms our previous observation that the "Without Pacemaker" group has a more uneven distribution of the "intensity" variable, with some outliers that might not be beneficial for the patients.
 
 ## Confidence intervals for the mean of the "intensity" variable 
 We will now construct the confidence intervals, with a confidence level of 0.95, for the mean of the "intensity" variable for both groups of patients. We start by creating a tibble containing all the relevant information, including the mean and the confidence intervals for each group.
@@ -288,11 +288,11 @@ pacemaker_intensity_ci_plot <- pacemaker_intensity_ci %>%
 
 pacemaker_intensity_ci_plot
 ```
-From this plot, we can see that the confidence intervals for the mean of the "intensity" variable for both groups of patients overlap quite a bit. This suggests that there is no significant difference between the two groups, and that the pacemaker does not have an effect on the "intensity" variable. 
+From this plot, we can see that the confidence intervals for the mean of the "intensity" variable for both groups of patients overlap quite a bit. This suggests that there is no significant difference between the two groups, and that the pacemaker does not have a significant effect on the "intensity" variable. 
 
 # Conclusion
 
-Based on the data collected, we can't really recommend the introduction of this new pacemaker into the market. The pacemaker effect on the "intensity" variable is not significant. The effect on the "period" variable is significant, but it is not clear if the slower period induced by the pacemaker is beneficial for the patients, specially taking into account the outliers we observed in the previous plots.
+Based on the data collected, we can conclude that the pacemkaer indeed has a positive effect on the "period" variable with faster, more evenly distributed pulses. Its effect on the "intensity" variable, however, is not significant. We still recommend the use of the pacemaker, as it does provide a significant benefit to the patients in terms of the "period" variable, which is crucial for the proper functioning of the heart.
 
 
 
