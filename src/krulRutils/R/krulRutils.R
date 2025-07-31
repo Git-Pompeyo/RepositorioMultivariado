@@ -5,7 +5,7 @@
 library(tidyverse)
 library(devtools)
 library(GGally)
-
+library(broom)
 
 #' Convert codes in a tibble column to a labeled factor using a lookup table
 #'
@@ -535,11 +535,20 @@ kmode <- function(x) {
 #'
 #' @return A tibble with group means and confidence intervals.
 #' @export
-compute_group_ci <- function(data, ..., value_col, conf_level = 0.95) {
+compute_ci <- function(
+    data,
+    ...,
+    value_col,
+    conf_level = 0.95,
+    alternative = "two.sided") {
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(t.test({{ value_col }}, conf.level = conf_level)),
+      tidy(t.test(
+        {{ value_col }},
+        conf.level = conf_level,
+        alternative = alternative
+      )),
       .groups = "drop"
     ) %>%
     select(
@@ -549,6 +558,64 @@ compute_group_ci <- function(data, ..., value_col, conf_level = 0.95) {
       ci_upper = conf.high
     )
 }
+
+#' Perform a t-test for group means
+#'
+#' @param data A data frame or tibble.
+#' @param group_col A bare (unquoted) grouping variable.
+#' @param value_col A bare (unquoted) numeric variable.
+#' @param alpha Significance level for the t-test (default = 0.05).
+#'
+#' @return A tibble with t-test results
+#' @export
+t_test <- function(
+    data,
+    ...,
+    value_col,
+    mu_0 = 0,
+    alpha = 0.05,
+    alternative = "two.sided") {
+  conf_level <- 1 - alpha
+
+  result_lookup_tbl <- tibble(
+    code = c("reject", "fail_reject"),
+    label = c("Reject null hypothesis", "Fail to reject null hypothesis")
+  )
+
+  data %>%
+    group_by(...) %>%
+    summarise(
+      tidy(t.test(
+        {{ value_col }},
+        mu = mu_0,
+        conf.level = conf_level,
+        alternative = alternative
+      )),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      alpha = alpha,
+      test_result = if_else(
+        p.value < alpha,
+        "reject",
+        "fail_reject"
+      )
+    ) %>%
+    convert_codes_to_factor(
+      code_col = test_result,
+      lookup_tbl = result_lookup_tbl,
+      lookup_code_col = code,
+      lookup_label_col = label,
+      new_factor_col_name = result
+    ) %>%
+    select(
+      ...,
+      p_value = p.value,
+      alpha,
+      result
+    )
+}
+
 #' Density function for location-scale t-distribution
 #'
 #' @param x Vector of quantiles.
