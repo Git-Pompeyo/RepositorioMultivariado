@@ -1,4 +1,5 @@
 library(tidyverse)
+library(krulRutils)
 options(scipen = 999) # Disable scientific notation
 
 employee_type_vector <- c(
@@ -55,4 +56,3 @@ frequency_vector %>%
   create_employee_tbl() %>%
   plot_employee_tbl() %>%
   print()
-
