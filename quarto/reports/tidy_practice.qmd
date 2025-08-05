@@ -1,0 +1,45 @@
+---
+format:
+   pdf:
+     fontsize: 11pt
+     include-in-header: _header.tex
+     pdf-engine: pdflatex
+---
+\pagenumbering{gobble}
+
+\thispagestyle{empty}
+
+\begin{center}
+\includegraphics[height=3cm]{tecnologico-de-monterrey-blue}
+
+\vspace{2cm}
+
+\Huge \textbf{Tidy practice} \par
+\vspace{3cm}
+
+
+\Large \textbf{MA2003B Application of Multivariate Methods \\ in Data Science} \par
+
+\vspace{3cm}
+
+\large \textbf{Team Members:} \par
+\vspace{0.5cm}
+\large
+\begin{tabular}{c}
+Raul Gomez \\ 
+Adriana Reyna
+\end{tabular}
+
+
+\vfill
+
+\large \today\par
+
+\end{center}
+
+\newpage
+
+\pagenumbering{arabic}
+
+{{< include _1content.qmd >}}
+

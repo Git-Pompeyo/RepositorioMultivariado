@@ -1,0 +1,196 @@
+### The WHO dataset: Load Libraries and Data
+
+Before starting, we need to load the required libraries and load the WHO dataset:
+
+```{r}
+#| output: false
+library("tidyverse")
+library("here")
+library("cowplot")
+library("patchwork")
+library("krulRutils")
+library("ISLR2")
+library("magrittr")
+
+options(scipen = 999)
+data(who)
+```
+
+### Cleaning the WHO Dataset
+
+We now proceed to clean the WHO dataset. The main problem is that it contains cryptic variables like `"new_sp_m014"`.
+
+```{r}
+who_tidy <- who %>%
+  pivot_longer(
+    cols = starts_with("new"),
+    names_to = "key",
+    values_to = "cases",
+    values_drop_na = TRUE
+  ) %>%
+  mutate(
+    key = if_else(
+      startsWith(key, "newrel"),
+      sub("newrel", "new_rel", key),
+      key
+    ),
+    cases = as.integer(cases)
+  ) %>%
+  separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
+  separate(sexage, into = c("sex", "age"), sep = 1) %>%
+  select(-new, -iso2, - iso3)  %T>%
+  saveRDS(here("data", "who_tidy.rds")) %>%
+  write_csv(here("data", "who_tidy.csv")) %>%
+  glimpse()
+```
+
+### Lookup Tables for Factors
+
+We now define lookup tables for `type`, `sex`, and `age`:
+
+```{r}
+who_type_lookup_tbl <- tibble(
+  code = c("ep", "rel", "sn", "sp"),
+  label = c(
+    "Extrapulmonary TB",
+    "Relapse case",
+    "Smear-Negative pulmonary TB",
+    "Smear-Positive pulmonary TB"
+  )
+)
+
+who_sex_lookup_tbl <- tibble(
+  code = c("f", "m"),
+  label = c("Female", "Male")
+)
+
+who_age_lookup_tbl <- tibble(
+  code = c("014", "1524", "2534", "3544", "4554", "5564", "65"),
+  label = c("0-14", "15-24", "25-34", "35-44", "45-54", "55-64", "65+")
+)
+```
+
+### Convert WHO Columns to Factors
+
+We now convert the codes to factors using the lookup tables:
+
+```{r}
+who_factor <- who_tidy %>%
+  convert_codes_to_factor(type, who_type_lookup_tbl, code, label) %>%
+  convert_codes_to_factor(sex, who_sex_lookup_tbl, code, label) %>%
+  convert_codes_to_factor(age, who_age_lookup_tbl, code, label) %>%
+  glimpse()
+```
+
+### Bar Plot: Tuberculosis Cases by Type and Sex
+
+First, we summarize the data:
+
+```{r}
+who_type_sex_tbl <- who_factor %>%
+  count(type_factor, sex_factor, wt = cases, name = "cases")
+```
+
+Then, we create the plot:
+
+```{r}
+who_type_sex_plot <- who_type_sex_tbl %>%
+  ggplot(aes(x = type_factor, y = cases, fill = sex_factor)) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(values = c("Female" = "#e7298a", "Male" = "#1f77b4")) +
+  labs(
+    title = "Tuberculosis Cases by Type and Sex",
+    x = "Tuberculosis Type",
+    y = "Cases",
+    fill = "Sex"
+  ) +
+  theme_krul()
+```
+
+### Save and Display Plot
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6
+#| fig-cap: "\\small TB cases are consistently higher among males across all types."
+ggsave(
+  filename = here("images", "who_plot.png"),
+  plot = who_type_sex_plot,
+  width = 12,
+  height = 6,
+  dpi = 300
+)
+
+who_type_sex_plot
+```
+
+### The Billboard Dataset: Tidying
+
+We now clean the Billboard dataset, moving week columns into one.
+
+```{r}
+data(billboard)
+
+billboard_tidy <- billboard %>%
+  pivot_longer(
+    cols = starts_with("wk"),
+    names_to = "week",
+    values_to = "ranking",
+    values_drop_na = TRUE
+  ) %>%
+  mutate(
+    week = if_else(startsWith(week, "wk"), sub("wk", "", week), week),
+    week = as.integer(week),
+    date = date.entered + weeks(week - 1)
+  ) %>%
+  arrange(date, ranking) %T>%
+  saveRDS(here("data", "billboard_tidy.rds")) %>%
+  write_csv(here("data", "billboard_tidy.csv"))
+```
+
+### Filter "Who Let The Dogs Out"
+
+We filter and select the relevant data:
+
+```{r}
+dogs_out_tbl <- billboard_tidy %>%
+  filter(track == "Who Let The Dogs Out") %>%
+  arrange(week) %>%
+  select(date, ranking)
+```
+
+### Plot Chart Performance
+
+We now generate the plot:
+
+```{r}
+dogs_out_plot <- dogs_out_tbl %>%
+  ggplot(aes(x = date, y = ranking)) +
+  geom_line(color = "#1f77b4", linewidth = 1) +
+  geom_point(color = "#d62728", size = 2) +
+  scale_x_date(date_labels = "%B %Y") +
+  scale_y_reverse(breaks = seq(0, 100, 10)) +
+  labs(
+    title = "Chart Performance of 'Who Let The Dogs Out'",
+    x = "Date",
+    y = "Billboard Hot 100 Ranking"
+  ) +
+  theme_krul()
+```
+
+### Save and Display the Chart
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6
+#| fig-cap: "\\small The song peaked at rank 40 in the week of October 21, 2000, and stayed in the chart for several weeks."
+ggsave(
+  filename = here("images", "dogs_out_plot.png"),
+  plot = dogs_out_plot,
+  width = 12,
+  height = 6,
+  dpi = 300
+)
+
+dogs_out_plot
+```

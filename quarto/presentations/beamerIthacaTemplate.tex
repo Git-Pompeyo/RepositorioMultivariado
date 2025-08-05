@@ -1,0 +1,51 @@
+\documentclass[$if(classoption)$$classoption$$endif$]{beamer}
+
+% Theme setup (Quarto will replace 'default' if changed in YAML)
+%\usetheme{$if(theme)$$theme$$else$default$endif$}
+
+
+\usetheme[
+%	bullet=square,           % Default option: circle
+%	nobigpagenumber,         % No big circled page number on lower right
+%       nofootline,		 % No footline
+	grey                    % For a neutral grey background color
+%	watermark=BG_both,	 % png file for the watermark
+	]{Ithaca}
+
+
+% Set font size
+%$if(fontsize)$
+%\documentclass[$fontsize$]{beamer}
+%$endif$
+
+% Load packages
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{ulem} % For underlining
+\usepackage{booktabs} % For better tables
+
+% Set graphics path
+\graphicspath{{$if(graphics)$$graphics$$else$images/$endif$}}
+
+% Metadata
+\title{$title$}
+\author[rgomez@tex.mx]{Raul Gomez}
+\date{$date$}
+\institute{$institute$}
+
+% Custom Beamer logo (if defined in Quarto YAML)
+$if(logo)$
+\logo{\includegraphics[height=1cm]{$logo$}}
+$endif$
+
+
+\begin{document}
+
+
+% Content will be inserted here by Quarto
+$body$
+
+\end{document}
+
