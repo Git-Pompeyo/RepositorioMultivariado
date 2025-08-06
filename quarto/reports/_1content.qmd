@@ -1,4 +1,22 @@
+# Tidy Data and the Tidyverse 
+
+The Tidyverse is a collection of R packages designed for data science. It provides a consistent and user-friendly interface for data manipulation, visualization, and analysis. The core idea of behind the design of the Tidyverse is the concept of "tidy data":
+
+\begin{definition}
+\textbf{Tidy Data} is a way of structuring datasets to make them easier to work with. In tidy data:
+
+1. Each variable forms a column.
+2. Each observation forms a row.
+3. Each type of observational unit forms a table. 
+
+This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R.
+
+\end{definition}
+
+
 # The WHO dataset
+
+
 
 Before starting, we need to load the required libraries and load the WHO dataset: 
 ```{r}
@@ -217,125 +235,3 @@ ggsave(
 
 dogs_out_plot
 ```
-
-# The Pew dataset 
-Finally, we will clean the Pew dataset. Since I was not able to find the original dataset without a subscription, I will use this artifially created dataset that contains the same structure as the original one.   
-```{r}
-pew <- tibble(
-  religion = c(
-    "Agnostic", "Atheist", "Buddhist", "Catholic", "Don’t know/refused",
-    "Evangelical Prot", "Hindu", "Historically Black Prot", "Jehovah’s Witness",
-    "Jewish", "Mainline Prot", "Mormon", "Muslim", "Orthodox",
-    "Other Christian", "Other Faiths", "Other World Religions", "Unaffiliated"
-  ),
-  `$10k` = c(
-    27, 12, 27, 418, 15, 575, 1, 228, 20, 19, 289, 29, 6, 13, 9, 20, 5, 217
-  ),
-  `$10–20k` = c(
-    34, 27, 21, 617, 19, 869, 9, 244, 27, 19, 495, 40, 7, 17, 11, 33, 2, 299
-  ),
-  `$20–30k` = c(
-    60, 37, 30, 732, 28, 1064, 7, 236, 24, 25, 655, 48, 9, 17, 10, 40, 3, 374
-  ),
-  `$30–40k` = c(
-    81, 52, 34, 670, 24, 982, 9, 238, 24, 31, 651, 51, 8, 14, 10, 51, 1, 365
-  )
-)
-```
-Now, the problem with this dataset is that the income categories are represented as columns, which makes it difficult to analyze the data. So we want to move this information to a single column called "income".
-```{r}
-pew_tidy <- pew %>%
-  pivot_longer(
-    cols = -religion,
-    names_to = "income",
-    values_to = "count",
-    values_drop_na = TRUE
-  ) %>%
-  uncount(weights = count) %T>%
-  saveRDS(here("data", "pew_tidy.rds")) %>%
-  write_csv(here("data", "pew_tidy.csv"))
-```
-Before generating the plot, we will change the names of the variables to make them shorter and generate the corresponding colors and factors:
-```{r}
-income_colors <- c(
-  "$30–40k" = "#1f77b4",
-  "$20–30k" = "#2ca02c",
-  "$10–20k" = "#ff7f0e",
-  "$10k" = "#d62728"
-
-)
-
-income_levels <- c(
-  "$30–40k",
-  "$20–30k",
-  "$10–20k",
-  "$10k"
-)
-
-pew_tidy <- pew_tidy %>%
-  mutate(
-    religion = if_else(
-      startsWith(religion, "Historically Black Prot"),
-      sub("Historically Black Prot", "Black Prot", religion),
-      religion
-    )
-  )
-
-
-pew_tidy <- pew_tidy %>%
-  mutate(
-    religion = if_else(
-      startsWith(religion, "Other World Religions"),
-      sub("Other World Religions", "Other Religions", religion),
-      religion
-    )
-  )
-
-pew_tidy <- pew_tidy %>%
-  mutate(income = factor(income, levels = income_levels, ordered = TRUE))
-```
-We can now generate the required table which groups the data by religion and income: 
-```{r}
-pew_grouped <- pew_tidy %>%
-  count(religion, income, name = "count")
-```
-With this tibble, we can now generate the required plot: 
-```{r} 
-pew_plot <- pew_grouped %>%
-  ggplot(aes(
-    x = fct_reorder(religion, count, .desc = TRUE),
-    y = count,
-    fill = income
-  )) +
-  geom_col(position = "dodge") +
-  scale_fill_manual(values = income_colors) +
-  labs(
-    title = "Distribution of income brackets per religion",
-    x = "Religion",
-    y = "Followers",
-    fill = "Income Bracket"
-  ) +
-  theme_krul() +
-  coord_flip()
-``` 
-Finally, we can save and plot the graph: 
-```{r}
-#| fig-width: 12
-#| fig-height: 12
-#| fig-cap: "\\small This plot shows the distribution of income brackets per religions. We can observe some differences in the distribution of these income brackets associated to the different social environments were the different religions thrive."
-ggsave(
-  filename = here("images", "pew_plot.png"),
-  plot = pew_plot,
-  width = 12,
-  height = 12,
-  dpi = 300
-)
-
-pew_plot
-```
-# Conclusions 
-In this document, we have practiced cleaning datasets and generating basic plots using the "tidyverse" package in R. This covers the basics of "Exploratory Data Analysis", for discrete datasets. I still need to look into histograms and boxplots for continuous datasets. We have worked with three different datasets:
-
-1. For the WHO dataset we generated a column plot and made sure that the bars for sex were separated.
-2. For the Billboard dataset, we generated a plot that kept track of the performance of a given song.
-3. For the Pew dataset, we generated a column plot, but in this case we stacked the bars for easy reference. (Although having them separated acutally looks good, and now that I have flipped the axese, it fits.) I also flipped the axes to make the plot more readable. 

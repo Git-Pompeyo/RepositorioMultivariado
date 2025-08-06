@@ -1,9 +1,11 @@
 ---
 format:
    pdf:
+     classoption: [twoside]
      fontsize: 11pt
      include-in-header: _header.tex
      pdf-engine: pdflatex
+     number-sections: true
 ---
 \pagenumbering{gobble}
 
@@ -14,7 +16,7 @@ format:
 
 \vspace{2cm}
 
-\Huge \textbf{Tidy practice} \par
+\Huge \textbf{Tidy Data: An Introduction to the Tidyverse} \par
 \vspace{3cm}
 
 
@@ -36,6 +38,13 @@ Adriana Reyna
 \large \today\par
 
 \end{center}
+
+\newpage
+
+\thispagestyle{empty}
+
+\mbox{}
+\vfill
 
 \newpage
 
