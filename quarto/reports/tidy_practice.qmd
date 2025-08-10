@@ -51,4 +51,3 @@ Adriana Reyna
 \pagenumbering{arabic}
 
 {{< include _1content.qmd >}}
-
