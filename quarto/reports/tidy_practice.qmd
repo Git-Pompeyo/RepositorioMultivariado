@@ -50,4 +50,4 @@ Adriana Reyna
 
 \pagenumbering{arabic}
 
-{{< include _1content.qmd >}}
+{{< include _1tidy_practice.qmd >}}
