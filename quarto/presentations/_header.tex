@@ -132,9 +132,9 @@
 %\newtheorem{acknowledgement}[theorem]{Acknowledgement}
 
 
-\newcounter{savedenumi}
-
-
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Section and subsection adjustments %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -43,6 +43,6 @@ highlight-style: tango
 
 
 
-{{< include _1content.qmd >}}
+{{< include _1tidyverse_content.qmd >}}
 
 
