@@ -11,7 +11,7 @@ The Tidyverse is a collection of R packages designed for data science. It provid
   \item Each type of observational unit forms a table.
 \end{enumerate}
 
-This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R. In these notes we will describe the basics of the Tidyverse but, for more information on its use, the interested reader is welcomed to check the following references: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
+This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R. In these notes we will describe the basics of the Tidyverse but, for more information on its use, the interested reader can check the following references: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
 
 \end{definition}
 
@@ -134,7 +134,7 @@ who_type_sex_tbl <- who_factor %>%
 
 # The "Grammar of Graphics" and ggplot2
 
-The concept of the "Grammar of Graphics" was introduced by Leland Wilkinson in his 1999 book \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. This provides a framework for understanding how to create visualizations in a systematic way. It breaks down the process of creating a plot into components such as data, aesthetics, geometries, statistics, coordinates, and themes. The `ggplot2` package \cite{wickham2016ggplot2} implements this grammar in R, allowing users to build complex visualizations by layering these components. For more information on the Grammar of Graphics, the interested reader can consult the following references: \cite{cleveland1993elements, hyndman2021forecasting}.
+The concept of the "Grammar of Graphics" was introduced by Leland Wilkinson in his 1999 book \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. This provides a framework for understanding how to create visualizations in a systematic way. It breaks down the process of creating a plot into components such as data, aesthetics, geometries, statistics, coordinates, and themes. The `ggplot2` package \cite{wickham2016ggplot2} implements this grammar in R, allowing users to build complex visualizations by layering these components. For more information on the Grammar of Graphics, its history and applications, the interested reader can consult the following references: \cite{cleveland1993elements, hyndman2021forecasting}.
 
 ## Layers in ggplot2
 
@@ -181,10 +181,10 @@ The geometry controls \emph{how} the data is drawn.
 
   \item \textbf{Labels:} \texttt{labs()} adds titles, axis labels, and captions.
 
-  \item \textbf{Themes:} \texttt{theme()} controls the overall appearance of the plot (fonts, background, gridlines, etc.).
+  \item \textbf{Themes:} \texttt{theme()} controls the overall appearance of the plot (fonts, background, gridlines).
 \end{enumerate}
 
-Each layer can be combined and customized to build complex and elegant plots. This \emph{layered grammar} allows you to think of your graphic as a composition of independent components rather than a single, monolithic command.
+Each layer can be combined and customized to build complex and elegant plots. This \emph{layered grammar} allows you to think of your graphic as a composition of independent components rather than a single, monolithic object.
 
 ## Plotting with ggplot2
 
