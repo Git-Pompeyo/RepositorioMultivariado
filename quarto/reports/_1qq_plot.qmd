@@ -272,7 +272,6 @@ gamma_qq_plot <- gamma_samples_tbl %>%
 gamma_histogram <- gamma_samples_tbl %>%
   ggplot(aes(x = sample)) +
   geom_histogram(
-    aes(y = after_stat(density)),
     bins = 30,
     fill = c_palette["C blue"],
     color = "black",
@@ -327,7 +326,6 @@ laplace_qq_plot <- laplace_samples_tbl %>%
 laplace_histogram <- laplace_samples_tbl %>%
   ggplot(aes(x = sample)) +
   geom_histogram(
-    aes(y = after_stat(density)),
     bins = 30,
     fill = c_palette["C blue"],
     color = "black",
