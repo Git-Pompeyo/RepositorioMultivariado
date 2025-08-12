@@ -1,9 +1,24 @@
 # Skewness, Kurtosis and QQ Plots 
 
-As it is well known, any normal distribution is completely determined by its mean and standard deviation. However, many real-world datasets do not follow a normal distribution. In this section, we will explore some other distributions and show how the concepts of skewness and kurtosis can help us understand its shape. We will also introduce QQ plots, which are useful graphical tools for comparing the distribution of a dataset against a theoretical distribution, which is usually taken to be normal. But before starting, let's load the necessary libraries and set some options. 
+### Skewness, Kurtosis and QQ Plots
+
+As it is well known, any normal distribution is completely determined by its mean and standard deviation.
+
+\bigpause
+
+However, many real-world datasets do not follow a normal distribution.
+
+\bigpause
+
+In this presentation, we will explore some other distributions and show how the concepts of skewness and kurtosis can help us understand its shape.
+
+\bigpause
+
+We will also introduce QQ plots, which are useful graphical tools for comparing the distribution of a dataset against a theoretical distribution, which is usually taken to be normal.
 
 ```{r}
 #| output: false
+#| echo: false
 library("tidyverse")
 library("here")
 library("patchwork")
@@ -16,18 +31,28 @@ options(scipen = 999)
 
 ## Skewness 
 
+### Skewness
+
 \begin{definition}
-The \emph{skewness} of a random variable $X$ is defined as the third standardized moment, given by
+The \alert{skewness} of a random variable $X$ is defined as the third standardized moment, given by
 $$
 \gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3},
 $$
 where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
 \end{definition}
 
-Skewness measures the asymmetry of a probability distribution. A distribution is said to be \emph{positively skewed} (or right-skewed) if it has a longer tail on the right side, and \emph{negatively skewed} (or left-skewed) if it has a longer tail on the left side. A perfectly symmetric distribution has a skewness of zero. To illustrate this idea, we will introduce the gamma distributions.
+\pause
+
+Skewness measures the asymmetry of a probability distribution.
+
+\bigpause
+
+A distribution is said to be \alert{positively skewed} (or right-skewed) if it has a longer tail on the right side, and \alert{negatively skewed} (or left-skewed) if it has a longer tail on the left side.
+
+### Gamma Distribution
 
 \begin{definition}
-Let $X$ be a continuous random variable following a \emph{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$. The probability density function (PDF) of $X$ is given by
+Let $X$ be a continuous random variable following a \alert{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$. The probability density function (PDF) of $X$ is given by
 
 \begin{equation} \label{eq:gamma_pdf}
 f_X(x; \alpha, \beta) = 
@@ -46,7 +71,11 @@ $$
 The parameters $\alpha$ and $\beta$ control the shape and rate of the distribution, respectively.
 \end{definition}
 
+###
+
 Among other applications, the Gamma distribution is frequently used to model the number of total insurance claims over a given time period.
+
+\pause
 
 \begin{remark}
 The skewness of a Gamma distribution is given by
@@ -56,13 +85,13 @@ $$
 This means that the skewness is always positive, and it approaches zero as $\alpha$ increases. In other words, the distribution becomes more symmetric as $\alpha$ becomes larger.
 \end{remark}
 
-We will now show how to plot the PDF of the Gamma distribution for $\alpha = 2$ and $\beta = 1$, highlighting the mean and median.
+###
 
 ```{r}
 #| fig-cap: "PDF of the gamma distribution with mean and median highlighted."
-#| fig-width: 8
+#| fig-width: 12
 #| fig-height: 5
-
+#| echo: false
 # Parameters
 alpha <- 2
 beta <- 1
@@ -127,23 +156,43 @@ ggplot(aes(x = x_data, y = density)) +
 
 ## Kurtosis 
 
+### Kurtosis
+
 \begin{definition}
-The \emph{kurtosis} of a random variable $X$ is defined as the fourth standardized moment, given by
+The \alert{kurtosis} of a random variable $X$ is defined as the fourth standardized moment, given by
 $$
 \gamma_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},
 $$
 where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
 \end{definition}
-Kurtosis measures the "tailedness" of a probability distribution. A distribution with high kurtosis has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis has lighter tails and a flatter peak. The kurtosis of a normal distribution is 3, and it is often adjusted to be 0 for comparison purposes. To illustrate this idea, we will introduce the Laplace distribution.
+
+\pause
+
+Kurtosis measures the "tailedness" of a probability distribution.
+
+\bigpause
+
+A distribution with high kurtosis has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis has lighter tails and a flatter peak.
+
+\bigpause
+
+The kurtosis of a normal distribution is 3, and it is often adjusted to be 0 for comparison purposes.
+
+### Laplace Distribution
+
 \begin{definition}
-Let $X$ be a continuous random variable following a \emph{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$. The probability density function (PDF) of $X$ is given by
+Let $X$ be a continuous random variable following a \alert{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$. The probability density function (PDF) of $X$ is given by
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right), \quad x \in \mathbb{R}.
 \end{equation}
 The parameters $\mu$ and $b$ control the location and scale of the distribution, respectively.
 \end{definition}
 
+###
+
 Among other applications, the Laplace distribution is often used in image processing and computer vision, particularly in modeling noise in images.
+
+\pause
 
 \begin{remark} The kurtosis of a Laplace distribution is given by
 $$
@@ -152,12 +201,13 @@ $$
 This means that the Laplace distribution has heavier tails than a normal distribution, which has a kurtosis of 3.
 \end{remark}
 
-We will now show how to plot the PDF of the Laplace distribution with mean zero and variance one.
+###
 
 ```{r}
 #| fig-cap: "PDF of the Laplace distribution with mean zero and variance one."
-#| fig-width: 8
+#| fig-width: 12
 #| fig-height: 5
+#| echo: false
 
 # Parameters
 mu <- 0      # mean (location)
@@ -190,39 +240,64 @@ laplace_distribution_tbl %>%
 ```
 
 ## QQ Plots
-QQ plots, or quantile-quantile plots, are graphical tools used to compare the distribution of a dataset against a theoretical distribution, such as the normal distribution. They are particularly useful for assessing whether a dataset follows a normal distribution. 
+
+### QQ Plots
+
+QQ plots, or quantile-quantile plots, are graphical tools used to compare the distribution of a dataset against a theoretical distribution, such as the normal distribution.
+
+\bigpause
+
+They are particularly useful for assessing whether a dataset follows a normal distribution. 
+
+### Constructing a QQ Plot
 
 To construct a QQ plot, you should follow these steps:
 \begin{enumerate}
-    \item \textbf{Sort the sample data:}  
+    \item  \alert{Sort the sample data:}  
     Arrange the data in increasing order:  
     \[
     x_{(1)} \leq x_{(2)} \leq \cdots \leq x_{(n)}.
     \]
     
-    \item \textbf{Calculate plotting positions (empirical quantiles):}  
+    \item  \alert{Calculate plotting positions (empirical quantiles):}  
     For each ordered value \( x_{(i)} \), compute the corresponding probability  
     \[
     p_i = \frac{i - 0.5}{n}, \quad i = 1, 2, \ldots, n.
     \]
     
-    \item \textbf{Find theoretical quantiles of the normal distribution:}  
+\seti
+ \end{enumerate}       
+
+### Constructing a QQ Plot
+
+\begin{enumerate}
+
+\conti
+
+    \item  \alert{Find theoretical quantiles of the normal distribution:}  
     Compute the theoretical quantiles from the inverse cumulative distribution function (CDF) of the normal distribution:  
     \[
     q_i = \Phi^{-1}(p_i),
     \]
     where \( \Phi^{-1} \) is the quantile function of the standard normal distribution.  
-        
-    \item \textbf{Plot the points:}  
+
+
+
+    \item  \alert{Plot the points:}  
     Plot the pairs \( (q_i, x_{(i)}) \) with \( q_i \) on the x-axis and \( x_{(i)} \) on the y-axis.
     
-    \item \textbf{Add a reference line:}  
-    Typically, we add a line through the first and third quartiles to help assess normality. \end{enumerate}
+    \item  \alert{Add a reference line:}  
+    Typically, we add a line through the first and third quartiles to help assess normality. 
+
+\end{enumerate}
 
 The closer the points lie to this line, the more the sample resembles the specified normal distribution.
 
-To illustrate these ideas, we will now generate samples from the Gamma and Laplace distributions, and then we will construct thier associated QQ plots and histograms. First we construct the samples:
+
+###
 ```{r}
+#| output: false
+#| echo: false
 set.seed(123)  # for reproducibility
 
 # Sample size 
@@ -247,11 +322,11 @@ laplace_samples_tbl <- tibble(
 )
 ```
 
-We will now construct the corresponding QQ plots and histograms. We will start with the Gamma distribution samples:
 ```{r}
 #| fig-cap: "QQ plot and histogram of the Gamma distribution samples." 
-#| fig-width: 10 
+#| fig-width: 12 
 #| fig-height: 5
+#| echo: false
 gamma_qq_plot <- gamma_samples_tbl %>%
   ggplot(aes(sample = sample)) +
   geom_qq(
@@ -300,11 +375,13 @@ gamma_plot <- gamma_qq_plot + gamma_histogram +
 gamma_plot
 ```
 
-We will now construct the QQ plot and histogram for the Laplace distribution samples:
+
+###
 ```{r}
 #| fig-cap: "QQ plot and histogram of the Laplace distribution samples."
-#| fig-width: 10 
+#| fig-width: 12 
 #| fig-height: 5 
+#| echo: false
 
 laplace_qq_plot <- laplace_samples_tbl %>%
   ggplot(aes(sample = sample)) +
@@ -351,15 +428,3 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
   )
 laplace_plot 
 ```
-
-## Exercises 
-
-Construct the QQ plot and histogram for the following distributions:
-
-\begin{enumerate}
-    \item Exponential distribution with rate parameter $\lambda = 1$.
-    \item Uniform distribution on the interval $[0, 1]$.
-    \item Beta distribution with shape parameters $\alpha = 2$ and $\beta = 5$.
-    \item Cauchy distribution with location parameter $x_0 = 0$ and scale parameter $\gamma = 1$.
-    \item Chi-squared distribution with degrees of freedom $k = 3$.
-\end{enumerate}
