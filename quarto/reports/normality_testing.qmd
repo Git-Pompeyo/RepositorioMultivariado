@@ -50,4 +50,4 @@ Adriana Reyna
 
 \pagenumbering{arabic}
 
-{{< include _2qq_plot.qmd >}}
+{{< include _3normality_testing.qmd >}}

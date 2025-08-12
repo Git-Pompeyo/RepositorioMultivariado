@@ -134,7 +134,7 @@ $$
 $$
 where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
 \end{definition}
-Kurtosis measures the "tailedness" of a probability distribution. A distribution with high kurtosis has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis has lighter tails and a flatter peak. The kurtosis of a normal distribution is 3, and it is often adjusted to be 0 for comparison purposes. To illustrate this idea, we will introduce the Laplace distribution.
+Kurtosis measures the "tailedness" of a probability distribution. A distribution with high kurtosis (also known as a \emph{leptokurtic} distribution) has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis (also known as a \emph{platykurtic} distribution) has lighter tails and a flatter peak. The kurtosis of a normal distribution is 3, and it is often adjusted to be 0 for comparison purposes. To illustrate this idea, we will introduce the Laplace distribution.
 \begin{definition}
 Let $X$ be a continuous random variable following a \emph{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$. The probability density function (PDF) of $X$ is given by
 \begin{equation} \label{eq:laplace_pdf}
