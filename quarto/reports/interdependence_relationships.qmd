@@ -53,4 +53,4 @@ format:
 \pagenumbering{arabic}
 
 {{< include _1tidy_data.qmd >}}
-{{< include _2normality_testing.qmd >}}
+{{< include _2qqplot.qmd >}}
