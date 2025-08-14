@@ -54,3 +54,4 @@ format:
 
 {{< include _1tidy_data.qmd >}}
 {{< include _2qqplot.qmd >}}
+{{< include _3normality_testing.qmd >}}
