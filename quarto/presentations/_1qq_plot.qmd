@@ -25,6 +25,7 @@ library("patchwork")
 library("krulRutils")
 library("ISLR2")
 library("magrittr")
+library("e1071") 
 
 options(scipen = 999)
 ```
@@ -161,7 +162,7 @@ ggplot(aes(x = x_data, y = density)) +
 \begin{definition}
 The \alert{kurtosis} of a random variable $X$ is defined as the fourth standardized moment, given by
 $$
-\gamma_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},
+\beta_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},
 $$
 where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
 \end{definition}
@@ -170,13 +171,16 @@ where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)
 
 Kurtosis measures the "tailedness" of a probability distribution.
 
-\bigpause
+\pause
 
 A distribution with high kurtosis has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis has lighter tails and a flatter peak.
 
-\bigpause
+\pause
 
-The kurtosis of a normal distribution is 3, and it is often adjusted to be 0 for comparison purposes.
+The kurtosis of a normal distribution is 3, which is why frequently we are interested in computing the \emph{excess kurtosis} which is given by:
+$$
+\gamma_2 = \beta_2 - 3.
+$$
 
 ### Laplace Distribution
 
@@ -194,11 +198,11 @@ Among other applications, the Laplace distribution is often used in image proces
 
 \pause
 
-\begin{remark} The kurtosis of a Laplace distribution is given by
+\begin{remark} The excess kurtosis of a Laplace distribution is given by
 $$
-\gamma_2 = 6.
+\gamma_2 = 3.
 $$
-This means that the Laplace distribution has heavier tails than a normal distribution, which has a kurtosis of 3.
+This means that the Laplace distribution has heavier tails than a normal distribution.
 \end{remark}
 
 ###
@@ -221,8 +225,8 @@ dlaplace <- function(x, mu, b) {
   return(1/(2*b) * exp(-abs(x - mu)/b))
 }
 
-# Create data frame with PDF values
-laplace_distribution_tbl<- data.frame(
+# Create tibble with PDF values
+laplace_distribution_tbl<- tibble(
   x_data = x_data,
   density = dlaplace(x_data, mu, b)
 )
@@ -232,7 +236,7 @@ laplace_distribution_tbl %>%
   ggplot(aes(x = x_data, y = density)) +
   geom_line(color = c_palette["C blue"], linewidth = 1) +
   labs(
-    title = "Laplace Distribution PDF (mean = 0, sd = 1)",
+    title = "Laplace Distribution PDF (mean = 0, var = 1)",
     x = "x",
     y = "Density"
   ) +
@@ -247,7 +251,7 @@ QQ plots, or quantile-quantile plots, are graphical tools used to compare the di
 
 \bigpause
 
-They are particularly useful for assessing whether a dataset follows a normal distribution. 
+They are particularly useful for assessing the normality of the data.
 
 ### Constructing a QQ Plot
 
@@ -262,7 +266,7 @@ To construct a QQ plot, you should follow these steps:
     \item  \alert{Calculate plotting positions (empirical quantiles):}  
     For each ordered value \( x_{(i)} \), compute the corresponding probability  
     \[
-    p_i = \frac{i - 0.5}{n}, \quad i = 1, 2, \ldots, n.
+    p_i = \frac{2i - 1}{2n}, \quad i = 1, 2, \ldots, n.
     \]
     
 \seti
@@ -303,21 +307,21 @@ set.seed(123)  # for reproducibility
 # Sample size 
 n <- 300 
 # Generate random samples from the Gamma distribution 
-gamma_samples <- rgamma(n, shape = alpha, rate = beta) 
+gamma_sample <- rgamma(n, shape = alpha, rate = beta) 
 
-gamma_samples_tbl <- tibble(
-  sample = gamma_samples
+gamma_sample_tbl <- tibble(
+  sample = gamma_sample
 )
 
 # Generate uniform random numbers in (0,1)
-u <- runif(100)
+u <- runif(n)
 
 # Apply inverse CDF of Laplace
 laplace_sample <- ifelse(u < 0.5,
                          mu + b * log(2*u),
                          mu - b * log(2*(1 - u)))
 
-laplace_samples_tbl <- tibble(
+laplace_sample_tbl <- tibble(
   sample = laplace_sample
 )
 ```
@@ -327,7 +331,7 @@ laplace_samples_tbl <- tibble(
 #| fig-width: 12 
 #| fig-height: 5
 #| echo: false
-gamma_qq_plot <- gamma_samples_tbl %>%
+gamma_qq_plot <- gamma_sample_tbl %>%
   ggplot(aes(sample = sample)) +
   geom_qq(
     color = c_palette["C red"],
@@ -344,7 +348,7 @@ gamma_qq_plot <- gamma_samples_tbl %>%
   ) +
   theme_krul()
 
-gamma_histogram <- gamma_samples_tbl %>%
+gamma_histogram <- gamma_sample_tbl %>%
   ggplot(aes(x = sample)) +
   geom_histogram(
     bins = 30,
@@ -383,7 +387,7 @@ gamma_plot
 #| fig-height: 5 
 #| echo: false
 
-laplace_qq_plot <- laplace_samples_tbl %>%
+laplace_qq_plot <- laplace_sample_tbl %>%
   ggplot(aes(sample = sample)) +
   geom_qq(
     color = c_palette["C red"],
@@ -400,7 +404,7 @@ laplace_qq_plot <- laplace_samples_tbl %>%
   ) +
   theme_krul()
 
-laplace_histogram <- laplace_samples_tbl %>%
+laplace_histogram <- laplace_sample_tbl %>%
   ggplot(aes(x = sample)) +
   geom_histogram(
     bins = 30,
@@ -428,3 +432,89 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
   )
 laplace_plot 
 ```
+
+## Sample Skewness and Kurtosis 
+
+### Sample Skewness and Kurtosis
+
+So far we have defined skewness and kurtosis for random variables.
+
+\bigpause
+
+However, in practice, we often work with samples rather than entire populations.
+
+\bigpause
+
+Therefore, we need to define sample skewness and sample kurtosis.
+
+###
+
+\begin{definition}
+Let $x_1, x_2, \dots, x_n$ be a sample of size $n$. 
+The \emph{sample mean} $\bar{x}$ and \emph{sample variance} $s^{2}$ are given by
+\[
+\bar{x} = \frac{1}{n} \sum_{i=1}^n x_i,
+\qquad
+s^{2} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2.
+\]
+The \emph{sample skewness} $g_1$ given by
+\[
+g_1 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^3.
+\]
+The \emph{sample excess kurtosis} $g_2$ 
+is given by
+$$
+g_2 = \frac{n(n+1)}{(n-1)(n-2)(n-3)}
+\sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^4
+- \frac{3(n-1)^2}{(n-2)(n-3)}.
+$$
+\end{definition}
+
+### 
+
+
+As an example, we will compute the sample skewness and sample excess kurtosis of the Gamma and Laplace samples we showed earlier.
+\bigpause 
+
+For the Gamma sample we have:
+```{r}
+#| echo: false
+# Compute sample skewness and excess kurtosis for Gamma distribution 
+gamma_sample_tbl %>%
+  summarise(
+    sample_skewness = skewness(sample, type = 2),
+    sample_excess_kurtosis = kurtosis(sample, type = 2) - 3
+  ) %>%
+glimpse()
+```
+
+
+\bigpause
+
+
+For the Laplace sample we have:
+```{r}
+#| echo: false
+# Compute sample skewness and excess kurtosis for Laplace distribution 
+laplace_sample_tbl %>%
+  summarise(
+    sample_skewness = skewness(sample, type = 2),
+    sample_excess_kurtosis = kurtosis(sample, type = 2)
+  ) %>%
+glimpse()
+```
+
+
+## Activity: Assessing Normality
+
+### Activity: Assessing Normality
+
+For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Kurtosis. After that, construct and compare their associated QQ plots and histograms.
+
+\begin{enumerate}
+    \item Exponential distribution with rate parameter $\lambda = 1$.
+    \item Uniform distribution on the interval $[0, 1]$.
+    \item Beta distribution with shape parameters $\alpha = 2$ and $\beta = 5$.
+    \item Cauchy distribution with location parameter $x_0 = 0$ and scale parameter $\gamma = 1$.
+    \item Chi-squared distribution with degrees of freedom $k = 3$.
+\end{enumerate}
