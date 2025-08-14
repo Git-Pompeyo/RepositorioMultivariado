@@ -1,6 +1,10 @@
-# Tidy Data and the Tidyverse 
+# An Introduction to the Tidyverse 
 
-The Tidyverse is a collection of R packages designed for data science. It provides a consistent and user-friendly interface for data manipulation, visualization, and analysis. Although formally introduced as an ecosystem in 2016, many of these packages were developed by Hadley Wickham between 2007–2014. The core idea of behind the design of the Tidyverse is Wickham's definition of "tidy data" \cite{wickham2014tidydata}.
+The Tidyverse is a collection of R packages designed for data science. It provides a consistent and user-friendly interface for data manipulation, visualization, and analysis. Although formally introduced as an ecosystem in 2016, many of these packages were developed by Hadley Wickham between 2007–2014.
+
+## Tidy Data
+
+The core idea of behind the design of the Tidyverse is Wickham's definition of "tidy data" \cite{wickham2014tidydata}.
 
 \begin{definition}
 \emph{Tidy Data} is a way of structuring datasets to make them easier to work with. In tidy data:
@@ -11,15 +15,15 @@ The Tidyverse is a collection of R packages designed for data science. It provid
   \item Each type of observational unit forms a table.
 \end{enumerate}
 
-This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R. In these notes we will describe the basics of the Tidyverse but, for more information on its use, the interested reader can check the following references: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
+This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R. In this section we will describe the basics of the Tidyverse but, for more information on its use, the interested reader can check the following references: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
 
 \end{definition}
 
-## Tibbles and pipes
+### Tibbles and pipes
 
 In the Tidyverse, data is often represented using a special type of data frame called a \emph{tibble}. Tibbles are more user-friendly than traditional data frames, as they provide better printing and subsetting behavior. They also allow for more intuitive handling of data. In particular, tibbles are designed to work seamlessly with the pipe operator (`%>%`), which allows for chaining together multiple operations (usually known as "verbs" in the context of the tidyverse) in a clear and concise manner. To illustrate these ideas, in the next section we will perform data cleaning on the "WHO" dataset, to make sure that the associated tibble satisfies the tidy data principles. This is usually the first step in Exploratory Data Analysis (EDA) and is crucial for ensuring that the data is in a suitable format for analysis and visualization.
 
-## Tidying the WHO dataset
+### An Example: Tidying the WHO dataset
 
 Before starting, we need to load the required libraries and load the WHO dataset: 
 ```{r}
@@ -132,11 +136,11 @@ who_type_sex_tbl <- who_factor %>%
   print(n = Inf) 
 ```
 
-# The "Grammar of Graphics" and ggplot2
+## The "Grammar of Graphics" and ggplot2
 
 The concept of the "Grammar of Graphics" was introduced by Leland Wilkinson in his 1999 book \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. This provides a framework for understanding how to create visualizations in a systematic way. It breaks down the process of creating a plot into components such as data, aesthetics, geometries, statistics, coordinates, and themes. The `ggplot2` package \cite{wickham2016ggplot2} implements this grammar in R, allowing users to build complex visualizations by layering these components. For more information on the Grammar of Graphics, its history and applications, the interested reader can consult the following references: \cite{cleveland1993elements, hyndman2021forecasting}.
 
-## Layers in ggplot2
+### Layers in ggplot2
 
 In \texttt{ggplot2}, plots are constructed by adding multiple \emph{layers} that define the components of the visualization. Each layer corresponds to a specific aspect of the plot, and together they form the complete graphic. These layers include:
 
@@ -186,7 +190,7 @@ The geometry controls \emph{how} the data is drawn.
 
 Each layer can be combined and customized to build complex and elegant plots. This \emph{layered grammar} allows you to think of your graphic as a composition of independent components rather than a single, monolithic object.
 
-## Plotting with ggplot2
+### Plotting with ggplot2
 
 We will illustrate these concepts by plotting the number of cases of tuberculosis by type and sex, using the frequency tibble we created earlier. 
 ```{r}
@@ -217,14 +221,14 @@ ggsave(
 who_type_sex_plot
 ```
 
-# The Billboard dataset 
+## Exercise: Tidying the Billboard dataset
 
 The problem with the Billboard dataset, according to the principles of "tidy data", is that the weeks in which a song appeared in the Billboard chart are represented as columns, which makes it difficult to analyze the data. Using the techniques we have learned so far, the reader is required to tidy the Billboard dataset, so that it can be used to analyze the evolution of the ranking of the song "Who Let The Dogs Out" by "Baha Men" in the Billboard Hot 100 chart. The final visualization should look like the one shown below.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{images/dogs_out_plot.png}
-\caption{Evolution of the ranking of the song 'Who Let The Dogs Out' by 'Baha Men' in the Billboard Hot 100 chart. The song peaked at rank 40 in the week of October 21, 2000, and remained in the top 100 for several weeks.}
+\caption{Evolution of the ranking of the song 'Who Let The Dogs Out' by 'Baha Men' in the Billboard Hot 100 chart. The song peaked at rank 40 in the week of October 21st, 2000, and remained in the top 100 for several weeks.}
 \end{figure}
 
 
@@ -257,3 +261,6 @@ Wilkinson, L. (1999) \textit{The Grammar of Graphics}. Springer-Verlag.
 
 \end{thebibliography}
 
+\vfill 
+
+\newpage

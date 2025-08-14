@@ -1,7 +1,8 @@
 ---
 format:
    pdf:
-     classoption: [twoside]
+     documentclass: book
+     classoption: [openright,twoside]
      fontsize: 11pt
      include-in-header: _header.tex
      pdf-engine: pdflatex
@@ -16,22 +17,23 @@ format:
 
 \vspace{2cm}
 
-\Huge \textbf{QQPlots and Normality Testing} \par
-\vspace{3cm}
+\LARGE \textbf{MA2003B Application of Multivariate Methods \\ in Data Science} \par
+\vspace{1cm}
 
 
-\Large \textbf{MA2003B Application of Multivariate Methods \\ in Data Science} \par
+\Large \textbf{Module 1: Interdependence Relationships} \par
 
-\vspace{3cm}
+\vspace{7cm}
 
-\large \textbf{Team Members:} \par
-\vspace{0.5cm}
-\large
-\begin{tabular}{c}
-Raul Gomez \\ 
-Adriana Reyna
+
+\large 
+
+\begin{tabular}{rl}
+\textbf{Instructor:} & Raul Gomez \\
+\textbf{Email:} & \url{rgomez@tec.mx} \\
+\textbf{Office:} & A4-123A \\
 \end{tabular}
-
+\par
 
 \vfill
 
@@ -50,4 +52,5 @@ Adriana Reyna
 
 \pagenumbering{arabic}
 
+{{< include _1tidy_data.qmd >}}
 {{< include _2normality_testing.qmd >}}

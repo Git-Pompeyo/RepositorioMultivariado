@@ -77,14 +77,16 @@
 
 
 
-\fancypagestyle{plain}{%
+
+% Define a custom style for all normal pages
+\fancypagestyle{multivariate_notes}{%
   \fancyhf{}
   % Even pages (Left side)
-  \fancyhead[LO]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{MA2003B}}
+  \fancyhead[LO]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{MA2003B.M1}}
   \fancyhead[RO]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
   % Odd pages (Right side)
   \fancyhead[LE]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
-  \fancyhead[RE]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{MA2003B}}
+  \fancyhead[RE]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{MA2003B.M1}}
   % Footer
   \rfoot{}
   \cfoot{\thepage}
@@ -92,7 +94,15 @@
   \setlength{\headsep}{10pt}
 }
 
-\pagestyle{plain}
+% Redefine the 'plain' style (used by first page of chapters) to have no header
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \cfoot{\thepage} % Keep page number centered in footer
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% Apply your custom style to all normal pages
+\pagestyle{multivariate_notes}
 
 
 
