@@ -221,7 +221,7 @@ ggsave(
 who_type_sex_plot
 ```
 
-## Exercise: Tidying the Billboard dataset
+## Activity: Tidying the Billboard dataset
 
 The problem with the Billboard dataset, according to the principles of "tidy data", is that the weeks in which a song appeared in the Billboard chart are represented as columns, which makes it difficult to analyze the data. Using the techniques we have learned so far, the reader is required to tidy the Billboard dataset, so that it can be used to analyze the evolution of the ranking of the song "Who Let The Dogs Out" by "Baha Men" in the Billboard Hot 100 chart. The final visualization should look like the one shown below.
 

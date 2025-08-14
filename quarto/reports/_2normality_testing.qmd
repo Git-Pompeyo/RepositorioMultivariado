@@ -28,7 +28,7 @@ where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)
 Skewness measures the asymmetry of a probability distribution. A distribution is said to be \emph{positively skewed} (or right-skewed) if it has a longer tail on the right side, and \emph{negatively skewed} (or left-skewed) if it has a longer tail on the left side. A perfectly symmetric distribution has a skewness of zero. To illustrate this idea, we will introduce the gamma distributions.
 
 \begin{definition}
-Let $X$ be a continuous random variable following a \emph{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$. The probability density function (PDF) of $X$ is given by
+We say that a continuous random variable $X$ follows a \emph{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$, if its associated probability density function (PDF) is given by
 
 \begin{equation} \label{eq:gamma_pdf}
 f_X(x; \alpha, \beta) = 
@@ -141,7 +141,7 @@ $$
 $$
 To illustrate this idea, we will introduce the Laplace distribution.
 \begin{definition}
-Let $X$ be a continuous random variable following a \emph{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$. The probability density function (PDF) of $X$ is given by
+We say that a continuous random variable $X$ follows a \emph{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$, if its associated probability density function (PDF) is given by
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right), \quad x \in \mathbb{R}.
 \end{equation}

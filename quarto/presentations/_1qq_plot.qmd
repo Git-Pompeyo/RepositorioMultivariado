@@ -53,7 +53,7 @@ A distribution is said to be \alert{positively skewed} (or right-skewed) if it h
 ### Gamma Distribution
 
 \begin{definition}
-Let $X$ be a continuous random variable following a \alert{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$. The probability density function (PDF) of $X$ is given by
+We say that a continuous random variable $X$ follows a \alert{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$, if its associated probability density function (PDF) is given by
 
 \begin{equation} \label{eq:gamma_pdf}
 f_X(x; \alpha, \beta) = 
@@ -185,7 +185,7 @@ $$
 ### Laplace Distribution
 
 \begin{definition}
-Let $X$ be a continuous random variable following a \alert{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$. The probability density function (PDF) of $X$ is given by
+We say that a continuous random variable $X$ follows a \alert{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$, if its associated probability density function (PDF) is given by
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right), \quad x \in \mathbb{R}.
 \end{equation}
@@ -509,7 +509,7 @@ glimpse()
 
 ### Activity: Assessing Normality
 
-For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Kurtosis. After that, construct and compare their associated QQ plots and histograms.
+For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Excess Kurtosis. After that, construct and compare their associated QQ plots and histograms.
 
 \begin{enumerate}
     \item Exponential distribution with rate parameter $\lambda = 1$.
