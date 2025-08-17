@@ -40,3 +40,18 @@ $$
 \gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
 $$
 \end{observation}
+
+## Normality Tests 
+
+There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
+
+\begin{enumerate}
+\item \emph{Shapiro-Wilk test}: This test is based on the correlation between the data and the corresponding normal scores. It is a powerful test for small sample sizes (less than 50) and is widely used in practice. However, it can be overly sensitive to small deviations from normality in larger sample sizes. 
+
+\item \emph{Kolmogorov-Smirnov test}: This test compares the empirical distribution function of the data with the cumulative distribution function of the normal distribution. It is a non-parametric test and can be used for any sample size. However, it is less powerful than the Shapiro-Wilk test for small sample sizes. 
+
+\item \emph{Anderson-Darling test}: This test is similar to the Kolmogorov-Smirnov test but gives more weight to the tails of the distribution. It is a powerful test for small sample sizes and is widely used in practice.
+
+\item \emph{Jarque-Bera test}: This test is based on the skewness and kurtosis of the data. It is a powerful test for large sample sizes and is widely used in practice. However, it can be overly sensitive to small deviations from normality in smaller sample sizes.
+
+\end{enumerate}
