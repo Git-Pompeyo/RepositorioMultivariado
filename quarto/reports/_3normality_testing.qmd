@@ -186,6 +186,10 @@ box_cox_gamma_plot
 
 As we saw in the previous section, the Box-Cox transformation can be used to make our data more normal-like. However, the choice of the parameter $\lambda$ is crucial for the success of the transformation. We wish to find the optimal value of $\lambda$ that maximizes the log-likelihood of the transformed data. This can be done using the `powerTransform` function from the `car` package, which performs a Box-Cox transformation and estimates the optimal value of $\lambda$. The following figure shows the log-likelihood profile for the Box-Cox transformation applied to the gamma sample data:
 ```{r}
+#| fig-cap: "Log-likelihood profile for the Box-Cox transformation applied to the Gamma distribution sample. The dashed line indicates the optimal value of lambda."
+#| fig-width: 14
+#| fig-height: 6
+
 # Intercept-only model
 fit <- lm(sample ~ 1, data = gamma_sample_tbl)
 
@@ -287,7 +291,3 @@ optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
 
 optimal_gamma_plot
 ```
-
-
-
-

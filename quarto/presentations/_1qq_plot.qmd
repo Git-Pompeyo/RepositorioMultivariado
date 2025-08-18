@@ -19,13 +19,15 @@ We will also introduce QQ plots, which are useful graphical tools for comparing 
 ```{r}
 #| output: false
 #| echo: false
-library("tidyverse")
-library("here")
-library("patchwork")
-library("krulRutils")
-library("ISLR2")
-library("magrittr")
-library("e1071") 
+library(tidyverse)
+library(broom)
+library(car)
+library(here)
+library(patchwork)
+library(krulRutils)
+library(ISLR2)
+library(magrittr)
+library(e1071) 
 
 options(scipen = 999)
 ```
@@ -107,31 +109,32 @@ gamma_distribution_tbl <- tibble(
 )
 
 # Calculate mean and median
-mean_val <- alpha / beta
-median_val <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_mean <- alpha / beta
+gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_sd <- sqrt(alpha) / beta
 
 # Plot
-gamma_distribution_tbl %>%
+gamma_distribution_plot <- gamma_distribution_tbl %>%
 ggplot(aes(x = x_data, y = density)) +
   geom_line(
     color = c_palette["C blue"],
     linewidth = 1
   ) +
   geom_vline(
-    xintercept = mean_val,
+    xintercept = gamma_mean,
     color = c_palette["C red"],
     linetype = "dashed",
     linewidth = 1
   ) +
   geom_vline(
-    xintercept = median_val,
+    xintercept = gamma_median,
     color = c_palette["C green"],
     linetype = "dotted",
     linewidth = 1
   ) +
   annotate(
     "text",
-    x = mean_val,
+    x = gamma_mean,
     y = 0.35,
     label = "Mean",
     color = c_palette["C red"],
@@ -139,7 +142,7 @@ ggplot(aes(x = x_data, y = density)) +
   ) +
   annotate(
     "text",
-    x = median_val,
+    x = gamma_median,
     y = 0.35,
     label = "Median",
     color = c_palette["C green"],
@@ -153,6 +156,8 @@ ggplot(aes(x = x_data, y = density)) +
     y = "Density"
   ) +
   theme_krul()
+
+gamma_distribution_plot
 ```
 
 ## Kurtosis 
@@ -177,7 +182,7 @@ A distribution with high kurtosis has heavier tails and a sharper peak than a no
 
 \pause
 
-The kurtosis of a normal distribution is 3, which is why frequently we are interested in computing the \emph{excess kurtosis} which is given by:
+The kurtosis of a normal distribution is 3, which is why frequently we are interested in computing the \alert{excess kurtosis} which is given by:
 $$
 \gamma_2 = \beta_2 - 3.
 $$
@@ -451,17 +456,17 @@ Therefore, we need to define sample skewness and sample kurtosis.
 
 \begin{definition}
 Let $x_1, x_2, \dots, x_n$ be a sample of size $n$. 
-The \emph{sample mean} $\bar{x}$ and \emph{sample variance} $s^{2}$ are given by
+The \alert{sample mean} $\bar{x}$ and \alert{sample variance} $s^{2}$ are given by
 \[
 \bar{x} = \frac{1}{n} \sum_{i=1}^n x_i,
 \qquad
 s^{2} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2.
 \]
-The \emph{sample skewness} $g_1$ given by
+The \alert{sample skewness} $g_1$ given by
 \[
 g_1 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^3.
 \]
-The \emph{sample excess kurtosis} $g_2$ 
+The \alert{sample excess kurtosis} $g_2$ 
 is given by
 $$
 g_2 = \frac{n(n+1)}{(n-1)(n-2)(n-3)}
@@ -505,11 +510,351 @@ glimpse()
 ```
 
 
-## Activity: Assessing Normality
+# Scaling and Standardization 
 
-### Activity: Assessing Normality
+### Scaling and Standardization
 
-For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Excess Kurtosis. After that, construct and compare their associated QQ plots and histograms.
+In many situations, it could happen that the units we are using to measure different variables in our data are not compatible.
+
+\bigpause 
+
+For example, we could have a dataset that contains the height of individuals in centimeters and their weight in kilograms.
+
+\bigpause 
+
+In such cases, it is often useful to \alert{scale} the variables so that they are comparable. 
+
+## Scaling Random Variables
+
+### Scaling Random Variables
+
+\begin{definition} 
+An \alert{affine transformation} of a random variable $X$ is a transformation of the form 
+$$
+Y = aX + b
+$$
+where $a$ and $b$ are constants.
+\end{definition}
+
+\pause
+
+\begin{remark}
+In the context of statistics, affine transformations are often refered to as \alert{scaling} (even when they also include a translational component).
+\end{remark}
+
+
+###
+
+Now assume that $X$ is a random variable with mean $\mu$ and standard deviation $\sigma$.
+
+\bigpause 
+
+Then the random variable
+$$ 
+Y = aX + b 
+$$
+will have mean $a\mu + b$ and standard deviation $|a|\sigma$.
+
+\bigpause 
+
+In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+will have mean $0$ and standard deviation $1$.
+
+### 
+In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+will have mean $0$ and standard deviation $1$.
+
+\bigpause
+
+This particular affine transformation is called a \alert{standardization}, and the resulting random variable $Z$ is called the \alert{standardized} version of $X$. $Z$ is also sometimes called the \alert{z-score} of $X$.
+
+\pause
+
+\begin{remark}
+Notice that if $X$ is not normally distributed, then $Z$ will \alert{not} be the standard normal distribution. Standardization does not make a non-normal distribution normal.
+\end{remark}
+
+###
+
+\begin{observation}
+Notice that, by definition, 
+$$
+\gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
+$$
+and
+$$
+\gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
+$$
+\end{observation}
+
+
+### 
+
+As an example, we will consider again the Gamma distrubution that we introduced earlier. In this case we have that 
+$$
+\mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
+$$
+\pause 
+Using this information, we can generate the plot of standadized version of the Gamma distribution and compare it with the original one.
+
+###
+```{r}
+#| fig-cap: "Comparison of the probability density function (PDF) of the original and standardized Gamma distribution."
+#| fig-width: 12 
+#| fig-height: 5
+#| echo: false
+
+# Calculate density values
+z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
+  mutate(
+    z_data = (x_data - gamma_mean) / gamma_sd,
+    z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
+  ) %>% 
+  select(z_data, z_density)
+
+# Calculate mean and median
+z_gamma_mean <- 0
+z_gamma_median <- (gamma_median-gamma_mean) / gamma_sd
+
+# Plot
+z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
+ggplot(aes(x = z_data, y = z_density)) +
+  geom_line(
+    color = c_palette["C blue"],
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_mean,
+    color = c_palette["C red"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_median,
+    color = c_palette["C green"],
+    linetype = "dotted",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_mean,
+    y = 0.55,
+    label = "Mean",
+    color = c_palette["C red"],
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_median,
+    y = 0.55,
+    label = "Median",
+    color = c_palette["C green"],
+    hjust = 1.1
+  ) +
+  coord_cartesian(ylim = c(0, 0.6)) +
+  labs(
+    title = paste(
+      "Standardized"
+    ),
+    x = "X",
+    y = "Density"
+  ) +
+  theme_krul()
+
+gamma_distribution_plot <- gamma_distribution_plot +
+  labs(
+    title = "Original"
+  )
+
+combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Gamma Distribution: Original and Standardized",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+combined_gamma_plot
+```
+
+
+## Scaling Samples
+
+### Scaling Samples 
+
+For a given a sample, it is not always known what the underlying distribution is.
+
+\bigpause 
+
+In particular, we may not know what the mean and the standard deviation of the underlying population are.
+
+\bigpause 
+
+However, we can still try to scale our data but we should keep in mind that in this case there is more than one scaling method.
+
+###
+The most common are:
+
+\begin{enumerate}
+    \item \alert{Standardization}: This method uses the sample mean and sample standard deviation to scale the data. The standardized sample is given by
+    $$
+    T = \frac{X - \bar{X}}{S},
+    $$
+    where $\bar{X}$ is the sample mean and $S$ is the sample standard deviation. 
+    
+    \item \alert{Min-Max Scaling}: This method scales the data to a fixed range, usually [0, 1]. The scaled sample is given by
+    $$
+    T = \frac{X - \min(X)}{\max(X) - \min(X)},
+    $$
+    where $\min(X)$ and $\max(X)$ are the minimum and maximum values of the sample, respectively. This method is very sensitive to outliers, as it uses the minimum and maximum values of the sample.
+\seti 
+\end{enumerate} 
+
+###
+\begin{enumerate}
+\conti
+
+    \item \alert{Robust Scaling}: This method scales the data using the median and interquartile range (IQR). The scaled sample is given by
+    $$
+    T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
+    $$
+    where $\text{IQR}(X) = Q_3 - Q_1$ is the interquartile range of the sample. This method is more robust to outliers than min-max scaling, as it uses the median and IQR instead of the minimum and maximum values.
+
+    \item \alert{Normalization}: This method simply divides each data point by the corresponding vector norm. The normalized sample is given by
+    $$
+    T = \frac{X}{\|X\|},
+    $$
+    where $\|X\|$ is the vector norm of the sample. It is not used as often as the previous methods.
+\end{enumerate}
+
+###
+
+\begin{remark} 
+As we mentioned earlier, scaling does not make a non-normal distribution normal. In particular, the sample skewness and sample excess kurtosis of the scaled sample will be the same as those of the original sample.
+\end{remark}
+
+\pause
+
+As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
+
+
+###
+
+```{r}
+#| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample." 
+#| fig-width: 14 
+#| fig-height: 7 
+#| echo: false
+
+scale_lookup_tbl <- tibble(
+  code = c(
+    "sample",
+    "sample_standard",
+    "sample_min_max",
+    "sample_robust",
+    "sample_normal"
+  ),
+  label = c(
+    "Original Sample",
+    "Standardized",
+    "Min-Max Scaled",
+    "Robust Scaled",
+    "Normalized"
+  )
+)
+
+scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
+  mutate(
+   sample_standard= standard_scale(sample),
+   sample_min_max= min_max_scale(sample),
+   sample_robust= robust_scale(sample),
+   sample_normal= normal_scale(sample)
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "scaling_method",
+    values_to = "sample_scaled"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = scaling_method,
+    lookup_tbl = scale_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = scaling_method_factor
+  )
+
+scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
+  ggplot(aes(sample = sample_scaled)) +
+  facet_wrap(
+    ~ scaling_method_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_qq(
+    color = c_palette["C red"],
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_palette["C blue"],
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "QQ Plots",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_krul()
+
+scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
+  ggplot(aes(x = sample_scaled)) +
+  facet_wrap(
+    ~ scaling_method_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histograms",
+    x = "Sample Values",
+    y = "Density"
+  ) +
+  theme_krul()
+
+scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Comparison of Scaling Methods Applied to the Gamma Sample",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+scaled_gamma_plot
+```
+
+# Activity: Visualizing the Non-Normality of Samples
+
+### Activity: Visualizing the Non-Normality of Samples
+
+For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Kurtosis. After that, construct and compare their associated QQ plots and histograms.
 
 \begin{enumerate}
     \item Exponential distribution with rate parameter $\lambda = 1$.
@@ -518,3 +863,361 @@ For each of the following distributions, construct a sample of size 300 and comp
     \item Cauchy distribution with location parameter $x_0 = 0$ and scale parameter $\gamma = 1$.
     \item Chi-squared distribution with degrees of freedom $k = 3$.
 \end{enumerate}
+
+# Normality Testing
+
+### Normality Testing
+
+Although QQ plots are a good way to visually assess the normality of a dataset, they can be subjective and imprecise.
+
+\bigpause 
+
+Therefore, it becomes necessary to develop more objective and precise statistical tests to determine whether the data we are analyzing follows a normal distribution.
+
+\bigpause 
+
+We will now explore some commonly used statistical tests for normality and discuss some transformations that can be performed on our data to make it more normal-like. 
+
+## Normality Tests 
+
+### Normality Tests
+
+There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
+
+\begin{enumerate}
+\item \alert{Shapiro-Wilk test}: This test is based on the correlation between the data and the corresponding normal scores. It is a powerful test for small sample sizes (less than 50) and is widely used in practice. However, it can be overly sensitive to small deviations from normality in larger sample sizes. 
+
+\item \alert{Kolmogorov-Smirnov test}: This test compares the empirical distribution function of the data with the cumulative distribution function of the normal distribution. It is a non-parametric test and can be used for any sample size. However, it is less powerful than the Shapiro-Wilk test for small sample sizes. It is also sensitive to scale and location parameters, which can affect the results of the test.
+\seti 
+\end{enumerate} 
+
+
+###
+
+\begin{enumerate}
+
+\conti
+
+\item \alert{Anderson-Darling test}: This test is similar to the Kolmogorov-Smirnov test but gives more weight to the tails of the distribution. It is a powerful test for small sample sizes and is widely used in practice.
+
+\item \alert{Jarque-Bera test}: This test is based on the skewness and kurtosis of the data. It is a powerful test for large sample sizes and is widely used in practice. However, it can be overly sensitive to small deviations from normality in smaller sample sizes.
+\end{enumerate}
+
+We will now apply these tests to the gamma sample data we created in the previous chapter:
+
+###
+
+```{r}
+#| output: false
+#| echo: false
+normality_tests_lookup_tbl <- tibble(
+  code = c("shapiro", "ks", "ad", "jb"),
+  label = c(
+    "Shapiro-Wilk",
+    "Kolmogorov-Smirnov",
+    "Anderson-Darling",
+    "Jarque-Bera"
+  ),
+)
+
+normality_test_gamma_sample_tbl <- gamma_sample_tbl %>% 
+  summarise(
+    shapiro = tidy_shapiro_test(data = ., value_col = sample)$p_value,
+    ks = tidy_ks_test(data = ., value_col = sample)$p_value,
+    ad = tidy_ad_test(data = ., value_col = sample)$p_value,
+    jb = tidy_jb_test(data = ., value_col = sample)$p_value
+  ) %>%
+  pivot_longer(
+    everything(),
+    names_to = "test",
+    values_to = "p_value"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label, 
+    new_factor_col_name = test_factor
+  ) %>%
+  select(test_factor, p_value) 
+```
+
+The results of the normality tests are as follows: 
+```{r}
+#| echo: false
+normality_test_gamma_sample_tbl 
+```
+
+\bigpause
+
+As we can see, none of these tests was particularly successful, which is not surprising given that the gamma distribution is not normal. 
+
+## Transformations 
+
+### Transformations
+
+To make our data more normal-like, we can apply various transformations to any given sample. Some of the most common transformations include:
+
+\begin{enumerate}
+\item \alert{Box-Cox transformation}: This is a family of power transformations that can be applied only to data that is always positive. It is given by the formula:
+$$
+\tilde{X} = \begin{cases}
+\frac{X^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\
+\log(X) & \text{if } \lambda = 0 
+\end{cases}
+$$
+where $\lambda$ is some parameter.
+\seti 
+
+\end{enumerate} 
+
+### 
+
+\begin{enumerate} 
+
+\conti
+
+\item \alert{Yeo-Johnson transformation}: This transformation is similar to the Box-Cox transformation but can handle negative values. It is useful for data that is positively or negatively skewed.
+It is given by the formula:
+$$
+\tilde{X} = \begin{cases}
+\frac{((X + 1)^\lambda - 1)}{\lambda} & \text{if } X \geq 0, \lambda \neq 0 \\
+\frac{-((-X + 1)^{2 - \lambda} - 1)}{2 - \lambda} & \text{if } X < 0, \lambda \neq 2 \\
+\log(X + 1) & \text{if } X \geq 0, \lambda = 0 \\
+\log(-X + 1) & \text{if } X < 0, \lambda = 2 
+\end{cases}
+$$
+where $\lambda$ is some parameter. 
+\end{enumerate}
+
+
+We will now apply the Box-Cox transformation to the gamma sample data with parameters $\lambda = 0$, $0.25$, $0.5$, $0.75$, and $1$:
+
+###
+
+```{r}
+#| fig-cap: "Comparison of different Box-Cox transformations."
+#| fig-width: 14 
+#| fig-height: 7
+#| echo: false
+
+box_cox_lookup_tbl <- tibble(
+  code = c("box_cox_0", "box_cox_025", "box_cox_05", "box_cox_075", "box_cox_1"),
+  label = c(
+    "lambda = 0",
+    "lambda = 0.25",
+    "lambda = 0.5",
+    "lambda = 0.75",
+    "lambda = 1"
+  ),
+)
+
+box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
+    mutate(
+    box_cox_0 = bcPower(sample, lambda = 0),
+    box_cox_025 = bcPower(sample, lambda = 0.25),
+    box_cox_05 = bcPower(sample, lambda = 0.5),
+    box_cox_075 = bcPower(sample, lambda = 0.75),
+    box_cox_1 = bcPower(sample, lambda = 1)
+  ) %>% 
+  pivot_longer(
+    starts_with("box_cox_"),
+    names_to = "lambda",
+    values_to = "transformed_sample"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = lambda,
+    lookup_tbl = box_cox_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label, 
+    new_factor_col_name = lambda_factor
+  ) 
+
+
+box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
+  ggplot(aes(sample = transformed_sample)) +
+  facet_wrap(
+    ~ lambda_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_qq(
+    color = c_palette["C red"],
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_palette["C blue"],
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "QQ Plots",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_krul()
+
+box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
+  ggplot(aes(x = transformed_sample)) +
+  facet_wrap(
+    ~ lambda_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_histogram(
+    bins = 30,
+    fill = c_palette["C blue"],
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histograms",
+    x = "Sample Values",
+    y = "Density"
+  ) +
+  theme_krul()
+
+box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Comparison of Box-Cox Transformations with Different Lambda Values",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+box_cox_gamma_plot
+```
+
+## Normality Score Optimization
+
+### Normality Score Optimization
+
+We wish to find the optimal value of $\lambda$ that maximizes the log-likelihood of the transformed data. 
+
+
+\bigpause
+
+The following figure shows the log-likelihood profile for the Box-Cox transformation applied to the gamma sample data:
+
+
+###
+```{r}
+#| echo: false
+#| fig-cap: "Log-likelihood profile for the Box-Cox transformation."
+#| fig-width: 14
+#| fig-height: 6
+
+# Intercept-only model
+fit <- lm(sample ~ 1, data = gamma_sample_tbl)
+
+# Estimate lambda
+bc <- powerTransform(fit)
+
+# Extract log-likelihood profile
+bc_prof <- boxCox(fit, lambda = seq(-2, 2, 0.1), plotit = FALSE)
+
+# Convert to tibble for ggplot
+df <- tibble(lambda = bc_prof$x, loglik = bc_prof$y)
+
+ggplot(df, aes(x = lambda, y = loglik)) +
+  geom_line(color = c_pal("C blue"), linewidth = 1) +
+  geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
+  labs(title = "Box–Cox Transformation",
+       x = expression(lambda),
+       y = "Log-likelihood") +
+  theme_krul()
+```
+
+### 
+
+Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:
+```{r}
+#| echo: false
+optimal_lambda <- bc$lambda 
+
+optimal_gamma_sample_tbl <- gamma_sample_tbl %>%
+  mutate(
+    transformed_sample = bcPower(sample, lambda = optimal_lambda)
+  )
+
+optimal_gamma_sample_tbl %>% 
+  summarise(
+  shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
+    ks = tidy_ks_test(data = ., value_col = transformed_sample)$p_value,
+    ad = tidy_ad_test(data = ., value_col = transformed_sample)$p_value,
+    jb = tidy_jb_test(data = ., value_col = transformed_sample)$p_value
+  ) %>%
+  pivot_longer(
+    everything(),
+    names_to = "test",
+    values_to = "p_value"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label, 
+    new_factor_col_name = test_factor
+  ) %>% 
+  select(test_factor, p_value)
+```
+\bigpause 
+
+As we can see, the Box-Cox transformation with the optimal value of $\lambda$ significantly improves the normality of the data, as all the normality tests now yield high $p$-values. We now show the QQ plot and histogram of the transformed data:
+
+###
+```{r}
+#| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation."
+#| fig-width: 10 
+#| fig-height: 5
+#| echo: false
+
+optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
+  ggplot(aes(sample = transformed_sample)) +
+  geom_qq(
+    color = c_palette["C red"],
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_palette["C blue"],
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "QQ Plot",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_krul()
+
+optimal_gamma_histogram <- optimal_gamma_sample_tbl %>%
+  ggplot(aes(x = transformed_sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_palette["C blue"],
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histogram",
+    x = "Sample Values",
+    y = "Density"
+  ) +
+  theme_krul()
+
+optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Optimal Gamma Distribution Transformation",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+optimal_gamma_plot
+```
