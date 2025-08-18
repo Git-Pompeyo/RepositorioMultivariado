@@ -2,49 +2,7 @@
 
 Although QQ plots are a good way to visually assess the normality of a dataset, they can be subjective and imprecise. Therefore, it becomes necessary to develop more objective and precise statistical tests to determine whether the data we are analyzing follows a normal distribution. In this chapter, we will explore some commonly used statistical tests for normality and discuss some transformations that can be performed on our data to make it more normal-like. 
 
-## Scaling and Standardization 
-
-\begin{definition} 
-An \emph{affine transformation} of a random variable $X$ is a transformation of the form 
-$$
-Y = aX + b
-$$
-where $a$ and $b$ are constants.
-\end{definition}
-
-\begin{remark}
-In the context of statistics, affine transformations are often refered to as \emph{scaling} (even when they also include a translational component).
-\end{remark}
-
-Now assume that $X$ is a random variable with mean $\mu$ and standard deviation $\sigma$. Then the random variable
-$$ 
-Y = aX + b 
-$$
-will have mean $a\mu + b$ and standard deviation $|a|\sigma$. In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
-$$
-Z = \frac{X - \mu}{\sigma}
-$$
-will have mean $0$ and standard deviation $1$. This particular affine transformation is called a \emph{standardization}, and the resulting random variable $Z$ is called the \emph{standardized} version of $X$. $Z$ is also sometimes called the \emph{z-score} of $X$.
-
-\begin{remark}
-Notice that if $X$ is not normally distributed, then $Z$ will \emph{not} be the standard normal distribution. Standardization does not make a non-normal distribution normal.
-\end{remark}
-
-\begin{observation}
-Notice that, by definition, 
-$$
-\gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
-$$
-and
-$$
-\gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
-$$
-\end{observation}
-
 ## Normality Tests 
-
-
-
 
 There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
 
@@ -54,10 +12,282 @@ There are several statistical tests that can be used to determine whether a data
 \begin{enumerate}
 \item \emph{Shapiro-Wilk test}: This test is based on the correlation between the data and the corresponding normal scores. It is a powerful test for small sample sizes (less than 50) and is widely used in practice. However, it can be overly sensitive to small deviations from normality in larger sample sizes. 
 
-\item \emph{Kolmogorov-Smirnov test}: This test compares the empirical distribution function of the data with the cumulative distribution function of the normal distribution. It is a non-parametric test and can be used for any sample size. However, it is less powerful than the Shapiro-Wilk test for small sample sizes. 
+\item \emph{Kolmogorov-Smirnov test}: This test compares the empirical distribution function of the data with the cumulative distribution function of the normal distribution. It is a non-parametric test and can be used for any sample size. However, it is less powerful than the Shapiro-Wilk test for small sample sizes. It is also sensitive to scale and location parameters, which can affect the results of the test.
 
 \item \emph{Anderson-Darling test}: This test is similar to the Kolmogorov-Smirnov test but gives more weight to the tails of the distribution. It is a powerful test for small sample sizes and is widely used in practice.
 
 \item \emph{Jarque-Bera test}: This test is based on the skewness and kurtosis of the data. It is a powerful test for large sample sizes and is widely used in practice. However, it can be overly sensitive to small deviations from normality in smaller sample sizes.
-
 \end{enumerate}
+
+We will now apply these tests to the gamma sample data we created in the previous chapter:
+```{r}
+#| output: false
+normality_tests_lookup_tbl <- tibble(
+  code = c("shapiro", "ks", "ad", "jb"),
+  label = c(
+    "Shapiro-Wilk",
+    "Kolmogorov-Smirnov",
+    "Anderson-Darling",
+    "Jarque-Bera"
+  ),
+)
+
+normality_test_gamma_sample_tbl <- gamma_sample_tbl %>% 
+  summarise(
+    shapiro = tidy_shapiro_test(data = ., value_col = sample)$p_value,
+    ks = tidy_ks_test(data = ., value_col = sample)$p_value,
+    ad = tidy_ad_test(data = ., value_col = sample)$p_value,
+    jb = tidy_jb_test(data = ., value_col = sample)$p_value
+  ) %>%
+  pivot_longer(
+    everything(),
+    names_to = "test",
+    values_to = "p_value"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label, 
+    new_factor_col_name = test_factor
+  ) %>%
+  select(test_factor, p_value) 
+```
+The results of the normality tests are as follows: 
+```{r}
+normality_test_gamma_sample_tbl 
+```
+As we can see, none of these tests was particularly successful, which is not surprising given that the gamma distribution is not normal. 
+
+## Transformations 
+To make our data more normal-like, we can apply various transformations to any given sample. Some of the most common transformations include:
+\begin{enumerate}
+\item \emph{Box-Cox transformation}: This is a family of power transformations that can be applied only to data that is always positive. It is given by the formula:
+$$
+\tilde{X} = \begin{cases}
+\frac{X^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\
+\log(X) & \text{if } \lambda = 0 
+\end{cases}
+$$
+where $\lambda$ is some parameter.
+
+\item \emph{Yeo-Johnson transformation}: This transformation is similar to the Box-Cox transformation but can handle negative values. It is useful for data that is positively or negatively skewed.
+It is given by the formula:
+$$
+\tilde{X} = \begin{cases}
+\frac{((X + 1)^\lambda - 1)}{\lambda} & \text{if } X \geq 0, \lambda \neq 0 \\
+\frac{-((-X + 1)^{2 - \lambda} - 1)}{2 - \lambda} & \text{if } X < 0, \lambda \neq 2 \\
+\log(X + 1) & \text{if } X \geq 0, \lambda = 0 \\
+\log(-X + 1) & \text{if } X < 0, \lambda = 2 
+\end{cases}
+$$
+where $\lambda$ is some parameter. 
+\end{enumerate}
+
+We will now apply the Box-Cox transformation to the gamma sample data with parameters $\lambda = 0$, $0.25$, $0.5$, $0.75$, and $1$:
+
+```{r}
+#| fig-cap: "Comparison of different Box-Cox transformations applied to the Gamma distribution sample, with parameter lambda = 0, 0.25, 0.5, 0.75, and 1."
+#| fig-width: 12 
+#| fig-height: 14
+
+
+box_cox_lookup_tbl <- tibble(
+  code = c("box_cox_0", "box_cox_025", "box_cox_05", "box_cox_075", "box_cox_1"),
+  label = c(
+    "lambda = 0",
+    "lambda = 0.25",
+    "lambda = 0.5",
+    "lambda = 0.75",
+    "lambda = 1"
+  ),
+)
+
+box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
+    mutate(
+    box_cox_0 = bcPower(sample, lambda = 0),
+    box_cox_025 = bcPower(sample, lambda = 0.25),
+    box_cox_05 = bcPower(sample, lambda = 0.5),
+    box_cox_075 = bcPower(sample, lambda = 0.75),
+    box_cox_1 = bcPower(sample, lambda = 1)
+  ) %>% 
+  pivot_longer(
+    starts_with("box_cox_"),
+    names_to = "lambda",
+    values_to = "transformed_sample"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = lambda,
+    lookup_tbl = box_cox_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label, 
+    new_factor_col_name = lambda_factor
+  ) 
+
+
+box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
+  ggplot(aes(sample = transformed_sample)) +
+  facet_wrap(
+    ~ lambda_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_qq(
+    color = c_palette["C red"],
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_palette["C blue"],
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "QQ Plots",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_krul()
+
+box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
+  ggplot(aes(x = transformed_sample)) +
+  facet_wrap(
+    ~ lambda_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_histogram(
+    bins = 30,
+    fill = c_palette["C blue"],
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histograms",
+    x = "Sample Values",
+    y = "Density"
+  ) +
+  theme_krul()
+
+box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Comparison of Box-Cox Transformations with Different Lambda Values",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+box_cox_gamma_plot
+```
+
+## Normality Score Optimization
+
+As we saw in the previous section, the Box-Cox transformation can be used to make our data more normal-like. However, the choice of the parameter $\lambda$ is crucial for the success of the transformation. We wish to find the optimal value of $\lambda$ that maximizes the log-likelihood of the transformed data. This can be done using the `powerTransform` function from the `car` package, which performs a Box-Cox transformation and estimates the optimal value of $\lambda$. The following figure shows the log-likelihood profile for the Box-Cox transformation applied to the gamma sample data:
+```{r}
+# Intercept-only model
+fit <- lm(sample ~ 1, data = gamma_sample_tbl)
+
+# Estimate lambda
+bc <- powerTransform(fit)
+
+# Extract log-likelihood profile
+bc_prof <- boxCox(fit, lambda = seq(-2, 2, 0.1), plotit = FALSE)
+
+# Convert to tibble for ggplot
+df <- tibble(lambda = bc_prof$x, loglik = bc_prof$y)
+
+ggplot(df, aes(x = lambda, y = loglik)) +
+  geom_line(color = c_pal("C blue"), linewidth = 1) +
+  geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
+  labs(title = "Box–Cox Transformation",
+       x = expression(lambda),
+       y = "Log-likelihood") +
+  theme_krul()
+```
+Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:
+```{r}
+optimal_lambda <- bc$lambda 
+
+optimal_gamma_sample_tbl <- gamma_sample_tbl %>%
+  mutate(
+    transformed_sample = bcPower(sample, lambda = optimal_lambda)
+  )
+
+optimal_gamma_sample_tbl %>% 
+  summarise(
+  shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
+    ks = tidy_ks_test(data = ., value_col = transformed_sample)$p_value,
+    ad = tidy_ad_test(data = ., value_col = transformed_sample)$p_value,
+    jb = tidy_jb_test(data = ., value_col = transformed_sample)$p_value
+  ) %>%
+  pivot_longer(
+    everything(),
+    names_to = "test",
+    values_to = "p_value"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label, 
+    new_factor_col_name = test_factor
+  ) %>% 
+  select(test_factor, p_value)
+```
+As we can see, the Box-Cox transformation with the optimal value of $\lambda$ significantly improves the normality of the data, as all the normality tests now yield high $p$-values. We now show the QQ plot and histogram of the transformed data:
+```{r}
+#| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation. Notice how both plots show a much better fit to the normal distribution compared to the original gamma sample." 
+#| fig-width: 10 
+#| fig-height: 5
+optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
+  ggplot(aes(sample = transformed_sample)) +
+  geom_qq(
+    color = c_palette["C red"],
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_palette["C blue"],
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "QQ Plot",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_krul()
+
+optimal_gamma_histogram <- optimal_gamma_sample_tbl %>%
+  ggplot(aes(x = transformed_sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_palette["C blue"],
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histogram",
+    x = "Sample Values",
+    y = "Density"
+  ) +
+  theme_krul()
+
+optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Optimal Gamma Distribution Transformation",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+optimal_gamma_plot
+```
+
+
+
+

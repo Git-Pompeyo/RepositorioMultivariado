@@ -4,7 +4,7 @@
 \alias{compute_ci}
 \title{Compute groupwise means and confidence intervals using t-tests}
 \usage{
-compute_ci(data, ..., value_col, conf_level = 0.95)
+compute_ci(data, ..., value_col, conf_level = 0.95, alternative = "two.sided")
 }
 \arguments{
 \item{data}{A data frame or tibble.}

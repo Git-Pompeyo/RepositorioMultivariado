@@ -5,11 +5,13 @@ As it is well known, any normal distribution is completely determined by its mea
 ```{r}
 #| output: false
 library(tidyverse)
+library(broom)
 library(here)
 library(patchwork)
 library(krulRutils)
 library(magrittr)
 library(e1071) # for skewness and kurtosis functions
+library(car)
 
 options(scipen = 999)
 ```
@@ -73,44 +75,46 @@ gamma_distribution_tbl <- tibble(
 )
 
 # Calculate mean and median
-mean_val <- alpha / beta
-median_val <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_mean <- alpha / beta
+gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_sd <- sqrt(alpha) / beta
 
 # Plot
-gamma_distribution_tbl %>%
+gamma_distribution_plot <- gamma_distribution_tbl %>%
 ggplot(aes(x = x_data, y = density)) +
   geom_line(
     color = c_palette["C blue"],
     linewidth = 1
   ) +
   geom_vline(
-    xintercept = mean_val,
+    xintercept = gamma_mean,
     color = c_palette["C red"],
     linetype = "dashed",
     linewidth = 1
   ) +
   geom_vline(
-    xintercept = median_val,
+    xintercept = gamma_median,
     color = c_palette["C green"],
     linetype = "dotted",
     linewidth = 1
   ) +
   annotate(
     "text",
-    x = mean_val,
-    y = 0.35,
+    x = gamma_mean,
+    y = 0.5,
     label = "Mean",
     color = c_palette["C red"],
     hjust = -0.1
   ) +
   annotate(
     "text",
-    x = median_val,
-    y = 0.35,
+    x = gamma_median,
+    y = 0.5,
     label = "Median",
     color = c_palette["C green"],
     hjust = 1.1
   ) +
+  coord_cartesian(ylim = c(0, 0.6)) +
   labs(
     title = paste(
       "Gamma Distribution PDF (shape =", alpha, ", rate =", beta, ")"
@@ -119,6 +123,8 @@ ggplot(aes(x = x_data, y = density)) +
     y = "Density"
   ) +
   theme_krul()
+
+gamma_distribution_plot
 ```
 
 ## Kurtosis 
@@ -285,7 +291,6 @@ gamma_histogram <- gamma_sample_tbl %>%
 
 gamma_plot <- gamma_qq_plot + gamma_histogram +
   plot_layout(ncol = 2) +
-
   plot_annotation(
     title = "Gamma Distribution: QQ Plot and Histogram",
     theme = theme(
@@ -397,8 +402,273 @@ laplace_sample_tbl %>%
 glimpse()
 ```
 
+## Scaling and Standardization 
 
-## Activity: Assessing Normality
+In many situations, it could happen that the units we are using to measure different variables in our data are not compatible. For example, we could have a dataset that contains the height of individuals in centimeters and their weight in kilograms. In such cases, it is often useful to \emph{scale} the variables so that they are comparable. In this section, we will discuss the most common methods for scaling and standardizing random variables and samples.
+
+### Scaling Random Variables
+
+\begin{definition} 
+An \emph{affine transformation} of a random variable $X$ is a transformation of the form 
+$$
+Y = aX + b
+$$
+where $a$ and $b$ are constants.
+\end{definition}
+
+\begin{remark}
+In the context of statistics, affine transformations are often refered to as \emph{scaling} (even when they also include a translational component).
+\end{remark}
+
+Now assume that $X$ is a random variable with mean $\mu$ and standard deviation $\sigma$. Then the random variable
+$$ 
+Y = aX + b 
+$$
+will have mean $a\mu + b$ and standard deviation $|a|\sigma$. In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+will have mean $0$ and standard deviation $1$. This particular affine transformation is called a \emph{standardization}, and the resulting random variable $Z$ is called the \emph{standardized} version of $X$. $Z$ is also sometimes called the \emph{z-score} of $X$.
+
+\begin{remark}
+Notice that if $X$ is not normally distributed, then $Z$ will \emph{not} be the standard normal distribution. Standardization does not make a non-normal distribution normal.
+\end{remark}
+
+\begin{observation}
+Notice that, by definition, 
+$$
+\gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
+$$
+and
+$$
+\gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
+$$
+\end{observation}
+
+As an example, we will consider again the Gamma distrubution that we introduced earlier. In this case we have that 
+$$
+\mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
+$$
+Using this information, we can generate the plot of standadized version of the Gamma distribution and compare it with the original one.
+```{r}
+#| fig-cap: "Comparison of the probability density function (PDF) of the original and standardized Gamma distribution."
+#| fig-width: 8
+#| fig-height: 5
+
+
+# Calculate density values
+z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
+  mutate(
+    z_data = (x_data - gamma_mean) / gamma_sd,
+    z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
+  ) %>% 
+  select(z_data, z_density)
+
+# Calculate mean and median
+z_gamma_mean <- 0
+z_gamma_median <- (gamma_median-gamma_mean) / gamma_sd
+
+# Plot
+z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
+ggplot(aes(x = z_data, y = z_density)) +
+  geom_line(
+    color = c_palette["C blue"],
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_mean,
+    color = c_palette["C red"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_median,
+    color = c_palette["C green"],
+    linetype = "dotted",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_mean,
+    y = 0.55,
+    label = "Mean",
+    color = c_palette["C red"],
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_median,
+    y = 0.55,
+    label = "Median",
+    color = c_palette["C green"],
+    hjust = 1.1
+  ) +
+  coord_cartesian(ylim = c(0, 0.6)) +
+  labs(
+    title = paste(
+      "Standardized"
+    ),
+    x = "X",
+    y = "Density"
+  ) +
+  theme_krul()
+
+gamma_distribution_plot <- gamma_distribution_plot +
+  labs(
+    title = "Original"
+  )
+
+combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Gamma Distribution: Original and Standardized",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+combined_gamma_plot
+```
+
+
+### Scaling Samples
+
+For a given a sample, it is not always known what the underlying distribution is. In particular, we may not know what the mean and the standard deviation of the underlying population are. However, we can still try to scale our data but we should keep in mind that in this case there is more than one scaling method. The most common are:
+
+\begin{enumerate}
+    \item \emph{Standardization}: This method uses the sample mean and sample standard deviation to scale the data. The standardized sample is given by
+    $$
+    T = \frac{X - \bar{X}}{S},
+    $$
+    where $\bar{X}$ is the sample mean and $S$ is the sample standard deviation. 
+    
+    \item \emph{Min-Max Scaling}: This method scales the data to a fixed range, usually [0, 1]. The scaled sample is given by
+    $$
+    T = \frac{X - \min(X)}{\max(X) - \min(X)},
+    $$
+    where $\min(X)$ and $\max(X)$ are the minimum and maximum values of the sample, respectively. This method is very sensitive to outliers, as it uses the minimum and maximum values of the sample.
+    
+    \item \emph{Robust Scaling}: This method scales the data using the median and interquartile range (IQR). The scaled sample is given by
+    $$
+    T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
+    $$
+    where $\text{IQR}(X) = Q_3 - Q_1$ is the interquartile range of the sample. This method is more robust to outliers than min-max scaling, as it uses the median and IQR instead of the minimum and maximum values.
+
+    \item \emph{Normalization}: This method simply divides each data point by the corresponding vector norm. The normalized sample is given by
+    $$
+    T = \frac{X}{\|X\|},
+    $$
+    where $\|X\|$ is the vector norm of the sample. It is not used as often as the previous methods.
+\end{enumerate}
+
+\begin{remark} 
+As we mentioned earlier, scaling does not make a non-normal distribution normal. In particular, the sample skewness and sample excess kurtosis of the scaled sample will be the same as those of the original sample.
+\end{remark}
+
+As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
+```{r}
+#| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample. Notice that the QQPlots are just rescaled versions of the original QQ plot, and therefore they all have the same shape."
+#| fig-width: 12 
+#| fig-height: 14 
+
+scale_lookup_tbl <- tibble(
+  code = c(
+    "sample",
+    "sample_standard",
+    "sample_min_max",
+    "sample_robust",
+    "sample_normal"
+  ),
+  label = c(
+    "Original Sample",
+    "Standardized",
+    "Min-Max Scaled",
+    "Robust Scaled",
+    "Normalized"
+  )
+)
+
+scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
+  mutate(
+   sample_standard= standard_scale(sample),
+   sample_min_max= min_max_scale(sample),
+   sample_robust= robust_scale(sample),
+   sample_normal= normal_scale(sample)
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "scaling_method",
+    values_to = "sample_scaled"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = scaling_method,
+    lookup_tbl = scale_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = scaling_method_factor
+  )
+
+scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
+  ggplot(aes(sample = sample_scaled)) +
+  facet_wrap(
+    ~ scaling_method_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_qq(
+    color = c_palette["C red"],
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_palette["C blue"],
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "QQ Plots",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_krul()
+
+scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
+  ggplot(aes(x = sample_scaled)) +
+  facet_wrap(
+    ~ scaling_method_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histograms",
+    x = "Sample Values",
+    y = "Density"
+  ) +
+  theme_krul()
+
+scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Comparison of Scaling Methods Applied to the Gamma Sample",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+scaled_gamma_plot
+```
+
+## Activity: Visualizing the Non-Normality of Samples
 
 For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Kurtosis. After that, construct and compare their associated QQ plots and histograms.
 
