@@ -221,15 +221,20 @@ ggsave(
 who_type_sex_plot
 ```
 
-## Activity: Tidying the Billboard dataset
+## Activity: Dataset Tidying 
 
-The problem with the Billboard dataset, according to the principles of "tidy data", is that the weeks in which a song appeared in the Billboard chart are represented as columns, which makes it difficult to analyze the data. Using the techniques we have learned so far, the reader is required to tidy the Billboard dataset, so that it can be used to analyze the evolution of the ranking of the song "Who Let The Dogs Out" by "Baha Men" in the Billboard Hot 100 chart. The final visualization should look like the one shown below.
+\begin{enumerate}
+\item In the previous section we showed how to use the \texttt{\%>\%} operator to chain together multiple operations in the Tidyverse. In this exercise, you should show the result of all the intermediate steps in the tidying process of the WHO dataset, using the pipe operator.
+
+\item The problem with the Billboard dataset, according to the principles of "tidy data", is that the weeks in which a song appeared in the Billboard chart are represented as columns, which makes it difficult to analyze the data. Using the techniques we have learned so far, the reader is required to tidy the Billboard dataset, so that it can be used to analyze the evolution of the ranking of the song "Who Let The Dogs Out" by "Baha Men" in the Billboard Hot 100 chart. The final visualization should look like the one shown below.
+
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{images/dogs_out_plot.png}
 \caption{Evolution of the ranking of the song 'Who Let The Dogs Out' by 'Baha Men' in the Billboard Hot 100 chart. The song peaked at rank 40 in the week of October 21st, 2000, and remained in the top 100 for several weeks.}
 \end{figure}
+\end{enumerate}
 
 
 

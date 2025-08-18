@@ -43,7 +43,13 @@ $$
 
 ## Normality Tests 
 
+
+
+
 There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
+
+
+
 
 \begin{enumerate}
 \item \emph{Shapiro-Wilk test}: This test is based on the correlation between the data and the corresponding normal scores. It is a powerful test for small sample sizes (less than 50) and is widely used in practice. However, it can be overly sensitive to small deviations from normality in larger sample sizes. 

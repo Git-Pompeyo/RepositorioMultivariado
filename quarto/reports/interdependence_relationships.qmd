@@ -52,6 +52,12 @@ format:
 
 \pagenumbering{arabic}
 
+\tableofcontents
+
+\part{Univariate Normality Testing}
+
 {{< include _1tidy_data.qmd >}}
 {{< include _2qqplot.qmd >}}
 {{< include _3normality_testing.qmd >}}
+
+\part{Introduction to Multivariate Analysis}
