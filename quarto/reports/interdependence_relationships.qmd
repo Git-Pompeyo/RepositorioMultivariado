@@ -54,17 +54,20 @@ format:
 
 \tableofcontents
 
+\pagenumbering{arabic}
+
 
 \part{Univariate Normality Testing}
 
-\pagenumbering{arabic}
 
-{{< include _1tidy_data.qmd >}}
-{{< include _2qqplot.qmd >}}
-{{< include _3normality_testing.qmd >}}
+{{< include _1_an_introduction_to_the_tidyverse.qmd >}}
+{{< include _2_the_standardized_moments.qmd >}}
+{{< include _3_normality_testing.qmd >}}
 
-\pagenumbering{gobble}
 
-\part{Introduction to Multivariate Analysis}
+\part{Principal Component Analysis}
 
-\pagenumbering{arabic}
+
+{{< include _4_introduction_to_multivariate_analysis.qmd >}}
+
+

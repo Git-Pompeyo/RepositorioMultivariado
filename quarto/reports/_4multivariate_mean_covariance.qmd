@@ -1,0 +1,28 @@
+# Introduction to Multivariate Analysis 
+
+In this chapter we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector. These concepts are fundamental in understanding the relationships between multiple variables in a given dataset.
+
+## The Mean Vector and the Covariance Matrix
+
+\begin{definition}
+Let $\Pi$ be a population and let 
+$$ 
+X: \Pi \to \mathbb{R}^{p} 
+$$ 
+be a random (row) vector. The \emph{mean vector} of $X$ is defined as
+\begin{equation}
+\mu = \mathbb{E}[X] = \left[ \mathbb{E}[X_1], \mathbb{E}[X_2], \ldots, \mathbb{E}[X_p] \right]
+\end{equation}
+where $X_i$ is the $i$-th component of the random vector $X$.
+The \emph{covariance matrix} of $X$ is defined as 
+\begin{equation}
+\Sigma = \Cov[X] = \mathbb{E}[(X - \mu_X)^{T}(X - \mu_X)] = \left[ \Cov[X_i, X_j] \right]_{i,j=1}^{p}
+\end{equation}
+where $\Cov(X_i, X_j) = \mathbb{E}[(X_i - \mathbb{E}[X_i])(X_j - \mathbb{E}[X_j])]$ is the covariance between the $i$-th and $j$-th components of the random vector $X$.
+\end{definition}
+
+\begin{remark}
+Remember that $\Cov(X_i, X_j) = \Cov(X_j, X_i)$, so the covariance matrix is symmetric. Furthermore, $\Cov(X_i, X_i) = \Var(X_i)$, which is the variance of the $i$-th component of the random vector $X$. For this reason, this matrix is also known as the \emph{variance-covariance matrix} of the random vector $X$.
+\end{remark}
+
+
