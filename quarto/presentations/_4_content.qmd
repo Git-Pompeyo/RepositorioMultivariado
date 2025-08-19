@@ -380,7 +380,11 @@ $$
 
 ###
 
-As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$. This process is known as a \alert{standardization} of the random vector $X$.
+As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$.
+
+\bigpause
+
+This process is known as a \alert{standardization} of the random vector $X$.
 
 ## Activity: The Geometry of Multivariate Data
 
