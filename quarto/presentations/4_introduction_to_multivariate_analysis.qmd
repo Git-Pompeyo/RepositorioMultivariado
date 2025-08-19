@@ -41,8 +41,6 @@ highlight-style: tango
 
 \end{center}
 
-
-
-{{< include _1tidyverse_content.qmd >}}
+{{< include _4_content.qmd >}}
 
 

@@ -2,6 +2,22 @@
 
 ### Introduction to Multivariate Analysis
 
+```{r}
+#| output: false
+#| echo: false
+library(tidyverse)
+library(broom)
+library(here)
+library(patchwork)
+library(krulRutils)
+library(magrittr)
+library(e1071) # for skewness and kurtosis functions
+library(car)
+library(ggforce)
+options(scipen = 999)
+```
+
+
 In this presentation we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector.
 
 \bigpause
@@ -18,18 +34,19 @@ $$
 X: \Pi \to \mathbb{R}^{p} 
 $$ 
 be a random (row) vector. The \alert{mean vector} of $X$ is defined as
-\begin{equation}
-\mu = \mathbb{E}[X] = \left[ \mathbb{E}[X_1], \mathbb{E}[X_2], \ldots, \mathbb{E}[X_p] \right]
-\end{equation}
+$$
+\mu = \mathbb{E}[X] = \left[ \mathbb{E}[X_1], \mathbb{E}[X_2], \ldots, \mathbb{E}[X_p] \right] = [\mu_1, \mu_2, \ldots, \mu_p]
+$$
 where $X_i$ is the $i$-th component of the random vector $X$.
 The \alert{covariance matrix} of $X$ is defined as 
-\begin{equation}
+$$
 \Sigma = \Cov[X] = \mathbb{E}[(X - \mu)^{T}(X - \mu)] = \left[ \Cov[X_i, X_j] \right]_{i,j=1}^{p}
-\end{equation}
-where $\Cov[X_i, X_j] = \mathbb{E}[(X_i - \mathbb{E}[X_i])(X_j - \mathbb{E}[X_j])]$ is the covariance between the $i$-th and $j$-th components of the random vector $X$.
+$$
+where $\Cov[X_i, X_j] = \mathbb{E}[(X_i - \mu_{i})(X_j - \mu_{j})]$ is the covariance between the $i$-th and $j$-th components of the random vector $X$.
 \end{definition}
 
-\pause
+
+###
 
 \begin{remark}
 Remember that $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, so the covariance matrix is symmetric. Furthermore, $\Cov[X_i, X_i] = \Var[X_i]$, which is the variance of the $i$-th component of the random vector $X$. For this reason, this matrix is also known as the \alert{variance-covariance matrix} of $X$.
@@ -50,7 +67,7 @@ The \alert{sample covariance matrix} is defined as
 where $\hat{\Sigma}$ is a $p \times p$ matrix and $\hat{\Sigma}_{i,j} = \frac{1}{n-1} \sum_{k=1}^{n} (x_{k,i} - \bar{x}_i)(x_{k,j} - \bar{x}_j)$ is the sample covariance between the $i$-th and $j$-th components of the random vector $X$.
 \end{definition}
 
-\pause
+###
 
 \begin{remark}
 The sample covariance matrix is an unbiased estimator of the covariance matrix of the random vector $X$.
@@ -72,9 +89,11 @@ $$
 \end{array}
 \right]
 $$
+\end{example}
 
-\pause
+###
 
+\begin{example}
 To obtain the sample mean vector, we compute:
 $$
 \begin{aligned}
@@ -90,10 +109,12 @@ In other words,
 $$
 \bar{x} = [6, 3, 5]
 $$
+\end{example}
 
 ###
 
-The sample variance of \(X_j\) is:
+\begin{example}
+The sample variance of $X_j$ is:
 $$
 \hat{\Sigma}_{X_j} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x_j})^2
 $$
@@ -109,31 +130,40 @@ $$
 \end{aligned}
 $$
 
-\pause
+\end{example}
 
-The sample covariance between \(X_j\) and \(X_k\) is:
+###
+
+\begin{example}
+The sample covariance between $X_j$ and $X_k$ is:
 $$
 \hat{\Sigma}_{X_j, X_k} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x}_j)(x_{ik} - \bar{x}_k)
 $$
-Calculating the sample covariances, we have:
+This computations can be done in a similar way as before, the results are:
 $$
 \begin{aligned}
-\hat{\Sigma}_{X_1, X_2} &= \frac{(2-6)(5-3) + (4-6)(3-3) + (6-6)(4-3) + (8-6)(2-3) + (10-6)(1-3)}{4} \\
-&= \frac{(-8) + 0 + 0 + (-2) + (-8)}{4} = -4.5 \\
-\hat{\Sigma}_{X_1, X_3} &= \frac{(2-6)(7-5) + (4-6)(6-5) + (6-6)(5-5) + (8-6)(4-5) + (10-6)(3-5)}{4} \\
-&= \frac{(-8) + (-2) + 0 + (-2) + (-8)}{4} = -5 \\
-\hat{\Sigma}_{X_2, X_3} &= \frac{(5-3)(7-5) + (3-3)(6-5) + (4-3)(5-5) + (2-3)(4-5) + (1-3)(3-5)}{4} \\
-&= \frac{4 + 0 + 0 + 1 + 4}{4} = 2.25
+\hat{\Sigma}_{X_1, X_2}  = -4.5 \\
+\hat{\Sigma}_{X_1, X_3}  = -5 \\
+\hat{\Sigma}_{X_2, X_3}  = 2.25
 \end{aligned}
 $$
+
+\end{example}
+
+###
+
+\begin{example}
+
 The resulting covariance matrix is then:
 $$
 \hat{\Sigma}=
-\begin{pmatrix}
+\left[
+\begin{array}{ccc}
 10 & -4.5 & -5 \\
 -4.5 & 2.5 & 2.25 \\
 -5 & 2.25 & 2.5
-\end{pmatrix}
+\end{array}
+\right]
 $$
 \end{example}
 
@@ -169,7 +199,11 @@ The Mahalanobis distance is a measure of the distance between two points in a mu
 
 ###
 
-To illustrate this point, we will consider the following dataset: We start by taking a random sample $x$ of size $n=300$ from a uniform distribution in the interval $[0, 10]$.
+To illustrate this point, we will consider the following dataset:
+
+\bigpause 
+
+We start by taking a random sample $x$ of size $n=300$ from a uniform distribution in the interval $[0, 10]$.
 ```{r}
 #| echo: false
 set.seed(123)
@@ -178,7 +212,7 @@ x_data <- runif(n, min = 0, max = 10)
 ``` 
 \pause 
 
-We will construct some error vector $\epsilon$ from a normal distribution with mean 0 and standard deviation 1:
+We will construct some error vector $\epsilon$ from a normal distribution with mean 0 and standard deviation 1.
 ```{r}
 #| echo: false
 epsilon_data <- rnorm(n, mean = 0, sd = 1)
@@ -186,7 +220,10 @@ epsilon_data <- rnorm(n, mean = 0, sd = 1)
 
 \pause
 
-We can now construct the vector $y = x + \epsilon$
+We can now construct the vector
+$$
+y = x + \epsilon
+$$
 ```{r}
 #| echo: false
 y_data <- x_data + epsilon_data
@@ -206,6 +243,7 @@ The associated scatter plot of the data is shown below:
 #| fig-cap: "Scatter plot of the sample data. Notice that the X and Y variables are highly correlated."
 #| fig-width:  5
 #| fig-height: 5
+#| echo: false
 sample_data_plot <- sample_data_tbl %>%
   ggplot(aes(x = x_data, y = y_data)) +
   geom_point(
@@ -213,19 +251,22 @@ sample_data_plot <- sample_data_tbl %>%
     size = 0.2,
     alpha = 1
   ) +
-  labs(
-    title = "Sample Data",
-    x = "X",
-    y = "Y"
-  ) +
   coord_fixed() +
+  labs(
+    title = "",
+    x = "",
+    y = ""
+  ) +
   theme_krul()
 
 sample_data_plot
 ```
 
 ###
-We now add the points (1, 1) and (5, 2) to the scatter plot:
+We now add the points (1, 1) and (5, 2) to our data:
+
+
+###
 ```{r}
 #| fig-cap: "Scatter Plot with extra sample points. Notice that one of these points is clearly an outlier."
 #| fig-width:  5
@@ -337,11 +378,11 @@ $$
 \Sigma_Y = \Cov[Y] = A \Sigma A^{T} 
 $$
 
-\bigpause
+###
 
 As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$. This process is known as a \alert{standardization} of the random vector $X$.
 
-## Activity: 
+## Activity: The Geometry of Multivariate Data
 
 ### Activity: The Geometry of Multivariate Data
 
