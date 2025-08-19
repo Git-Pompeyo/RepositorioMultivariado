@@ -56,14 +56,14 @@ Remember that $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, so the covariance matrix is sym
 
 \begin{definition}
 Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$, we define its associated \alert{sample mean vector} as 
-\begin{equation}
+$$
 \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i = \left[ \frac{1}{n} \sum_{i=1}^{n} x_{i,1}, \frac{1}{n} \sum_{i=1}^{n} x_{i,2}, \ldots, \frac{1}{n} \sum_{i=1}^{n} x_{i,p} \right]
-\end{equation}
+$$
 where $x_i$ is the $i$-th row of the sample matrix $x$ and $x_{i,j}$ is the $j$-th component of the $i$-th row.
 The \alert{sample covariance matrix} is defined as 
-\begin{equation}
+$$
 \hat{\Sigma} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^{T}(x_i - \bar{x})
-\end{equation}
+$$
 where $\hat{\Sigma}$ is a $p \times p$ matrix and $\hat{\Sigma}_{i,j} = \frac{1}{n-1} \sum_{k=1}^{n} (x_{k,i} - \bar{x}_i)(x_{k,j} - \bar{x}_j)$ is the sample covariance between the $i$-th and $j$-th components of the random vector $X$.
 \end{definition}
 
@@ -173,9 +173,9 @@ $$
 
 \begin{definition}
 Assume that we have a population $\Pi$ with a random vector $X$ that has mean vector $\mu$ and covariance matrix $\Sigma$. If $\Sigma$ is invertible, then the \alert{Mahalanobis distance} between two points $x$ and $y$ in $\mathbb{R}^p$ is defined as:
-\begin{equation}
+$$
 d_M(x, y) = \sqrt{(x - y) \Sigma^{-1} (x - y)^T}
-\end{equation}
+$$
 \end{definition}
 
 ###
@@ -186,9 +186,9 @@ In the context of sample data, the Mahalanobis distance can be computed using th
 
 \begin{definition}
 Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$ and sample covariance matrix $\hat{\Sigma}$, the \alert{sample Mahalanobis distance} between two points $x_i$ and $x_j$ is defined as:
-\begin{equation}
+$$
 d_M(x_i, x_j) = \sqrt{(x_i - x_j) \hat{\Sigma}^{-1} (x_i - x_j)^{T}}
-\end{equation}
+$$
 \end{definition}
 
 \pause
