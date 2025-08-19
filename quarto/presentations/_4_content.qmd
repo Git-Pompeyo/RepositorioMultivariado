@@ -1,46 +1,63 @@
 # Introduction to Multivariate Analysis 
 
-In this chapter we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector. These concepts are fundamental in understanding the relationships between multiple variables in a given dataset.
+### Introduction to Multivariate Analysis
+
+In this presentation we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector.
+
+\bigpause
+
+These concepts are fundamental in understanding the relationships between multiple variables in a given dataset.
 
 ## The Mean Vector and the Covariance Matrix
+
+### The Mean Vector and the Covariance Matrix
 
 \begin{definition}
 Let $\Pi$ be a population and let 
 $$ 
 X: \Pi \to \mathbb{R}^{p} 
 $$ 
-be a random (row) vector. The \emph{mean vector} of $X$ is defined as
+be a random (row) vector. The \alert{mean vector} of $X$ is defined as
 \begin{equation}
 \mu = \mathbb{E}[X] = \left[ \mathbb{E}[X_1], \mathbb{E}[X_2], \ldots, \mathbb{E}[X_p] \right]
 \end{equation}
 where $X_i$ is the $i$-th component of the random vector $X$.
-The \emph{covariance matrix} of $X$ is defined as 
+The \alert{covariance matrix} of $X$ is defined as 
 \begin{equation}
 \Sigma = \Cov[X] = \mathbb{E}[(X - \mu)^{T}(X - \mu)] = \left[ \Cov[X_i, X_j] \right]_{i,j=1}^{p}
 \end{equation}
 where $\Cov[X_i, X_j] = \mathbb{E}[(X_i - \mathbb{E}[X_i])(X_j - \mathbb{E}[X_j])]$ is the covariance between the $i$-th and $j$-th components of the random vector $X$.
 \end{definition}
 
+\pause
+
 \begin{remark}
-Remember that $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, so the covariance matrix is symmetric. Furthermore, $\Cov[X_i, X_i] = \Var[X_i]$, which is the variance of the $i$-th component of the random vector $X$. For this reason, this matrix is also known as the \emph{variance-covariance matrix} of $X$.
+Remember that $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, so the covariance matrix is symmetric. Furthermore, $\Cov[X_i, X_i] = \Var[X_i]$, which is the variance of the $i$-th component of the random vector $X$. For this reason, this matrix is also known as the \alert{variance-covariance matrix} of $X$.
 \end{remark}
 
-Now given a sample of size $n$ taken from the population $\Pi$, its associated \emph{sample matrix} is the $n \times p$ matrix where each row contains a single observation from the random vector $X$. In this context, the sample mean vector and the sample covariance matrix are defined as follows:
+###
+
 \begin{definition}
-Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$, we define its associated \emph{sample mean vector} as 
+Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$, we define its associated \alert{sample mean vector} as 
 \begin{equation}
 \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i = \left[ \frac{1}{n} \sum_{i=1}^{n} x_{i,1}, \frac{1}{n} \sum_{i=1}^{n} x_{i,2}, \ldots, \frac{1}{n} \sum_{i=1}^{n} x_{i,p} \right]
 \end{equation}
 where $x_i$ is the $i$-th row of the sample matrix $x$ and $x_{i,j}$ is the $j$-th component of the $i$-th row.
-The \emph{sample covariance matrix} is defined as 
+The \alert{sample covariance matrix} is defined as 
 \begin{equation}
 \hat{\Sigma} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^{T}(x_i - \bar{x})
 \end{equation}
 where $\hat{\Sigma}$ is a $p \times p$ matrix and $\hat{\Sigma}_{i,j} = \frac{1}{n-1} \sum_{k=1}^{n} (x_{k,i} - \bar{x}_i)(x_{k,j} - \bar{x}_j)$ is the sample covariance between the $i$-th and $j$-th components of the random vector $X$.
 \end{definition}
+
+\pause
+
 \begin{remark}
 The sample covariance matrix is an unbiased estimator of the covariance matrix of the random vector $X$.
 \end{remark}
+
+
+###
 
 \begin{example}
 Consider the following sample matrix of size $n=5$ from a population $\Pi$:
@@ -55,6 +72,9 @@ $$
 \end{array}
 \right]
 $$
+
+\pause
+
 To obtain the sample mean vector, we compute:
 $$
 \begin{aligned}
@@ -63,14 +83,23 @@ $$
 \bar{x}_3 &= \frac{7+6+5+4+3}{5} = 5
 \end{aligned}
 $$
+
+\pause
+
 In other words,
 $$
 \bar{x} = [6, 3, 5]
 $$
+
+###
+
 The sample variance of \(X_j\) is:
 $$
 \hat{\Sigma}_{X_j} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x_j})^2
 $$
+
+\pause
+
 Therefore,
 $$
 \begin{aligned}
@@ -79,6 +108,9 @@ $$
 \hat{\Sigma}_{X_3} &= \frac{(7-5)^2 + (6-5)^2 + (5-5)^2 + (4-5)^2 + (3-5)^2}{4} = 2.5
 \end{aligned}
 $$
+
+\pause
+
 The sample covariance between \(X_j\) and \(X_k\) is:
 $$
 \hat{\Sigma}_{X_j, X_k} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x}_j)(x_{ik} - \bar{x}_k)
@@ -107,46 +139,69 @@ $$
 
 ## The Mahalanobis Distance 
 
+### The Mahalanobis Distance
+
 \begin{definition}
-Assume that we have a population $\Pi$ with a random vector $X$ that has mean vector $\mu$ and covariance matrix $\Sigma$. If $\Sigma$ is invertible, then the \emph{Mahalanobis distance} between two points $x$ and $y$ in $\mathbb{R}^p$ is defined as:
+Assume that we have a population $\Pi$ with a random vector $X$ that has mean vector $\mu$ and covariance matrix $\Sigma$. If $\Sigma$ is invertible, then the \alert{Mahalanobis distance} between two points $x$ and $y$ in $\mathbb{R}^p$ is defined as:
 \begin{equation}
 d_M(x, y) = \sqrt{(x - y) \Sigma^{-1} (x - y)^T}
 \end{equation}
 \end{definition}
 
+###
+
 In the context of sample data, the Mahalanobis distance can be computed using the sample covariance matrix $\hat{\Sigma}$:
+
+\pause
+
 \begin{definition}
-Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$ and sample covariance matrix $\hat{\Sigma}$, the \emph{sample Mahalanobis distance} between two points $x_i$ and $x_j$ is defined as:
+Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$ and sample covariance matrix $\hat{\Sigma}$, the \alert{sample Mahalanobis distance} between two points $x_i$ and $x_j$ is defined as:
 \begin{equation}
 d_M(x_i, x_j) = \sqrt{(x_i - x_j) \hat{\Sigma}^{-1} (x_i - x_j)^{T}}
 \end{equation}
 \end{definition}
+
+\pause
+
 \begin{remark}
 The Mahalanobis distance is a measure of the distance between two points in a multivariate space, taking into account the correlations between the variables. It is particularly useful for identifying outliers in multivariate data.
 \end{remark}
 
-To illustrate this point, we will consider the following dataset: We start by taking a random sample of size $n=300$ from a uniform distribution in the interval $[0, 10]$.
+###
+
+To illustrate this point, we will consider the following dataset: We start by taking a random sample $x$ of size $n=300$ from a uniform distribution in the interval $[0, 10]$.
 ```{r}
+#| echo: false
 set.seed(123)
 n <- 300
 x_data <- runif(n, min = 0, max = 10)
 ``` 
-Now we will construct some error vector $\epsilon$ from a normal distribution with mean 0 and standard deviation 1:
+\pause 
+
+We will construct some error vector $\epsilon$ from a normal distribution with mean 0 and standard deviation 1:
 ```{r}
+#| echo: false
 epsilon_data <- rnorm(n, mean = 0, sd = 1)
 ```
-We can now construct the vector 
+
+\pause
+
+We can now construct the vector $y = x + \epsilon$
 ```{r}
+#| echo: false
 y_data <- x_data + epsilon_data
-```
-and put it together to create a tibble:
-```{r}
+
 sample_data_tbl <- tibble(
   x = x_data,
   y = y_data
 )
 ```
+\pause
+
 The associated scatter plot of the data is shown below:
+
+
+###
 ```{r}
 #| fig-cap: "Scatter plot of the sample data. Notice that the X and Y variables are highly correlated."
 #| fig-width:  5
@@ -168,11 +223,14 @@ sample_data_plot <- sample_data_tbl %>%
 
 sample_data_plot
 ```
-We now add two extra points to this plot: 
+
+###
+We now add the points (1, 1) and (5, 2) to the scatter plot:
 ```{r}
 #| fig-cap: "Scatter Plot with extra sample points. Notice that one of these points is clearly an outlier."
 #| fig-width:  5
 #| fig-height: 5
+#| echo: false
 extra_points_tbl <- tibble(
   x_extra = c(1, 5),
   y_extra = c(1, 2)
@@ -188,8 +246,18 @@ geom_point(
 
 extra_sample_data_plot
 ```
-Notice that one of these points is clearly an outlier. We would like to have some concrete measure to show this, so we start by computing the sample mean vector which represents the center or our data. For future reference, we will also compute the sample covariance matrix. 
+
+###
+Notice that one of these points is clearly an outlier.
+
+\bigpause 
+
+We would like to have some concrete measure to show this.
+
+\bigpause
+
 ```{r}
+#| echo: false
 sample_mean_vector <- colMeans(sample_data_tbl)
 sample_covariance_matrix <- cov(sample_data_tbl)
 
@@ -198,11 +266,14 @@ sample_mean_tbl <- tibble(
   y_bar = sample_mean_vector[2]
 )
 ```
-But now if we use the Euclidean distance, we obtain that it is actually the outlier point that is closer to the sample mean vector:
+However, if we use the Euclidean distance, we obtain that it is actually the outlier point that is closer to the sample mean vector:
+
+###
 ```{r}
 #| fig-cap: "Scatter Plot with sample mean vector and a circle representing points that are at a constant Euclidean distance from the center of our data."
 #| fig-width:  5
 #| fig-height: 5
+#| echo: false
 euclidean_sample_data_plot <- extra_sample_data_plot +
 geom_point(
   data = sample_mean_tbl,
@@ -219,11 +290,18 @@ geom_circle(
 
 euclidean_sample_data_plot
 ```
+
+
+###
 On the other hand, if we compute the Mahalanobis distance, we obtain that the outlier point is actually further away from the sample mean vector:
+
+
+###
 ```{r}
 #| fig-cap: "Scatter Plot with sample mean vector and a ellipse representing points that are at a constant Mahalanobis distance from the center of our data."
 #| fig-width:  5
 #| fig-height: 5
+#| echo: false
 annotated_sample_data_plot <- extra_sample_data_plot + 
 geom_point(
   data = sample_mean_tbl,
@@ -239,11 +317,18 @@ annotated_sample_data_plot
 
 ## Scaling and Standardization 
 
+
+### Scaling and Standardization
+
 Now assume that we have a random vector $X$ with mean vector $\mu$ and covariance matrix $\Sigma$. We can define a new random vector $Y$ as follows: 
 $$
 Y^{T} = A X^{T} + b 
 $$
-where $A$ is a $p \times p$ matrix and $b$ is a $p$-dimensional vector. The mean vector and covariance matrix of the new random vector $Y$ can be computed as follows:
+where $A$ is a $p \times p$ matrix and $b$ is a $p$-dimensional vector.
+
+\bigpause 
+
+The mean vector and covariance matrix of the new random vector $Y$ can be computed as follows:
 $$
 \mu_Y^{T} = \mathbb{E}[Y]^{T} = A \mu^{T} + b 
 $$
@@ -251,9 +336,14 @@ and
 $$
 \Sigma_Y = \Cov[Y] = A \Sigma A^{T} 
 $$
-As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$. This process is known as a \emph{standardization} of the random vector $X$.
 
-## Activity: The Geometry of Multivariate Data 
+\bigpause
+
+As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$. This process is known as a \alert{standardization} of the random vector $X$.
+
+## Activity: 
+
+### Activity: The Geometry of Multivariate Data
 
 \textbf{Part A: Theoretical Exercises}
 
@@ -263,6 +353,8 @@ As we will show later, it is always possible to find a matrix $A$ and a vector $
     \item Show that if you standardize each variable in a multivariate dataset, the covariance matrix becomes the coorrelation matrix.
     \item Assume that $X_1$ and $X_2$ are two independent random variables following the standard normal distribution. Show that $d_M(X, 0)^{2}$ follows a chi-square distribution with 2 degrees of freedom, where $d_M(X, 0)$ is the Mahalanobis distance from the origin.
 \end{enumerate}
+
+###
 
 \textbf{Part B: Practical Exercises}
 
@@ -279,6 +371,9 @@ As we will show later, it is always possible to find a matrix $A$ and a vector $
     \item Plot pairs of variables with projected ellipses.
     \item Compare Euclidean distances from the mean with Mahalanobis distances.
 \end{enumerate}
+
+
+###
 
 \textbf{Part C: Advanced Exercises}
 
