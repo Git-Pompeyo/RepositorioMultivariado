@@ -13,6 +13,8 @@ library(magrittr)
 library(e1071) # for skewness and kurtosis functions
 library(car)
 library(ggforce)
+library(mvtnorm)
+
 options(scipen = 999)
 ```
 

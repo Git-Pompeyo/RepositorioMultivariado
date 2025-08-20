@@ -69,5 +69,5 @@ format:
 
 
 {{< include _4_introduction_to_multivariate_analysis.qmd >}}
-
+{{< include _5_normal_multivariate_distribution.qmd >}}
 

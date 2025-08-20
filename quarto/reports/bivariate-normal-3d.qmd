@@ -1,0 +1,40 @@
+---
+title: "Bivariate Normal PDF (Interactive)"
+format: html
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+library(plotly)
+library(mvtnorm)
+
+# Parameters
+mu <- c(0, 0)
+Sigma <- matrix(c(1, 0.6,
+                  0.6, 1), nrow = 2)
+
+# Grid
+x <- seq(-3, 3, length.out = 120)
+y <- seq(-3, 3, length.out = 120)
+grid <- expand.grid(x = x, y = y)
+
+# Density values
+grid$z <- mvtnorm::dmvnorm(grid, mean = mu, sigma = Sigma)
+
+# Convert to matrix for plotly surface
+z_mat <- matrix(grid$z, nrow = length(x), ncol = length(y))
+
+# 3D interactive surface
+plot_ly(x = x, y = y, z = z_mat) |>
+  add_surface() |>
+  layout(
+    title = "Bivariate Normal Distribution PDF",
+    scene = list(
+      xaxis = list(title = "X1"),
+      yaxis = list(title = "X2"),
+      zaxis = list(title = "Density")
+    )
+  )
+```

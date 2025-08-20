@@ -1,0 +1,179 @@
+# Normal Multivariate Distribution
+
+## Definition and Basic Properties
+
+\begin{definition}
+Let $\mu$ be a (row) vector and let $\Sigma$ be a symmetric positive definite matrix. We say that a random (row) vector $X$ has \emph{normal multivariate distribution} with mean $\mu$ and covariance matrix $\Sigma$, in symbols $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, if its probability density is given by
+$$
+\frac{1}{(2\pi)^{p/2} |\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(X - \mu) \Sigma^{-1} (X - \mu)^{T}\right)dX.
+$$
+\end{definition}
+
+\begin{remark} Some things to notice about the definition above:
+\begin{enumerate}
+\item Just like in the univariate case, the normal multivariate distribution is completely determined by its mean $\mu$ and covariance matrix $\Sigma$.
+\item The covariance matrix $\Sigma$ must be symmetric and positive definite, which ensures that the distribution is well-defined and that the exponent in the density function is negative definite.
+\item The term 
+$$
+|\Sigma| = \det(\Sigma)
+$$
+is the \emph{generalized variance} of the distribution. It can be interpreted as a measure of the "spread" of the distribution in the $p$-dimensional space.
+\item Notice that the term $(X - \mu) \Sigma^{-1} (X - \mu)^{T}$ is the square of the Mahalanobis distance between the random vector $X$ and the mean $\mu$. 
+\end{enumerate}
+\end{remark}
+
+Just like in the univariate case, the normal multivariate distribution is singled out among all other possible distributions by the Central Limit Theorem, that roughly states that the sum of a large number of independent and identically distributed random variables (properly standardized) converges to a normal distribution. The precise statement is as follows:
+\begin{theorem}[Multivariate Central Limit Theorem]
+Let $\{X_i\}_{i=1}^{\infty}$ be a sequence of independent and identically distributed 
+random vectors in $\mathbb{R}^p$ with mean vector $\mu$ and covariance matrix $\Sigma$. 
+Define the sample mean
+\[
+\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i.
+\]
+Then, as $n \to \infty$,
+\[
+\sqrt{n}\,(\bar{X}_n - \mu) \;\xrightarrow{d}\; \mathcal{N}_p(0, \Sigma),
+\]
+where $\xrightarrow{d}$ denotes convergence in distribution and 
+$\mathcal{N}_p(0, \Sigma)$ is the $p$-dimensional multivariate normal distribution 
+with mean vector $0$ and covariance matrix $\Sigma$.
+\end{theorem}
+
+```{r}
+#| fig-cap: "Bivariate Normal Distribution with Different Covariance Matrices" 
+#| fig-width: 12
+#| fig-height: 12
+
+# Add seed for reproducibility
+set.seed(123)
+
+
+# Parameters
+mu <- c(0, 0)
+Sigma_1 <- matrix(c(1, 0, 0, 1), nrow = 2)
+Sigma_2 <- matrix(c(0.3, 0, 0, 1.5), nrow = 2)
+Sigma_3 <- matrix(c(1, 0.6, 0.6, 1), nrow = 2)
+Sigma_4 <- matrix(c(1, -0.6, -0.6, 1), nrow = 2)
+
+
+# Grid for density
+x <- seq(-3, 3, length.out = 100)
+y <- seq(-3, 3, length.out = 100)
+
+grid_1 <- expand.grid(x = x, y = y)
+grid_1$z <- mvtnorm::dmvnorm(grid_1, mean = mu, sigma = Sigma_1)
+
+grid_2 <- expand.grid(x = x, y = y)
+grid_2$z <- mvtnorm::dmvnorm(grid_2, mean = mu, sigma = Sigma_2)
+
+grid_3 <- expand.grid(x = x, y = y)
+grid_3$z <- mvtnorm::dmvnorm(grid_3, mean = mu, sigma = Sigma_3)
+
+grid_4 <- expand.grid(x = x, y = y)
+grid_4$z <- mvtnorm::dmvnorm(grid_4, mean = mu, sigma = Sigma_4)
+
+# Sample points
+samples_1 <- as_tibble(mvtnorm::rmvnorm(1000, mean = mu, sigma = Sigma_1))
+colnames(samples_1) <- c("x", "y")
+
+samples_2 <- as_tibble(mvtnorm::rmvnorm(1000, mean = mu, sigma = Sigma_2))
+colnames(samples_2) <- c("x", "y")
+
+samples_3 <- as_tibble(mvtnorm::rmvnorm(1000, mean = mu, sigma = Sigma_3))
+colnames(samples_3) <- c("x", "y")
+
+samples_4 <- as_tibble(mvtnorm::rmvnorm(1000, mean = mu, sigma = Sigma_4))
+colnames(samples_4) <- c("x", "y")
+
+# Plot: contours + samples
+normal_plot_1 <- ggplot() +
+  geom_contour(data = grid_1, aes(x, y, z = z, color = ..level..)) +
+  geom_point(
+    data = samples_1,
+    aes(x, y),
+    color = c_pal("C red"),
+    alpha = 0.5,
+    size = 0.1
+  ) +
+  scale_color_viridis_c(option = "mako") +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(-3, 3)) +
+  labs(
+    title = "",
+    x = expression(X[1]), y = expression(X[2]),
+    color = "Density"
+  ) +
+  theme_krul()
+
+normal_plot_2 <- ggplot() +
+  geom_contour(data = grid_2, aes(x, y, z = z, color = ..level..)) +
+  geom_point(
+    data = samples_2,
+    aes(x, y),
+    color = c_pal("C red"),
+    alpha = 0.5,
+    size = 0.1
+  ) +
+  scale_color_viridis_c(option = "mako") +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(-3, 3)) +
+  labs(
+    title = "",
+    x = expression(X[1]), y = expression(X[2]),
+    color = "Density"
+  ) +
+  theme_krul()
+
+normal_plot_3 <- ggplot() +
+  geom_contour(data = grid_3, aes(x, y, z = z, color = ..level..)) +
+  geom_point(
+    data = samples_3,
+    aes(x, y),
+    color = c_pal("C red"),
+    alpha = 0.5,
+    size = 0.1
+  ) +
+  scale_color_viridis_c(option = "mako") +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(-3, 3)) +
+  labs(
+    title = "",
+    x = expression(X[1]), y = expression(X[2]),
+    color = "Density"
+  ) +
+  theme_krul()
+
+normal_plot_4 <- ggplot() +
+  geom_contour(data = grid_4, aes(x, y, z = z, color = ..level..)) +
+  geom_point(
+    data = samples_4,
+    aes(x, y),
+    color = c_pal("C red"),
+    alpha = 0.5,
+    size = 0.1
+  ) +
+  scale_color_viridis_c(option = "mako") +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(-3, 3)) +
+  labs(
+    title = "",
+    x = expression(X[1]), y = expression(X[2]),
+    color = "Density"
+  ) +
+  theme_krul()
+
+normal_plot <- (normal_plot_1 + normal_plot_2) / (normal_plot_3 + normal_plot_4) +
+  plot_layout(widths = c(1, 1), heights = c(1, 1)) +
+  plot_annotation(
+    title = "Contours of the Bivariate Normal ",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+normal_plot
+```
+
+
+
+
+
