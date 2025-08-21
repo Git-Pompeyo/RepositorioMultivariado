@@ -394,11 +394,11 @@ This is a very useful property, as it allows us to analyze subsets of variables 
 There are several statistical tests to check whether a given dataset follows a multivariate normal distribution. These tests are essential in multivariate statistics, as many methods assume normality. Here are some of the most commonly used tests, together with their implementation in R:
 
 \begin{enumerate}
-  \item \textbf{Mardia's Test:}  
+  \item \alert{Mardia's Test:}  
     Based on multivariate skewness and kurtosis.  
     For a multivariate normal distribution, skewness should be close to 0 and kurtosis close to \(p(p+2)\), where \(p\) is the number of variables. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "mardia")}.
     
-  \item \textbf{Henze-Zirkler (HZ) Test:}  
+  \item \alert{Henze-Zirkler (HZ) Test:}  
     Uses the empirical characteristic function to measure deviations from normality. It has good global power and is suitable for moderate dimensions. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "hz")}.
     
 \seti 
@@ -409,12 +409,12 @@ There are several statistical tests to check whether a given dataset follows a m
 
 \conti
 
-  \item \textbf{Royston's Test:}  
+  \item \alert{Royston's Test:}  
     A multivariate extension of the Shapiro-Wilk test, based on the product of univariate Shapiro-Wilk statistics applied to principal components. Easy to interpret, though power decreases in high dimensions. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "royston")}.
     
-  \item \textbf{Doornik-Hansen Test:}  
+  \item \alert{Doornik-Hansen Test:}  
     Combines skewness and kurtosis into a single omnibus test, providing a robust alternative to Mardia. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "dh")}.
     
-  \item \textbf{Graphical Methods (Chi-square Q-Q plots):}  
+  \item \alert{Graphical Methods (Chi-square Q-Q plots):}  
     Plot the Mahalanobis distances of the data against the quantiles of a chi-square distribution. Deviations from a straight line indicate departures from multivariate normality. Implemented in R via \texttt{multivariate\_diagnostic\_plot(data = your\_data, type = "qq") }.
 \end{enumerate}
