@@ -188,6 +188,108 @@ Z = (X - \mu) \sigma^{-1} = (X - \mu) Q D^{-1} = (X - \mu) Q \Lambda^{-1/2}
 $$
 in which case $Z \sim \mathcal{N}_{p}(0, I_p)$.
 
+
+## Geometric Interpretation of the SVD
+
+Earlier in this chapter we considered the Normal Multivariate Distribution with mean 
+$$ 
+\mu = [0, 0] 
+$$ 
+and covariance matrix 
+$$
+\Sigma = \left[
+\begin{array}{cc}
+1 & 0.6 \\
+0.6 & 1 
+\end{array} 
+\right] 
+$$
+According to the SVD, we can write this covariance matrix as 
+$$ 
+\Sigma = Q \Lambda Q^{T} 
+$$
+for some orthogonal matrix $Q$ and diagonal matrix $\Lambda$. In this case, we can compute the SVD of $\Sigma$ as follows:
+
+```{r}
+# Example mean and covariance
+mu <- c(0, 0)
+Sigma <- matrix(c(1, 0.6,
+                  0.6, 1), 2, 2)
+
+
+# Compute eigenvectors and eigenvalues
+eig <- eigen(Sigma)
+vectors <- eig$vectors
+values <- eig$values
+``` 
+We obtain: 
+$$
+Q = \left[
+\begin{array}{cc}
+ `{r} vectors[1, 1]` & `{r} vectors[1, 2]` \\
+ `{r} vectors[2, 1]` & `{r} vectors[2, 2]`
+\end{array}
+\right]
+$$
+and 
+$$
+\Lambda = \left[
+\begin{array}{cc}
+ `{r} values[1]` & 0 \\
+0 & `{r} values[2]`
+\end{array}
+\right]
+$$
+where the singular vectors are the columns of $Q$ and the singular values are the diagonal entries of $\Lambda$. Geometrically, the singular vectors represent the directions of the axes of the ellipsoid that defines the contours of the normal multivariate distribution, and the square root of the singular values represent the lengths of these axes.
+
+```{r}
+#| fig-cap: "Geometric Interpretation of the SVD of a Bivariate Normal Distribution. The red point represents the mean, the green arrows represent the eigenvectors scaled by the square root of the eigenvalues, and the blue ellipse represents the 1-Mahalanobis-distance contour."
+#| fig-width: 5
+#| fig-height: 5
+
+
+# Scale eigenvectors by sqrt(eigenvalues) for plotting
+vec_data <- tibble(
+  x0 = mu[1],
+  y0 = mu[2],
+  x1 = mu[1] + sqrt(values) * vectors[1, ],
+  y1 = mu[2] + sqrt(values) * vectors[2, ]
+)
+
+# Generate points of the 1-Mahalanobis-distance ellipse
+ellipse_points <- as_tibble(ellipse(Sigma, centre = mu, level = 0.393))
+# level = 0.393 corresponds to ~1 standard deviation for 2D
+
+
+# Plot
+ggplot() +
+  geom_path(
+    data = ellipse_points,
+    aes(x = x, y = y),
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_segment(
+    data = vec_data,
+    aes(x = x0, y = y0, xend = x1, yend = y1),
+    arrow = arrow(length = unit(0.2, "cm")),
+    color = c_pal("C green"),
+    linewidth = 1
+  ) +
+  geom_point(
+    aes(x = mu[1], y = mu[2]),
+    color = c_pal("C red"),
+    size = 3
+  ) +
+  coord_equal() +
+  labs(
+    title = "Geometric Interpretation of the SVD",
+    x = expression(X[1]),
+    y = expression(X[2])
+  ) +
+  theme_krul()
+```
+
 ## Closure under Linear Transformations 
 
 \begin{theorem}[Closure under Linear Transformations] 

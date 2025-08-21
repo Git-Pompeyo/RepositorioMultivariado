@@ -4,17 +4,19 @@ As it is well known, any normal distribution is completely determined by its mea
 
 ```{r}
 #| output: false
-library(tidyverse)
-library(broom)
-library(here)
-library(patchwork)
-library(krulRutils)
-library(magrittr)
-library(e1071) # for skewness and kurtosis functions
-library(car)
-library(ggforce)
-library(mvtnorm)
-library(MVN)
+library(tidyverse)   # for data manipulation and visualization
+library(broom)       # for tidying data
+library(here)        # for file paths
+library(patchwork)   # for combining ggplots
+library(krulRutils)  # for custom package functions
+library(magrittr)    # for the pipe operator
+library(e1071)       # for skewness and kurtosis functions
+library(car)         # for robust scaling functions
+library(ggforce)     # for ggplot2 extensions
+library(mvtnorm)     # for multivariate normal distribution
+library(MVN)         # for multivariate normality tests
+library(ellipse)     # for generating covariance ellipses
+
 
 options(scipen = 999)
 ```
