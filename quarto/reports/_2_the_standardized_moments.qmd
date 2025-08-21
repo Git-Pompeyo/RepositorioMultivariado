@@ -14,6 +14,7 @@ library(e1071) # for skewness and kurtosis functions
 library(car)
 library(ggforce)
 library(mvtnorm)
+library(MVN)
 
 options(scipen = 999)
 ```
