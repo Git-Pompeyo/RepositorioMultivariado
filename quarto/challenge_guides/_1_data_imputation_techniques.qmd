@@ -1,0 +1,73 @@
+# Guide for Handling Missing Data in Time Series (Air Quality Context)
+
+In this challenge, you are working with real-life air quality data that contains missing values.  
+Your goal is to handle these gaps in a way that is \textbf{accurate, transparent, and reproducible}, since the results will be shared with our industry partner SIMA which is a govermnment agency and they need to justify their decisions based on your analysis. When dealing with missing data, you should keep in mind the following steps and best practices:
+
+
+## Clarify Your Objective
+Before choosing an imputation method, decide what the imputed data will be used for:
+\begin{itemize}
+  \item \textbf{Forecasting:} If you need to predict future values, you must preserve the temporal structure of the series.
+  \item \textbf{Trend Monitoring / Reporting:} If the task is to calculate averages (e.g., yearly PM2.5 mean), you need imputations that avoid biasing the mean.
+  \item \textbf{Statistical Analysis:} If the data will be used in regression or other models, imputations should not distort correlations between variables.
+\end{itemize}
+
+## Characterize Missingness
+
+You should be able to clearly state the general patterns of the missing data:
+
+\begin{itemize}
+  \item Calculate the percentage of missing values per variable and per station.
+  \item Visualize where the gaps occur (e.g., plot missingness over time).
+  \item Check if missingness is random or shows patterns (e.g., whole days missing due to sensor outages).
+\end{itemize}
+
+## Try Multiple Imputation Methods
+You should compare at least two different approaches:
+\begin{itemize}
+  \item \textbf{Simple Baselines:} 
+    \begin{itemize}
+      \item Forward/Backward fill (for short gaps only)
+      \item Linear interpolation
+      \item Seasonal averages (using historical values from the same hour/day/season)
+    \end{itemize}
+  \item \textbf{Model-Based:} 
+    \begin{itemize}
+      \item Kalman filtering or state-space models (common in environmental monitoring)
+      \item ARIMA or SARIMA-based imputation (using local dynamics)
+      \item Multivariate imputation (using correlations across pollutants, e.g., PM2.5 and PM10)
+    \end{itemize}
+\end{itemize}
+
+## Evaluate Imputation Quality
+Since the true missing values are unknown, use indirect evaluation:
+\begin{itemize}
+  \item \textbf{Internal consistency:} Check whether the mean, variance, and seasonal patterns of the series are preserved. Compare the autocorrelation (ACF/PACF) before and after imputation.
+  \item \textbf{External validation:} Compare with nearby stations or known events (e.g., spikes during wildfires, drops after rain).
+  \item \textbf{Downstream performance:} Fit a forecasting model (such as SARIMA) to the imputed series and compare accuracy across different imputation methods.
+\end{itemize}
+
+## Document Your Process
+You must keep a clear record of:
+\begin{itemize}
+  \item The percentage of data imputed.
+  \item The methods you tested and why you chose the final one.
+  \item The raw and imputed datasets (do not overwrite the original).
+\end{itemize}
+
+## Best Practices
+\begin{itemize}
+  \item Use simple methods for short gaps; reserve more advanced methods for larger gaps.
+  \item Do not over-impute: if long blocks are missing (e.g., weeks), report them as gaps instead of filling them in.
+  \item Ensure reproducibility: write your code so others (including our industry partner) can reproduce your results.
+  \item Be transparent: always note which values were imputed in your reporting.
+\end{itemize}
+
+## Suggested Workflow
+\begin{enumerate}
+  \item Quantify and visualize missingness.
+  \item Apply at least one baseline and one advanced imputation method.
+  \item Evaluate the results using internal consistency, external validation, and forecasting performance.
+  \item Choose the method that balances accuracy, interpretability, and reproducibility.
+  \item Document everything clearly for our industry partner.
+\end{enumerate}
