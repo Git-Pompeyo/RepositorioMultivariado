@@ -1,4 +1,15 @@
+# An Introduction to the Tidyverse
+
+# The Standardized Moments
+
+# Normality Testing
+
+# Introduction to Multivariate Analysis
+
+# Normal Multivariate Distribution
+
 # Principal Component Analysis
+
 
 ### Principal Component Analysis 
 
@@ -98,6 +109,8 @@ The first principal component (associated with the largest singular value) captu
 ###
 
 These principal components induce a new coordinate system for our data.
+
+\bigpause
 
 The values of our data in this new coordinate system are known as their \alert{principal component scores.} 
 
@@ -474,6 +487,7 @@ Q_{virginica} & = \left[
 \right]
 \end{align*}
 
+\pause
 
 The scree plot and cumulative variance plot for the three species are shown in the following figure:
 
@@ -755,6 +769,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 
 ###
 \begin{enumerate}
+\conti
   \item \textbf{Compute the covariance matrix.}
     \begin{itemize}
       \item The matrix captures how variables vary together.
@@ -765,6 +780,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 
 ###
 \begin{enumerate}
+\conti
   \item \textbf{Find the singular value decomposition (SVD) of the covariance matrix.}
     \begin{itemize}
       \item Eigenvalues measure the variance explained by each principal component.
@@ -775,6 +791,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 
 ###
 \begin{enumerate}
+\conti
   \item \textbf{Rank the components.}
     \begin{itemize}
       \item Order the singular values from largest to smallest.
@@ -785,6 +802,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 
 ###
 \begin{enumerate}
+\conti
   \item \textbf{Decide how many components to keep.}
     \begin{itemize}
       \item \textit{Kaiser criterion}: keep eigenvalues $> 1$ (for correlation matrix).
@@ -796,6 +814,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 
 ###
 \begin{enumerate}
+\conti
   \item \textbf{Find the principal component scores and loadings.}
     \begin{itemize}
       \item Project the original data onto the selected principal components.
@@ -806,6 +825,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 
 ###
 \begin{enumerate}
+\conti
   \item \textbf{Interpret the components.}
     \begin{itemize}
       \item Examine the \textit{loadings} to see which variables contribute the most.
