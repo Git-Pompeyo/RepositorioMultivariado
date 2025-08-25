@@ -97,11 +97,11 @@ $$
 The resulting covariance matrix is then:
 $$
 \hat{\Sigma}=
-\begin{pmatrix}
+\begin{bmatrix}
 10 & -4.5 & -5 \\
 -4.5 & 2.5 & 2.25 \\
 -5 & 2.25 & 2.5
-\end{pmatrix}
+\end{bmatrix}
 $$
 \end{example}
 
