@@ -72,3 +72,5 @@ format:
 {{< include _5_normal_multivariate_distribution.qmd >}}
 {{< include _6_principal_component_analysis.qmd >}}
 
+\part{Factor Analysis} 
+{{< include _7_factor_analysis.qmd >}}

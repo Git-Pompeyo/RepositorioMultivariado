@@ -174,7 +174,7 @@ $$
 We now look at the singular value decomposition of $\Sigma$, to obtain:
 ```{r}
 #| echo: false
-# Compute eigenvectors and eigenvalues
+# Compute the singular vectors and values
 eig <- eigen(Sigma)
 vectors <- eig$vectors
 values <- eig$values
@@ -643,7 +643,7 @@ The resulting biplots for each species are shown in the following figure:
 #| echo: false
 
 
-# Function to prepare biplot data from precomputed eigenvectors
+# Function to prepare biplot data from precomputed singular vectors
 prepare_biplot_from_eigen <- function(tbl, eig) {
   data_matrix <- as.matrix(tbl)
   centered_data_matrix <- scale(data_matrix, center = TRUE, scale = FALSE)
@@ -795,7 +795,7 @@ In general, when performing PCA, it is recommended to follow these steps:
   \item \textbf{Rank the components.}
     \begin{itemize}
       \item Order the singular values from largest to smallest.
-      \item The eigenvector corresponding to the largest eigenvalue is the first principal component.
+      \item The singular vector corresponding to the largest singular value is the first principal component.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -805,7 +805,7 @@ In general, when performing PCA, it is recommended to follow these steps:
 \conti
   \item \textbf{Decide how many components to keep.}
     \begin{itemize}
-      \item \textit{Kaiser criterion}: keep eigenvalues $> 1$ (for correlation matrix).
+      \item \textit{Kaiser criterion}: keep the singular values $> 1$ (for correlation matrix).
       \item \textit{Scree plot}: look for the “elbow” where explained variance levels off.
       \item \textit{Cumulative variance}: keep enough components to explain about $70\%-90\%$ of the total variance.
     \end{itemize}
