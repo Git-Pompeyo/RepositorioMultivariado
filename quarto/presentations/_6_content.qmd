@@ -1,0 +1,817 @@
+# Principal Component Analysis
+
+### Principal Component Analysis 
+
+```{r}
+#| output: false
+#| echo: false
+library(tidyverse)   # for data manipulation and visualization
+library(broom)       # for tidying data
+library(here)        # for file paths
+library(patchwork)   # for combining ggplots
+library(krulRutils)  # for custom package functions
+library(magrittr)    # for the pipe operator
+library(e1071)       # for skewness and kurtosis functions
+library(car)         # for robust scaling functions
+library(ggforce)     # for ggplot2 extensions
+library(mvtnorm)     # for multivariate normal distribution
+library(MVN)         # for multivariate normality tests
+library(ellipse)     # for generating covariance ellipses
+
+
+options(scipen = 999)
+```
+
+```{r}
+#| echo: false
+set.seed(123)
+n <- 300
+x_data <- runif(n, min = 0, max = 10)
+epsilon_data <- rnorm(n, mean = 0, sd = 1)
+y_data <- x_data + epsilon_data
+sample_data_tbl <- tibble(
+  x = x_data,
+  y = y_data
+)
+```
+```{r}
+#| echo: false
+sample_data_plot <- sample_data_tbl %>%
+  ggplot(aes(x = x_data, y = y_data)) +
+  geom_point(
+    color = "black",
+    size = 0.2,
+    alpha = 1
+  ) +
+  labs(
+    title = "Sample Data",
+    x = "X",
+    y = "Y"
+  ) +
+  theme_krul()
+```
+
+Principal Component Analysis (PCA) is a powerful technique used to reduce the dimensionality of a dataset while preserving as much information (measured by variance) as possible.
+
+\bigpause 
+
+It transforms the original variables into a new set of uncorrelated variables called \alert{principal components,} which are ordered by the amount of variance they explain.
+
+## Understanding Total Variance
+
+### Understanding Total Variance
+
+Let $\Sigma$ be the covariance matrix of a given dataset.
+
+\bigpause
+
+The \alert{total variance} of the data is given by the trace of the covariance matrix: 
+$$
+\mbox{Total Variance} = \Tr \Sigma = \sum_{i=1}^{p} \Sigma_{ii},
+$$
+where $\Sigma_{ii}$ are the diagonal elements of $\Sigma$ representing the sample variance of each variable.
+
+###
+
+Now, using the singular value decomposition (SVD) of $\Sigma$, we can find matrices $Q$, and $\Lambda$ such that: 
+$$ 
+\Sigma = Q \Lambda Q^{T}, 
+$$
+where $\Lambda$ is a diagonal matrix containing the singular values $\lambda_1, \ldots, \lambda_p$ of $\Sigma$.
+
+\bigpause 
+
+
+These singular values can then be used to express the total variance as:
+$$
+\mbox{Total Variance} = \Tr \Sigma = \Tr Q \Lambda Q^{T} = \Tr \Lambda = \lambda_1 + \cdots + \lambda_p.
+$$
+
+###
+
+The columns of $Q$ are known as the \alert{principal component directions} of our data and the singular values in $\Lambda$ indicate how much variance each principal component explains.
+
+\bigpause
+
+The first principal component (associated with the largest singular value) captures the most variance, the second principal component (associated with the second largest singular value) captures the second most variance, and so on. 
+
+###
+
+These principal components induce a new coordinate system for our data.
+
+The values of our data in this new coordinate system are known as their \alert{principal component scores.} 
+
+\bigpause
+
+They are related to the original variables through the equations:
+$$ 
+ X = Q\, (PC) + \bar{x} 
+$$
+and 
+$$
+PC = Q^{T} (X - \bar{x}) 
+$$
+Here $X$ is our original coordinate vector, $PC$ is the coordinate vector corresponding to the principal component scores,  and $\bar{x}$ is the vector of means of our dataset.
+
+\bigpause
+
+To illustrate these ideas, we will consider again the dataset shown in the following figure:
+
+###
+```{r}
+#| fig-cap: ""
+#| fig-width:  16
+#| fig-height: 8
+#| echo: false
+sample_data_plot
+```
+
+###
+
+Recall that this dataset consists of 300 observations of two variables, $X$ and $Y$.
+
+\bigpause
+
+The first variable is generated from a uniform distribution between $0$ and $10$.
+
+\bigpause
+
+The second variable is generated as $Y = X + \epsilon$, where $\epsilon$ is a normally distributed random error with mean $0$ and standard deviation $1$. 
+
+###
+The covariance matrix of this dataset is given by:
+```{r}
+#| echo: false
+Sigma <- cov(sample_data_tbl)
+```
+$$
+\Sigma = \begin{bmatrix} 
+  `r Sigma[1,1]` & `r Sigma[1,2]` \\ 
+  `r Sigma[2,1]` & `r Sigma[2,2]` 
+\end{bmatrix}
+$$
+\pause
+The total variance is:
+$$
+\mbox{Total Variance} = \Tr \Sigma = \Sigma_{11} + \Sigma_{22} = `r Sigma[1,1] + Sigma[2,2]` 
+$$
+
+###
+
+We now look at the singular value decomposition of $\Sigma$, to obtain:
+```{r}
+#| echo: false
+# Compute eigenvectors and eigenvalues
+eig <- eigen(Sigma)
+vectors <- eig$vectors
+values <- eig$values
+``` 
+$$
+Q = \left[
+\begin{array}{cc}
+ `{r} vectors[1, 1]` & `{r} vectors[1, 2]` \\
+ `{r} vectors[2, 1]` & `{r} vectors[2, 2]`
+\end{array}
+\right]
+$$
+and 
+$$
+\Lambda = \left[
+\begin{array}{cc}
+ `{r} values[1]` & 0 \\
+0 & `{r} values[2]`
+\end{array}
+\right]
+$$
+
+###
+
+The principal component directions are given by the columns of $Q$, and the amount of variance explained by each component is given by the corresponding singular value in $\Lambda$.
+
+\bigpause
+
+In particular, since the vector of means is given by: 
+```{r}
+#| echo: false
+sample_mean_vector <- colMeans(sample_data_tbl)
+```
+\begin{align*}
+\bar{x} & = `r sample_mean_vector[1]`  \\
+\bar{y} & = `r sample_mean_vector[2]`
+\end{align*}
+
+###
+
+we have that the relation between the original variables and the principal component coordinates is given by: 
+\begin{align*}
+X & = `r vectors[1,1]` PC_1 + `r vectors[1,2]` PC_2 + `r sample_mean_vector[1]` \\
+Y & = `r vectors[2,1]` PC_1 + `r vectors[2,2]` PC_2 + `r sample_mean_vector[2]` 
+\end{align*}
+and 
+\begin{align*} 
+PC_1 & = `r vectors[1,1]` (X - `r sample_mean_vector[1]`) + `r vectors[2,1]` (Y - `r sample_mean_vector[2]`) \\ 
+PC_2 & = `r vectors[1,2]` (X - `r sample_mean_vector[1]`) + `r vectors[2,2]` (Y - `r sample_mean_vector[2]`) 
+\end{align*}
+\pause
+
+using these formulas, we can find the projection of our original data into the first and second principal components. The results are shown in the following figure:
+
+###
+
+```{r}
+#| fig-cap: ""
+#| fig-width: 16
+#| fig-height: 8
+#| echo: false
+sample_data_matrix <- as.matrix(sample_data_tbl)
+
+# Center the data
+centered_sample_data <- scale(sample_data_matrix, center = TRUE, scale = FALSE)
+
+# SVD
+svd_result <- svd(centered_sample_data)
+v1 <- svd_result$v[, 1]
+v2 <- svd_result$v[, 2]
+
+# Projection onto PC, in centered coordinates
+proj_PC1 <- (centered_sample_data %*% v1) %*% t(v1)
+proj_PC2 <- (centered_sample_data %*% v2) %*% t(v2)
+
+# Shift back to original location
+proj_coords1 <- proj_PC1 + attr(centered_sample_data, "scaled:center")
+proj_coords2 <- proj_PC2 + attr(centered_sample_data, "scaled:center")
+
+#Provide unique names before converting to tibble
+colnames(proj_coords1) <- c("x_proj1", "y_proj1")
+colnames(proj_coords2) <- c("x_proj2", "y_proj2")
+
+proj_coords1_tbl <- as_tibble(proj_coords1)
+proj_coords2_tbl <- as_tibble(proj_coords2)
+
+# Bind with original data
+compare_proj1_tbl <- bind_cols(sample_data_tbl, proj_coords1_tbl)
+compare_proj2_tbl <- bind_cols(sample_data_tbl, proj_coords2_tbl)
+
+# Generate plot corresponding to the first projection
+compare_plot1 <- ggplot(compare_proj1_tbl) +
+  geom_point(
+    aes(x = x, y = y),
+    color = "black",
+    size = 0.2,
+    alpha = 1
+  ) +
+  geom_point(
+    aes(x = x_proj1, y = y_proj1),
+    color = c_pal("C red"),
+    size = 0.2,
+    alpha = 1
+  ) +
+  labs(
+    title = "First Principal Component Projection",
+    x = "X",
+    y = "Y"
+  ) +
+  theme_krul()
+
+# Generate plot corresponding to the second projection
+compare_plot2 <- ggplot(compare_proj2_tbl) +
+  geom_point(
+    aes(x = x, y = y),
+    color = "black",
+    size = 0.2,
+    alpha = 1
+  ) +
+  geom_point(
+    aes(x = x_proj2, y = y_proj2),
+    color = c_pal("C red"),
+    size = 0.2,
+    alpha = 1
+  ) +
+  labs(
+    title = "Second Principal Component Projection",
+    x = "X",
+    y = "Y"
+  ) +
+  theme_krul()
+
+# Combine plots
+compare_plot1 + compare_plot2 +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Principal Component Projections",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+```
+
+## Cumulative Variance and Scree Plots
+
+###
+
+Principal Component Analysis is often used for dimensionality reduction.
+
+\bigpause 
+
+In other words, we want to reduce the number of variables in our dataset while retaining as much information as possible.
+
+\bigpause 
+
+To decide how many principal components to keep, we can look at the amount of variance explained by each component.
+
+###
+
+A common way to visualize this information is through the use of a \alert{scree plot}.
+
+\bigpause
+
+The scree plot associated to a given dataset displays the singular values on the $y$-axis and the component number on the $x$-axis.
+
+\bigpause 
+
+It helps to identify the point where the explained variance starts to level off, often referred to as the "elbow".
+
+###
+
+Another useful plot is the \alert{cumulative variance plot}, which shows the cumulative proportion of variance explained by the principal components.
+
+\bigpause
+
+Notice that the proportion of variance explained by the $k$-th principal component is given by: 
+$$ 
+\frac{\lambda_k}{\sum_{i=1}^{p} \lambda_i}
+$$
+This plot helps to determine how many components are needed to explain a desired amount of total variance, such as $70\%$ or $90\%$. 
+
+###
+
+To illustrate this, we will use the well-known \alert{Iris} dataset, which contains measurements of four features: 
+\begin{enumerate}
+  \item Sepal Length
+  \item Sepal Width
+  \item Petal Length
+  \item Petal Width 
+\end{enumerate} 
+For three species of iris flowers: 
+\begin{enumerate}
+  \item Iris setosa
+  \item Iris versicolor
+  \item Iris virginica 
+\end{enumerate}
+
+
+###
+
+We will perform PCA on the four features and create a scree plot to visualize the variance explained by each principal component.
+
+\bigpause 
+
+The covariance matrices for each species are given by:
+
+###
+```{r}
+#| echo: false
+# Load the iris dataset
+data(iris)
+
+iris_setosa_tbl <- as_tibble(iris) %>%
+  filter(Species == "setosa") %>%
+  select(-Species)
+
+iris_versicolor_tbl <- as_tibble(iris) %>%
+  filter(Species == "versicolor") %>%
+  select(-Species)
+
+iris_virginica_tbl <- as_tibble(iris) %>%
+  filter(Species == "virginica") %>%
+  select(-Species)
+
+# Compute covariance matrix
+cov_matrix_setosa <- cov(iris_setosa_tbl)
+cov_matrix_versicolor <- cov(iris_versicolor_tbl)
+cov_matrix_virginica <- cov(iris_virginica_tbl)
+
+# Singular value decomposition
+eig_setosa <- eigen(cov_matrix_setosa)
+eig_versicolor <- eigen(cov_matrix_versicolor)
+eig_virginica <- eigen(cov_matrix_virginica)
+```
+\begin{align*}
+\Sigma_{setosa} & = \begin{bmatrix} 
+  `r round(cov_matrix_setosa[1,1], 2)` & `r round(cov_matrix_setosa[1,2], 2)` & `r round(cov_matrix_setosa[1,3], 2)` & `r round(cov_matrix_setosa[1,4], 2)` \\ 
+  `r round(cov_matrix_setosa[2,1], 2)` & `r round(cov_matrix_setosa[2,2], 2)` & `r round(cov_matrix_setosa[2,3], 2)` & `r round(cov_matrix_setosa[2,4], 2)` \\ 
+  `r round(cov_matrix_setosa[3,1], 2)` & `r round(cov_matrix_setosa[3,2], 2)` & `r round(cov_matrix_setosa[3,3], 2)` & `r round(cov_matrix_setosa[3,4], 2)` \\ 
+  `r round(cov_matrix_setosa[4,1], 2)` & `r round(cov_matrix_setosa[4,2], 2)` & `r round(cov_matrix_setosa[4,3], 2)` & `r round(cov_matrix_setosa[4,4], 2)`
+\end{bmatrix} \\
+\Sigma_{versicolor} & = \begin{bmatrix} 
+  `r round(cov_matrix_versicolor[1,1], 2)` & `r round(cov_matrix_versicolor[1,2], 2)` & `r round(cov_matrix_versicolor[1,3], 2)` & `r round(cov_matrix_versicolor[1,4], 2)` \\ 
+  `r round(cov_matrix_versicolor[2,1], 2)` & `r round(cov_matrix_versicolor[2,2], 2)` & `r round(cov_matrix_versicolor[2,3], 2)` & `r round(cov_matrix_versicolor[2,4], 2)` \\ 
+  `r round(cov_matrix_versicolor[3,1], 2)` & `r round(cov_matrix_versicolor[3,2], 2)` & `r round(cov_matrix_versicolor[3,3], 2)` & `r round(cov_matrix_versicolor[3,4], 2)` \\ 
+  `r round(cov_matrix_versicolor[4,1], 2)` & `r round(cov_matrix_versicolor[4,2], 2)` & `r round(cov_matrix_versicolor[4,3], 2)` & `r round(cov_matrix_versicolor[4,4], 2)`
+\end{bmatrix} \\
+\Sigma_{virginica} & = \begin{bmatrix} 
+  `r round(cov_matrix_virginica[1,1], 2)` & `r round(cov_matrix_virginica[1,2], 2)` & `r round(cov_matrix_virginica[1,3], 2)` & `r round(cov_matrix_virginica[1,4], 2)` \\ 
+  `r round(cov_matrix_virginica[2,1], 2)` & `r round(cov_matrix_virginica[2,2], 2)` & `r round(cov_matrix_virginica[2,3], 2)` & `r round(cov_matrix_virginica[2,4], 2)` \\ 
+  `r round(cov_matrix_virginica[3,1], 2)` & `r round(cov_matrix_virginica[3,2], 2)` & `r round(cov_matrix_virginica[3,3], 2)` & `r round(cov_matrix_virginica[3,4], 2)` \\ 
+  `r round(cov_matrix_virginica[4,1], 2)` & `r round(cov_matrix_virginica[4,2], 2)` & `r round(cov_matrix_virginica[4,3], 2)` & `r round(cov_matrix_virginica[4,4], 2)`
+\end{bmatrix}
+\end{align*}
+
+###
+
+The singular values for each species are given by: 
+\begin{align*}
+\Lambda_{setosa} & = \begin{bmatrix} 
+  `r round(eig_setosa$values[1], 2)` & 0 & 0 & 0 \\ 
+  0 & `r round(eig_setosa$values[2], 2)` & 0 & 0 \\ 
+  0 & 0 & `r round(eig_setosa$values[3], 2)` & 0 \\ 
+  0 & 0 & 0 & `r round(eig_setosa$values[4], 2)`
+\end{bmatrix} \\
+\Lambda_{versicolor} & = \begin{bmatrix} 
+  `r round(eig_versicolor$values[1], 2)` & 0 & 0 & 0 \\ 
+  0 & `r round(eig_versicolor$values[2], 2)` & 0 & 0 \\ 
+  0 & 0 & `r round(eig_versicolor$values[3], 2)` & 0 \\ 
+  0 & 0 & 0 & `r round(eig_versicolor$values[4], 2)`
+\end{bmatrix} \\
+\Lambda_{virginica} & = \begin{bmatrix} 
+  `r round(eig_virginica$values[1], 2)` & 0 & 0 & 0 \\ 
+  0 & `r round(eig_virginica$values[2], 2)` & 0 & 0 \\ 
+  0 & 0 & `r round(eig_virginica$values[3], 2)` & 0 \\ 
+  0 & 0 & 0 & `r round(eig_virginica$values[4], 2)`
+\end{bmatrix}
+\end{align*}
+
+###
+
+The associated principal component directions are given by the columns of the matrices
+\begin{align*}
+Q_{setosa} & = \left[
+\begin{array}{cccc}
+ `{r} round(eig_setosa$vectors[1, 1], 2)` & `{r} round(eig_setosa$vectors[1, 2], 2)` & `{r} round(eig_setosa$vectors[1, 3], 2)` & `{r} round(eig_setosa$vectors[1, 4], 2)` \\
+ `{r} round(eig_setosa$vectors[2, 1], 2)` & `{r} round(eig_setosa$vectors[2, 2], 2)` & `{r} round(eig_setosa$vectors[2, 3], 2)` & `{r} round(eig_setosa$vectors[2, 4], 2)` \\
+ `{r} round(eig_setosa$vectors[3, 1], 2)` & `{r} round(eig_setosa$vectors[3, 2], 2)` & `{r} round(eig_setosa$vectors[3, 3], 2)` & `{r} round(eig_setosa$vectors[3, 4], 2)` \\
+ `{r} round(eig_setosa$vectors[4, 1], 2)` & `{r} round(eig_setosa$vectors[4, 2], 2)` & `{r} round(eig_setosa$vectors[4, 3], 2)` & `{r} round(eig_setosa$vectors[4, 4], 2)`
+\end{array}
+\right] \\
+Q_{versicolor} & = \left[
+\begin{array}{cccc}
+ `{r} round(eig_versicolor$vectors[1, 1], 2)` & `{r} round(eig_versicolor$vectors[1, 2], 2)` & `{r} round(eig_versicolor$vectors[1, 3], 2)` & `{r} round(eig_versicolor$vectors[1, 4], 2)` \\
+ `{r} round(eig_versicolor$vectors[2, 1], 2)` & `{r} round(eig_versicolor$vectors[2, 2], 2)` & `{r} round(eig_versicolor$vectors[2, 3], 2)` & `{r} round(eig_versicolor$vectors[2, 4], 2)` \\
+ `{r} round(eig_versicolor$vectors[3, 1], 2)` & `{r} round(eig_versicolor$vectors[3, 2], 2)` & `{r} round(eig_versicolor$vectors[3, 3], 2)` & `{r} round(eig_versicolor$vectors[3, 4], 2)` \\
+ `{r} round(eig_versicolor$vectors[4, 1], 2)` & `{r} round(eig_versicolor$vectors[4, 2], 2)` & `{r} round(eig_versicolor$vectors[4, 3], 2)` & `{r} round(eig_versicolor$vectors[4, 4], 2)`
+\end{array}
+\right] \\
+Q_{virginica} & = \left[
+\begin{array}{cccc}
+ `{r} round(eig_virginica$vectors[1, 1], 2)` & `{r} round(eig_virginica$vectors[1, 2], 2)` & `{r} round(eig_virginica$vectors[1, 3], 2)` & `{r} round(eig_virginica$vectors[1, 4], 2)` \\
+ `{r} round(eig_virginica$vectors[2, 1], 2)` & `{r} round(eig_virginica$vectors[2, 2], 2)` & `{r} round(eig_virginica$vectors[2, 3], 2)` & `{r} round(eig_virginica$vectors[2, 4], 2)` \\
+ `{r} round(eig_virginica$vectors[3, 1], 2)` & `{r} round(eig_virginica$vectors[3, 2], 2)` & `{r} round(eig_virginica$vectors[3, 3], 2)` & `{r} round(eig_virginica$vectors[3, 4], 2)` \\
+ `{r} round(eig_virginica$vectors[4, 1], 2)` & `{r} round(eig_virginica$vectors[4, 2], 2)` & `{r} round(eig_virginica$vectors[4, 3], 2)` & `{r} round(eig_virginica$vectors[4, 4], 2)`
+\end{array}
+\right]
+\end{align*}
+
+
+The scree plot and cumulative variance plot for the three species are shown in the following figure:
+
+###
+
+```{r}
+#| fig-cap: ""
+#| fig-width: 16
+#| fig-height: 8
+#| echo: false
+
+# Scree plot data
+scree_data <- tibble(
+  Component = 1:4,
+  Setosa = eig_setosa$values,
+  Versicolor = eig_versicolor$values,
+  Virginica = eig_virginica$values
+) %>%
+  pivot_longer(
+    cols = -Component,
+    names_to = "Species",
+    values_to = "SingularValue"
+  )
+# Scree plot
+scree_plot <- scree_data %>%
+  ggplot(aes(x = Component, y = SingularValue, color = Species)) +
+  geom_point(size = 3) +
+  geom_line() +
+  c_scale_color("C red", "C blue", "C green") +
+  scale_x_continuous(breaks = 1:4) +
+  labs(
+    title = "Scree Plot of Iris Dataset",
+    x = "Principal Component",
+    y = "Singular Value"
+  ) +
+  theme_krul() +
+  theme(legend.position = "top")
+
+# Cumulative variance data
+cumulative_variance_data <- scree_data %>%
+  group_by(Species) %>%
+  arrange(Component) %>%
+  mutate(CumulativeVariance = cumsum(SingularValue) / sum(SingularValue))
+# Cumulative variance plot
+cumulative_variance_plot <- cumulative_variance_data %>%
+  ggplot(aes(x = Component, y = CumulativeVariance, color = Species)) +
+  geom_point(size = 3) +
+  geom_line() +
+  c_scale_color("C red", "C blue", "C green") +
+  scale_x_continuous(breaks = 1:4) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(
+    title = "Cumulative Variance Explained by Principal Components",
+    x = "Principal Component",
+    y = "Cumulative Variance Explained"
+  ) +
+  theme_krul() +
+  theme(legend.position = "top")
+
+# Combine scree plot and cumulative variance plot
+scree_plot + cumulative_variance_plot +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Scree Plot and Cumulative Variance Plot for the Iris Dataset",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+```
+
+## Loadings and Biplots 
+
+### Loadings and Biplots
+
+Recall that equation 
+$$
+PC = Q^{T} (X - \bar{x})
+$$
+gives the relation between the original variables and the principal component scores.
+
+\bigpause
+
+Using this equation, we can quickly compute these scores for each observation in our dataset.
+
+\bigpause 
+
+The coefficients appearing in this equation are known as the \alert{loadings} of the principal components, and they indicate how much each original variable contributes to each principal component.
+
+###
+
+A \alert{biplot} is a graphical representation that displays both the principal component scores of the observations and the loadings of the variables on the same plot.
+
+\bigpause 
+
+This allows us to visualize how the original variables contribute to the principal components and how the observations are distributed in the space defined by these components.
+
+\bigpause
+
+To illustrate this concept, we will create biplots for the first two principal components of the \alert{iris} dataset for each species.
+
+\bigpause
+
+We start by finding the loadings corresponding to each species, for which we simply take the first two columns of the matrices $Q_{setosa}$, $Q_{versicolor}$, and $Q_{virginica}$ shown above. 
+
+###
+
+\begin{align*}
+\text{Loadings}_{setosa} = \left[
+\begin{array}{cc}
+ `{r} round(eig_setosa$vectors[1, 1], 2)` & `{r} round(eig_setosa$vectors[1, 2], 2)` \\
+ `{r} round(eig_setosa$vectors[2, 1], 2)` & `{r} round(eig_setosa$vectors[2, 2], 2)` \\
+ `{r} round(eig_setosa$vectors[3, 1], 2)` & `{r} round(eig_setosa$vectors[3, 2], 2)` \\
+ `{r} round(eig_setosa$vectors[4, 1], 2)` & `{r} round(eig_setosa$vectors[4, 2], 2)`
+\end{array}
+\right]
+\\ 
+\text{Loadings}_{versicolor} = \left[
+\begin{array}{cc}
+ `{r} round(eig_versicolor$vectors[1, 1], 2)` & `{r} round(eig_versicolor$vectors[1, 2], 2)` \\
+ `{r} round(eig_versicolor$vectors[2, 1], 2)` & `{r} round(eig_versicolor$vectors[2, 2], 2)` \\
+ `{r} round(eig_versicolor$vectors[3, 1], 2)` & `{r} round(eig_versicolor$vectors[3, 2], 2)` \\
+ `{r} round(eig_versicolor$vectors[4, 1], 2)` & `{r} round(eig_versicolor$vectors[4, 2], 2)`
+\end{array}
+\right]
+\\
+\text{Loadings}_{virginica} = \left[
+\begin{array}{cc}
+ `{r} round(eig_virginica$vectors[1, 1], 2)` & `{r} round(eig_virginica$vectors[1, 2], 2)` \\
+ `{r} round(eig_virginica$vectors[2, 1], 2)` & `{r} round(eig_virginica$vectors[2, 2], 2)` \\
+ `{r} round(eig_virginica$vectors[3, 1], 2)` & `{r} round(eig_virginica$vectors[3, 2], 2)` \\
+ `{r} round(eig_virginica$vectors[4, 1], 2)` & `{r} round(eig_virginica$vectors[4, 2], 2)`
+\end{array}
+\right]
+\end{align*}
+
+###
+
+We can then compute the principal component scores for each observation by simply multiplying the values of our original variables by these matrices.
+
+\bigpause
+
+The resulting biplots for each species are shown in the following figure:
+
+###
+
+```{r}
+#| fig-cap: ""
+#| fig-width: 16
+#| fig-height: 8
+#| echo: false
+
+
+# Function to prepare biplot data from precomputed eigenvectors
+prepare_biplot_from_eigen <- function(tbl, eig) {
+  data_matrix <- as.matrix(tbl)
+  centered_data_matrix <- scale(data_matrix, center = TRUE, scale = FALSE)
+
+
+  # Scores: project observations onto PC1 and PC2
+  scores <- centered_data_matrix %*% eig$vectors[, 1:2]
+  colnames(scores) <- c("PC1", "PC2")
+  scores_tbl <- as_tibble(scores) %>%
+    mutate(Obs = row_number())
+
+
+  # Loadings: first two eigenvectors
+  loadings <- eig$vectors[, 1:2]
+  colnames(loadings) <- c("PC1", "PC2")
+  loadings <- as_tibble(loadings) %>%
+    mutate(Variable = colnames(tbl))
+
+  list(scores = scores_tbl, loadings = loadings)
+}
+
+# Prepare data for each species
+setosa_data <- prepare_biplot_from_eigen(
+  iris_setosa_tbl,
+  eig_setosa
+)
+
+versicolor_data <- prepare_biplot_from_eigen(
+  iris_versicolor_tbl,
+  eig_versicolor
+)
+
+virginica_data <- prepare_biplot_from_eigen(
+  iris_virginica_tbl,
+  eig_virginica
+)
+
+# Function to create biplot
+create_biplot <- function(scores_tbl, loadings_tbl, species_name) {
+  ggplot() +
+    geom_point(
+      data = scores_tbl,
+      aes(x = PC1, y = PC2),
+      color = c_pal("C red"),
+      alpha = 1,
+      size = 0.3
+    ) +
+    geom_segment(
+      data = loadings_tbl,
+      aes(
+        x = 0,
+        y = 0,
+        xend = PC1 * max(scores_tbl$PC1),
+        yend = PC2 * max(scores_tbl$PC2)
+      ),
+      arrow = arrow(length = unit(0.3, "cm")),
+      color = c_pal("C blue"),
+    ) +
+    geom_text(
+      data = loadings_tbl,
+      aes(
+        x = PC1 * max(scores_tbl$PC1) * 1.1,
+        y = PC2 * max(scores_tbl$PC2) * 1.1,
+        label = Variable
+      ),
+      color = "black",
+      size = 5
+    ) +
+    labs(
+      title = paste("Biplot for", species_name),
+      x = "PC1",
+      y = "PC2"
+    ) +
+    theme_minimal()
+}
+
+# Create biplots
+biplot_setosa <- create_biplot(
+  setosa_data$scores,
+  setosa_data$loadings,
+  "Setosa"
+)
+
+biplot_versicolor <- create_biplot(
+  versicolor_data$scores,
+  versicolor_data$loadings,
+  "Versicolor"
+)
+
+biplot_virginica <- create_biplot(
+  virginica_data$scores,
+  virginica_data$loadings,
+  "Virginica"
+)
+
+# Combine biplots
+biplot_setosa + biplot_versicolor + biplot_virginica +
+  plot_layout(ncol = 3) +
+  plot_annotation(
+    title = "Biplots of Iris Species (PC1 vs PC2)",
+    theme = theme(
+      plot.title = element_text(size = 24, face = "bold")
+    )
+  )
+```
+
+## Summary of the PCA Process
+
+### Summary of the PCA Process
+
+In general, when performing PCA, it is recommended to follow these steps:
+
+
+\begin{enumerate}
+\item \textbf{Standardize the data (if needed).} It is not always easy to decide whether to standardize the data or not. Here are some guidelines:
+    \begin{itemize}
+      \item If the variables are measured on different scales (e.g., height in cm and weight in kg), standardization is usually recommended.
+      \item If the variables are on the same scale and have similar variances, standardization may not be necessary.
+      \item If the variables have very different variances, standardization can help to give equal weight to all variables.
+    \end{itemize}
+\seti 
+\end{enumerate}
+
+###
+\begin{enumerate}
+  \item \textbf{Compute the covariance matrix.}
+    \begin{itemize}
+      \item The matrix captures how variables vary together.
+      \item Its size is $p \times p$, where $p$ is the number of variables.
+    \end{itemize}
+\seti 
+\end{enumerate}
+
+###
+\begin{enumerate}
+  \item \textbf{Find the singular value decomposition (SVD) of the covariance matrix.}
+    \begin{itemize}
+      \item Eigenvalues measure the variance explained by each principal component.
+      \item Eigenvectors give the directions (linear combinations of variables) of the components.
+    \end{itemize}
+\seti 
+\end{enumerate}
+
+###
+\begin{enumerate}
+  \item \textbf{Rank the components.}
+    \begin{itemize}
+      \item Order the singular values from largest to smallest.
+      \item The eigenvector corresponding to the largest eigenvalue is the first principal component.
+    \end{itemize}
+\seti 
+\end{enumerate}
+
+###
+\begin{enumerate}
+  \item \textbf{Decide how many components to keep.}
+    \begin{itemize}
+      \item \textit{Kaiser criterion}: keep eigenvalues $> 1$ (for correlation matrix).
+      \item \textit{Scree plot}: look for the “elbow” where explained variance levels off.
+      \item \textit{Cumulative variance}: keep enough components to explain about $70\%-90\%$ of the total variance.
+    \end{itemize}
+\seti 
+\end{enumerate}
+
+###
+\begin{enumerate}
+  \item \textbf{Find the principal component scores and loadings.}
+    \begin{itemize}
+      \item Project the original data onto the selected principal components.
+      \item Use the formula: $PC = Q^{T} (X - \bar{x})$.
+    \end{itemize}
+\seti 
+\end{enumerate}
+
+###
+\begin{enumerate}
+  \item \textbf{Interpret the components.}
+    \begin{itemize}
+      \item Examine the \textit{loadings} to see which variables contribute the most.
+      \item Larger absolute values indicate stronger influence.
+      \item Use biplots to visualize scores and loadings together.
+      \item Apply dimension reduction before regression, clustering, or other analyses.
+      \item Apply noise reduction by discarding low-variance components.
+    \end{itemize}
+\end{enumerate}
