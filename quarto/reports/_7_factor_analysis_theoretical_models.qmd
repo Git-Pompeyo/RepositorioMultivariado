@@ -1,8 +1,8 @@
 # Factor Analysis: Theoretical Models
 
-Factor Analysis is a statistical technique that is widely used in applied fields to identify hidden patterns or latent structures behind large sets of observed variables. The goal is to reduce complexity by grouping related variables into a smaller number of underlying \emph{factors}, which are easier to interpret.
+\emph{Factor Analysis} is a statistical technique that is widely used in applied fields to identify hidden patterns or latent structures behind large sets of observed variables. The goal is to reduce complexity by grouping related variables into a smaller number of underlying \emph{factors}, which are easier to interpret.
 
-Some areas where FA is commonly applied include:
+Some areas where factor analysis is commonly applied include:
 \begin{itemize}
     \item \textbf{Psychology and social sciences:} to uncover latent traits such as intelligence, anxiety, personality dimensions, or satisfaction levels, based on responses to questionnaires or surveys.
     \item \textbf{Marketing and consumer research:} to identify purchasing motives, brand perceptions, or market segments from customer behavior data.
@@ -52,7 +52,7 @@ $$
 The variance decomposition $\Var[X] = LL^{T} + \Psi$ shows that the total variance of the observed variables $X$ can be decomposed into two components:
 \begin{itemize}
     \item \textbf{Common variance ($LL^{T}$):} This part of the variance is explained by the common factors $F$. It captures the shared variability among the observed variables that can be attributed to the underlying latent structure.
-    \item \textbf{Unique variance ($\Psi$):} This part of the variance is specific to each observed variable and is not explained by the common factors. It includes measurement error and any other variability that is unique to each variable. 
+    \item \textbf{Unique variance ($\Psi$):} This part of the variance is specific to each observed variable and is not explained by the common factors. It includes measurement errors and any other variability that is unique to each variable. 
 \end{itemize}
 In particular, the variance of each individual observed variable $X_{i}$ can be expressed as 
 $$ 
@@ -82,7 +82,7 @@ L^{T} & I_{m}
 $$
 Notice that, in particular,
 $$
-\Cov[X,F] = L 
+\Cov[X,F] = \E[(X - \mu)(F - 0)^{T}] = \E[(LF + \epsilon)F^{T}] = L \E[FF^{T}] + \E[\epsilon F^{T}] = L I_{m} + 0 = L 
 $$
 Using the properties of the multivariate normal distribution, we can derive the conditional distribution of the factors $F$ given the observed variables $X$. This conditional distribution is also normal, with mean and covariance given by 
 $$ 
@@ -107,7 +107,7 @@ then, in general, the \emph{residual}
 $$ 
 r(x) = x - \mu - Lf 
 $$ 
-is different from zero. In fact, as a function of the random variable $X$, the residual has distribution 
+is different from zero. In fact, as a function of the random variable $X$, the residual has probability distribution 
 $$
 r(X) \sim \N\Bigg(0, L \left(I_m + L^T \Psi^{-1} L \right)^{-1} L^T + \Psi \Bigg)
 $$
