@@ -2698,6 +2698,55 @@
       "Maintainer": "Thomas Lin Pedersen <thomas.pedersen@posit.co>",
       "Repository": "CRAN"
     },
+    "ggrepel": {
+      "Package": "ggrepel",
+      "Version": "0.9.6",
+      "Source": "Repository",
+      "Authors@R": "c( person(\"Kamil\", \"Slowikowski\", email = \"kslowikowski@gmail.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-2843-6370\")), person(\"Alicia\", \"Schep\", role = \"ctb\", comment = c(ORCID = \"0000-0002-3915-0618\")), person(\"Sean\", \"Hughes\", role = \"ctb\", comment = c(ORCID = \"0000-0002-9409-9405\")), person(\"Trung Kien\", \"Dang\", role = \"ctb\", comment = c(ORCID = \"0000-0001-7562-6495\")), person(\"Saulius\", \"Lukauskas\", role = \"ctb\"), person(\"Jean-Olivier\", \"Irisson\", role = \"ctb\", comment = c(ORCID = \"0000-0003-4920-3880\")), person(\"Zhian N\", \"Kamvar\", role = \"ctb\", comment = c(ORCID = \"0000-0003-1458-7108\")), person(\"Thompson\", \"Ryan\", role = \"ctb\", comment = c(ORCID = \"0000-0002-0450-8181\")), person(\"Dervieux\", \"Christophe\", role = \"ctb\", comment = c(ORCID = \"0000-0003-4474-2498\")), person(\"Yutani\", \"Hiroaki\", role = \"ctb\"), person(\"Pierre\", \"Gramme\", role = \"ctb\"), person(\"Amir Masoud\", \"Abdol\", role = \"ctb\"), person(\"Malcolm\", \"Barrett\", role = \"ctb\", comment = c(ORCID = \"0000-0003-0299-5825\")), person(\"Robrecht\", \"Cannoodt\", role = \"ctb\", comment = c(ORCID = \"0000-0003-3641-729X\")), person(\"Michał\", \"Krassowski\", role = \"ctb\", comment = c(ORCID = \"0000-0002-9638-7785\")), person(\"Michael\", \"Chirico\", role = \"ctb\", comment = c(ORCID = \"0000-0003-0787-087X\")), person(\"Pedro\", \"Aphalo\", role = \"ctb\", comment = c(ORCID = \"0000-0003-3385-972X\")), person(\"Francis\", \"Barton\", role = \"ctb\") )",
+      "Title": "Automatically Position Non-Overlapping Text Labels with 'ggplot2'",
+      "Description": "Provides text and label geoms for 'ggplot2' that help to avoid overlapping text labels. Labels repel away from each other and away from the data points.",
+      "Depends": [
+        "R (>= 3.0.0)",
+        "ggplot2 (>= 2.2.0)"
+      ],
+      "Imports": [
+        "grid",
+        "Rcpp",
+        "rlang (>= 0.3.0)",
+        "scales (>= 0.5.0)",
+        "withr (>= 2.5.0)"
+      ],
+      "Suggests": [
+        "knitr",
+        "rmarkdown",
+        "testthat",
+        "svglite",
+        "vdiffr",
+        "gridExtra",
+        "ggpp",
+        "patchwork",
+        "devtools",
+        "prettydoc",
+        "ggbeeswarm",
+        "dplyr",
+        "magrittr",
+        "readr",
+        "stringr"
+      ],
+      "VignetteBuilder": "knitr",
+      "License": "GPL-3 | file LICENSE",
+      "URL": "https://ggrepel.slowkow.com/, https://github.com/slowkow/ggrepel",
+      "BugReports": "https://github.com/slowkow/ggrepel/issues",
+      "RoxygenNote": "7.3.1",
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "yes",
+      "Author": "Kamil Slowikowski [aut, cre] (<https://orcid.org/0000-0002-2843-6370>), Alicia Schep [ctb] (<https://orcid.org/0000-0002-3915-0618>), Sean Hughes [ctb] (<https://orcid.org/0000-0002-9409-9405>), Trung Kien Dang [ctb] (<https://orcid.org/0000-0001-7562-6495>), Saulius Lukauskas [ctb], Jean-Olivier Irisson [ctb] (<https://orcid.org/0000-0003-4920-3880>), Zhian N Kamvar [ctb] (<https://orcid.org/0000-0003-1458-7108>), Thompson Ryan [ctb] (<https://orcid.org/0000-0002-0450-8181>), Dervieux Christophe [ctb] (<https://orcid.org/0000-0003-4474-2498>), Yutani Hiroaki [ctb], Pierre Gramme [ctb], Amir Masoud Abdol [ctb], Malcolm Barrett [ctb] (<https://orcid.org/0000-0003-0299-5825>), Robrecht Cannoodt [ctb] (<https://orcid.org/0000-0003-3641-729X>), Michał Krassowski [ctb] (<https://orcid.org/0000-0002-9638-7785>), Michael Chirico [ctb] (<https://orcid.org/0000-0003-0787-087X>), Pedro Aphalo [ctb] (<https://orcid.org/0000-0003-3385-972X>), Francis Barton [ctb]",
+      "Maintainer": "Kamil Slowikowski <kslowikowski@gmail.com>",
+      "Repository": "CRAN"
+    },
     "ggstats": {
       "Package": "ggstats",
       "Version": "0.10.0",
@@ -3839,6 +3888,38 @@
       "Repository": "RSPM",
       "Encoding": "UTF-8"
     },
+    "lavaan": {
+      "Package": "lavaan",
+      "Version": "0.6-19",
+      "Source": "Repository",
+      "Title": "Latent Variable Analysis",
+      "Authors@R": "c(person(given   = \"Yves\", family = \"Rosseel\", role    = c(\"aut\", \"cre\"), email   = \"Yves.Rosseel@UGent.be\", comment = c(ORCID = \"0000-0002-4129-4477\")), person(given = c(\"Terrence\",\"D.\"), family = \"Jorgensen\", role = \"aut\", email = \"TJorgensen314@gmail.com\", comment = c(ORCID = \"0000-0001-5111-6773\")), person(given = c(\"Luc\"), family = \"De Wilde\", role = \"aut\", email = \"Luc.DeWilde@UGent.be\"), person(given = \"Daniel\", family = \"Oberski\", role = \"ctb\", email = \"daniel.oberski@gmail.com\"), person(given = \"Jarrett\", family = \"Byrnes\",  role = \"ctb\", email = \"byrnes@nceas.ucsb.edu\"), person(given = \"Leonard\", family = \"Vanbrabant\", role = \"ctb\", email = \"info@restriktor.org\"), person(given = \"Victoria\", family = \"Savalei\", role = \"ctb\", email = \"vsavalei@ubc.ca\"), person(given = \"Ed\", family = \"Merkle\", role = \"ctb\", email = \"merklee@missouri.edu\"), person(given = \"Michael\", family = \"Hallquist\", role = \"ctb\", email = \"michael.hallquist@gmail.com\"), person(given = \"Mijke\", family = \"Rhemtulla\", role = \"ctb\", email = \"mrhemtulla@ucdavis.edu\"), person(given = \"Myrsini\", family = \"Katsikatsou\", role = \"ctb\", email = \"mirtok2@gmail.com\"), person(given = \"Mariska\", family = \"Barendse\", role = \"ctb\", email = \"m.t.barendse@gmail.com\"), person(given = c(\"Nicholas\"), family = \"Rockwood\", role = \"ctb\", email = \"nrockwood@rti.org\"), person(given = \"Florian\", family = \"Scharf\", role = \"ctb\", email = \"florian.scharf@uni-leipzig.de\"), person(given = \"Han\", family = \"Du\", role = \"ctb\", email = \"hdu@psych.ucla.edu\"), person(given = \"Haziq\", family = \"Jamil\", role = \"ctb\", email = \"haziq.jamil@ubd.edu.bn\", comment = c(ORCID = \"0000-0003-3298-1010\")), person(given = \"Franz\", family = \"Classe\", role  = \"ctb\", email = \"classe@dji.de\") )",
+      "Description": "Fit a variety of latent variable models, including confirmatory factor analysis, structural equation modeling and latent growth curve models.",
+      "Depends": [
+        "R(>= 3.4)"
+      ],
+      "Imports": [
+        "methods",
+        "stats4",
+        "stats",
+        "utils",
+        "graphics",
+        "MASS",
+        "mnormt",
+        "pbivnorm",
+        "numDeriv",
+        "quadprog"
+      ],
+      "BugReports": "https://github.com/yrosseel/lavaan/issues",
+      "License": "GPL (>= 2)",
+      "LazyData": "yes",
+      "ByteCompile": "true",
+      "URL": "https://lavaan.ugent.be",
+      "NeedsCompilation": "no",
+      "Author": "Yves Rosseel [aut, cre] (<https://orcid.org/0000-0002-4129-4477>), Terrence D. Jorgensen [aut] (<https://orcid.org/0000-0001-5111-6773>), Luc De Wilde [aut], Daniel Oberski [ctb], Jarrett Byrnes [ctb], Leonard Vanbrabant [ctb], Victoria Savalei [ctb], Ed Merkle [ctb], Michael Hallquist [ctb], Mijke Rhemtulla [ctb], Myrsini Katsikatsou [ctb], Mariska Barendse [ctb], Nicholas Rockwood [ctb], Florian Scharf [ctb], Han Du [ctb], Haziq Jamil [ctb] (<https://orcid.org/0000-0003-3298-1010>), Franz Classe [ctb]",
+      "Maintainer": "Yves Rosseel <Yves.Rosseel@UGent.be>",
+      "Repository": "CRAN"
+    },
     "lazyeval": {
       "Package": "lazyeval",
       "Version": "0.2.2",
@@ -4308,6 +4389,24 @@
       "NeedsCompilation": "no",
       "Repository": "CRAN"
     },
+    "mnormt": {
+      "Package": "mnormt",
+      "Version": "2.1.1",
+      "Source": "Repository",
+      "Date": "2022-09-26",
+      "Title": "The Multivariate Normal and t Distributions, and Their Truncated Versions",
+      "Author": "Adelchi Azzalini [aut, cre], Alan Genz [aut] (most Fortran code), Alan Miller [ctb] (Fortran routine PHI), Michael J. Wichura  [ctb] (Fortran routine PHINV), G. W. Hill [ctb] (Fortran routine STDINV), Yihong Ge [ctb] (Fortran routines BNVU and MVBVU).",
+      "Maintainer": "Adelchi Azzalini <adelchi.azzalini@unipd.it>",
+      "Depends": [
+        "R (>= 2.2.0)"
+      ],
+      "Description": "Functions are provided for computing the density and the distribution function of d-dimensional normal and \"t\" random variables, possibly truncated (on one side or two sides),  and for generating random  vectors sampled from these distributions, except sampling from the truncated \"t\". Moments of arbitrary order of a multivariate truncated normal are computed, and converted to cumulants up to order 4.  Probabilities are computed via non-Monte Carlo methods; different routines  are used in the case d=1, d=2, d=3, d>3, if d denotes the dimensionality.",
+      "License": "GPL-2 | GPL-3",
+      "URL": "http://azzalini.stat.unipd.it/SW/Pkg-mnormt/",
+      "NeedsCompilation": "yes",
+      "Encoding": "UTF-8",
+      "Repository": "CRAN"
+    },
     "modelr": {
       "Package": "modelr",
       "Version": "0.1.11",
@@ -4644,6 +4743,20 @@
       "Config/Needs/website": "gifski",
       "NeedsCompilation": "no",
       "Author": "Thomas Lin Pedersen [cre, aut] (ORCID: <https://orcid.org/0000-0002-5147-4711>)",
+      "Repository": "CRAN"
+    },
+    "pbivnorm": {
+      "Package": "pbivnorm",
+      "Version": "0.6.0",
+      "Source": "Repository",
+      "Title": "Vectorized Bivariate Normal CDF",
+      "Date": "2015-01-23",
+      "Author": "Fortran code by Alan Genz.  R code by Brenton Kenkel, based on Adelchi Azzalini's 'mnormt' package.",
+      "Maintainer": "Brenton Kenkel <brenton.kenkel@gmail.com>",
+      "Description": "Provides a vectorized R function for calculating probabilities from a standard bivariate normal CDF.",
+      "License": "GPL (>= 2)",
+      "URL": "https://github.com/brentonk/pbivnorm",
+      "NeedsCompilation": "yes",
       "Repository": "CRAN"
     },
     "pbkrtest": {

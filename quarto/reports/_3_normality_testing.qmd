@@ -32,7 +32,7 @@ normality_tests_lookup_tbl <- tibble(
   ),
 )
 
-normality_test_gamma_sample_tbl <- gamma_sample_tbl %>% 
+normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
   summarise(
     shapiro = tidy_shapiro_test(data = ., value_col = sample)$p_value,
     ks = tidy_ks_test(data = ., value_col = sample)$p_value,
@@ -48,14 +48,14 @@ normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
     code_col = test,
     lookup_tbl = normality_tests_lookup_tbl,
     lookup_code_col = code,
-    lookup_label_col = label, 
+    lookup_label_col = label,
     new_factor_col_name = test_factor
   ) %>%
-  select(test_factor, p_value) 
+  select(test_factor, p_value)
 ```
 The results of the normality tests are as follows: 
 ```{r}
-normality_test_gamma_sample_tbl 
+normality_test_gamma_sample_tbl
 ```
 As we can see, none of these tests was particularly successful, which is not surprising given that the gamma distribution is not normal. 
 
@@ -88,12 +88,18 @@ We will now apply the Box-Cox transformation to the gamma sample data with param
 
 ```{r}
 #| fig-cap: "Comparison of different Box-Cox transformations applied to the Gamma distribution sample, with parameter lambda = 0, 0.25, 0.5, 0.75, and 1."
-#| fig-width: 12 
+#| fig-width: 12
 #| fig-height: 14
 
 
 box_cox_lookup_tbl <- tibble(
-  code = c("box_cox_0", "box_cox_025", "box_cox_05", "box_cox_075", "box_cox_1"),
+  code = c(
+    "box_cox_0",
+    "box_cox_025",
+    "box_cox_05",
+    "box_cox_075",
+    "box_cox_1"
+  ),
   label = c(
     "lambda = 0",
     "lambda = 0.25",
@@ -104,13 +110,13 @@ box_cox_lookup_tbl <- tibble(
 )
 
 box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
-    mutate(
+  mutate(
     box_cox_0 = bcPower(sample, lambda = 0),
     box_cox_025 = bcPower(sample, lambda = 0.25),
     box_cox_05 = bcPower(sample, lambda = 0.5),
     box_cox_075 = bcPower(sample, lambda = 0.75),
     box_cox_1 = bcPower(sample, lambda = 1)
-  ) %>% 
+  ) %>%
   pivot_longer(
     starts_with("box_cox_"),
     names_to = "lambda",
@@ -120,9 +126,9 @@ box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
     code_col = lambda,
     lookup_tbl = box_cox_lookup_tbl,
     lookup_code_col = code,
-    lookup_label_col = label, 
+    lookup_label_col = label,
     new_factor_col_name = lambda_factor
-  ) 
+  )
 
 
 box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
@@ -212,16 +218,16 @@ ggplot(df, aes(x = lambda, y = loglik)) +
 ```
 Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:
 ```{r}
-optimal_lambda <- bc$lambda 
+optimal_lambda <- bc$lambda
 
 optimal_gamma_sample_tbl <- gamma_sample_tbl %>%
   mutate(
     transformed_sample = bcPower(sample, lambda = optimal_lambda)
   )
 
-optimal_gamma_sample_tbl %>% 
+optimal_gamma_sample_tbl %>%
   summarise(
-  shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
+    shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
     ks = tidy_ks_test(data = ., value_col = transformed_sample)$p_value,
     ad = tidy_ad_test(data = ., value_col = transformed_sample)$p_value,
     jb = tidy_jb_test(data = ., value_col = transformed_sample)$p_value
@@ -235,15 +241,15 @@ optimal_gamma_sample_tbl %>%
     code_col = test,
     lookup_tbl = normality_tests_lookup_tbl,
     lookup_code_col = code,
-    lookup_label_col = label, 
+    lookup_label_col = label,
     new_factor_col_name = test_factor
-  ) %>% 
+  ) %>%
   select(test_factor, p_value)
 ```
 As we can see, the Box-Cox transformation with the optimal value of $\lambda$ significantly improves the normality of the data, as all the normality tests now yield high $p$-values. We now show the QQ plot and histogram of the transformed data:
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation. Notice how both plots show a much better fit to the normal distribution compared to the original gamma sample." 
-#| fig-width: 10 
+#| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation. Notice how both plots show a much better fit to the normal distribution compared to the original gamma sample."
+#| fig-width: 10
 #| fig-height: 5
 optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
   ggplot(aes(sample = transformed_sample)) +

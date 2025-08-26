@@ -16,6 +16,8 @@ library(ggforce)     # for ggplot2 extensions
 library(mvtnorm)     # for multivariate normal distribution
 library(MVN)         # for multivariate normality tests
 library(ellipse)     # for generating covariance ellipses
+library(ggrepel)     # for better text annotations in ggplot2
+library(lavaan)      # for structural equation modeling
 
 
 options(scipen = 999)
@@ -86,7 +88,7 @@ gamma_sd <- sqrt(alpha) / beta
 
 # Plot
 gamma_distribution_plot <- gamma_distribution_tbl %>%
-ggplot(aes(x = x_data, y = density)) +
+  ggplot(aes(x = x_data, y = density)) +
   geom_line(
     color = c_palette["C blue"],
     linewidth = 1
@@ -171,24 +173,24 @@ We will now show how to plot the PDF of the Laplace distribution with mean zero 
 
 # Parameters
 mu <- 0      # mean (location)
-b <- 1/sqrt(2)       # scale
+b <- 1 / sqrt(2)       # scale
 
 # Sequence of x values covering enough range to see tails
 x_data <- seq(-5, 5, length.out = 300)
 
 # Laplace PDF function
 dlaplace <- function(x, mu, b) {
-  return(1/(2*b) * exp(-abs(x - mu)/b))
+  1 / (2 * b) * exp(-abs(x - mu) / b)
 }
 
 # Create data frame with PDF values
-laplace_distribution_tbl<- tibble(
+laplace_distribution_tbl <- tibble(
   x_data = x_data,
   density = dlaplace(x_data, mu, b)
 )
 
 # Plot PDF
-laplace_distribution_tbl %>% 
+laplace_distribution_tbl %>%
   ggplot(aes(x = x_data, y = density)) +
   geom_line(color = c_palette["C blue"], linewidth = 1) +
   labs(
@@ -235,10 +237,10 @@ To illustrate these ideas, we will now generate samples from the Gamma and Lapla
 ```{r}
 set.seed(123)  # for reproducibility
 
-# Sample size 
+# Sample size
 n <- 300
-# Generate random samples from the Gamma distribution 
-gamma_sample <- rgamma(n, shape = alpha, rate = beta) 
+# Generate random samples from the Gamma distribution
+gamma_sample <- rgamma(n, shape = alpha, rate = beta)
 
 gamma_sample_tbl <- tibble(
   sample = gamma_sample
@@ -249,8 +251,8 @@ u <- runif(n)
 
 # Apply inverse CDF of Laplace
 laplace_sample <- ifelse(u < 0.5,
-                         mu + b * log(2*u),
-                         mu - b * log(2*(1 - u)))
+                         mu + b * log(2 * u),
+                         mu - b * log(2 * (1 - u)))
 
 laplace_sample_tbl <- tibble(
   sample = laplace_sample
@@ -259,8 +261,8 @@ laplace_sample_tbl <- tibble(
 
 We will now construct the corresponding QQ plots and histograms. We will start with the Gamma distribution samples:
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Gamma distribution samples." 
-#| fig-width: 10 
+#| fig-cap: "QQ plot and histogram of the Gamma distribution samples."
+#| fig-width: 10
 #| fig-height: 5
 gamma_qq_plot <- gamma_sample_tbl %>%
   ggplot(aes(sample = sample)) +
@@ -312,8 +314,8 @@ gamma_plot
 We will now construct the QQ plot and histogram for the Laplace distribution samples:
 ```{r}
 #| fig-cap: "QQ plot and histogram of the Laplace distribution samples."
-#| fig-width: 10 
-#| fig-height: 5 
+#| fig-width: 10
+#| fig-height: 5
 
 laplace_qq_plot <- laplace_sample_tbl %>%
   ggplot(aes(sample = sample)) +
@@ -348,7 +350,6 @@ laplace_histogram <- laplace_sample_tbl %>%
   theme_krul()
 laplace_plot <- laplace_qq_plot + laplace_histogram +
   plot_layout(ncol = 2) +
-  
   plot_annotation(
     title = "Laplace Distribution: QQ Plot and Histogram",
     theme = theme(
@@ -358,7 +359,7 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
       )
     )
   )
-laplace_plot 
+laplace_plot
 ```
 
 ## Sample Skewness and Kurtosis 
@@ -388,23 +389,23 @@ $$
 
 As an example, we will compute the sample skewness and sample excess kurtosis of the Gamma and Laplace samples we generated earlier. For the Gamma sample we have:
 ```{r}
-# Compute sample skewness and excess kurtosis for Gamma distribution 
+# Compute sample skewness and excess kurtosis for Gamma distribution
 gamma_sample_tbl %>%
   summarise(
     sample_skewness = skewness(sample, type = 2),
     sample_excess_kurtosis = kurtosis(sample, type = 2)
   ) %>%
-glimpse()
+  glimpse()
 ```
 For the Laplace sample we have:
 ```{r}
-# Compute sample skewness and excess kurtosis for Laplace distribution 
+# Compute sample skewness and excess kurtosis for Laplace distribution
 laplace_sample_tbl %>%
   summarise(
     sample_skewness = skewness(sample, type = 2),
     sample_excess_kurtosis = kurtosis(sample, type = 2)
   ) %>%
-glimpse()
+  glimpse()
 ```
 
 ## Scaling and Standardization 
@@ -466,16 +467,16 @@ z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
   mutate(
     z_data = (x_data - gamma_mean) / gamma_sd,
     z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
-  ) %>% 
+  ) %>%
   select(z_data, z_density)
 
 # Calculate mean and median
 z_gamma_mean <- 0
-z_gamma_median <- (gamma_median-gamma_mean) / gamma_sd
+z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
 
 # Plot
 z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
-ggplot(aes(x = z_data, y = z_density)) +
+  ggplot(aes(x = z_data, y = z_density)) +
   geom_line(
     color = c_palette["C blue"],
     linewidth = 1
@@ -576,8 +577,8 @@ As we mentioned earlier, scaling does not make a non-normal distribution normal.
 As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
 ```{r}
 #| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample. Notice that the QQPlots are just rescaled versions of the original QQ plot, and therefore they all have the same shape."
-#| fig-width: 12 
-#| fig-height: 14 
+#| fig-width: 12
+#| fig-height: 14
 
 scale_lookup_tbl <- tibble(
   code = c(
@@ -598,10 +599,10 @@ scale_lookup_tbl <- tibble(
 
 scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
   mutate(
-   sample_standard= standard_scale(sample),
-   sample_min_max= min_max_scale(sample),
-   sample_robust= robust_scale(sample),
-   sample_normal= normal_scale(sample)
+    sample_standard = standard_scale(sample),
+    sample_min_max = min_max_scale(sample),
+    sample_robust = robust_scale(sample),
+    sample_normal = normal_scale(sample)
   ) %>%
   pivot_longer(
     cols = everything(),

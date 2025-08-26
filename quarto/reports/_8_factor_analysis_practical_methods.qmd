@@ -1,0 +1,67 @@
+# Factor Analysis Methods
+
+```{r} 
+
+# -----------------------------
+# 1. Load libraries and dataset
+# -----------------------------
+library(ggplot2)
+
+
+data(HolzingerSwineford1939)
+
+# Select 9 numeric test variables
+hs_data <- HolzingerSwineford1939[, c("x1","x2","x3","x4","x5","x6","x7","x8","x9")] %>% select(-x1, -x2, -x3)
+
+# -----------------------------
+# 2. Fit 2-factor FA with varimax rotation
+# -----------------------------
+fa_res <- factanal(hs_data, factors = 2, rotation = "varimax", scores = "regression")
+print(fa_res)
+
+# -----------------------------
+# 3. Extract factor loadings for biplot
+# -----------------------------
+loadings_matrix <- as.matrix(fa_res$loadings)
+loadings_df <- data.frame(
+  Variable = rownames(loadings_matrix),
+  Factor1 = loadings_matrix[, 1],
+  Factor2 = loadings_matrix[, 2]
+)
+
+# Scale arrows for plotting
+arrow_scale <- 3
+loadings_df$Factor1 <- loadings_df$Factor1 * arrow_scale
+loadings_df$Factor2 <- loadings_df$Factor2 * arrow_scale
+
+# -----------------------------
+# 4. Extract factor scores for observations
+# -----------------------------
+scores_df <- as.data.frame(fa_res$scores)
+
+# -----------------------------
+# 5. Create biplot
+# -----------------------------
+ggplot() +
+  geom_point(
+    data = scores_df,
+    aes(x = Factor1, y = Factor2),
+    color = "blue",
+    alpha = 0.5
+  ) +
+  geom_segment(
+    data = loadings_df,
+    aes(x = 0, y = 0, xend = Factor1, yend = Factor2),
+    arrow = arrow(length = unit(0.3, "cm")),
+    color = "red",
+    size = 1
+  ) +
+  geom_text_repel(
+    data = loadings_df,
+    aes(x = Factor1, y = Factor2, label = Variable),
+    color = "red", size = 4
+  ) +
+  labs(x = "Factor 1", y = "Factor 2",
+       title = "Factor Analysis Biplot (HolzingerSwineford1939)") +
+  theme_krul()
+```

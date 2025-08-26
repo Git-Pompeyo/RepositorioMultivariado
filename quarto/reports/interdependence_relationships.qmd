@@ -59,18 +59,17 @@ format:
 
 \part{Univariate Normality Testing}
 
-
 {{< include _1_an_introduction_to_the_tidyverse.qmd >}}
 {{< include _2_the_standardized_moments.qmd >}}
 {{< include _3_normality_testing.qmd >}}
 
-
 \part{Principal Component Analysis}
-
 
 {{< include _4_introduction_to_multivariate_analysis.qmd >}}
 {{< include _5_normal_multivariate_distribution.qmd >}}
 {{< include _6_principal_component_analysis.qmd >}}
 
 \part{Factor Analysis} 
-{{< include _7_factor_analysis.qmd >}}
+
+{{< include _7_factor_analysis_theoretical_models.qmd >}}
+{{< include _8_factor_analysis_practical_methods.qmd >}}
