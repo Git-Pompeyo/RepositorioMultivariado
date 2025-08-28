@@ -134,7 +134,7 @@ box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
 box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
   ggplot(aes(sample = transformed_sample)) +
   facet_wrap(
-    ~ lambda_factor,
+    ~lambda_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -156,7 +156,7 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
 box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
   ggplot(aes(x = transformed_sample)) +
   facet_wrap(
-    ~ lambda_factor,
+    ~lambda_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -211,9 +211,11 @@ df <- tibble(lambda = bc_prof$x, loglik = bc_prof$y)
 ggplot(df, aes(x = lambda, y = loglik)) +
   geom_line(color = c_pal("C blue"), linewidth = 1) +
   geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
-  labs(title = "Box–Cox Transformation",
-       x = expression(lambda),
-       y = "Log-likelihood") +
+  labs(
+    title = "Box–Cox Transformation",
+    x = expression(lambda),
+    y = "Log-likelihood"
+  ) +
   theme_krul()
 ```
 Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:

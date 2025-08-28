@@ -16,18 +16,18 @@
 ```{r}
 #| output: false
 #| echo: false
-library(tidyverse)   # for data manipulation and visualization
-library(broom)       # for tidying data
-library(here)        # for file paths
-library(patchwork)   # for combining ggplots
-library(krulRutils)  # for custom package functions
-library(magrittr)    # for the pipe operator
-library(e1071)       # for skewness and kurtosis functions
-library(car)         # for robust scaling functions
-library(ggforce)     # for ggplot2 extensions
-library(mvtnorm)     # for multivariate normal distribution
-library(MVN)         # for multivariate normality tests
-library(ellipse)     # for generating covariance ellipses
+library(tidyverse) # for data manipulation and visualization
+library(broom) # for tidying data
+library(here) # for file paths
+library(patchwork) # for combining ggplots
+library(krulRutils) # for custom package functions
+library(magrittr) # for the pipe operator
+library(e1071) # for skewness and kurtosis functions
+library(car) # for robust scaling functions
+library(ggforce) # for ggplot2 extensions
+library(mvtnorm) # for multivariate normal distribution
+library(MVN) # for multivariate normality tests
+library(ellipse) # for generating covariance ellipses
 
 
 options(scipen = 999)
@@ -254,7 +254,7 @@ proj_PC2 <- (centered_sample_data %*% v2) %*% t(v2)
 proj_coords1 <- proj_PC1 + attr(centered_sample_data, "scaled:center")
 proj_coords2 <- proj_PC2 + attr(centered_sample_data, "scaled:center")
 
-#Provide unique names before converting to tibble
+# Provide unique names before converting to tibble
 colnames(proj_coords1) <- c("x_proj1", "y_proj1")
 colnames(proj_coords2) <- c("x_proj2", "y_proj2")
 

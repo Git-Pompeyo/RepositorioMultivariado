@@ -12,8 +12,10 @@ library(mvtnorm)
 
 # Parameters
 mu <- c(0, 0)
-Sigma <- matrix(c(1, 0.6,
-                  0.6, 1), nrow = 2)
+Sigma <- matrix(c(
+  1, 0.6,
+  0.6, 1
+), nrow = 2)
 
 # Grid
 x <- seq(-3, 3, length.out = 120)

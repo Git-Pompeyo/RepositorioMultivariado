@@ -1,10 +1,50 @@
-# Factor Analysis Methods
+# An Introduction to the Tidyverse
+
+# The Standardized Moments
+
+# Normality Testing
+
+# Introduction to Multivariate Analysis
+
+# Normal Multivariate Distribution
+
+# Principal Component Analysis
+
+# Factor Analysis: Theoretical Models
+
+# Factor Analysis: Practical Methods
+
+### Factor Analysis: Practical Models 
+
+
+```{r}
+#| output: false
+#| echo: false
+library(tidyverse) # for data manipulation and visualization
+library(broom) # for tidying data
+library(here) # for file paths
+library(patchwork) # for combining ggplots
+library(krulRutils) # for custom package functions
+library(magrittr) # for the pipe operator
+library(e1071) # for skewness and kurtosis functions
+library(car) # for robust scaling functions
+library(ggforce) # for ggplot2 extensions
+library(mvtnorm) # for multivariate normal distribution
+library(MVN) # for multivariate normality tests
+library(ellipse) # for generating covariance ellipses
+library(ggrepel) # for better text annotations in ggplot2
+library(lavaan) # for structural equation modeling
+
+
+options(scipen = 999)
+```
 
 Recall from last chapter that the classical factor analysis model is given by 
 $$
 X = \mu + LF + \epsilon 
 $$
 where:
+\pause
 \begin{itemize}
     \item $X$ is a random vector of $p$ observed variables (indicators).
     \item $\mu$ is a constant vector of dimension $p$.
@@ -13,10 +53,15 @@ where:
     \item $\epsilon \sim \N(0,\Psi)$ is a vector of unique errors (specific variances) that are also assumed to be normally distributed with mean zero and diagonal covariance matrix $\Psi = \diag(\sigma_{1}^{2}, \ldots, \sigma_{p}^{2})$.
     \item The factors $F$ and the errors $\epsilon$ are assumed to be independent, in particular $\Cov[F,\epsilon] = 0$.
 \end{itemize}
+
+###
+
 Notice that, since $\epsilon \sim \N(0,\Psi)$, this model is completely specified by the parameters $\mu$, $L$, and $\Psi$. In this chapter we will discuss practical methods for estimating these parameters from data, as well as methods for estimating the latent factors $F$ (known as \emph{factor scores}) for our observations once the model parameters have been estimated.
 
 
 ## Assesing Factorability 
+
+### Assessing Factorability
 
 The first step in applying factor analysis to a dataset is to assess whether the data is suitable for factor analysis, i.e., whether the observed variables exhibit sufficient correlations to justify the use of a factor model. Several statistical tests and measures can be used to evaluate the factorability of a dataset: 
 
@@ -147,3 +192,4 @@ ggplot() +
   ) +
   theme_krul()
 ```
+

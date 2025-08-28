@@ -278,12 +278,12 @@ extra_points_tbl <- tibble(
 )
 
 extra_sample_data_plot <- sample_data_plot +
-geom_point(
-  data = extra_points_tbl,
-  aes(x = x_extra, y = y_extra),
-  color = c_pal("C red"),
-  size = 1.5
-)
+  geom_point(
+    data = extra_points_tbl,
+    aes(x = x_extra, y = y_extra),
+    color = c_pal("C red"),
+    size = 1.5
+  )
 
 extra_sample_data_plot
 ```
@@ -316,18 +316,18 @@ However, if we use the Euclidean distance, we obtain that it is actually the out
 #| fig-height: 5
 #| echo: false
 euclidean_sample_data_plot <- extra_sample_data_plot +
-geom_point(
-  data = sample_mean_tbl,
-  aes(x = x_bar, y = y_bar),
-  color = c_pal("C red"),
-  size = 1.5
-) +
-geom_circle(
-  aes(x0 = sample_mean_vector[1], y0 = sample_mean_vector[2], r = 4),
-  color = c_pal("C blue"),
-  linewidth = 0.6,
-  fill = NA
-)
+  geom_point(
+    data = sample_mean_tbl,
+    aes(x = x_bar, y = y_bar),
+    color = c_pal("C red"),
+    size = 1.5
+  ) +
+  geom_circle(
+    aes(x0 = sample_mean_vector[1], y0 = sample_mean_vector[2], r = 4),
+    color = c_pal("C blue"),
+    linewidth = 0.6,
+    fill = NA
+  )
 
 euclidean_sample_data_plot
 ```
@@ -343,17 +343,17 @@ On the other hand, if we compute the Mahalanobis distance, we obtain that the ou
 #| fig-width:  5
 #| fig-height: 5
 #| echo: false
-annotated_sample_data_plot <- extra_sample_data_plot + 
-geom_point(
-  data = sample_mean_tbl,
-  aes(x = x_bar, y = y_bar),
-  color = c_pal("C red"),
-  size = 1.5 
-) +
-stat_ellipse(type = "norm", level = 0.8647, color = c_pal("C blue"), linewidth = 0.6)
- 
+annotated_sample_data_plot <- extra_sample_data_plot +
+  geom_point(
+    data = sample_mean_tbl,
+    aes(x = x_bar, y = y_bar),
+    color = c_pal("C red"),
+    size = 1.5
+  ) +
+  stat_ellipse(type = "norm", level = 0.8647, color = c_pal("C blue"), linewidth = 0.6)
 
-annotated_sample_data_plot 
+
+annotated_sample_data_plot
 ```
 
 ## Scaling and Standardization 

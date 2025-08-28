@@ -4,20 +4,20 @@ As it is well known, any normal distribution is completely determined by its mea
 
 ```{r}
 #| output: false
-library(tidyverse)   # for data manipulation and visualization
-library(broom)       # for tidying data
-library(here)        # for file paths
-library(patchwork)   # for combining ggplots
-library(krulRutils)  # for custom package functions
-library(magrittr)    # for the pipe operator
-library(e1071)       # for skewness and kurtosis functions
-library(car)         # for robust scaling functions
-library(ggforce)     # for ggplot2 extensions
-library(mvtnorm)     # for multivariate normal distribution
-library(MVN)         # for multivariate normality tests
-library(ellipse)     # for generating covariance ellipses
-library(ggrepel)     # for better text annotations in ggplot2
-library(lavaan)      # for structural equation modeling
+library(tidyverse) # for data manipulation and visualization
+library(broom) # for tidying data
+library(here) # for file paths
+library(patchwork) # for combining ggplots
+library(krulRutils) # for custom package functions
+library(magrittr) # for the pipe operator
+library(e1071) # for skewness and kurtosis functions
+library(car) # for robust scaling functions
+library(ggforce) # for ggplot2 extensions
+library(mvtnorm) # for multivariate normal distribution
+library(MVN) # for multivariate normality tests
+library(ellipse) # for generating covariance ellipses
+library(ggrepel) # for better text annotations in ggplot2
+library(lavaan) # for structural equation modeling
 
 
 options(scipen = 999)
@@ -172,8 +172,8 @@ We will now show how to plot the PDF of the Laplace distribution with mean zero 
 #| fig-height: 5
 
 # Parameters
-mu <- 0      # mean (location)
-b <- 1 / sqrt(2)       # scale
+mu <- 0 # mean (location)
+b <- 1 / sqrt(2) # scale
 
 # Sequence of x values covering enough range to see tails
 x_data <- seq(-5, 5, length.out = 300)
@@ -235,7 +235,7 @@ The closer the points lie to this line, the more the sample resembles the specif
 
 To illustrate these ideas, we will now generate samples from the Gamma and Laplace distributions, and then we will construct their associated QQ plots and histograms. First we construct the samples:
 ```{r}
-set.seed(123)  # for reproducibility
+set.seed(123) # for reproducibility
 
 # Sample size
 n <- 300
@@ -251,8 +251,9 @@ u <- runif(n)
 
 # Apply inverse CDF of Laplace
 laplace_sample <- ifelse(u < 0.5,
-                         mu + b * log(2 * u),
-                         mu - b * log(2 * (1 - u)))
+  mu + b * log(2 * u),
+  mu - b * log(2 * (1 - u))
+)
 
 laplace_sample_tbl <- tibble(
   sample = laplace_sample
@@ -620,7 +621,7 @@ scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
 scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
   ggplot(aes(sample = sample_scaled)) +
   facet_wrap(
-    ~ scaling_method_factor,
+    ~scaling_method_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -642,7 +643,7 @@ scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
 scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
   ggplot(aes(x = sample_scaled)) +
   facet_wrap(
-    ~ scaling_method_factor,
+    ~scaling_method_factor,
     nrow = 5,
     scales = "free"
   ) +

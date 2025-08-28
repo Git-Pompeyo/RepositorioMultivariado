@@ -62,7 +62,7 @@ who_tidy <- who %>%
   ) %>%
   separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
   separate(sexage, into = c("sex", "age"), sep = 1) %>%
-  select(-new, -iso2, - iso3)  %T>%
+  select(-new, -iso2, -iso3) %T>%
   # Finally, we save the tidy data in both RDS and CSV formats
   saveRDS(here("data", "who_tidy.rds")) %>%
   write_csv(here("data", "who_tidy.csv")) %>%
@@ -133,7 +133,7 @@ Finally, we want to use this information to analyze the number of cases of tuber
 ```{r}
 who_type_sex_tbl <- who_factor %>%
   count(type_factor, sex_factor, wt = cases, name = "cases") %>%
-  print(n = Inf) 
+  print(n = Inf)
 ```
 
 ## The "Grammar of Graphics" and ggplot2

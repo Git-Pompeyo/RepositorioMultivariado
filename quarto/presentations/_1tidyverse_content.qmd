@@ -95,7 +95,7 @@ who_tidy <- who %>%
       key
     ),
     cases = as.integer(cases)
-  ) 
+  )
 ```
 
 ###
@@ -104,7 +104,7 @@ who_tidy <- who %>%
 who_tidy <- who_tidy %>%
   separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
   separate(sexage, into = c("sex", "age"), sep = 1) %>%
-  select(-new, -iso2, - iso3)
+  select(-new, -iso2, -iso3)
 ```
 
 
@@ -160,7 +160,7 @@ who_factor <- who_tidy %>%
     lookup_tbl = who_type_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-  ) 
+  )
 ```
 
 
@@ -173,7 +173,7 @@ who_factor <- who_factor %>%
     lookup_tbl = who_sex_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-  ) 
+  )
 ```
 
 ###
@@ -185,7 +185,7 @@ who_factor <- who_factor %>%
     lookup_tbl = who_age_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-  )  
+  )
 ```
 
 
@@ -197,7 +197,7 @@ Finally, we want to use this information to analyze the number of cases of tuber
 #| output: false
 who_type_sex_tbl <- who_factor %>%
   count(type_factor, sex_factor, wt = cases, name = "cases") %>%
-  print(n = Inf) 
+  print(n = Inf)
 ```
 
 ### 
@@ -206,7 +206,7 @@ who_type_sex_tbl <- who_factor %>%
 #| echo: false
 who_type_sex_tbl <- who_factor %>%
   count(type_factor, sex_factor, wt = cases, name = "cases") %>%
-  print(n = Inf) 
+  print(n = Inf)
 ```
 
 # The "Grammar of Graphics" and ggplot2
@@ -332,7 +332,7 @@ who_type_sex_plot
 
 ```{r}
 #| echo: false
-#| fig-width: 16 
+#| fig-width: 16
 #| fig-height: 7
 who_type_sex_plot <- who_type_sex_tbl %>%
   ggplot(aes(x = type_factor, y = cases, fill = sex_factor)) +

@@ -3,7 +3,6 @@
 
 # Load required packages
 library(tidyverse)
-library(devtools)
 library(GGally)
 library(broom)
 library(nortest)
@@ -682,15 +681,15 @@ standard_scale <- function(x, na.rm = TRUE) {
   if (na.rm) {
     x <- na.omit(x)
   }
-  
+
   mean_x <- mean(x, na.rm = TRUE)
   sd_x <- sd(x, na.rm = TRUE)
-  
+
   if (sd_x == 0) {
     warning("Standard deviation is zero; returning NA for all values.")
     return(rep(NA, length(x)))
   }
-  
+
   (x - mean_x) / sd_x
 }
 
@@ -705,15 +704,15 @@ min_max_scale <- function(x, na.rm = TRUE) {
   if (na.rm) {
     x <- na.omit(x)
   }
-  
+
   min_x <- min(x, na.rm = TRUE)
   max_x <- max(x, na.rm = TRUE)
-  
+
   if (max_x == min_x) {
     warning("Max and min are equal; returning NA for all values.")
     return(rep(NA, length(x)))
   }
-  
+
   (x - min_x) / (max_x - min_x)
 }
 
@@ -728,19 +727,19 @@ robust_scale <- function(x, na.rm = TRUE) {
   if (na.rm) {
     x <- na.omit(x)
   }
-  
+
   median_x <- median(x, na.rm = TRUE)
   iqr_x <- IQR(x, na.rm = TRUE)
-  
+
   if (iqr_x == 0) {
     warning("Interquartile range is zero; returning NA for all values.")
     return(rep(NA, length(x)))
   }
-  
+
   (x - median_x) / iqr_x
 }
 
-#' Normalizing Scaling of a Numeric Vector 
+#' Normalizing Scaling of a Numeric Vector
 #'
 #' @param x A numeric vector to be scaled.
 #' @param na.rm Logical, whether to remove NA values before scaling. Default TRUE.
@@ -751,20 +750,20 @@ normal_scale <- function(x, na.rm = TRUE) {
   if (na.rm) {
     x <- na.omit(x)
   }
-  
+
   norm_x <- sqrt(sum(x^2, na.rm = TRUE))
-  
+
   if (norm_x == 0) {
     warning("Norm is zero; returning NA for all values.")
     return(rep(NA, length(x)))
   }
-  
+
   x / norm_x
 }
 
 
 
-#' Perform Shapiro-Wilk normality test for groups 
+#' Perform Shapiro-Wilk normality test for groups
 #'
 #' @param data A data frame or tibble.
 #' @param group_col A bare (unquoted) grouping variable.
@@ -775,8 +774,7 @@ normal_scale <- function(x, na.rm = TRUE) {
 tidy_shapiro_test <- function(
     data,
     ...,
-    value_col
-) {
+    value_col) {
   data %>%
     group_by(...) %>%
     summarise(
@@ -804,8 +802,7 @@ tidy_shapiro_test <- function(
 tidy_ks_test <- function(
     data,
     ...,
-    value_col
-) {
+    value_col) {
   data %>%
     group_by(...) %>%
     summarise(
@@ -837,8 +834,7 @@ tidy_ks_test <- function(
 tidy_ad_test <- function(
     data,
     ...,
-    value_col
-) {
+    value_col) {
   data %>%
     group_by(...) %>%
     summarise(
@@ -866,8 +862,7 @@ tidy_ad_test <- function(
 tidy_jb_test <- function(
     data,
     ...,
-    value_col
-) {
+    value_col) {
   data %>%
     group_by(...) %>%
     summarise(
@@ -883,4 +878,3 @@ tidy_jb_test <- function(
       method = method
     )
 }
-

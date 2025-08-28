@@ -93,7 +93,7 @@ Using these formulas, we can find the projection of our original data into the f
 
 ```{r}
 #| fig-cap: "Projections onto the Principal Component Directions. Notice that much more information is lost when projecting onto the second principal component."
-#| fig-width: 16 
+#| fig-width: 16
 #| fig-height: 8
 sample_data_matrix <- as.matrix(sample_data_tbl)
 
@@ -113,7 +113,7 @@ proj_PC2 <- (centered_sample_data %*% v2) %*% t(v2)
 proj_coords1 <- proj_PC1 + attr(centered_sample_data, "scaled:center")
 proj_coords2 <- proj_PC2 + attr(centered_sample_data, "scaled:center")
 
-#Provide unique names before converting to tibble
+# Provide unique names before converting to tibble
 colnames(proj_coords1) <- c("x_proj1", "y_proj1")
 colnames(proj_coords2) <- c("x_proj2", "y_proj2")
 
@@ -392,7 +392,7 @@ To illustrate this concept, we will create biplots for the first two principal c
 \end{align*}
 We can then compute the principal component scores for each observation by simply multiplying the values of our original variables by these matrices. The resulting biplots for each species are shown in the following figure:
 ```{r}
-#| fig-cap: "Loadings and scores for the first two principal components of the Iris dataset by species." 
+#| fig-cap: "Loadings and scores for the first two principal components of the Iris dataset by species."
 #| fig-width: 16
 #| fig-height: 8
 # Function to prepare biplot data from precomputed singular vectors
@@ -448,8 +448,8 @@ create_biplot <- function(scores_tbl, loadings_tbl, species_name) {
       aes(
         x = 0,
         y = 0,
-        xend = PC1*max(scores_tbl$PC1),
-        yend = PC2*max(scores_tbl$PC2)
+        xend = PC1 * max(scores_tbl$PC1),
+        yend = PC2 * max(scores_tbl$PC2)
       ),
       arrow = arrow(length = unit(0.3, "cm")),
       color = c_pal("C blue"),

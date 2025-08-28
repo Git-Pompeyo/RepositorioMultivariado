@@ -27,7 +27,7 @@ library(patchwork)
 library(krulRutils)
 library(ISLR2)
 library(magrittr)
-library(e1071) 
+library(e1071)
 
 options(scipen = 999)
 ```
@@ -115,7 +115,7 @@ gamma_sd <- sqrt(alpha) / beta
 
 # Plot
 gamma_distribution_plot <- gamma_distribution_tbl %>%
-ggplot(aes(x = x_data, y = density)) +
+  ggplot(aes(x = x_data, y = density)) +
   geom_line(
     color = c_palette["C blue"],
     linewidth = 1
@@ -219,25 +219,25 @@ This means that the Laplace distribution has heavier tails than a normal distrib
 #| echo: false
 
 # Parameters
-mu <- 0      # mean (location)
-b <- 1/sqrt(2)       # scale
+mu <- 0 # mean (location)
+b <- 1 / sqrt(2) # scale
 
 # Sequence of x values covering enough range to see tails
 x_data <- seq(-5, 5, length.out = 300)
 
 # Laplace PDF function
 dlaplace <- function(x, mu, b) {
-  return(1/(2*b) * exp(-abs(x - mu)/b))
+  return(1 / (2 * b) * exp(-abs(x - mu) / b))
 }
 
 # Create tibble with PDF values
-laplace_distribution_tbl<- tibble(
+laplace_distribution_tbl <- tibble(
   x_data = x_data,
   density = dlaplace(x_data, mu, b)
 )
 
 # Plot PDF
-laplace_distribution_tbl %>% 
+laplace_distribution_tbl %>%
   ggplot(aes(x = x_data, y = density)) +
   geom_line(color = c_palette["C blue"], linewidth = 1) +
   labs(
@@ -307,12 +307,12 @@ The closer the points lie to this line, the more the sample resembles the specif
 ```{r}
 #| output: false
 #| echo: false
-set.seed(123)  # for reproducibility
+set.seed(123) # for reproducibility
 
-# Sample size 
-n <- 300 
-# Generate random samples from the Gamma distribution 
-gamma_sample <- rgamma(n, shape = alpha, rate = beta) 
+# Sample size
+n <- 300
+# Generate random samples from the Gamma distribution
+gamma_sample <- rgamma(n, shape = alpha, rate = beta)
 
 gamma_sample_tbl <- tibble(
   sample = gamma_sample
@@ -323,8 +323,9 @@ u <- runif(n)
 
 # Apply inverse CDF of Laplace
 laplace_sample <- ifelse(u < 0.5,
-                         mu + b * log(2*u),
-                         mu - b * log(2*(1 - u)))
+  mu + b * log(2 * u),
+  mu - b * log(2 * (1 - u))
+)
 
 laplace_sample_tbl <- tibble(
   sample = laplace_sample
@@ -332,8 +333,8 @@ laplace_sample_tbl <- tibble(
 ```
 
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Gamma distribution samples." 
-#| fig-width: 12 
+#| fig-cap: "QQ plot and histogram of the Gamma distribution samples."
+#| fig-width: 12
 #| fig-height: 5
 #| echo: false
 gamma_qq_plot <- gamma_sample_tbl %>%
@@ -388,8 +389,8 @@ gamma_plot
 ###
 ```{r}
 #| fig-cap: "QQ plot and histogram of the Laplace distribution samples."
-#| fig-width: 12 
-#| fig-height: 5 
+#| fig-width: 12
+#| fig-height: 5
 #| echo: false
 
 laplace_qq_plot <- laplace_sample_tbl %>%
@@ -425,7 +426,7 @@ laplace_histogram <- laplace_sample_tbl %>%
   theme_krul()
 laplace_plot <- laplace_qq_plot + laplace_histogram +
   plot_layout(ncol = 2) +
-  
+
   plot_annotation(
     title = "Laplace Distribution: QQ Plot and Histogram",
     theme = theme(
@@ -435,7 +436,7 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
       )
     )
   )
-laplace_plot 
+laplace_plot
 ```
 
 ## Sample Skewness and Kurtosis 
@@ -484,13 +485,13 @@ As an example, we will compute the sample skewness and sample excess kurtosis of
 For the Gamma sample we have:
 ```{r}
 #| echo: false
-# Compute sample skewness and excess kurtosis for Gamma distribution 
+# Compute sample skewness and excess kurtosis for Gamma distribution
 gamma_sample_tbl %>%
   summarise(
     sample_skewness = skewness(sample, type = 2),
     sample_excess_kurtosis = kurtosis(sample, type = 2) - 3
   ) %>%
-glimpse()
+  glimpse()
 ```
 
 
@@ -500,13 +501,13 @@ glimpse()
 For the Laplace sample we have:
 ```{r}
 #| echo: false
-# Compute sample skewness and excess kurtosis for Laplace distribution 
+# Compute sample skewness and excess kurtosis for Laplace distribution
 laplace_sample_tbl %>%
   summarise(
     sample_skewness = skewness(sample, type = 2),
     sample_excess_kurtosis = kurtosis(sample, type = 2)
   ) %>%
-glimpse()
+  glimpse()
 ```
 
 
@@ -606,7 +607,7 @@ Using this information, we can generate the plot of standadized version of the G
 ###
 ```{r}
 #| fig-cap: "Comparison of the probability density function (PDF) of the original and standardized Gamma distribution."
-#| fig-width: 12 
+#| fig-width: 12
 #| fig-height: 5
 #| echo: false
 
@@ -615,16 +616,16 @@ z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
   mutate(
     z_data = (x_data - gamma_mean) / gamma_sd,
     z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
-  ) %>% 
+  ) %>%
   select(z_data, z_density)
 
 # Calculate mean and median
 z_gamma_mean <- 0
-z_gamma_median <- (gamma_median-gamma_mean) / gamma_sd
+z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
 
 # Plot
 z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
-ggplot(aes(x = z_data, y = z_density)) +
+  ggplot(aes(x = z_data, y = z_density)) +
   geom_line(
     color = c_palette["C blue"],
     linewidth = 1
@@ -751,9 +752,9 @@ As an example, we will consider the different scaling methods applied to the Gam
 ###
 
 ```{r}
-#| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample." 
-#| fig-width: 14 
-#| fig-height: 7 
+#| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample."
+#| fig-width: 14
+#| fig-height: 7
 #| echo: false
 
 scale_lookup_tbl <- tibble(
@@ -775,10 +776,10 @@ scale_lookup_tbl <- tibble(
 
 scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
   mutate(
-   sample_standard= standard_scale(sample),
-   sample_min_max= min_max_scale(sample),
-   sample_robust= robust_scale(sample),
-   sample_normal= normal_scale(sample)
+    sample_standard = standard_scale(sample),
+    sample_min_max = min_max_scale(sample),
+    sample_robust = robust_scale(sample),
+    sample_normal = normal_scale(sample)
   ) %>%
   pivot_longer(
     cols = everything(),
@@ -796,7 +797,7 @@ scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
 scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
   ggplot(aes(sample = sample_scaled)) +
   facet_wrap(
-    ~ scaling_method_factor,
+    ~scaling_method_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -818,7 +819,7 @@ scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
 scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
   ggplot(aes(x = sample_scaled)) +
   facet_wrap(
-    ~ scaling_method_factor,
+    ~scaling_method_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -920,7 +921,7 @@ normality_tests_lookup_tbl <- tibble(
   ),
 )
 
-normality_test_gamma_sample_tbl <- gamma_sample_tbl %>% 
+normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
   summarise(
     shapiro = tidy_shapiro_test(data = ., value_col = sample)$p_value,
     ks = tidy_ks_test(data = ., value_col = sample)$p_value,
@@ -936,16 +937,16 @@ normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
     code_col = test,
     lookup_tbl = normality_tests_lookup_tbl,
     lookup_code_col = code,
-    lookup_label_col = label, 
+    lookup_label_col = label,
     new_factor_col_name = test_factor
   ) %>%
-  select(test_factor, p_value) 
+  select(test_factor, p_value)
 ```
 
 The results of the normality tests are as follows: 
 ```{r}
 #| echo: false
-normality_test_gamma_sample_tbl 
+normality_test_gamma_sample_tbl
 ```
 
 \bigpause
@@ -997,7 +998,7 @@ We will now apply the Box-Cox transformation to the gamma sample data with param
 
 ```{r}
 #| fig-cap: "Comparison of different Box-Cox transformations."
-#| fig-width: 14 
+#| fig-width: 14
 #| fig-height: 7
 #| echo: false
 
@@ -1013,13 +1014,13 @@ box_cox_lookup_tbl <- tibble(
 )
 
 box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
-    mutate(
+  mutate(
     box_cox_0 = bcPower(sample, lambda = 0),
     box_cox_025 = bcPower(sample, lambda = 0.25),
     box_cox_05 = bcPower(sample, lambda = 0.5),
     box_cox_075 = bcPower(sample, lambda = 0.75),
     box_cox_1 = bcPower(sample, lambda = 1)
-  ) %>% 
+  ) %>%
   pivot_longer(
     starts_with("box_cox_"),
     names_to = "lambda",
@@ -1029,15 +1030,15 @@ box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
     code_col = lambda,
     lookup_tbl = box_cox_lookup_tbl,
     lookup_code_col = code,
-    lookup_label_col = label, 
+    lookup_label_col = label,
     new_factor_col_name = lambda_factor
-  ) 
+  )
 
 
 box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
   ggplot(aes(sample = transformed_sample)) +
   facet_wrap(
-    ~ lambda_factor,
+    ~lambda_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -1059,7 +1060,7 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
 box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
   ggplot(aes(x = transformed_sample)) +
   facet_wrap(
-    ~ lambda_factor,
+    ~lambda_factor,
     nrow = 5,
     scales = "free"
   ) +
@@ -1125,9 +1126,11 @@ df <- tibble(lambda = bc_prof$x, loglik = bc_prof$y)
 ggplot(df, aes(x = lambda, y = loglik)) +
   geom_line(color = c_pal("C blue"), linewidth = 1) +
   geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
-  labs(title = "Box–Cox Transformation",
-       x = expression(lambda),
-       y = "Log-likelihood") +
+  labs(
+    title = "Box–Cox Transformation",
+    x = expression(lambda),
+    y = "Log-likelihood"
+  ) +
   theme_krul()
 ```
 
@@ -1136,16 +1139,16 @@ ggplot(df, aes(x = lambda, y = loglik)) +
 Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:
 ```{r}
 #| echo: false
-optimal_lambda <- bc$lambda 
+optimal_lambda <- bc$lambda
 
 optimal_gamma_sample_tbl <- gamma_sample_tbl %>%
   mutate(
     transformed_sample = bcPower(sample, lambda = optimal_lambda)
   )
 
-optimal_gamma_sample_tbl %>% 
+optimal_gamma_sample_tbl %>%
   summarise(
-  shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
+    shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
     ks = tidy_ks_test(data = ., value_col = transformed_sample)$p_value,
     ad = tidy_ad_test(data = ., value_col = transformed_sample)$p_value,
     jb = tidy_jb_test(data = ., value_col = transformed_sample)$p_value
@@ -1159,9 +1162,9 @@ optimal_gamma_sample_tbl %>%
     code_col = test,
     lookup_tbl = normality_tests_lookup_tbl,
     lookup_code_col = code,
-    lookup_label_col = label, 
+    lookup_label_col = label,
     new_factor_col_name = test_factor
-  ) %>% 
+  ) %>%
   select(test_factor, p_value)
 ```
 \bigpause 
@@ -1171,7 +1174,7 @@ As we can see, the Box-Cox transformation with the optimal value of $\lambda$ si
 ###
 ```{r}
 #| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation."
-#| fig-width: 10 
+#| fig-width: 10
 #| fig-height: 5
 #| echo: false
 
