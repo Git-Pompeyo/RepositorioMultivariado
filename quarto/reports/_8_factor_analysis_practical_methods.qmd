@@ -1,4 +1,4 @@
-# Factor Analysis Methods
+# Factor Analysis: Practical Methods
 
 Recall from last chapter that the classical factor analysis model is given by 
 $$
@@ -16,7 +16,7 @@ where:
 Notice that, since $\epsilon \sim \N(0,\Psi)$, this model is completely specified by the parameters $\mu$, $L$, and $\Psi$. In this chapter we will discuss practical methods for estimating these parameters from data, as well as methods for estimating the latent factors $F$ (known as \emph{factor scores}) for our observations once the model parameters have been estimated.
 
 
-## Assesing Factorability 
+## Assessing Factorability 
 
 The first step in applying factor analysis to a dataset is to assess whether the data is suitable for factor analysis, i.e., whether the observed variables exhibit sufficient correlations to justify the use of a factor model. Several statistical tests and measures can be used to evaluate the factorability of a dataset: 
 
@@ -34,7 +34,7 @@ Determining the appropriate number of factors to retain in a factor analysis is 
     \item \textbf{Eigenvalue Criterion (Kaiser Criterion):} Retain factors with singular values greater than 1. This method is based on the idea that a factor should explain at least as much variance as a single observed variable.
     \item \textbf{Scree Plot:} A scree plot displays the singular values in descending order. Look for an "elbow" point where the slope of the curve changes dramatically. The number of factors to retain is typically determined by the number of points before this elbow.
     \item \textbf{Parallel Analysis:} This method involves comparing the observed singular values with those obtained from random data of the same size. Factors are retained if their singular values exceed those from the random data.
-    \item \textbf{Model Fit Indices:} For more advanced factor analysis methods (e.g., confirmatory factor analysis), various fit indices (e.g., RMSEA, CFI, TLI) can be used to assess how well the model fits the data for different numbers of factors.
+    \item \textbf{Model Fit Indices:} For more advanced factor analysis methods (e.g., confirmatory factor analysis), various fit indices (e.g., RMSEA, TLI) can be used to assess how well the model fits the data for different numbers of factors.
 \end{enumerate}
 
 ## Extracting Factors
@@ -64,13 +64,13 @@ Once the factor loadings have been estimated and the factors have been rotated (
     \item \textbf{Anderson-Rubin Method:} This method generates factor scores that are uncorrelated and standardized. It is particularly useful when the factors are assumed to be orthogonal.
 \end{enumerate}
 
-## Assesing Model Fit 
+## Assessing Model Fit 
 
 After fitting a factor analysis model, it is important to assess how well the model fits the data. Several statistical tests and fit indices can be used to evaluate model fit: 
 \begin{enumerate}
     \item \textbf{Chi-Square Test of Model Fit:} This test evaluates the null hypothesis that the model-implied covariance matrix matches the observed covariance matrix. A non-significant result ($p$-value > 0.05) suggests that the model fits the data well.
     \item \textbf{Root Mean Square Error of Approximation (RMSEA):} This index measures the discrepancy between the observed and model-implied covariance matrices per degree of freedom. Values less than 0.06 indicate a good fit.
-    \item \textbf{Comparative Fit Index (CFI) and Tucker-Lewis Index (TLI):} These indices compare the fit of the specified model to a null model. Values greater than 0.95 indicate a good fit.
+    \item \textbf{Tucker-Lewis Index (TLI):} This index compares the fit of the specified model to a null model. Values greater than 0.95 indicate a good fit.
     \item \textbf{Standardized Root Mean Square Residual (SRMR):} This index measures the average discrepancy between observed and predicted correlations. Values less than 0.08 indicate a good fit.
 \end{enumerate}
 
@@ -89,61 +89,364 @@ Notice that Factor Loading Plots and Biplots only make sense when we have 2 or 3
 \end{remark}
 
 
-## Example: Factor Analysis Biplot of the Holzinger Swineford 1939 Dataset
+## Example: Factor Analysis of the Holzinger-Swineford Dataset
 
-```{r} 
-#| fig-cap: "Factor Analysis Biplot of the Holzinger Swineford 1939 Dataset"
-#| fig-width: 8
-#| fig-height: 5
+We will now provide an example of factor analysis using the "HolzingerSwineford1939" dataset from the "lavaan" package. This dataset contains scores from a battery of 9 cognitive tests administered to 301 students in grades 7 and 8. The tests were designed to measure 3 latent abilities: visual/spatial, verbal, and speed. For this example we will focus only on tests x4 to x9 so that we can fit a two-factor model and visualize the results in a biplot. The 
+exact description of each test is given below:
 
+\begin{enumerate}
+\item \textbf{Paragraph (x4)}: Reading comprehension. Students read short paragraphs and answer questions about the main idea, details, and simple inferences.
+\item \textbf{Sentence (x5)}: Sentence completion. Choose the word or phrase that best completes a sentence so it is clear and grammatical; emphasizes vocabulary‑in‑context and syntax.
+\item \textbf{Word Meaning (x6)}: Vocabulary. Select the best synonym/definition for a target word; reflects breadth of lexical knowledge.
+\item \textbf{Addition (x7)}: Timed arithmetic fluency. Complete many simple addition problems quickly and accurately; captures processing speed with minimal reasoning load.
+\item \textbf{Counting Dots (x8)}: Rapid visual enumeration. Quickly count small groups of dots across many items; measures visual scanning and speeded accuracy.
+\item \textbf{Straight–Curved Capitals (x9)}: Perceptual discrimination speed. Scan capital letters and mark those with only straight strokes (versus any curved strokes), under strict time limits.
+\end{enumerate}
+
+To perform this analysis, we will start by loading the necessary libraries and the dataset: 
+```{r}
+#| output: false
+
+# Load required libraries
+library(lavaan)
+library(psych)
+library(scales)
+
+# Load the Holzinger-Swineford1939 dataset
 data(HolzingerSwineford1939)
 
 # Select the relevant tests
-hs_data <- HolzingerSwineford1939[, c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9")] %>% select(-x1, -x2, -x3)
+hs_data <- as_tibble(HolzingerSwineford1939) %>%
+  select("x4", "x5", "x6", "x7", "x8", "x9")
+```
 
-# Fit 2-factor FA with varimax rotation
-fa_res <- factanal(hs_data, factors = 2, rotation = "varimax", scores = "regression")
+### Assessing Factorability
 
-# Extract factor loadings for biplot
-loadings_matrix <- as.matrix(fa_res$loadings)
-loadings_df <- data.frame(
-  Variable = rownames(loadings_matrix),
-  Factor1 = loadings_matrix[, 1],
-  Factor2 = loadings_matrix[, 2]
+We start our factor analysis process by assessing the factorability for tests x4–x9. First we collect all the required information: 
+```{r}
+# Correlation matrix (pairwise complete observations)
+Sigma <- cor(hs_data)
+
+# Bartlett's test and KMO measure
+n_eff <- nrow(hs_data)
+bart <- cortest.bartlett(Sigma, n = n_eff)
+kmo  <- KMO(Sigma)
+```
+We now show the correlation heatmap:
+```{r}
+#| fig-cap: "Correlation heatmap for tests x4–x9. Notice the strong correlations among the verbal tests (x4, x5, x6) and the speed tests (x7, x8, x9), suggesting that a two-factor model may be appropriate for this data."
+#| fig-width: 5
+#| fig-height: 5
+
+corr_df <- Sigma %>%
+  as_tibble(rownames = "Var1") %>%
+  pivot_longer(-Var1, names_to = "Var2", values_to = "r")
+
+# Preserve matrix order on axes
+corr_df$Var1 <- factor(corr_df$Var1, levels = colnames(Sigma))
+corr_df$Var2 <- factor(corr_df$Var2, levels = colnames(Sigma))
+
+ggplot(corr_df, aes(x = Var2, y = Var1, fill = r)) +
+  geom_tile(color = "black") +
+  geom_text(aes(label = sprintf("%.2f", r)), size = 3) +
+  scale_fill_gradient2(
+    low = c_pal("C blue"), mid = "white", high = c_pal("C red"),
+    midpoint = 0, limits = c(-1, 1)
+  ) +
+  coord_fixed() +
+  labs(
+    title = "Correlation heatmap for tests x4–x9",
+    x = "", y = "", fill = "Correlation"
+  ) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    panel.background = element_blank(),
+    panel.grid = element_blank(),
+    axis.ticks = element_blank()
+  )
+```
+Notice that there is a strong correlation among the verbal tests (x4, x5, x6) and among the speed tests (x7, x8, x9), but not such strong correlation between the two groups. This is a good indication that a two-factor model may be appropriate for this data. We now report the results of Bartlett's test and the KMO measure:
+\begin{align*}
+\mbox{Bartlett's test of sphericity} & = `r bart$p.value` \\
+\mbox{Kaiser-Meyer-Olkin measure} & = `r kmo$MSA`
+\end{align*} 
+As we can see, all tests so far indicate that factor analysis is appropriate for this dataset.
+
+### Deciding the Number of Factors 
+
+We will now use a scree plot and a cumulative variance plot to help us decide on the number of factors to retain. Since we are using the correlation matrix, we will look for singular values greater than 1 (Kaiser criterion) and also look for an "elbow" in the scree plot.
+
+```{r}
+#| fig-cap: "Scree plot and cumulative variance for tests x4–x9. Both plots suggest that a two-factor solution is appropriate for this dataset."
+#| fig-width: 14
+#| fig-height: 7
+
+# Scree analysis from the correlation matrix
+eig <- eigen(Sigma)
+
+scree_df <- tibble(
+  component = seq_along(eig$values),
+  singular_value = eig$values
+) %>%
+  mutate(
+    cumulative = cumsum(singular_value) / sum(singular_value)
+  )
+
+# Scree plot
+scree_plot <- scree_df %>%
+  ggplot(aes(x = component, y = singular_value)) +
+  geom_point(size = 3, color = c_pal("C red")) +
+  geom_line(color = c_pal("C blue")) +
+  geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    color = c_pal("C green"),
+    linewidth = 1.5
+  ) +
+  scale_x_continuous(breaks = scree_df$component) +
+  labs(
+    title = "Scree Plot",
+    x = "Principal Component",
+    y = "Singular Value"
+  ) +
+  theme_krul()
+
+# Cumulative variance plot
+cum_plot <- ggplot(scree_df, aes(x = component, y = cumulative)) +
+  geom_point(size = 3, color = c_pal("C red")) +
+  geom_line(color = c_pal("C blue")) +
+  scale_x_continuous(breaks = scree_df$component) +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1),
+    limits = c(0, 1)
+  ) +
+  labs(
+    title = "Cumulative Variance Plot",
+    x = "Principal Component",
+    y = "Cumulative Variance Explained"
+  ) +
+  theme_krul()
+
+# Combine scree plot and cumulative variance plot
+scree_plot + cum_plot + plot_layout(ncol = 2) +
+  plot_annotation(
+    title = paste(
+      "Scree Plot and Cumulative Variance Plot for the",
+      "Holzinger-Swineford Dataset"
+    ),
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+```
+Notice that both the scree plot and the cumulative variance plot suggest that a two-factor solution is appropriate for analysing the six tests included in this dataset.
+
+### Extracting, Rotating, and Scoring Factors
+
+Even though extracting, rotating and scoring factors are theoretically separate steps, in practice they are often performed together using specialized software or statistical packages. Here we will use the `psych::fa` function to perform all three steps at once. We will fit a 2-factor model using maximum likelihood (ML) estimation, compute factor scores using the regression method, and perform a varimax rotation to simplify the factor structure. 
+
+```{r} 
+# Fit 2-factor FA using ML, regression scores and varimax rotation
+fa_rot <- fa(
+  r = hs_data,
+  nfactors = 2,
+  rotate = "varimax",
+  fm = "ml",
+  scores = "regression",
+  use = "pairwise"
 )
 
-# Scale arrows for plotting
+# Extract factor loadings into a tibble
+loadings <- fa_rot$loadings[, 1:2] %>%
+  unclass() %>%
+  as_tibble(rownames = "Variable") %>%
+  rename(F1 = 2, F2 = 3)
+# Extract factor scores into a tibble
+scores <- fa_rot$scores %>%
+  as_tibble() %>%
+  setNames(c("F1", "F2")) %>%
+  mutate(Obs = row_number())
+```
+
+### Assessing Model Fit 
+
+We now evaluate how well the 2‑factor ML solution reproduces the observed correlations. For this, we perform the tests $\chi$‑squared, RMSEA, CFI, TLI, and RMSR. 
+```{r}
+#| label: model-fit-x4-x9
+#| echo: true
+#| message: true
+#| warning: false
+
+# Extract standard fit indices from psych::fa object (ML)
+chisq <- fa_rot$STATISTIC
+df    <- fa_rot$dof
+pval  <- fa_rot$PVAL
+rmsea <- as.numeric(fa_rot$RMSEA[1])
+tli   <- fa_rot$TLI
+bic   <- fa_rot$BIC
+
+L   <- as.matrix(fa_rot$loadings)
+Phi <- if (!is.null(fa_rot$Phi)) fa_rot$Phi else diag(ncol(L))
+uni <- if (!is.null(fa_rot$uniquenesses)) {
+  fa_rot$uniquenesses
+} else {
+  1 - rowSums((L %*% Phi) * L)
+}
+Rhat <- L %*% Phi %*% t(L) + diag(as.numeric(uni))
+
+# Helper function to extract lower-triangle entries (off-diagonal)
+lt_offdiag <- function(M) M[lower.tri(M, diag = FALSE)]
+
+# Classic RMSR
+res <- Sigma - Rhat
+rmsr <- sqrt(mean(lt_offdiag(res)^2, na.rm = TRUE))
+
+# Standardized RMSR (SRMR)
+is_cov <- any(abs(diag(Sigma) - 1) > 1e-8)
+S_obs_cor  <- if (is_cov) stats::cov2cor(Sigma) else Sigma
+S_hat_cor  <- if (is_cov) stats::cov2cor(Rhat)  else Rhat
+
+res_cor <- S_obs_cor - S_hat_cor
+
+# SRMR = sqrt( sum_{i<j}(res_ij^2) / sum_{i<j}(obs_ij^2) )
+num <- sum(lt_offdiag(res_cor)^2, na.rm = TRUE)
+den <- sum(lt_offdiag(S_obs_cor)^2, na.rm = TRUE)
+srmr <- sqrt(num / den)
+```
+The results of these tests are:
+\begin{align*} 
+\mbox{$\chi^{2}$ Test} & = `r pval` \\ 
+\mbox{RMSEA} & = `r rmsea` \\ 
+\mbox{TLI} & = `r tli` \\ 
+\mbox{RMSR} & = `r srmr` 
+\end{align*}
+All tests indicate that the 2‑factor model fits the data well.
+
+### Visualizing the Model
+
+Finally, we will visualize the model using a biplot. We will also rotate the factors manually to illustrate what could happen if we did not choose an appropriate rotation method. 
+
+```{r}
+#| fig-cap: "Biplots of the 2-factor solution for tests x4–x9. Left: Varimax rotation. Right: Manual 45° rotation. Notice how the varimax rotation leads to a simpler and more interpretable structure, with verbal tests (x4, x5, x6) loading highly on Factor 1 and speed tests (x7, x8, x9) loading highly on Factor 2."
+#| fig-width: 14 
+#| fig-height: 7
+
+# Scaling factor for arrows (keep consistent across plots)
 arrow_scale <- 3
-loadings_df$Factor1 <- loadings_df$Factor1 * arrow_scale
-loadings_df$Factor2 <- loadings_df$Factor2 * arrow_scale
 
-#  Extract factor scores for observations
-scores_df <- as_tibble(fa_res$scores)
-
-# Create biplot
-ggplot() +
+# Base (unrotated) biplot
+p_base <- ggplot() +
   geom_point(
-    data = scores_df,
-    aes(x = Factor1, y = Factor2),
-    color = c_pal("C red"),
+    data = scores,
+    aes(x = F1, y = F2),
     alpha = 1,
+    color = c_pal("C red"),
     size = 0.5
   ) +
   geom_segment(
-    data = loadings_df,
-    aes(x = 0, y = 0, xend = Factor1, yend = Factor2),
-    arrow = arrow(length = unit(0.3, "cm")),
+    data = loadings,
+    aes(x = 0, y = 0, xend = F1 * arrow_scale, yend = F2 * arrow_scale),
+    arrow = arrow(length = unit(0.2, "cm")),
     color = c_pal("C blue"),
-    linewidth = 1
+    linewidth = 1.2
   ) +
-  geom_text_repel(
-    data = loadings_df,
-    aes(x = Factor1, y = Factor2, label = Variable),
-    color = "black", size = 4
+  geom_text(
+    data = loadings,
+    aes(x = F1 * arrow_scale, y = F2 * arrow_scale, label = Variable),
+    color = "black",
+    hjust = -0.5
   ) +
   labs(
-    x = "Factor 1", y = "Factor 2",
-    title = "Factor Analysis Biplot (HolzingerSwineford1939)"
+    title = "Varimax Rotation",
+    x = "Factor 1",
+    y = "Factor 2"
   ) +
   theme_krul()
+
+# 45° rotation of scores and loadings
+theta  <- pi / 4
+cos_t  <- cos(theta)
+sin_t  <- sin(theta)
+
+scores_rot <- scores %>%
+  mutate(
+    F1_rot = F1 * cos_t - F2 * sin_t,
+    F2_rot = F1 * sin_t + F2 * cos_t
+  )
+
+loadings_rot <- loadings %>%
+  mutate(
+    F1_rot = F1 * cos_t - F2 * sin_t,
+    F2_rot = F1 * sin_t + F2 * cos_t
+  )
+
+# Rotated biplot
+p_rot <- ggplot() +
+  geom_point(
+    data = scores_rot,
+    aes(x = F1_rot, y = F2_rot),
+    alpha = 1,
+    color = c_pal("C red"),
+    size = 0.5
+  ) +
+  geom_segment(
+    data = loadings_rot,
+    aes(x = 0, y = 0, xend = F1_rot * arrow_scale, yend = F2_rot * arrow_scale),
+    arrow = arrow(length = unit(0.2, "cm")),
+    color = c_pal("C blue"),
+    linewidth = 1.2
+  ) +
+  geom_text(
+    data = loadings_rot,
+    aes(x = F1_rot * arrow_scale, y = F2_rot * arrow_scale, label = Variable),
+    color = "black",
+    hjust = -0.5
+  ) +
+  labs(
+    title = "Manual Rotation",
+    x = "Rotated Factor 1",
+    y = "Rotated Factor 2"
+  ) +
+  theme_krul()
+
+# Optional: share axis limits for fair comparison
+xr <- range(
+  c(
+    scores$F1,
+    scores_rot$F1_rot,
+    loadings$F1 * arrow_scale,
+    loadings_rot$F1_rot * arrow_scale
+  ),
+  na.rm = TRUE
+)
+
+yr <- range(
+  c(
+    scores$F2,
+    scores_rot$F2_rot,
+    loadings$F2 * arrow_scale,
+    loadings_rot$F2_rot * arrow_scale
+  ),
+  na.rm = TRUE
+)
+p_base <- p_base + coord_equal(xlim = xr, ylim = yr)
+p_rot  <- p_rot  + coord_equal(xlim = xr, ylim = yr)
+
+# Side-by-side using patchwork
+p_base + p_rot + plot_layout(ncol = 2) + 
+  plot_annotation(
+    title = paste(
+      "Biplots of the factor analysis model",
+      "using Varimax and Manual Rotations"
+    ),
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
 ```

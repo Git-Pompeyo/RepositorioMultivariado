@@ -17,7 +17,7 @@ library(mvtnorm) # for multivariate normal distribution
 library(MVN) # for multivariate normality tests
 library(ellipse) # for generating covariance ellipses
 library(ggrepel) # for better text annotations in ggplot2
-library(lavaan) # for structural equation modeling
+
 
 
 options(scipen = 999)
