@@ -1,8 +1,8 @@
-# Introduction to Multivariate Analysis 
+# Introducción al análisis multivariante 
 
 In this chapter we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector. These concepts are fundamental in understanding the relationships between multiple variables in a given dataset.
 
-## The Mean Vector and the Covariance Matrix
+## El vector de medias y la matriz de covarianzas
 
 \begin{definition}
 Let $\Pi$ be a population and let 
@@ -105,7 +105,7 @@ $$
 $$
 \end{example}
 
-## The Mahalanobis Distance 
+## La distancia de Mahalanobis 
 
 \begin{definition}
 Assume that we have a population $\Pi$ with a random vector $X$ that has mean vector $\mu$ and covariance matrix $\Sigma$. If $\Sigma$ is invertible, then the \emph{Mahalanobis distance} between two points $x$ and $y$ in $\mathbb{R}^p$ is defined as:
@@ -148,7 +148,7 @@ sample_data_tbl <- tibble(
 ```
 The associated scatter plot of the data is shown below:
 ```{r}
-#| fig-cap: "Scatter plot of the sample data. Notice that the X and Y variables are highly correlated."
+#| fig-cap: "Diagrama de dispersión de los datos de muestra. Nótese la alta correlación entre las variables X e Y."
 #| fig-width:  5
 #| fig-height: 5
 sample_data_plot <- sample_data_tbl %>%
@@ -159,7 +159,7 @@ sample_data_plot <- sample_data_tbl %>%
     alpha = 1
   ) +
   labs(
-    title = "Sample Data",
+    title = "Datos de muestra",
     x = "X",
     y = "Y"
   ) +
@@ -170,7 +170,7 @@ sample_data_plot
 ```
 We now add two extra points to this plot: 
 ```{r}
-#| fig-cap: "Scatter Plot with extra sample points. Notice that one of these points is clearly an outlier."
+#| fig-cap: "Dispersión con puntos adicionales. Nótese que uno de ellos es claramente atípico."
 #| fig-width:  5
 #| fig-height: 5
 extra_points_tbl <- tibble(
@@ -200,7 +200,7 @@ sample_mean_tbl <- tibble(
 ```
 But now if we use the Euclidean distance, we obtain that it is actually the outlier point that is closer to the sample mean vector:
 ```{r}
-#| fig-cap: "Scatter Plot with sample mean vector and a circle representing points that are at a constant Euclidean distance from the center of our data."
+#| fig-cap: "Dispersión con vector de media muestral y un círculo de distancia euclidiana constante al centro de los datos."
 #| fig-width:  5
 #| fig-height: 5
 euclidean_sample_data_plot <- extra_sample_data_plot +
@@ -221,7 +221,7 @@ euclidean_sample_data_plot
 ```
 On the other hand, if we compute the Mahalanobis distance, we obtain that the outlier point is actually further away from the sample mean vector:
 ```{r}
-#| fig-cap: "Scatter Plot with sample mean vector and a ellipse representing points that are at a constant Mahalanobis distance from the center of our data."
+#| fig-cap: "Dispersión con vector de media muestral y una elipse de distancia de Mahalanobis constante al centro de los datos."
 #| fig-width:  5
 #| fig-height: 5
 annotated_sample_data_plot <- extra_sample_data_plot +
@@ -241,7 +241,7 @@ annotated_sample_data_plot <- extra_sample_data_plot +
 annotated_sample_data_plot
 ```
 
-## Scaling and Standardization 
+## Escalamiento y estandarización 
 
 Now assume that we have a random vector $X$ with mean vector $\mu$ and covariance matrix $\Sigma$. We can define a new random vector $Y$ as follows: 
 $$
@@ -257,9 +257,9 @@ $$
 $$
 As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$. This process is known as a \emph{standardization} of the random vector $X$.
 
-## Activity: The Geometry of Multivariate Data 
+## Actividad: La geometría de los datos multivariantes 
 
-\textbf{Part A: Theoretical Exercises}
+\textbf{Parte A: Ejercicios teóricos}
 
 \begin{enumerate}
     \item Prove that the Mahalanobis distance reduces to the Euclidean distance if the covariance matrix is the identity.
@@ -268,7 +268,7 @@ As we will show later, it is always possible to find a matrix $A$ and a vector $
     \item Assume that $X_1$ and $X_2$ are two independent random variables following the standard normal distribution. Show that $d_M(X, 0)^{2}$ follows a chi-square distribution with 2 degrees of freedom, where $d_M(X, 0)$ is the Mahalanobis distance from the origin.
 \end{enumerate}
 
-\textbf{Part B: Practical Exercises}
+\textbf{Parte B: Ejercicios prácticos}
 
 \begin{enumerate}
     \item Generate a 2D dataset of 50 points (two correlated variables).
@@ -284,7 +284,7 @@ As we will show later, it is always possible to find a matrix $A$ and a vector $
     \item Compare Euclidean distances from the mean with Mahalanobis distances.
 \end{enumerate}
 
-\textbf{Part C: Advanced Exercises}
+\textbf{Parte C: Ejercicios avanzados}
 
 \begin{enumerate}
     \item Simulate 5 points in 3 dimensions with one variable as a linear combination of the others.

@@ -1,8 +1,8 @@
-# Normality Testing
+# Pruebas de normalidad
 
 Although QQ plots are a good way to visually assess the normality of a dataset, they can be subjective and imprecise. Therefore, it becomes necessary to develop more objective and precise statistical tests to determine whether the data we are analyzing follows a normal distribution. In this chapter, we will explore some commonly used statistical tests for normality and discuss some transformations that can be performed on our data to make it more normal-like. 
 
-## Normality Tests 
+## Pruebas de normalidad 
 
 There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
 
@@ -53,13 +53,13 @@ normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
   ) %>%
   select(test_factor, p_value)
 ```
-The results of the normality tests are as follows: 
+Los resultados de las pruebas de normalidad son los siguientes: 
 ```{r}
 normality_test_gamma_sample_tbl
 ```
 As we can see, none of these tests was particularly successful, which is not surprising given that the gamma distribution is not normal. 
 
-## Transformations 
+## Transformaciones 
 To make our data more normal-like, we can apply various transformations to any given sample. Some of the most common transformations include:
 \begin{enumerate}
 \item \emph{Box-Cox transformation}: This is a family of power transformations that can be applied only to data that is always positive. It is given by the formula:
@@ -87,7 +87,7 @@ where $\lambda$ is some parameter.
 We will now apply the Box-Cox transformation to the gamma sample data with parameters $\lambda = 0$, $0.25$, $0.5$, $0.75$, and $1$:
 
 ```{r}
-#| fig-cap: "Comparison of different Box-Cox transformations applied to the Gamma distribution sample, with parameter lambda = 0, 0.25, 0.5, 0.75, and 1."
+#| fig-cap: "Comparación de distintas transformaciones de Box–Cox aplicadas a la muestra Gamma, con parámetro lambda = 0, 0.25, 0.5, 0.75 y 1."
 #| fig-width: 12
 #| fig-height: 14
 
@@ -147,9 +147,9 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plots",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráficos QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -167,16 +167,16 @@ box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histograms",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histogramas",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
 box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Comparison of Box-Cox Transformations with Different Lambda Values",
+    title = "Comparación de transformaciones Box–Cox con distintos valores de lambda",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -188,11 +188,11 @@ box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
 box_cox_gamma_plot
 ```
 
-## Normality Score Optimization
+## Optimización de normalidad (Box–Cox)
 
 As we saw in the previous section, the Box-Cox transformation can be used to make our data more normal-like. However, the choice of the parameter $\lambda$ is crucial for the success of the transformation. We wish to find the optimal value of $\lambda$ that maximizes the log-likelihood of the transformed data. This can be done using the `powerTransform` function from the `car` package, which performs a Box-Cox transformation and estimates the optimal value of $\lambda$. The following figure shows the log-likelihood profile for the Box-Cox transformation applied to the gamma sample data:
 ```{r}
-#| fig-cap: "Log-likelihood profile for the Box-Cox transformation applied to the Gamma distribution sample. The dashed line indicates the optimal value of lambda."
+#| fig-cap: "Perfil de log-verosimilitud para la transformación de Box–Cox aplicada a la muestra Gamma. La línea discontinua indica el valor óptimo de lambda."
 #| fig-width: 14
 #| fig-height: 6
 
@@ -212,9 +212,9 @@ ggplot(df, aes(x = lambda, y = loglik)) +
   geom_line(color = c_pal("C blue"), linewidth = 1) +
   geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
   labs(
-    title = "Box–Cox Transformation",
+    title = "Transformación de Box–Cox",
     x = expression(lambda),
-    y = "Log-likelihood"
+    y = "Log-verosimilitud"
   ) +
   theme_krul()
 ```
@@ -248,9 +248,9 @@ optimal_gamma_sample_tbl %>%
   ) %>%
   select(test_factor, p_value)
 ```
-As we can see, the Box-Cox transformation with the optimal value of $\lambda$ significantly improves the normality of the data, as all the normality tests now yield high $p$-values. We now show the QQ plot and histogram of the transformed data:
+Como se observa, la transformación de Box–Cox con el valor óptimo de $\lambda$ mejora significativamente la normalidad de los datos, pues todas las pruebas arrojan valores $p$ altos. A continuación se presentan el gráfico QQ y el histograma de los datos transformados:
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation. Notice how both plots show a much better fit to the normal distribution compared to the original gamma sample."
+#| fig-cap: "Gráfico QQ e histograma de la transformación Gamma óptima. Nótese el mejor ajuste a la normalidad en comparación con la muestra Gamma original."
 #| fig-width: 10
 #| fig-height: 5
 optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
@@ -264,9 +264,9 @@ optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plot",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráfico QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -279,16 +279,16 @@ optimal_gamma_histogram <- optimal_gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histogram",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histograma",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
 optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Optimal Gamma Distribution Transformation",
+    title = "Transformación Gamma óptima",
     theme = theme(
       plot.title = element_text(
         size = 24,

@@ -1,4 +1,4 @@
-# Factor Analysis: Theoretical Models
+# Análisis factorial: modelos teóricos
 
 \emph{Factor Analysis} is a statistical technique that is widely used in applied fields to identify hidden patterns or latent structures behind large sets of observed variables. The goal is to reduce complexity by grouping related variables into a smaller number of underlying \emph{factors}, which are easier to interpret.
 
@@ -14,7 +14,7 @@ Some areas where factor analysis is commonly applied include:
 In practice, Factor Analysis is used when researchers suspect that a few unobserved dimensions are responsible for the correlations among many observed variables. It is especially useful for building measurement scales, data reduction, and gaining insights into the structure of complex datasets.
 
 
-## Factor Analysis Setting
+## Planteamiento del análisis factorial
 
 The theoretical context for factor analysis is a relation of the form 
 $$
@@ -48,7 +48,7 @@ $$
 X \sim \N(\mu, LL^{T} + \Psi)
 $$
 
-## Variance Decomposition 
+## Descomposición de varianza 
 The variance decomposition $\Var[X] = LL^{T} + \Psi$ shows that the total variance of the observed variables $X$ can be decomposed into two components:
 \begin{itemize}
     \item \textbf{Common variance ($LL^{T}$):} This part of the variance is explained by the common factors $F$. It captures the shared variability among the observed variables that can be attributed to the underlying latent structure.
@@ -60,7 +60,7 @@ $$
 $$
 where $h_{i}^{2} = \sum_{j=1}^{m} L_{ij}^{2}$ is called the \emph{communality} of the variable $X_{i}$, representing the portion of its variance explained by the common factors, and $\sigma_{i}^{2}$ is the unique variance specific to $X_{i}$.
 
-## Factor Score Estimation 
+## Estimación de puntuaciones factoriales 
 
 Assume that we have a model 
 $$
@@ -114,7 +114,7 @@ $$
 
 \end{remark}
 
-## Rotation of Factors 
+## Rotación de factores 
 
 An important aspect of factor analysis is that the factors are not uniquely defined. If $F$ is a vector of factors, then any orthogonal transformation $F^{*} = QF$, where $Q$ is an orthogonal matrix (i.e., $Q^{T}Q = I$), will yield a new set of factors that explain the same variance in the observed variables. In particular, 
 $$

@@ -1,4 +1,4 @@
-# The Standardized Moments
+# Los momentos estandarizados
 
 As it is well known, any normal distribution is completely determined by its mean and standard deviation. However, many real-world datasets do not follow a normal distribution. In this chapter, we will explore some other distributions and show how the concepts of skewness and kurtosis can help us understand its shape. We will also introduce QQ plots, which are useful graphical tools for comparing the distribution of a dataset against a theoretical distribution, which is usually taken to be normal. But before starting, let's load the necessary libraries and set some options. 
 
@@ -23,7 +23,7 @@ library(ggrepel) # for better text annotations in ggplot2
 options(scipen = 999)
 ```
 
-## Skewness 
+## Asimetría 
 
 \begin{definition}
 The \emph{skewness} of a random variable $X$ is defined as the third standardized moment, given by
@@ -64,7 +64,7 @@ This means that the skewness is always positive, and it approaches zero as $\alp
 We will now show how to plot the PDF of the Gamma distribution for $\alpha = 2$ and $\beta = 1$, highlighting the mean and median.
 
 ```{r}
-#| fig-cap: "PDF of the gamma distribution with mean and median highlighted."
+#| fig-cap: "Función de densidad (PDF) de la distribución gamma con media y mediana destacadas."
 #| fig-width: 8
 #| fig-height: 5
 
@@ -109,7 +109,7 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
     "text",
     x = gamma_mean,
     y = 0.5,
-    label = "Mean",
+    label = "Media",
     color = c_palette["C red"],
     hjust = -0.1
   ) +
@@ -117,24 +117,24 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
     "text",
     x = gamma_median,
     y = 0.5,
-    label = "Median",
+    label = "Mediana",
     color = c_palette["C green"],
     hjust = 1.1
   ) +
   coord_cartesian(ylim = c(0, 0.6)) +
   labs(
     title = paste(
-      "Gamma Distribution PDF (shape =", alpha, ", rate =", beta, ")"
+      "PDF de la distribución Gamma (shape =", alpha, ", rate =", beta, ")"
     ),
     x = "X",
-    y = "Density"
+    y = "Densidad"
   ) +
   theme_krul()
 
 gamma_distribution_plot
 ```
 
-## Kurtosis 
+## Curtosis 
 
 \begin{definition}
 The \emph{kurtosis} of a random variable $X$ is defined as the fourth standardized moment, given by
@@ -167,7 +167,7 @@ This means that the Laplace distribution has heavier tails than a normal distrib
 We will now show how to plot the PDF of the Laplace distribution with mean zero and variance one.
 
 ```{r}
-#| fig-cap: "PDF of the Laplace distribution with mean zero and variance one."
+#| fig-cap: "PDF de la distribución de Laplace con media cero y varianza uno."
 #| fig-width: 8
 #| fig-height: 5
 
@@ -194,14 +194,14 @@ laplace_distribution_tbl %>%
   ggplot(aes(x = x_data, y = density)) +
   geom_line(color = c_palette["C blue"], linewidth = 1) +
   labs(
-    title = "Laplace Distribution PDF (mean = 0, var = 1)",
+    title = "PDF de la distribución de Laplace (media = 0, var = 1)",
     x = "x",
-    y = "Density"
+    y = "Densidad"
   ) +
   theme_krul()
 ```
 
-## QQ Plots
+## Gráficos QQ
 QQ plots, or quantile-quantile plots, are graphical tools used to compare the distribution of a dataset against a theoretical distribution, such as the normal distribution. They are particularly useful for assessing the normality of the data.
 
 To construct a QQ plot, you should follow these steps:
@@ -262,7 +262,7 @@ laplace_sample_tbl <- tibble(
 
 We will now construct the corresponding QQ plots and histograms. We will start with the Gamma distribution samples:
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Gamma distribution samples."
+#| fig-cap: "Gráfico QQ e histograma de las muestras de la distribución Gamma."
 #| fig-width: 10
 #| fig-height: 5
 gamma_qq_plot <- gamma_sample_tbl %>%
@@ -276,9 +276,9 @@ gamma_qq_plot <- gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plot",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráfico QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -291,16 +291,16 @@ gamma_histogram <- gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histogram",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histograma",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
 gamma_plot <- gamma_qq_plot + gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Gamma Distribution: QQ Plot and Histogram",
+    title = "Distribución Gamma: gráfico QQ e histograma",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -314,7 +314,7 @@ gamma_plot
 
 We will now construct the QQ plot and histogram for the Laplace distribution samples:
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Laplace distribution samples."
+#| fig-cap: "Gráfico QQ e histograma de las muestras de la distribución de Laplace."
 #| fig-width: 10
 #| fig-height: 5
 
@@ -329,9 +329,9 @@ laplace_qq_plot <- laplace_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plot",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráfico QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -344,15 +344,15 @@ laplace_histogram <- laplace_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histogram",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histograma",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 laplace_plot <- laplace_qq_plot + laplace_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Laplace Distribution: QQ Plot and Histogram",
+    title = "Distribución de Laplace: gráfico QQ e histograma",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -363,7 +363,7 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
 laplace_plot
 ```
 
-## Sample Skewness and Kurtosis 
+## Asimetría y curtosis muestrales 
 
 So far we have defined skewness and kurtosis for random variables. However, in practice, we often work with samples rather than entire populations. Therefore, we need to define sample skewness and sample kurtosis.
 
@@ -409,11 +409,11 @@ laplace_sample_tbl %>%
   glimpse()
 ```
 
-## Scaling and Standardization 
+## Escalamiento y estandarización 
 
 In many situations, it could happen that the units we are using to measure different variables in our data are not compatible. For example, we could have a dataset that contains the height of individuals in centimeters and their weight in kilograms. In such cases, it is often useful to \emph{scale} the variables so that they are comparable. In this section, we will discuss the most common methods for scaling and standardizing random variables and samples.
 
-### Scaling Random Variables
+### Escalamiento de variables aleatorias
 
 \begin{definition} 
 An \emph{affine transformation} of a random variable $X$ is a transformation of the form 
@@ -458,7 +458,7 @@ $$
 $$
 Using this information, we can generate the plot of standadized version of the Gamma distribution and compare it with the original one.
 ```{r}
-#| fig-cap: "Comparison of the probability density function (PDF) of the original and standardized Gamma distribution."
+#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
 #| fig-width: 8
 #| fig-height: 5
 
@@ -498,7 +498,7 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
     "text",
     x = z_gamma_mean,
     y = 0.55,
-    label = "Mean",
+    label = "Media",
     color = c_palette["C red"],
     hjust = -0.1
   ) +
@@ -506,17 +506,17 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
     "text",
     x = z_gamma_median,
     y = 0.55,
-    label = "Median",
+    label = "Mediana",
     color = c_palette["C green"],
     hjust = 1.1
   ) +
   coord_cartesian(ylim = c(0, 0.6)) +
   labs(
     title = paste(
-      "Standardized"
+      "Estandarizada"
     ),
     x = "X",
-    y = "Density"
+    y = "Densidad"
   ) +
   theme_krul()
 
@@ -528,7 +528,7 @@ gamma_distribution_plot <- gamma_distribution_plot +
 combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Gamma Distribution: Original and Standardized",
+    title = "Distribución Gamma: original y estandarizada",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -541,7 +541,7 @@ combined_gamma_plot
 ```
 
 
-### Scaling Samples
+### Escalamiento de muestras
 
 For a given a sample, it is not always known what the underlying distribution is. In particular, we may not know what the mean and the standard deviation of the underlying population are. However, we can still try to scale our data but we should keep in mind that in this case there is more than one scaling method. The most common are:
 
@@ -577,7 +577,7 @@ As we mentioned earlier, scaling does not make a non-normal distribution normal.
 
 As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
 ```{r}
-#| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample. Notice that the QQPlots are just rescaled versions of the original QQ plot, and therefore they all have the same shape."
+#| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a la muestra Gamma. Note que los QQ-plots son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma."
 #| fig-width: 12
 #| fig-height: 14
 
@@ -591,7 +591,7 @@ scale_lookup_tbl <- tibble(
   ),
   label = c(
     "Original Sample",
-    "Standardized",
+    "Estandarizada",
     "Min-Max Scaled",
     "Robust Scaled",
     "Normalized"
@@ -634,9 +634,9 @@ scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plots",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráficos QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -654,16 +654,16 @@ scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histograms",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histogramas",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
 scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Comparison of Scaling Methods Applied to the Gamma Sample",
+    title = "Comparación de métodos de escalamiento aplicados a la muestra Gamma",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -675,7 +675,7 @@ scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
 scaled_gamma_plot
 ```
 
-## Activity: Visualizing the Non-Normality of Samples
+## Actividad: Visualizando la no normalidad de muestras
 
 For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Kurtosis. After that, construct and compare their associated QQ plots and histograms.
 

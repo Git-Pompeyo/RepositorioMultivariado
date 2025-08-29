@@ -1,8 +1,8 @@
-# Principal Component Analysis
+# Análisis de componentes principales
 
 Principal Component Analysis (PCA) is a powerful technique used to reduce the dimensionality of a dataset while preserving as much information (measured by variance) as possible. It transforms the original variables into a new set of uncorrelated variables called principal components, which are ordered by the amount of variance they explain.
 
-## Understanding Total Variance
+## Entendiendo la varianza total
 
 Let $\Sigma$ be the covariance matrix of a given dataset. The \emph{total variance} of the data is given by the trace of the covariance matrix: 
 $$
@@ -28,7 +28,7 @@ Here $X$ is our original coordinate vector, $PC$ is the coordinate vector corres
 
 To illustrate these ideas, we will consider again the dataset shown in the following figure:
 ```{r}
-#| fig-cap: "Sample data with two highly correlated variables."
+#| fig-cap: "Datos de muestra con dos variables altamente correlacionadas."
 #| fig-width: 5
 #| fig-height: 5
 sample_data_plot
@@ -92,7 +92,7 @@ PC_2 & = `r vectors[1,2]` (X - `r sample_mean_vector[1]`) + `r vectors[2,2]` (Y 
 Using these formulas, we can find the projection of our original data into the first and second principal components. The results are shown in the following figure:
 
 ```{r}
-#| fig-cap: "Projections onto the Principal Component Directions. Notice that much more information is lost when projecting onto the second principal component."
+#| fig-cap: "Proyecciones sobre las direcciones de los componentes principales. Se pierde mucha más información al proyectar sobre el segundo componente."
 #| fig-width: 16
 #| fig-height: 8
 sample_data_matrix <- as.matrix(sample_data_tbl)
@@ -139,7 +139,7 @@ compare_plot1 <- ggplot(compare_proj1_tbl) +
     alpha = 1
   ) +
   labs(
-    title = "First Principal Component Projection",
+    title = "Proyección en el primer componente principal",
     x = "X",
     y = "Y"
   ) +
@@ -161,7 +161,7 @@ compare_plot2 <- ggplot(compare_proj2_tbl) +
     alpha = 1
   ) +
   labs(
-    title = "Second Principal Component Projection",
+    title = "Proyección en el segundo componente principal",
     x = "X",
     y = "Y"
   ) +
@@ -172,7 +172,7 @@ compare_plot2 <- ggplot(compare_proj2_tbl) +
 compare_plot1 + compare_plot2 +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Principal Component Projections",
+    title = "Proyecciones de componentes principales",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -182,7 +182,7 @@ compare_plot1 + compare_plot2 +
   )
 ```
 
-## Cumulative Variance and Scree Plots
+## Varianza acumulada y gráficos scree
 
 As we mentioned in the introduction to this chapter, PCA is often used for dimensionality reduction. This means that we want to reduce the number of variables in our dataset while retaining as much information as possible. To decide how many principal components to keep, we can look at the amount of variance explained by each component. A common way to visualize this information is through the use of a \emph{scree plot}. The scree plot associated to a given dataset displays the singular values on the $y$-axis and the component number on the $x$-axis. It helps to identify the point where the explained variance starts to level off, often referred to as the "elbow". Another useful plot is the \emph{cumulative variance plot}, which shows the cumulative proportion of variance explained by the principal components. Notice that the proportion of variance explained by the $k$-th principal component is given by: 
 $$ 
@@ -315,9 +315,9 @@ scree_plot <- scree_data %>%
   c_scale_color("C red", "C blue", "C green") +
   scale_x_continuous(breaks = 1:4) +
   labs(
-    title = "Scree Plot of Iris Dataset",
-    x = "Principal Component",
-    y = "Singular Value"
+    title = "Gráfico scree del conjunto Iris",
+    x = "Componente principal",
+    y = "Valor singular"
   ) +
   theme_krul() +
   theme(legend.position = "top")
@@ -336,9 +336,9 @@ cumulative_variance_plot <- cumulative_variance_data %>%
   scale_x_continuous(breaks = 1:4) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs(
-    title = "Cumulative Variance Explained by Principal Components",
-    x = "Principal Component",
-    y = "Cumulative Variance Explained"
+    title = "Varianza acumulada explicada por los componentes principales",
+    x = "Componente principal",
+    y = "Varianza acumulada explicada"
   ) +
   theme_krul() +
   theme(legend.position = "top")
@@ -347,7 +347,7 @@ cumulative_variance_plot <- cumulative_variance_data %>%
 scree_plot + cumulative_variance_plot +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Scree Plot and Cumulative Variance Plot for the Iris Dataset",
+    title = "Gráfico scree y varianza acumulada para el conjunto Iris",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -357,7 +357,7 @@ scree_plot + cumulative_variance_plot +
   )
 ```
 
-## Loadings and Biplots 
+## Cargas (loadings) y biplots 
 
 Recall that equation (\ref{eq:pc_scores}) gives the relation between the original variables and the principal component scores. Using this equation, we can quickly compute these scores for each observation in our dataset. The coefficients appearing in this equation are known as the \emph{loadings} of the principal components, and they indicate how much each original variable contributes to each principal component. A\emph{biplot} is a graphical representation that displays both the principal component scores of the observations and the loadings of the variables on the same plot. This allows us to visualize how the original variables contribute to the principal components and how the observations are distributed in the space defined by these components.
 
@@ -392,7 +392,7 @@ To illustrate this concept, we will create biplots for the first two principal c
 \end{align*}
 We can then compute the principal component scores for each observation by simply multiplying the values of our original variables by these matrices. The resulting biplots for each species are shown in the following figure:
 ```{r}
-#| fig-cap: "Loadings and scores for the first two principal components of the Iris dataset by species."
+#| fig-cap: "Cargas y puntuaciones para los dos primeros componentes principales del conjunto Iris por especie."
 #| fig-width: 16
 #| fig-height: 8
 # Function to prepare biplot data from precomputed singular vectors
@@ -465,7 +465,7 @@ create_biplot <- function(scores_tbl, loadings_tbl, species_name) {
       size = 5
     ) +
     labs(
-      title = paste("Biplot for", species_name),
+      title = paste("Biplot para", species_name),
       x = "PC1",
       y = "PC2"
     ) +
@@ -495,14 +495,14 @@ biplot_virginica <- create_biplot(
 biplot_setosa + biplot_versicolor + biplot_virginica +
   plot_layout(ncol = 3) +
   plot_annotation(
-    title = "Biplots of Iris Species (PC1 vs PC2)",
+    title = "Biplots de especies de Iris (PC1 vs PC2)",
     theme = theme(
       plot.title = element_text(size = 24, face = "bold")
     )
   )
 ```
 
-## Summary of the PCA Process
+## Resumen del proceso de PCA
 
 In general, when performing PCA, it is recommended to follow these steps:
 

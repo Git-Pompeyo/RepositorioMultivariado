@@ -17,11 +17,11 @@ format:
 
 \vspace{2cm}
 
-\LARGE \textbf{MA2003B Application of Multivariate Methods \\ in Data Science} \par
+\LARGE \textbf{MA2003B Aplicación de Métodos Multivariados \\ en Ciencia de Datos} \par
 \vspace{1cm}
 
 
-\Large \textbf{Module 1: Interdependence Relationships} \par
+\Large \textbf{Módulo 1: Relaciones de Interdependencia} \par
 
 \vspace{7cm}
 
@@ -29,9 +29,9 @@ format:
 \large 
 
 \begin{tabular}{rl}
-\textbf{Instructor:} & Raul Gomez \\
-\textbf{Email:} & \url{rgomez@tec.mx} \\
-\textbf{Office:} & A4-123A \\
+\textbf{Profesor:} & Raul Gomez \\
+\textbf{Correo:} & \url{rgomez@tec.mx} \\
+\textbf{Oficina:} & A4-123A \\
 \end{tabular}
 \par
 
@@ -57,19 +57,19 @@ format:
 \pagenumbering{arabic}
 
 
-\part{Univariate Normality Testing}
+\part{Pruebas de Normalidad Univariada}
 
 {{< include _1_an_introduction_to_the_tidyverse.qmd >}}
 {{< include _2_the_standardized_moments.qmd >}}
 {{< include _3_normality_testing.qmd >}}
 
-\part{Principal Component Analysis}
+\part{Análisis de Componentes Principales}
 
 {{< include _4_introduction_to_multivariate_analysis.qmd >}}
 {{< include _5_normal_multivariate_distribution.qmd >}}
 {{< include _6_principal_component_analysis.qmd >}}
 
-\part{Factor Analysis} 
+\part{Análisis Factorial} 
 
 {{< include _7_factor_analysis_theoretical_models.qmd >}}
 {{< include _8_factor_analysis_practical_methods.qmd >}}

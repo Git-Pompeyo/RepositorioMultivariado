@@ -1,6 +1,6 @@
-# Normal Multivariate Distribution
+# Distribución normal multivariante
 
-## Definition and Basic Properties
+## Definición y propiedades básicas
 
 \begin{definition}
 Let $\mu$ be a (row) vector and let $\Sigma$ be a symmetric positive definite matrix. We say that a random (row) vector $X$ has \emph{normal multivariate distribution} with mean $\mu$ and covariance matrix $\Sigma$, in symbols $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, if its probability density is given by
@@ -44,7 +44,7 @@ with mean vector $0$ and covariance matrix $\Sigma$.
 Even though the Central Limit Theorem singles out the normal multivariate distribution as a particularly important distribution, it is not the only relevant distribution in multivariate statistics. Actually, most real-world data does not follow a normal distribution, and many statistical methods are designed to handle non-normal data. Furthermore, important statistical methods, like linear regression, principal component analysis and clustering do not yield good results when applied to a normal multivariate distribution.
 \end{remark}
 
-## Normal Multivariate Contours
+## Contornos de la normal multivariante
 
 Notice that the probability density function of the normal multivariate distribution is a Gaussian function in $p$ dimensions. This means that the contours of the distribution are ellipsoids centered at the mean $\mu$ and whose shape is controlled by $\Sigma$. The probability distribution of these contours is controlled by the $\chi^2$ distribution in the following sense: let $0 \leq \varpi \leq 1$ be a probability level, and let $c$ be such that 
 $$
@@ -59,7 +59,7 @@ In the following figure, we show the contours of the bivariate normal distributi
 
 
 ```{r}
-#| fig-cap: "Bivariate Normal Distribution with Different Covariance Matrices"
+#| fig-cap: "Distribución normal bivariante con distintas matrices de covarianzas"
 #| fig-width: 12
 #| fig-height: 12
 
@@ -105,7 +105,7 @@ plot_bivariate_normal <- function(mu, Sigma, n_samples = 1000,
     labs(
       title = "",
       x = expression(X[1]), y = expression(X[2]),
-      color = "Density"
+      color = "Densidad"
     ) +
     theme_krul()
 
@@ -121,7 +121,7 @@ normal_plot <- (normal_plot_1 + normal_plot_2) /
   (normal_plot_3 + normal_plot_4) +
   plot_layout(widths = c(1, 1), heights = c(1, 1)) +
   plot_annotation(
-    title = "Contours of the Bivariate Normal ",
+    title = "Contornos de la normal bivariante ",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -133,7 +133,7 @@ normal_plot <- (normal_plot_1 + normal_plot_2) /
 normal_plot
 ```
 
-## Standardization of the Normal Multivariate Distribution 
+## Estandarización de la normal multivariante 
 
 Just like in the univariate case, given a random vector $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, we can standardize it to obtain a new random vector $Z$ that follows the standard multivariate normal distribution $\mathcal{N}_{p}(0, I_p)$, where $I_p$ is the identity matrix of size $p$. To describe this standardization process, we first need to remember some linear algebra results. 
 
@@ -245,7 +245,7 @@ $$
 where the singular vectors are the columns of $Q$ and the singular values are the diagonal entries of $\Lambda$. Geometrically, the singular vectors represent the directions of the axes of the ellipsoid that defines the contours of the normal multivariate distribution, and the square root of the singular values represent the lengths of these axes.
 
 ```{r}
-#| fig-cap: "Geometric Interpretation of the SVD of a Bivariate Normal Distribution. The red point represents the mean, the green arrows represent the eigenvectors scaled by the square root of the eigenvalues, and the blue ellipse represents the 1-Mahalanobis-distance contour."
+#| fig-cap: "Interpretación geométrica de la SVD de una normal bivariante. El punto rojo es la media, las flechas verdes son los eigenvectores escalados por la raíz de los eigenvalores y la elipse azul es el contorno de distancia de Mahalanobis igual a 1."
 #| fig-width: 5
 #| fig-height: 5
 
@@ -285,14 +285,14 @@ ggplot() +
   ) +
   coord_equal() +
   labs(
-    title = "Geometric Interpretation of the SVD",
+    title = "Interpretación geométrica de la SVD",
     x = expression(X[1]),
     y = expression(X[2])
   ) +
   theme_krul()
 ```
 
-## Closure under Linear Transformations 
+## Clausura bajo transformaciones lineales 
 
 \begin{theorem}[Closure under Linear Transformations] 
 Let $X \sim \mathcal{N}_{p}(\mu, \Sigma)$ be a random vector with normal multivariate distribution. Then, for any matrix $A$ of size $m \times p$ and any vector $b$ of size $m$, the random vector 
@@ -338,7 +338,7 @@ $$
 \begin{remark} Notice that since projection into a subspace is a linear transformation, the closure under linear transformations theorem implies that any subset of the components of a normal multivariate distribution also has a normal multivariate distribution. This is a very useful property, as it allows us to analyze subsets of variables while still maintaining the normality assumption. 
 \end{remark}
 
-## Multivariate Normality Testing 
+## Pruebas de normalidad multivariante 
 
 There are several statistical tests to check whether a given dataset follows a multivariate normal distribution. These tests are essential in multivariate statistics, as many methods assume normality. Here are some of the most commonly used tests, together with their implementation in R:
 

@@ -1,31 +1,31 @@
-# An Introduction to the Tidyverse 
+# Introducción al Tidyverse 
 
-The Tidyverse is a collection of R packages designed for data science. It provides a consistent and user-friendly interface for data manipulation, visualization, and analysis. Although formally introduced as an ecosystem in 2016, many of these packages were developed by Hadley Wickham between 2007–2014.
+El Tidyverse es una colección de paquetes de R diseñados para la ciencia de datos. Proporciona una interfaz coherente y amigable para la manipulación, visualización y análisis de datos. Aunque se introdujo formalmente como ecosistema en 2016, muchos de estos paquetes fueron desarrollados por Hadley Wickham entre 2007 y 2014.
 
-## Tidy Data
+## Datos ordenados
 
-The core idea of behind the design of the Tidyverse is Wickham's definition of "tidy data" \cite{wickham2014tidydata}.
+La idea central detrás del diseño del Tidyverse es la definición de "datos ordenados" de Wickham \cite{wickham2014tidydata}.
 
 \begin{definition}
-\emph{Tidy Data} is a way of structuring datasets to make them easier to work with. In tidy data:
+\emph{Datos ordenados} es una forma de estructurar conjuntos de datos para facilitar su uso. En datos ordenados:
 
 \begin{enumerate}
-  \item Each variable forms a column.
-  \item Each observation forms a row.
-  \item Each type of observational unit forms a table.
+  \item Cada variable forma una columna.
+  \item Cada observación forma una fila.
+  \item Cada tipo de unidad observacional forma una tabla.
 \end{enumerate}
 
-This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R. In this section we will describe the basics of the Tidyverse but, for more information on its use, the interested reader can check the following references: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
+Esta estructura facilita la manipulación, el análisis y la visualización de datos, ya que se alinea con la forma en que los datos se procesan típicamente en R. En esta sección describiremos los conceptos básicos del Tidyverse; para más información sobre su uso, el lector interesado puede consultar: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
 
 \end{definition}
 
-### Tibbles and pipes
+### Tibbles y pipes
 
-In the Tidyverse, data is often represented using a special type of data frame called a \emph{tibble}. Tibbles are more user-friendly than traditional data frames, as they provide better printing and subsetting behavior. They also allow for more intuitive handling of data. In particular, tibbles are designed to work seamlessly with the pipe operator (`%>%`), which allows for chaining together multiple operations (usually known as "verbs" in the context of the tidyverse) in a clear and concise manner. To illustrate these ideas, in the next section we will perform data cleaning on the "WHO" dataset, to make sure that the associated tibble satisfies the tidy data principles. This is usually the first step in Exploratory Data Analysis (EDA) and is crucial for ensuring that the data is in a suitable format for analysis and visualization.
+En el Tidyverse, los datos suelen representarse mediante un tipo especial de data frame llamado \emph{tibble}. Los tibbles son más amigables que los data frames tradicionales, pues ofrecen mejor impresión y comportamiento de subconjuntos. Además, están diseñados para trabajar de forma fluida con el operador pipe (`%>%`), que permite encadenar múltiples operaciones (conocidas como "verbos" en el contexto del Tidyverse) de manera clara y concisa. Para ilustrar estas ideas, en la siguiente sección realizaremos la limpieza del conjunto de datos de la OMS ("WHO"), para asegurar que el tibble asociado cumpla los principios de datos ordenados. Esto suele ser el primer paso del Análisis Exploratorio de Datos (EDA) y es crucial para garantizar que los datos estén en un formato adecuado para su análisis y visualización.
 
-### An Example: Tidying the WHO dataset
+### Ejemplo: Ordenando el conjunto de datos de la OMS
 
-Before starting, we need to load the required libraries and load the WHO dataset: 
+Antes de comenzar, debemos cargar las librerías necesarias y el conjunto de datos de la OMS: 
 ```{r}
 #| output: false
 library("tidyverse")
@@ -36,16 +36,16 @@ library("krulRutils")
 library("ISLR2")
 library("magrittr")
 
-options(scipen = 999) # Disable scientific notation
+options(scipen = 999) # Desactivar notación científica
 data(who)
 ``` 
-We can now start our "tidying" process. The main problem with this dataset is that it contains variables (like "new_sp_m014") that are not very clear and that contain more than one piece of information. So we need to separate these variables and introduce better names for them and their associated values. 
+Ahora podemos iniciar nuestro proceso de "ordenamiento". El principal problema de este conjunto es que contiene variables (como "new_sp_m014") que no son muy claras y que incluyen más de una pieza de información. Por ello necesitamos separar estas variables e introducir mejores nombres para ellas y sus valores asociados. 
 ```{r}
-# We start by creating the variable "who_tidy"
-# that contains the cleaned WHO dataset
+# Empezamos creando la variable "who_tidy"
+# que contiene el conjunto de datos de la OMS ya limpio
 who_tidy <- who %>%
-  # We use pivot_longer to eliminate the variables starting with "new"
-  # and use them as values instead
+  # Usamos pivot_longer para eliminar las variables que empiezan con "new"
+  # y usarlas como valores en su lugar
   pivot_longer(
     cols = starts_with("new"),
     names_to = "key",
@@ -63,26 +63,26 @@ who_tidy <- who %>%
   separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
   separate(sexage, into = c("sex", "age"), sep = 1) %>%
   select(-new, -iso2, -iso3) %T>%
-  # Finally, we save the tidy data in both RDS and CSV formats
+  # Finalmente, guardamos los datos ordenados en formato RDS y CSV
   saveRDS(here("data", "who_tidy.rds")) %>%
   write_csv(here("data", "who_tidy.csv")) %>%
   glimpse()
 ```
-We now want to convert the columns "type", "sex", and "age" into factors. We start by constructing the following lookup tables:
+Ahora queremos convertir las columnas "type", "sex" y "age" en factores. Empezamos construyendo las siguientes tablas de correspondencia:
 ```{r}
 who_type_lookup_tbl <- tibble(
   code = c("ep", "rel", "sn", "sp"),
   label = c(
-    "Extrapulmonary TB",
-    "Relapse case",
-    "Smear-Negative pulmonary TB",
-    "Smear-Positive pulmonary TB"
+    "Tuberculosis extrapulmonar",
+    "Caso de recaída",
+    "Tuberculosis pulmonar baciloscopía negativa",
+    "Tuberculosis pulmonar baciloscopía positiva"
   )
 )
 
 who_sex_lookup_tbl <- tibble(
   code = c("f", "m"),
-  label = c("Female", "Male")
+  label = c("Mujer", "Hombre")
 )
 
 who_age_lookup_tbl <- tibble(
@@ -106,7 +106,7 @@ who_age_lookup_tbl <- tibble(
   )
 )
 ```
-We can now append factor columns for the corresponding variables in the WHO dataset: 
+Ahora podemos añadir las columnas factor para las variables correspondientes en el conjunto de la OMS: 
 ```{r}
 who_factor <- who_tidy %>%
   convert_codes_to_factor(
@@ -136,9 +136,9 @@ who_type_sex_tbl <- who_factor %>%
   print(n = Inf)
 ```
 
-## The "Grammar of Graphics" and ggplot2
+## La "Gramática de los Gráficos" y ggplot2
 
-The concept of the "Grammar of Graphics" was introduced by Leland Wilkinson in his 1999 book \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. This provides a framework for understanding how to create visualizations in a systematic way. It breaks down the process of creating a plot into components such as data, aesthetics, geometries, statistics, coordinates, and themes. The `ggplot2` package \cite{wickham2016ggplot2} implements this grammar in R, allowing users to build complex visualizations by layering these components. For more information on the Grammar of Graphics, its history and applications, the interested reader can consult the following references: \cite{cleveland1993elements, hyndman2021forecasting}.
+El concepto de la "Gramática de los Gráficos" fue introducido por Leland Wilkinson en su libro de 1999 \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. Proporciona un marco para entender cómo crear visualizaciones de forma sistemática. Descompone el proceso de construir una gráfica en componentes como datos, estéticas, geometrías, estadísticas, coordenadas y temas. El paquete `ggplot2` \cite{wickham2016ggplot2} implementa esta gramática en R, permitiendo construir visualizaciones complejas por capas. Para más información sobre su historia y aplicaciones, consulte: \cite{cleveland1993elements, hyndman2021forecasting}.
 
 ### Layers in ggplot2
 
@@ -190,27 +190,27 @@ The geometry controls \emph{how} the data is drawn.
 
 Each layer can be combined and customized to build complex and elegant plots. This \emph{layered grammar} allows you to think of your graphic as a composition of independent components rather than a single, monolithic object.
 
-### Plotting with ggplot2
+### Graficación con ggplot2
 
-We will illustrate these concepts by plotting the number of cases of tuberculosis by type and sex, using the frequency tibble we created earlier. 
+Ilustraremos estos conceptos graficando el número de casos de tuberculosis por tipo y sexo, usando el tibble de frecuencias que creamos antes. 
 ```{r}
 who_type_sex_plot <- who_type_sex_tbl %>%
   ggplot(aes(x = type_factor, y = cases, fill = sex_factor)) +
   geom_col(position = "dodge") +
   c_scale_fill("C rose", "C blue") +
   labs(
-    title = "Tuberculosis Cases by Type and Sex",
-    x = "Tuberculosis Type",
-    y = "Cases",
-    fill = "Sex"
+    title = "Casos de tuberculosis por tipo y sexo",
+    x = "Tipo de tuberculosis",
+    y = "Casos",
+    fill = "Sexo"
   ) +
   theme_krul()
 ```
-We can now save and plot the graph:
+Ahora podemos guardar y graficar:
 ```{r}
 #| fig-width: 12
 #| fig-height: 6
-#| fig-cap: "\\small This plot shows a comparative analysis of the number of cases of tuberculosis by type and sex. As we can see from the plot, the number of cases is consistently higher for the male population across all types of tuberculosis. "
+#| fig-cap: "\\small Esta gráfica muestra un análisis comparativo del número de casos de tuberculosis por tipo y sexo. Como se observa, el número de casos es consistentemente mayor en la población masculina en todos los tipos de tuberculosis. "
 ggsave(
   filename = here("images", "who_plot.png"),
   plot = who_type_sex_plot,
@@ -221,18 +221,18 @@ ggsave(
 who_type_sex_plot
 ```
 
-## Activity: Dataset Tidying 
+## Actividad: Limpieza de datos 
 
 \begin{enumerate}
-\item In the previous section we showed how to use the \texttt{\%>\%} operator to chain together multiple operations in the Tidyverse. In this exercise, you should show the result of all the intermediate steps in the tidying process of the WHO dataset, using the pipe operator.
+\item En la sección anterior se mostró cómo usar el operador \texttt{\%>\%} para encadenar múltiples operaciones en el Tidyverse. En este ejercicio, muestre el resultado de todos los pasos intermedios en el proceso de ordenamiento del conjunto de la OMS, usando el operador pipe.
 
-\item The problem with the Billboard dataset, according to the principles of "tidy data", is that the weeks in which a song appeared in the Billboard chart are represented as columns, which makes it difficult to analyze the data. Using the techniques we have learned so far, the reader is required to tidy the Billboard dataset, so that it can be used to analyze the evolution of the ranking of the song "Who Let The Dogs Out" by "Baha Men" in the Billboard Hot 100 chart. The final visualization should look like the one shown below.
+\item El problema con el conjunto \emph{Billboard}, según los principios de "datos ordenados", es que las semanas en que una canción apareció en la lista están representadas como columnas, lo que dificulta analizar los datos. Utilizando las técnicas vistas hasta ahora, ordene el conjunto para analizar la evolución del ranking de la canción "Who Let The Dogs Out" de "Baha Men" en el Billboard Hot 100. La visualización final debe lucir como la que se muestra abajo.
 
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{images/dogs_out_plot.png}
-\caption{Evolution of the ranking of the song 'Who Let The Dogs Out' by 'Baha Men' in the Billboard Hot 100 chart. The song peaked at rank 40 in the week of October 21st, 2000, and remained in the top 100 for several weeks.}
+\caption{Evolución del ranking de la canción 'Who Let The Dogs Out' de 'Baha Men' en el Billboard Hot 100. La canción alcanzó el puesto 40 en la semana del 21 de octubre de 2000 y permaneció varias semanas en el top 100.}
 \end{figure}
 \end{enumerate}
 

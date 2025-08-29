@@ -205,9 +205,9 @@ scree_plot <- scree_df %>%
   ) +
   scale_x_continuous(breaks = scree_df$component) +
   labs(
-    title = "Scree Plot",
-    x = "Principal Component",
-    y = "Singular Value"
+    title = "Gráfico scree",
+    x = "Componente principal",
+    y = "Valor singular"
   ) +
   theme_krul()
 
@@ -221,9 +221,9 @@ cum_plot <- ggplot(scree_df, aes(x = component, y = cumulative)) +
     limits = c(0, 1)
   ) +
   labs(
-    title = "Cumulative Variance Plot",
-    x = "Principal Component",
-    y = "Cumulative Variance Explained"
+    title = "Varianza acumulada",
+    x = "Componente principal",
+    y = "Varianza acumulada explicada"
   ) +
   theme_krul()
 
@@ -231,8 +231,8 @@ cum_plot <- ggplot(scree_df, aes(x = component, y = cumulative)) +
 scree_plot + cum_plot + plot_layout(ncol = 2) +
   plot_annotation(
     title = paste(
-      "Scree Plot and Cumulative Variance Plot for the",
-      "Holzinger-Swineford Dataset"
+      "Gráfico scree y varianza acumulada para",
+      "el conjunto Holzinger-Swineford"
     ),
     theme = theme(
       plot.title = element_text(
