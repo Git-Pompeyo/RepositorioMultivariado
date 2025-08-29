@@ -151,7 +151,7 @@ Recordemos que una matriz $Q$ es ortogonal si $Q^{T}Q=I_p$; sus columnas son ort
 La descomposición en valores singulares (SVD) permite descomponer una matriz en valores (diagonal de $\Lambda$, también \emph{autovalores}) y vectores singulares (columnas de $Q$, \emph{autovectores}). Es útil para entender la geometría de la normal multivariante.
 \end{remark}
 
-Notice that, since $\Sigma$ is positive definite, the diagonal entries of
+Como $\Sigma$ es definida positiva, las entradas diagonales de
 $$
 \Lambda = \left[
 \begin{array}{cccc}
@@ -203,11 +203,11 @@ $$
 \end{array} 
 \right] 
 $$
-According to the SVD, we can write this covariance matrix as 
+De acuerdo con la SVD, podemos escribir esta matriz de covarianzas como 
 $$ 
 \Sigma = Q \Lambda Q^{T} 
 $$
-for some orthogonal matrix $Q$ and diagonal matrix $\Lambda$. In this case, we can compute the SVD of $\Sigma$ as follows:
+para alguna matriz ortogonal $Q$ y diagonal $\Lambda$. En este caso, la SVD de $\Sigma$ se calcula así:
 
 ```{r}
 # Example mean and covariance
@@ -223,7 +223,7 @@ eig <- eigen(Sigma)
 vectors <- eig$vectors
 values <- eig$values
 ``` 
-We obtain: 
+Obtenemos: 
 $$
 Q = \left[
 \begin{array}{cc}
@@ -232,7 +232,7 @@ Q = \left[
 \end{array}
 \right]
 $$
-and 
+y 
 $$
 \Lambda = \left[
 \begin{array}{cc}
@@ -241,7 +241,7 @@ $$
 \end{array}
 \right]
 $$
-where the singular vectors are the columns of $Q$ and the singular values are the diagonal entries of $\Lambda$. Geometrically, the singular vectors represent the directions of the axes of the ellipsoid that defines the contours of the normal multivariate distribution, and the square root of the singular values represent the lengths of these axes.
+donde los vectores singulares son las columnas de $Q$ y los valores singulares son las entradas diagonales de $\Lambda$. Geométricamente, los vectores singulares representan las direcciones de los ejes del elipsoide que define los contornos de la normal multivariante, y las raíces cuadradas de los valores singulares representan las longitudes de dichos ejes.
 
 ```{r}
 #| fig-cap: "Interpretación geométrica de la SVD de una normal bivariante. El punto rojo es la media, las flechas verdes son los eigenvectores escalados por la raíz de los eigenvalores y la elipse azul es el contorno de distancia de Mahalanobis igual a 1."
@@ -293,16 +293,16 @@ ggplot() +
 
 ## Clausura bajo transformaciones lineales 
 
-\begin{theorem}[Closure under Linear Transformations] 
-Let $X \sim \mathcal{N}_{p}(\mu, \Sigma)$ be a random vector with normal multivariate distribution. Then, for any matrix $A$ of size $m \times p$ and any vector $b$ of size $m$, the random vector 
+\begin{theorem}[Clausura bajo transformaciones lineales] 
+Sea $X \sim \mathcal{N}_{p}(\mu, \Sigma)$ un vector con distribución normal multivariante. Para cualquier matriz $A$ de tamaño $m\times p$ y vector $b$ de tamaño $m$, el vector aleatorio 
 $$
 Y = AX + b 
 $$ 
-also has a normal multivariate distribution, specifically $Y \sim \mathcal{N}_{m}(A\mu + b, A\Sigma A^{T})$. 
+también tiene distribución normal multivariante: $Y \sim \mathcal{N}_{m}(A\mu + b, A\Sigma A^{T})$. 
 \end{theorem}
 
 \begin{remark} 
-This theorem states that if we apply a linear transformation to a random vector with a normal multivariate distribution, the resulting random vector will also have a normal multivariate distribution. The mean and covariance of the transformed vector are given by the formulas in the theorem. This property is particularly useful in applications such as regression analysis, where we often need to transform the data to fit a model while maintaining the normality of the residuals. Furthermore, it allows us to derive new distributions from existing ones, which is a key aspect of multivariate statistical theory. In practice, this theorem is often used to derive the distribution of linear combinations of random variables, which is a common operation in multivariate statistics. 
+Este teorema afirma que si aplicamos una transformación lineal a un vector con distribución normal multivariante, el resultado también es normal multivariante. Las expresiones de media y covarianza se dan en el enunciado. Es especialmente útil en aplicaciones como regresión (manteniendo normalidad de residuos) y para derivar distribuciones de combinaciones lineales.
 \end{remark}
 
 \begin{example} 
@@ -334,12 +334,12 @@ $$Y \sim \mathcal{N}_{2}\left(\begin{bmatrix} 4 \\ 7 \end{bmatrix}, \begin{bmatr
 $$ 
 \end{example}
 
-\begin{remark} Notice that since projection into a subspace is a linear transformation, the closure under linear transformations theorem implies that any subset of the components of a normal multivariate distribution also has a normal multivariate distribution. This is a very useful property, as it allows us to analyze subsets of variables while still maintaining the normality assumption. 
+\begin{remark} Nótese que la proyección a un subespacio es lineal, por lo que el teorema de clausura implica que cualquier subconjunto de componentes de una normal multivariante también es normal multivariante. Esto permite analizar subconjuntos de variables manteniendo la suposición de normalidad. 
 \end{remark}
 
 ## Pruebas de normalidad multivariante 
 
-There are several statistical tests to check whether a given dataset follows a multivariate normal distribution. These tests are essential in multivariate statistics, as many methods assume normality. Here are some of the most commonly used tests, together with their implementation in R:
+Existen varias pruebas para verificar si un conjunto sigue normalidad multivariante. Son esenciales, pues muchos métodos la asumen. Algunas de las más usadas y su implementación en R:
 
 \begin{enumerate}
   \item \textbf{Mardia's Test:}  

@@ -359,9 +359,9 @@ scree_plot + cumulative_variance_plot +
 
 ## Cargas (loadings) y biplots 
 
-Recall that equation (\ref{eq:pc_scores}) gives the relation between the original variables and the principal component scores. Using this equation, we can quickly compute these scores for each observation in our dataset. The coefficients appearing in this equation are known as the \emph{loadings} of the principal components, and they indicate how much each original variable contributes to each principal component. A\emph{biplot} is a graphical representation that displays both the principal component scores of the observations and the loadings of the variables on the same plot. This allows us to visualize how the original variables contribute to the principal components and how the observations are distributed in the space defined by these components.
+Recuerde que la ecuación (\ref{eq:pc_scores}) da la relación entre las variables originales y las puntuaciones de componentes principales. Con ella podemos calcular rápidamente las puntuaciones de cada observación. Los coeficientes de esta ecuación son las \emph{cargas} de los componentes y cuantifican la contribución de cada variable. Un \emph{biplot} muestra simultáneamente las puntuaciones de las observaciones y las cargas de las variables, permitiendo visualizar contribuciones y distribución en el espacio de los componentes.
 
-To illustrate this concept, we will create biplots for the first two principal components of the "iris" dataset for each species. We start by finding the loadings corresponding to each species, for which we simply take the first two columns of the matrices $Q_{setosa}$, $Q_{versicolor}$, and $Q_{virginica}$ shown above. 
+Para ilustrar, crearemos biplots de los dos primeros componentes del conjunto "iris" por especie. Empezamos obteniendo las cargas correspondientes a cada especie, tomando las dos primeras columnas de las matrices $Q_{setosa}$, $Q_{versicolor}$ y $Q_{virginica}$ mostradas arriba. 
 \begin{align*}
 \text{Loadings}_{setosa} = \left[
 \begin{array}{cc}
@@ -390,7 +390,7 @@ To illustrate this concept, we will create biplots for the first two principal c
 \end{array}
 \right]
 \end{align*}
-We can then compute the principal component scores for each observation by simply multiplying the values of our original variables by these matrices. The resulting biplots for each species are shown in the following figure:
+Luego calculamos las puntuaciones multiplicando los datos centrados por estas matrices. Los biplots resultantes para cada especie se muestran a continuación:
 ```{r}
 #| fig-cap: "Cargas y puntuaciones para los dos primeros componentes principales del conjunto Iris por especie."
 #| fig-width: 16

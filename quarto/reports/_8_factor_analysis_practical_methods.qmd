@@ -59,19 +59,19 @@ Tras extraer factores, suele ser útil rotarlos para lograr una estructura más 
 
 Once the factor loadings have been estimated and the factors have been rotated (if applicable), the next step is to compute factor scores for each observation in the dataset. Factor scores represent the estimated values of the latent factors for each individual based on their observed variable scores. Several methods can be used to compute factor scores: 
 \begin{enumerate}
-    \item \textbf{Regression Method:} This method estimates factor scores by regressing the observed variables on the estimated factor loadings. It provides unbiased estimates of factor scores but may not preserve the original variance of the factors.
-    \item \textbf{Bartlett Method:} This method computes factor scores by minimizing the residual variance of the observed variables. It tends to produce factor scores that are more reliable and have lower measurement error.
-    \item \textbf{Anderson-Rubin Method:} This method generates factor scores that are uncorrelated and standardized. It is particularly useful when the factors are assumed to be orthogonal.
+    \item \textbf{Método de regresión:} estima puntuaciones al regredir las variables observadas sobre las cargas estimadas; es insesgado, pero puede no preservar la varianza original de los factores.
+    \item \textbf{Método de Bartlett:} calcula puntuaciones minimizando la varianza residual de las variables observadas; produce puntuaciones más fiables y con menor error de medición.
+    \item \textbf{Método de Anderson–Rubin:} genera puntuaciones no correlacionadas y estandarizadas; útil cuando se asume ortogonalidad de los factores.
 \end{enumerate}
 
 ## Assessing Model Fit 
 
 After fitting a factor analysis model, it is important to assess how well the model fits the data. Several statistical tests and fit indices can be used to evaluate model fit: 
 \begin{enumerate}
-    \item \textbf{Chi-Square Test of Model Fit:} This test evaluates the null hypothesis that the model-implied covariance matrix matches the observed covariance matrix. A non-significant result ($p$-value > 0.05) suggests that the model fits the data well.
-    \item \textbf{Root Mean Square Error of Approximation (RMSEA):} This index measures the discrepancy between the observed and model-implied covariance matrices per degree of freedom. Values less than 0.06 indicate a good fit.
-    \item \textbf{Tucker-Lewis Index (TLI):} This index compares the fit of the specified model to a null model. Values greater than 0.95 indicate a good fit.
-    \item \textbf{Standardized Root Mean Square Residual (SRMR):} This index measures the average discrepancy between observed and predicted correlations. Values less than 0.08 indicate a good fit.
+    \item \textbf{Prueba $\chi^2$ de ajuste:} contrasta que la covarianza implícita del modelo coincida con la observada; un resultado no significativo ($p>0.05$) sugiere buen ajuste.
+    \item \textbf{RMSEA:} discrepancia por grado de libertad entre covarianzas observada y modelada; valores < 0.06 indican buen ajuste.
+    \item \textbf{TLI (Tucker–Lewis):} compara el ajuste del modelo con un modelo nulo; valores > 0.95 indican buen ajuste.
+    \item \textbf{SRMR:} discrepancia media estandarizada entre correlaciones observadas y predichas; valores < 0.08 indican buen ajuste.
 \end{enumerate}
 
 ## Visualizing the Model 
@@ -85,13 +85,13 @@ Visualizing the results of a factor analysis can help in interpreting the factor
 \end{enumerate}
 
 \begin{remark}
-Notice that Factor Loading Plots and Biplots only make sense when we have 2 or 3 factors, otherwise we cannot visualize them properly.
+Los diagramas de cargas y los biplots solo tienen sentido cuando hay 2 o 3 factores; de otro modo no se visualizan adecuadamente.
 \end{remark}
 
 
 ## Example: Factor Analysis of the Holzinger-Swineford Dataset
 
-We will now provide an example of factor analysis using the "HolzingerSwineford1939" dataset from the "lavaan" package. This dataset contains scores from a battery of 9 cognitive tests administered to 301 students in grades 7 and 8. The tests were designed to measure 3 latent abilities: visual/spatial, verbal, and speed. For this example we will focus only on tests x4 to x9 so that we can fit a two-factor model and visualize the results in a biplot. The 
+Mostraremos ahora un ejemplo con el conjunto "HolzingerSwineford1939" del paquete "lavaan". Incluye puntuaciones de 9 pruebas cognitivas aplicadas a 301 estudiantes de 7º y 8º. Las pruebas miden 3 habilidades latentes: visual/espacial, verbal y rapidez. En este ejemplo nos enfocaremos en x4 a x9 para ajustar un modelo de dos factores y visualizarlo en un biplot.
 exact description of each test is given below:
 
 \begin{enumerate}
@@ -122,7 +122,7 @@ hs_data <- as_tibble(HolzingerSwineford1939) %>%
 
 ### Assessing Factorability
 
-We start our factor analysis process by assessing the factorability for tests x4–x9. First we collect all the required information: 
+Iniciamos el proceso evaluando la factorizabilidad para x4–x9. Primero reunimos la información requerida: 
 ```{r}
 # Correlation matrix (pairwise complete observations)
 Sigma <- cor(hs_data)
@@ -242,11 +242,11 @@ scree_plot + cum_plot + plot_layout(ncol = 2) +
     )
   )
 ```
-Notice that both the scree plot and the cumulative variance plot suggest that a two-factor solution is appropriate for analysing the six tests included in this dataset.
+Nótese que tanto el gráfico scree como el de varianza acumulada sugieren que una solución de dos factores es adecuada para las seis pruebas consideradas.
 
-### Extracting, Rotating, and Scoring Factors
+### Extracción, rotación y puntuación de factores
 
-Even though extracting, rotating and scoring factors are theoretically separate steps, in practice they are often performed together using specialized software or statistical packages. Here we will use the `psych::fa` function to perform all three steps at once. We will fit a 2-factor model using maximum likelihood (ML) estimation, compute factor scores using the regression method, and perform a varimax rotation to simplify the factor structure. 
+Aunque extraer, rotar y puntuar factores son pasos teóricos distintos, en la práctica suelen realizarse juntos con paquetes estadísticos. Aquí usaremos `psych::fa` para realizar los tres pasos de una vez: ajustar un modelo de 2 factores por máxima verosimilitud (ML), calcular puntuaciones por regresión y aplicar una rotación varimax para simplificar la estructura.
 
 ```{r} 
 # Fit 2-factor FA using ML, regression scores and varimax rotation
@@ -271,9 +271,9 @@ scores <- fa_rot$scores %>%
   mutate(Obs = row_number())
 ```
 
-### Assessing Model Fit 
+### Evaluación del ajuste del modelo 
 
-We now evaluate how well the 2‑factor ML solution reproduces the observed correlations. For this, we perform the tests $\chi$‑squared, RMSEA, CFI, TLI, and RMSR. 
+Evaluamos qué tan bien la solución ML de 2 factores reproduce las correlaciones observadas. Para ello, reportamos $\chi^2$, RMSEA, CFI, TLI y RMSR. 
 ```{r}
 #| label: model-fit-x4-x9
 #| echo: true
@@ -316,21 +316,21 @@ num <- sum(lt_offdiag(res_cor)^2, na.rm = TRUE)
 den <- sum(lt_offdiag(S_obs_cor)^2, na.rm = TRUE)
 srmr <- sqrt(num / den)
 ```
-The results of these tests are:
+Los resultados son:
 \begin{align*} 
 \mbox{$\chi^{2}$ Test} & = `r pval` \\ 
 \mbox{RMSEA} & = `r rmsea` \\ 
 \mbox{TLI} & = `r tli` \\ 
 \mbox{RMSR} & = `r srmr` 
 \end{align*}
-All tests indicate that the 2‑factor model fits the data well.
+Todas las métricas indican que el modelo de 2 factores ajusta bien los datos.
 
-### Visualizing the Model
+### Visualización del modelo
 
-Finally, we will visualize the model using a biplot. We will also rotate the factors manually to illustrate what could happen if we did not choose an appropriate rotation method. 
+Finalmente, visualizamos el modelo con un biplot. También rotaremos manualmente los factores para ilustrar qué pasaría sin una rotación adecuada. 
 
 ```{r}
-#| fig-cap: "Biplots of the 2-factor solution for tests x4–x9. Left: Varimax rotation. Right: Manual 45° rotation. Notice how the varimax rotation leads to a simpler and more interpretable structure, with verbal tests (x4, x5, x6) loading highly on Factor 1 and speed tests (x7, x8, x9) loading highly on Factor 2."
+#| fig-cap: "Biplots de la solución de 2 factores para x4–x9. Izquierda: rotación Varimax. Derecha: rotación manual 45°. La rotación Varimax produce una estructura más simple e interpretable: las pruebas verbales (x4, x5, x6) cargan alto en el Factor 1 y las de rapidez (x7, x8, x9) en el Factor 2."
 #| fig-width: 14 
 #| fig-height: 7
 
@@ -360,7 +360,7 @@ p_base <- ggplot() +
     hjust = -0.5
   ) +
   labs(
-    title = "Varimax Rotation",
+    title = "Rotación Varimax",
     x = "Factor 1",
     y = "Factor 2"
   ) +
@@ -406,9 +406,9 @@ p_rot <- ggplot() +
     hjust = -0.5
   ) +
   labs(
-    title = "Manual Rotation",
-    x = "Rotated Factor 1",
-    y = "Rotated Factor 2"
+    title = "Rotación manual",
+    x = "Factor 1 (rotado)",
+    y = "Factor 2 (rotado)"
   ) +
   theme_krul()
 
@@ -439,8 +439,8 @@ p_rot  <- p_rot  + coord_equal(xlim = xr, ylim = yr)
 p_base + p_rot + plot_layout(ncol = 2) + 
   plot_annotation(
     title = paste(
-      "Biplots of the factor analysis model",
-      "using Varimax and Manual Rotations"
+      "Biplots del modelo de análisis factorial",
+      "usando rotación Varimax y manual"
     ),
     theme = theme(
       plot.title = element_text(

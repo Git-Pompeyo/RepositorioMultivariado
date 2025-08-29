@@ -129,7 +129,7 @@ who_factor <- who_tidy %>%
   ) %>%
   glimpse()
 ``` 
-Finally, we want to use this information to analyze the number of cases of tuberculosis by type and sex. We start by generating the corresponding frequency tibble.
+Finalmente, queremos usar esta información para analizar el número de casos de tuberculosis por tipo y sexo. Empezamos generando el tibble de frecuencias correspondiente.
 ```{r}
 who_type_sex_tbl <- who_factor %>%
   count(type_factor, sex_factor, wt = cases, name = "cases") %>%
@@ -140,55 +140,55 @@ who_type_sex_tbl <- who_factor %>%
 
 El concepto de la "Gramática de los Gráficos" fue introducido por Leland Wilkinson en su libro de 1999 \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. Proporciona un marco para entender cómo crear visualizaciones de forma sistemática. Descompone el proceso de construir una gráfica en componentes como datos, estéticas, geometrías, estadísticas, coordenadas y temas. El paquete `ggplot2` \cite{wickham2016ggplot2} implementa esta gramática en R, permitiendo construir visualizaciones complejas por capas. Para más información sobre su historia y aplicaciones, consulte: \cite{cleveland1993elements, hyndman2021forecasting}.
 
-### Layers in ggplot2
+### Capas en ggplot2
 
-In \texttt{ggplot2}, plots are constructed by adding multiple \emph{layers} that define the components of the visualization. Each layer corresponds to a specific aspect of the plot, and together they form the complete graphic. These layers include:
+En \texttt{ggplot2}, las gráficas se construyen añadiendo múltiples \emph{capas} que definen los componentes de la visualización. Cada capa corresponde a un aspecto específico de la gráfica y, en conjunto, forman la composición completa. Estas capas incluyen:
 
 \begin{enumerate}
-\item \textbf{Data:} The dataset to be visualized (usually a data frame or tibble). This is the source of the information for the plot.
+\item \textbf{Datos:} El conjunto a visualizar (usualmente data frame o tibble). Es la fuente de información de la gráfica.
 
-\item \textbf{Aesthetics:} Mappings that relate variables in the data to visual properties of the plot, such as:
+\item \textbf{Estéticas:} Mapeos que relacionan variables con propiedades visuales, por ejemplo:
     \begin{itemize}
-      \item Position on the x- and y-axes.
-      \item Color, fill.
-      \item Size, shape.
-      \item Transparency.
+      \item Posición en los ejes x e y.
+      \item Color, relleno.
+      \item Tamaño, forma.
+      \item Transparencia.
     \end{itemize}
-These mappings define \emph{what} data is shown and \emph{how} it is represented visually.
+Estos mapeos definen \emph{qué} datos se muestran y \emph{cómo} se representan visualmente.
 
-\item \textbf{Geometries:} Geometric objects that display the data, for example:
+\item \textbf{Geometrías:} Objetos geométricos que muestran los datos; por ejemplo:
     \begin{itemize}
-      \item \texttt{geom\_point()} for scatterplots.
-      \item \texttt{geom\_line()} for line graphs.
-      \item \texttt{geom\_col()} for bar charts.
-      \item \texttt{geom\_histogram()} for histograms.
+      \item \texttt{geom\_point()} para diagramas de dispersión.
+      \item \texttt{geom\_line()} para gráficas de líneas.
+      \item \texttt{geom\_col()} para barras.
+      \item \texttt{geom\_histogram()} para histogramas.
     \end{itemize}
-The geometry controls \emph{how} the data is drawn.
+La geometría controla \emph{cómo} se dibujan los datos.
 
-\item \textbf{Statistical transformations:}
-    Optional calculations applied to the data before plotting, such as:
+\item \textbf{Transformaciones estadísticas:}
+    Cálculos opcionales aplicados a los datos antes de graficar, como:
     \begin{itemize}
-      \item \texttt{stat\_bin()} for binning data in histograms.
-      \item \texttt{stat\_smooth()} for fitting smooth curves.
+      \item \texttt{stat\_bin()} para agrupar en histogramas.
+      \item \texttt{stat\_smooth()} para ajustar curvas suaves.
     \end{itemize}
-    These are preprocessing steps for the data visualization.
+    Estos son pasos de preprocesamiento para la visualización.
 
-  \item \textbf{Scales:} Define how data values are translated into visual properties, for example mapping numeric values to colors or shapes. Scales also control axis ticks, legends, and guides.
+  \item \textbf{Escalas:} Definen cómo se traducen los valores a propiedades visuales; también controlan marcas de ejes, leyendas y guías.
 
-  \item \textbf{Coordinates:} The coordinate system used for the plot, such as Cartesian (\texttt{coord\_cartesian()}), polar (\texttt{coord\_polar()}), or flipped coordinates (\texttt{coord\_flip()}).
+  \item \textbf{Coordenadas:} El sistema usado, como cartesiano (\texttt{coord\_cartesian()}), polar (\texttt{coord\_polar()}) o invertido (\texttt{coord\_flip()}).
 
-  \item \textbf{Facets:} Methods to split the data into subsets and display multiple plots arranged in a grid:
+  \item \textbf{Facetado:} Métodos para dividir los datos en subconjuntos y mostrar múltiples gráficas en una cuadrícula:
     \begin{itemize}
       \item \texttt{facet\_wrap()}
       \item \texttt{facet\_grid()}
     \end{itemize}
 
-  \item \textbf{Labels:} \texttt{labs()} adds titles, axis labels, and captions.
+  \item \textbf{Etiquetas:} \texttt{labs()} agrega títulos, etiquetas de ejes y pies.
 
-  \item \textbf{Themes:} \texttt{theme()} controls the overall appearance of the plot (fonts, background, gridlines).
+  \item \textbf{Temas:} \texttt{theme()} controla la apariencia general (fuentes, fondo, rejillas).
 \end{enumerate}
 
-Each layer can be combined and customized to build complex and elegant plots. This \emph{layered grammar} allows you to think of your graphic as a composition of independent components rather than a single, monolithic object.
+Cada capa puede combinarse y personalizarse para construir gráficas complejas y elegantes. Esta \emph{gramática por capas} invita a pensar la gráfica como una composición de componentes independientes en lugar de un objeto monolítico.
 
 ### Graficación con ggplot2
 

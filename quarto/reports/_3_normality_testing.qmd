@@ -62,7 +62,7 @@ Como era de esperarse (la Gamma no es normal), ninguna prueba resulta satisfacto
 ## Transformaciones 
 Para acercar los datos a la normalidad, pueden aplicarse transformaciones. Algunas comunes son:
 \begin{enumerate}
-\item \emph{Box-Cox transformation}: This is a family of power transformations that can be applied only to data that is always positive. It is given by the formula:
+\item \emph{Transformación de Box–Cox}: familia de transformaciones potenciadas aplicables sólo a datos positivos. Está dada por:
 $$
 \tilde{X} = \begin{cases}
 \frac{X^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\
@@ -71,8 +71,7 @@ $$
 $$
 donde $\lambda$ es un parámetro.
 
-\item \emph{Yeo-Johnson transformation}: This transformation is similar to the Box-Cox transformation but can handle negative values. It is useful for data that is positively or negatively skewed.
-It is given by the formula:
+\item \emph{Transformación de Yeo–Johnson}: similar a Box–Cox, pero admite valores negativos; útil con asimetrías positivas o negativas. Está dada por:
 $$
 \tilde{X} = \begin{cases}
 \frac{((X + 1)^\lambda - 1)}{\lambda} & \text{if } X \geq 0, \lambda \neq 0 \\

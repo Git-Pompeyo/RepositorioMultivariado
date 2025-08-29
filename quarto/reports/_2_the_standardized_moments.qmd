@@ -365,7 +365,7 @@ laplace_plot
 
 ## Asimetría y curtosis muestrales 
 
-So far we have defined skewness and kurtosis for random variables. However, in practice, we often work with samples rather than entire populations. Therefore, we need to define sample skewness and sample kurtosis.
+Hasta ahora hemos definido asimetría y curtosis para variables aleatorias. Sin embargo, en la práctica trabajamos con muestras y no con poblaciones completas. Por ello, necesitamos definir la asimetría y la curtosis \emph{muestrales}.
 
 \begin{definition}
 Let $x_1, x_2, \dots, x_n$ be a sample of size $n$. 
@@ -388,7 +388,7 @@ g_2 = \frac{n(n+1)}{(n-1)(n-2)(n-3)}
 $$
 \end{definition}
 
-As an example, we will compute the sample skewness and sample excess kurtosis of the Gamma and Laplace samples we generated earlier. For the Gamma sample we have:
+Como ejemplo, calcularemos la asimetría y la curtosis en exceso muestrales de las muestras de Gamma y Laplace generadas antes. Para la muestra Gamma tenemos:
 ```{r}
 # Compute sample skewness and excess kurtosis for Gamma distribution
 gamma_sample_tbl %>%

@@ -99,15 +99,15 @@ $$
 representa la incertidumbre asociada a las puntuaciones estimadas. 
 
 \begin{remark} 
-Notice that, if 
+Nótese que, si 
 $$
 f = \E[F | X = x] = L^{T}(LL^{T} + \Psi)^{-1}(x - \mu)
 $$
-then, in general, the \emph{residual}
+entonces, en general, el \emph{residuo}
 $$ 
 r(x) = x - \mu - Lf 
 $$ 
-is different from zero. In fact, as a function of the random variable $X$, the residual has probability distribution 
+es distinto de cero. De hecho, como función de $X$, el residuo tiene distribución 
 $$
 r(X) \sim \N\Bigg(0, L \left(I_m + L^T \Psi^{-1} L \right)^{-1} L^T + \Psi \Bigg)
 $$

@@ -122,7 +122,7 @@ d_M(x_i, x_j) = \sqrt{(x_i - x_j) \hat{\Sigma}^{-1} (x_i - x_j)^{T}}
 \end{equation}
 \end{definition}
 \begin{remark}
-The Mahalanobis distance is a measure of the distance between two points in a multivariate space, taking into account the correlations between the variables. It is particularly useful for identifying outliers in multivariate data.
+La distancia de Mahalanobis mide la separación entre dos puntos en un espacio multivariante, tomando en cuenta las correlaciones entre variables. Es particularmente útil para identificar atípicos en datos multivariantes.
 \end{remark}
 
 Para ilustrar, consideremos el siguiente conjunto de datos. Iniciamos con una muestra aleatoria de tamaño $n=300$ de una uniforme en $[0, 10]$.
@@ -131,22 +131,22 @@ set.seed(123)
 n <- 300
 x_data <- runif(n, min = 0, max = 10)
 ``` 
-Now we will construct some error vector $\epsilon$ from a normal distribution with mean 0 and standard deviation 1:
+Construimos ahora un vector de error $\epsilon$ normal con media 0 y desviación 1:
 ```{r}
 epsilon_data <- rnorm(n, mean = 0, sd = 1)
 ```
-We can now construct the vector 
+Podemos entonces formar el vector 
 ```{r}
 y_data <- x_data + epsilon_data
 ```
-and put it together to create a tibble:
+y crear el tibble:
 ```{r}
 sample_data_tbl <- tibble(
   x = x_data,
   y = y_data
 )
 ```
-The associated scatter plot of the data is shown below:
+La dispersión asociada se muestra a continuación:
 ```{r}
 #| fig-cap: "Diagrama de dispersión de los datos de muestra. Nótese la alta correlación entre las variables X e Y."
 #| fig-width:  5
@@ -168,7 +168,7 @@ sample_data_plot <- sample_data_tbl %>%
 
 sample_data_plot
 ```
-We now add two extra points to this plot: 
+Ahora añadimos dos puntos extra a esta gráfica: 
 ```{r}
 #| fig-cap: "Dispersión con puntos adicionales. Nótese que uno de ellos es claramente atípico."
 #| fig-width:  5
@@ -188,7 +188,7 @@ extra_sample_data_plot <- sample_data_plot +
 
 extra_sample_data_plot
 ```
-Notice that one of these points is clearly an outlier. We would like to have some concrete measure to show this, so we start by computing the sample mean vector which represents the center or our data. For future reference, we will also compute the sample covariance matrix. 
+Nótese que uno de estos puntos es claramente un atípico. Nos gustaría tener una medida concreta para mostrarlo, así que calculamos el vector de medias muestral (centro de los datos). Para referencia futura, también calculamos la matriz de covarianzas muestral. 
 ```{r}
 sample_mean_vector <- colMeans(sample_data_tbl)
 sample_covariance_matrix <- cov(sample_data_tbl)
@@ -198,7 +198,7 @@ sample_mean_tbl <- tibble(
   y_bar = sample_mean_vector[2]
 )
 ```
-But now if we use the Euclidean distance, we obtain that it is actually the outlier point that is closer to the sample mean vector:
+Si usamos la distancia euclídea, obtenemos que el punto atípico parece más cercano a la media muestral:
 ```{r}
 #| fig-cap: "Dispersión con vector de media muestral y un círculo de distancia euclidiana constante al centro de los datos."
 #| fig-width:  5
