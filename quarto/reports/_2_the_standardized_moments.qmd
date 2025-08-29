@@ -368,19 +368,19 @@ laplace_plot
 Hasta ahora hemos definido asimetría y curtosis para variables aleatorias. Sin embargo, en la práctica trabajamos con muestras y no con poblaciones completas. Por ello, necesitamos definir la asimetría y la curtosis \emph{muestrales}.
 
 \begin{definition}
-Let $x_1, x_2, \dots, x_n$ be a sample of size $n$. 
-The \emph{sample mean} $\bar{x}$ and \emph{sample variance} $s^{2}$ are given by
+Sean $x_1, x_2, \dots, x_n$ una muestra de tamaño $n$. 
+La \emph{media muestral} $\bar{x}$ y la \emph{varianza muestral} $s^{2}$ están dadas por
 \[
 \bar{x} = \frac{1}{n} \sum_{i=1}^n x_i,
 \qquad
 s^{2} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2.
 \]
-The \emph{sample skewness} $g_1$ is given by
+La \emph{asimetría muestral} $g_1$ está dada por
 \[
 g_1 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^3.
 \]
-The \emph{sample excess kurtosis} $g_2$ 
-is given by
+La \emph{curtosis en exceso muestral} $g_2$ 
+está dada por
 $$
 g_2 = \frac{n(n+1)}{(n-1)(n-2)(n-3)}
 \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^4

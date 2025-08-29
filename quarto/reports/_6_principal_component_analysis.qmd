@@ -504,54 +504,54 @@ biplot_setosa + biplot_versicolor + biplot_virginica +
 
 ## Resumen del proceso de PCA
 
-In general, when performing PCA, it is recommended to follow these steps:
+En general, al realizar PCA se recomienda seguir estos pasos:
 
 
 \begin{enumerate}
-\item \textbf{Standardize the data (if needed).} It is not always easy to decide whether to standardize the data or not. Here are some guidelines:
+\item \textbf{Estandarice los datos (si es necesario).} No siempre es obvio si conviene estandarizar. Algunas pautas:
     \begin{itemize}
-      \item If the variables are measured on different scales (e.g., height in cm and weight in kg), standardization is usually recommended.
-      \item If the variables are on the same scale and have similar variances, standardization may not be necessary.
-      \item If the variables have very different variances, standardization can help to give equal weight to all variables.
+      \item Si las variables están en escalas distintas (p.ej., cm y kg), suele recomendarse estandarizar.
+      \item Si están en la misma escala y con varianzas similares, podría no ser necesario.
+      \item Si las varianzas son muy diferentes, estandarizar ayuda a dar peso similar a todas.
     \end{itemize}
 
-  \item \textbf{Compute the covariance matrix.}
+  \item \textbf{Calcule la matriz de covarianzas.}
     \begin{itemize}
-      \item The matrix captures how variables vary together.
-      \item Its size is $p \times p$, where $p$ is the number of variables.
+      \item La matriz captura cómo varían conjuntamente las variables.
+      \item Su tamaño es $p \times p$, donde $p$ es el número de variables.
     \end{itemize}
 
-  \item \textbf{Find the singular value decomposition (SVD) of the covariance matrix.}
+  \item \textbf{Obtenga la descomposición en valores/vectores propios (SVD).}
     \begin{itemize}
-      \item Eigenvalues measure the variance explained by each principal component.
-      \item Eigenvectors give the directions (linear combinations of variables) of the components.
+      \item Los autovalores miden la varianza explicada por cada componente.
+      \item Los autovectores dan las direcciones (combinaciones lineales) de los componentes.
     \end{itemize}
 
-  \item \textbf{Rank the components.}
+  \item \textbf{Ordene los componentes.}
     \begin{itemize}
-      \item Order the singular values from largest to smallest.
-      \item The singular vector corresponding to the largest singular value is the first principal component.
+      \item Ordene los valores propios de mayor a menor.
+      \item El vector correspondiente al mayor valor propio es el primer componente.
     \end{itemize}
 
-  \item \textbf{Decide how many components to keep.}
+  \item \textbf{Decida cuántos componentes conservar.}
     \begin{itemize}
-      \item \textit{Kaiser criterion}: keep the singular values $> 1$ (for correlation matrix).
-      \item \textit{Scree plot}: look for the “elbow” where explained variance levels off.
-      \item \textit{Cumulative variance}: keep enough components to explain about $70\%-90\%$ of the total variance.
+      \item \textit{Criterio de Kaiser}: conservar valores propios $> 1$ (para matriz de correlación).
+      \item \textit{Gráfico scree}: buscar el “codo” donde se estabiliza la varianza explicada.
+      \item \textit{Varianza acumulada}: conservar componentes suficientes para ~$70$–$90\%$.
     \end{itemize}
 
-  \item \textbf{Find the principal component scores and loadings.}
+  \item \textbf{Obtenga puntuaciones y cargas.}
     \begin{itemize}
-      \item Project the original data onto the selected principal components.
-      \item Use the formula: $PC = Q^{T} (X - \bar{x})$.
+      \item Proyecte los datos originales sobre los componentes seleccionados.
+      \item Use la fórmula: $PC = Q^{T} (X - \bar{x})$.
     \end{itemize}
 
-  \item \textbf{Interpret the components.}
+  \item \textbf{Interprete los componentes.}
     \begin{itemize}
-      \item Examine the \textit{loadings} to see which variables contribute the most.
-      \item Larger absolute values indicate stronger influence.
-      \item Use biplots to visualize scores and loadings together.
-      \item Apply dimension reduction before regression, clustering, or other analyses.
-      \item Apply noise reduction by discarding low-variance components.
+      \item Examine las \textit{cargas} para ver qué variables contribuyen más.
+      \item Valores absolutos grandes indican mayor influencia.
+      \item Use biplots para visualizar puntuaciones y cargas conjuntamente.
+      \item Aplique reducción de dimensión antes de regresión, clustering u otros análisis.
+      \item Reduzca ruido descartando componentes de baja varianza.
     \end{itemize}
 \end{enumerate}

@@ -306,7 +306,7 @@ Este teorema afirma que si aplicamos una transformación lineal a un vector con 
 \end{remark}
 
 \begin{example} 
-Let $X \sim \mathcal{N}_{2}(\mu, \Sigma)$ be a random vector with mean $\mu = (1, 2)$ and covariance matrix 
+Sea $X \sim \mathcal{N}_{2}(\mu, \Sigma)$ un vector aleatorio con media $\mu = (1, 2)$ y matriz de covarianzas 
 $$ 
 \Sigma = \left[ 
 \begin{array}{cc} 
@@ -315,21 +315,21 @@ $$
 \end{array} 
 \right] 
 $$ 
-Now, consider the linear transformation 
+Considere la transformación lineal 
 $$ 
 Y = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} X + \begin{bmatrix} 0 \\ 1 \end{bmatrix} 
 $$ 
-In other words, 
+Es decir, 
 \begin{align*}
 Y_1 & = 2X_1 + X_2 \\ 
 Y_2 & = 3X_2 + 1 
 \end{align*}
-Using the closure under linear transformations theorem, we can find the mean and covariance of $Y$:
+Usando el teorema de clausura bajo transformaciones lineales, obtenemos la media y la covarianza de $Y$:
 \begin{align*} 
 \text{Mean: } & A\mu + b = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 1 \\ 2 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 4 \\ 7 \end{bmatrix} \\ 
 \text{Covariance: } & A\Sigma A^{T} = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 1 & 0.5 \\ 0.5 & 2 \end{bmatrix} \begin{bmatrix} 2 & 0 \\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 8 & 9 \\ 9 & 18 \end{bmatrix} 
 \end{align*} 
-Thus,  
+Así,  
 $$Y \sim \mathcal{N}_{2}\left(\begin{bmatrix} 4 \\ 7 \end{bmatrix}, \begin{bmatrix} 8 & 9 \\ 9 & 18 \end{bmatrix}\right)
 $$ 
 \end{example}
@@ -342,19 +342,18 @@ $$
 Existen varias pruebas para verificar si un conjunto sigue normalidad multivariante. Son esenciales, pues muchos métodos la asumen. Algunas de las más usadas y su implementación en R:
 
 \begin{enumerate}
-  \item \textbf{Mardia's Test:}  
-    Based on multivariate skewness and kurtosis.  
-    For a multivariate normal distribution, skewness should be close to 0 and kurtosis close to \(p(p+2)\), where \(p\) is the number of variables. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "mardia")}.
+  \item \textbf{Prueba de Mardia:}  
+    Basada en asimetría y curtosis multivariantes. Para normalidad multivariante, la asimetría debe ser cercana a 0 y la curtosis a \(p(p+2)\), donde \(p\) es el número de variables. En R: \texttt{MVN::mvn(datos, mvn\_test = "mardia")}.
     
-  \item \textbf{Henze-Zirkler (HZ) Test:}  
-    Uses the empirical characteristic function to measure deviations from normality. It has good global power and is suitable for moderate dimensions. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "hz")}.
+  \item \textbf{Prueba de Henze–Zirkler (HZ):}  
+    Usa la función característica empírica para medir desviaciones de la normalidad. Tiene buen poder global y es adecuada en dimensiones moderadas. En R: \texttt{MVN::mvn(datos, mvn\_test = "hz")}.
     
-  \item \textbf{Royston's Test:}  
-    A multivariate extension of the Shapiro-Wilk test, based on the product of univariate Shapiro-Wilk statistics applied to principal components. Easy to interpret, though power decreases in high dimensions. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "royston")}.
+  \item \textbf{Prueba de Royston:}  
+    Extensión multivariante de Shapiro–Wilk, basada en el producto de estadísticas univariantes aplicadas a componentes principales. Fácil de interpretar; el poder disminuye en alta dimensión. En R: \texttt{MVN::mvn(datos, mvn\_test = "royston")}.
     
-  \item \textbf{Doornik-Hansen Test:}  
-    Combines skewness and kurtosis into a single omnibus test, providing a robust alternative to Mardia. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "dh")}.
+  \item \textbf{Prueba de Doornik–Hansen:}  
+    Combina asimetría y curtosis en una prueba ómnibus, alternativa robusta a Mardia. En R: \texttt{MVN::mvn(datos, mvn\_test = "dh")}.
     
-  \item \textbf{Graphical Methods (Chi-square Q-Q plots):}  
-    Plot the Mahalanobis distances of the data against the quantiles of a chi-square distribution. Deviations from a straight line indicate departures from multivariate normality. Implemented in R via \texttt{multivariate\_diagnostic\_plot(data = your\_data, type = "qq") }.
+  \item \textbf{Métodos gráficos (Q–Q chi‑cuadrado):}  
+    Graficar las distancias de Mahalanobis contra cuantiles de una chi‑cuadrada; desviaciones de la recta indican no normalidad multivariante. En R: \texttt{multivariate\_diagnostic\_plot(data = datos, type = "qq")}.
 \end{enumerate}
