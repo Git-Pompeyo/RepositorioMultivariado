@@ -1,6 +1,6 @@
 # Introducción al análisis multivariante 
 
-In this chapter we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector. These concepts are fundamental in understanding the relationships between multiple variables in a given dataset.
+En este capítulo introducimos conceptos básicos del análisis multivariante, enfocándonos en el vector de medias y la matriz de covarianzas de un vector aleatorio. Estos conceptos son fundamentales para entender relaciones entre múltiples variables en un conjunto de datos.
 
 ## El vector de medias y la matriz de covarianzas
 
@@ -22,10 +22,10 @@ where $\Cov[X_i, X_j] = \mathbb{E}[(X_i - \mathbb{E}[X_i])(X_j - \mathbb{E}[X_j]
 \end{definition}
 
 \begin{remark}
-Remember that $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, so the covariance matrix is symmetric. Furthermore, $\Cov[X_i, X_i] = \Var[X_i]$, which is the variance of the $i$-th component of the random vector $X$. For this reason, this matrix is also known as the \emph{variance-covariance matrix} of $X$.
+Recuerde que $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, por lo que la matriz es simétrica. Además, $\Cov[X_i, X_i] = \Var[X_i]$, la varianza de la $i$‑ésima componente de $X$. Por ello también se le llama \emph{matriz varianza–covarianza}.
 \end{remark}
 
-Now given a sample of size $n$ taken from the population $\Pi$, its associated \emph{sample matrix} is the $n \times p$ matrix where each row contains a single observation from the random vector $X$. In this context, the sample mean vector and the sample covariance matrix are defined as follows:
+Ahora, dada una muestra de tamaño $n$ de $\Pi$, su \emph{matriz muestral} es de tamaño $n\times p$ y cada renglón contiene una observación del vector $X$. En este contexto, el vector de medias muestral y la matriz de covarianzas muestral se definen así:
 \begin{definition}
 Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$, we define its associated \emph{sample mean vector} as 
 \begin{equation}
@@ -39,11 +39,11 @@ The \emph{sample covariance matrix} is defined as
 where $\hat{\Sigma}$ is a $p \times p$ matrix and $\hat{\Sigma}_{i,j} = \frac{1}{n-1} \sum_{k=1}^{n} (x_{k,i} - \bar{x}_i)(x_{k,j} - \bar{x}_j)$ is the sample covariance between the $i$-th and $j$-th components of the random vector $X$.
 \end{definition}
 \begin{remark}
-The sample covariance matrix is an unbiased estimator of the covariance matrix of the random vector $X$.
+La matriz de covarianzas muestral es un estimador insesgado de la matriz de covarianzas de $X$.
 \end{remark}
 
 \begin{example}
-Consider the following sample matrix of size $n=5$ from a population $\Pi$:
+Considere la siguiente matriz muestral de tamaño $n=5$ de una población $\Pi$:
 $$
 \left[
 \begin{array}{ccc}
@@ -55,7 +55,7 @@ $$
 \end{array}
 \right]
 $$
-To obtain the sample mean vector, we compute:
+Para obtener el vector de medias muestral, calcule:
 $$
 \begin{aligned}
 \bar{x}_1 &= \frac{2+4+6+8+10}{5} = 6 \\
@@ -67,11 +67,11 @@ In other words,
 $$
 \bar{x} = [6, 3, 5]
 $$
-The sample variance of \(X_j\) is:
+La varianza muestral de \(X_j\) es:
 $$
 \hat{\Sigma}_{X_j} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x_j})^2
 $$
-Therefore,
+Por lo tanto,
 $$
 \begin{aligned}
 \hat{\Sigma}_{X_1} &= \frac{(2-6)^2 + (4-6)^2 + (6-6)^2 + (8-6)^2 + (10-6)^2}{4} = 10 \\
@@ -79,7 +79,7 @@ $$
 \hat{\Sigma}_{X_3} &= \frac{(7-5)^2 + (6-5)^2 + (5-5)^2 + (4-5)^2 + (3-5)^2}{4} = 2.5
 \end{aligned}
 $$
-The sample covariance between \(X_j\) and \(X_k\) is:
+La covarianza muestral entre \(X_j\) y \(X_k\) es:
 $$
 \hat{\Sigma}_{X_j, X_k} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x}_j)(x_{ik} - \bar{x}_k)
 $$
@@ -94,7 +94,7 @@ $$
 &= \frac{4 + 0 + 0 + 1 + 4}{4} = 2.25
 \end{aligned}
 $$
-The resulting covariance matrix is then:
+La matriz de covarianzas resultante es:
 $$
 \hat{\Sigma}=
 \begin{bmatrix}
@@ -125,7 +125,7 @@ d_M(x_i, x_j) = \sqrt{(x_i - x_j) \hat{\Sigma}^{-1} (x_i - x_j)^{T}}
 The Mahalanobis distance is a measure of the distance between two points in a multivariate space, taking into account the correlations between the variables. It is particularly useful for identifying outliers in multivariate data.
 \end{remark}
 
-To illustrate this point, we will consider the following dataset: We start by taking a random sample of size $n=300$ from a uniform distribution in the interval $[0, 10]$.
+Para ilustrar, consideremos el siguiente conjunto de datos. Iniciamos con una muestra aleatoria de tamaño $n=300$ de una uniforme en $[0, 10]$.
 ```{r}
 set.seed(123)
 n <- 300
@@ -243,11 +243,11 @@ annotated_sample_data_plot
 
 ## Escalamiento y estandarización 
 
-Now assume that we have a random vector $X$ with mean vector $\mu$ and covariance matrix $\Sigma$. We can define a new random vector $Y$ as follows: 
+Suponga ahora que tenemos un vector aleatorio $X$ con media $\mu$ y covarianzas $\Sigma$. Definimos un nuevo vector $Y$ como: 
 $$
 Y^{T} = A X^{T} + b 
 $$
-where $A$ is a $p \times p$ matrix and $b$ is a $p$-dimensional vector. The mean vector and covariance matrix of the new random vector $Y$ can be computed as follows:
+donde $A$ es una matriz $p\times p$ y $b$ un vector de dimensión $p$. El vector de medias y la matriz de covarianzas de $Y$ se obtienen como:
 $$
 \mu_Y^{T} = \mathbb{E}[Y]^{T} = A \mu^{T} + b 
 $$
@@ -255,33 +255,33 @@ and
 $$
 \Sigma_Y = \Cov[Y] = A \Sigma A^{T} 
 $$
-As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$. This process is known as a \emph{standardization} of the random vector $X$.
+Más adelante mostraremos que siempre es posible encontrar $A$ y $b$ tales que $\mu_Y=0$ y $\Sigma_Y = I_p$ (identidad $p\times p$). A este proceso se le conoce como \emph{estandarización} de $X$.
 
 ## Actividad: La geometría de los datos multivariantes 
 
 \textbf{Parte A: Ejercicios teóricos}
 
 \begin{enumerate}
-    \item Prove that the Mahalanobis distance reduces to the Euclidean distance if the covariance matrix is the identity.
-    \item Show that Mahalanobis distance is invariant under affine transformations.
-    \item Show that if you standardize each variable in a multivariate dataset, the covariance matrix becomes the coorrelation matrix.
-    \item Assume that $X_1$ and $X_2$ are two independent random variables following the standard normal distribution. Show that $d_M(X, 0)^{2}$ follows a chi-square distribution with 2 degrees of freedom, where $d_M(X, 0)$ is the Mahalanobis distance from the origin.
+    \item Demuestre que la distancia de Mahalanobis se reduce a la euclídea si la covarianza es la identidad.
+    \item Muestre que la distancia de Mahalanobis es invariante bajo transformaciones afines.
+    \item Muestre que al estandarizar cada variable, la matriz de covarianzas pasa a ser la matriz de correlaciones.
+    \item Si $X_1$ y $X_2$ son normales estándar independientes, muestre que $d_M(X,0)^2$ sigue una ji‑cuadrada con 2 g.l., donde $d_M$ es la distancia al origen.
 \end{enumerate}
 
 \textbf{Parte B: Ejercicios prácticos}
 
 \begin{enumerate}
-    \item Generate a 2D dataset of 50 points (two correlated variables).
-    \item Compute the sample mean vector and covariance matrix.
-    \item Write a function in R that computes the Mahalanobis distance of each point from the mean.
-    \item Identify the point with the largest Mahalanobis distance.
-    \item Plot the dataset using \texttt{ggplot2}.
-    \item Draw Mahalanobis distance ellipses for distances 1, 2, and 3.
-    \item Color points depending on whether their distance is greater than 1, 2, or 3.
-    \item Create a 3-variable dataset.
-    \item Compute Mahalanobis distances in 3D.
-    \item Plot pairs of variables with projected ellipses.
-    \item Compare Euclidean distances from the mean with Mahalanobis distances.
+    \item Genere un conjunto 2D de 50 puntos (dos variables correlacionadas).
+    \item Calcule el vector de medias muestral y la matriz de covarianzas.
+    \item Escriba una función en R que calcule la distancia de Mahalanobis de cada punto a la media.
+    \item Identifique el punto con mayor distancia de Mahalanobis.
+    \item Grafique el conjunto con \texttt{ggplot2}.
+    \item Dibuje elipses de distancia de Mahalanobis 1, 2 y 3.
+    \item Coloree puntos según si su distancia supera 1, 2 o 3.
+    \item Cree un conjunto de 3 variables.
+    \item Calcule distancias de Mahalanobis en 3D.
+    \item Grafique pares de variables con elipses proyectadas.
+    \item Compare distancias euclídeas a la media con distancias de Mahalanobis.
 \end{enumerate}
 
 \textbf{Parte C: Ejercicios avanzados}

@@ -1,6 +1,6 @@
-# Introduction to Multivariate Analysis 
+# Introducción al análisis multivariante 
 
-### Introduction to Multivariate Analysis
+### Introducción al análisis multivariante
 
 ```{r}
 #| output: false
@@ -18,59 +18,59 @@ options(scipen = 999)
 ```
 
 
-In this presentation we will introduce some of the most basic concepts in multivariate analysis, specifically focusing on the mean vector and covariance matrix of a random vector.
+En esta presentación introduciremos conceptos básicos del análisis multivariante, enfocándonos en el vector de medias y la matriz de covarianzas de un vector aleatorio.
 
 \bigpause
 
-These concepts are fundamental in understanding the relationships between multiple variables in a given dataset.
+Estos conceptos son fundamentales para entender las relaciones entre múltiples variables en un conjunto de datos.
 
-## The Mean Vector and the Covariance Matrix
+## El vector de medias y la matriz de covarianzas
 
-### The Mean Vector and the Covariance Matrix
+### El vector de medias y la matriz de covarianzas
 
 \begin{definition}
 Let $\Pi$ be a population and let 
 $$ 
 X: \Pi \to \mathbb{R}^{p} 
 $$ 
-be a random (row) vector. The \alert{mean vector} of $X$ is defined as
+sea un vector aleatorio (renglón). El \alert{vector de medias} de $X$ se define como
 $$
 \mu = \mathbb{E}[X] = \left[ \mathbb{E}[X_1], \mathbb{E}[X_2], \ldots, \mathbb{E}[X_p] \right] = [\mu_1, \mu_2, \ldots, \mu_p]
 $$
-where $X_i$ is the $i$-th component of the random vector $X$.
-The \alert{covariance matrix} of $X$ is defined as 
+donde $X_i$ es la $i$‑ésima componente de $X$.
+La \alert{matriz de covarianzas} de $X$ se define como 
 $$
 \Sigma = \Cov[X] = \mathbb{E}[(X - \mu)^{T}(X - \mu)] = \left[ \Cov[X_i, X_j] \right]_{i,j=1}^{p}
 $$
-where $\Cov[X_i, X_j] = \mathbb{E}[(X_i - \mu_{i})(X_j - \mu_{j})]$ is the covariance between the $i$-th and $j$-th components of the random vector $X$.
+donde $\Cov[X_i, X_j] = \mathbb{E}[(X_i - \mu_{i})(X_j - \mu_{j})]$ es la covarianza entre las componentes $i$ y $j$.
 \end{definition}
 
 
 ###
 
 \begin{remark}
-Remember that $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, so the covariance matrix is symmetric. Furthermore, $\Cov[X_i, X_i] = \Var[X_i]$, which is the variance of the $i$-th component of the random vector $X$. For this reason, this matrix is also known as the \alert{variance-covariance matrix} of $X$.
+Recuerde que $\Cov[X_i, X_j] = \Cov[X_j, X_i]$, por lo que la matriz es simétrica. Además, $\Cov[X_i, X_i] = \Var[X_i]$, la varianza de la componente $i$. Por ello también se le llama \alert{matriz varianza‑covarianza}.
 \end{remark}
 
 ###
 
 \begin{definition}
-Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$, we define its associated \alert{sample mean vector} as 
+Dada una muestra de tamaño $n$ de $\Pi$, con matriz muestral $x$, definimos el \alert{vector de medias muestral} como 
 $$
 \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i = \left[ \frac{1}{n} \sum_{i=1}^{n} x_{i,1}, \frac{1}{n} \sum_{i=1}^{n} x_{i,2}, \ldots, \frac{1}{n} \sum_{i=1}^{n} x_{i,p} \right]
 $$
-where $x_i$ is the $i$-th row of the sample matrix $x$ and $x_{i,j}$ is the $j$-th component of the $i$-th row.
-The \alert{sample covariance matrix} is defined as 
+donde $x_i$ es el $i$‑ésimo renglón de $x$ y $x_{i,j}$ su componente $j$.
+La \alert{matriz de covarianzas muestral} se define como 
 $$
 \hat{\Sigma} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^{T}(x_i - \bar{x})
 $$
-where $\hat{\Sigma}$ is a $p \times p$ matrix and $\hat{\Sigma}_{i,j} = \frac{1}{n-1} \sum_{k=1}^{n} (x_{k,i} - \bar{x}_i)(x_{k,j} - \bar{x}_j)$ is the sample covariance between the $i$-th and $j$-th components of the random vector $X$.
+donde $\hat{\Sigma}$ es de tamaño $p \times p$ y $\hat{\Sigma}_{i,j} = \frac{1}{n-1} \sum_{k=1}^{n} (x_{k,i} - \bar{x}_i)(x_{k,j} - \bar{x}_j)$ es la covarianza muestral entre las componentes $i$ y $j$.
 \end{definition}
 
 ###
 
 \begin{remark}
-The sample covariance matrix is an unbiased estimator of the covariance matrix of the random vector $X$.
+La matriz de covarianzas muestral es un estimador insesgado de la matriz de covarianzas del vector aleatorio $X$.
 \end{remark}
 
 
@@ -167,12 +167,12 @@ $$
 $$
 \end{example}
 
-## The Mahalanobis Distance 
+## La distancia de Mahalanobis 
 
-### The Mahalanobis Distance
+### La distancia de Mahalanobis
 
 \begin{definition}
-Assume that we have a population $\Pi$ with a random vector $X$ that has mean vector $\mu$ and covariance matrix $\Sigma$. If $\Sigma$ is invertible, then the \alert{Mahalanobis distance} between two points $x$ and $y$ in $\mathbb{R}^p$ is defined as:
+Suponga que tenemos una población $\Pi$ con un vector aleatorio $X$ de media $\mu$ y covarianzas $\Sigma$. Si $\Sigma$ es invertible, la \alert{distancia de Mahalanobis} entre $x$ e $y$ en $\mathbb{R}^p$ se define como:
 $$
 d_M(x, y) = \sqrt{(x - y) \Sigma^{-1} (x - y)^T}
 $$
@@ -180,12 +180,12 @@ $$
 
 ###
 
-In the context of sample data, the Mahalanobis distance can be computed using the sample covariance matrix $\hat{\Sigma}$:
+En el contexto muestral, puede calcularse usando la matriz de covarianzas muestral $\hat{\Sigma}$:
 
 \pause
 
 \begin{definition}
-Given a sample of size $n$ from the population $\Pi$, with associated sample matrix $x$ and sample covariance matrix $\hat{\Sigma}$, the \alert{sample Mahalanobis distance} between two points $x_i$ and $x_j$ is defined as:
+Dada una muestra de tamaño $n$ de $\Pi$, con matriz muestral $x$ y matriz $\hat{\Sigma}$, la \alert{distancia de Mahalanobis muestral} entre $x_i$ y $x_j$ es:
 $$
 d_M(x_i, x_j) = \sqrt{(x_i - x_j) \hat{\Sigma}^{-1} (x_i - x_j)^{T}}
 $$
@@ -194,7 +194,7 @@ $$
 \pause
 
 \begin{remark}
-The Mahalanobis distance is a measure of the distance between two points in a multivariate space, taking into account the correlations between the variables. It is particularly useful for identifying outliers in multivariate data.
+La distancia de Mahalanobis mide la separación en un espacio multivariante considerando las correlaciones entre variables. Es útil para identificar atípicos.
 \end{remark}
 
 ###

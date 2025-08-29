@@ -1,17 +1,17 @@
-# An Introduction to the Tidyverse
+# Introducción al Tidyverse
 
-# The Standardized Moments
+# Los momentos estandarizados
 
-# Normality Testing
+# Pruebas de normalidad
 
-# Introduction to Multivariate Analysis
-
-
-# Normal Multivariate Distribution
+# Introducción al análisis multivariante
 
 
+# Distribución normal multivariante
 
-## Definition and Basic Properties
+
+
+## Definición y propiedades básicas
 
 ```{r}
 #| output: false
@@ -32,10 +32,10 @@ library(ellipse)
 options(scipen = 999)
 ```
 
-### Definition and Basic Properties
+### Definición y propiedades básicas
 
 \begin{definition}
-Let $\mu$ be a (row) vector and let $\Sigma$ be a symmetric positive definite matrix. We say that a random (row) vector $X$ has \alert{normal multivariate distribution} with mean $\mu$ and covariance matrix $\Sigma$, in symbols $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, if its probability density is given by
+Sea $\mu$ un vector (renglón) y $\Sigma$ una matriz simétrica definida positiva. Decimos que un vector aleatorio (renglón) $X$ tiene \alert{distribución normal multivariante} con media $\mu$ y matriz de covarianzas $\Sigma$, en símbolos $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, si su densidad es
 $$
 \frac{1}{(2\pi)^{p/2} |\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(X - \mu) \Sigma^{-1} (X - \mu)^{T}\right)dX
 $$
@@ -43,24 +43,24 @@ $$
 
 
 ### 
-\begin{remark} Some things to notice about the definition above:
+\begin{remark} Algunas observaciones sobre la definición:
 \begin{enumerate}
-\item Just like in the univariate case, the normal multivariate distribution is completely determined by its mean $\mu$ and covariance matrix $\Sigma$. \pause
-\item The covariance matrix $\Sigma$ must be symmetric and positive definite, which ensures that the distribution is well-defined and that the exponent in the density function is negative definite. \pause
-\item The term 
+\item Al igual que en el caso univariado, la normal multivariante queda completamente determinada por $\mu$ y $\Sigma$. \pause
+\item La matriz $\Sigma$ debe ser simétrica y definida positiva para que la distribución esté bien definida y el exponente sea negativo definido. \pause
+\item El término 
 $$
 |\Sigma| = \det(\Sigma)
 $$
-is the \alert{generalized variance} of the distribution. It can be interpreted as a measure of the "spread" of the distribution in the $p$-dimensional space. \pause
-\item Notice that the term $(X - \mu) \Sigma^{-1} (X - \mu)^{T}$ is the square of the Mahalanobis distance between the random vector $X$ and the mean $\mu$. 
+es la \alert{varianza generalizada} de la distribución. Puede interpretarse como una medida de la "dispersión" en el espacio de dimensión $p$. \pause
+\item El término $(X - \mu) \Sigma^{-1} (X - \mu)^{T}$ es el cuadrado de la distancia de Mahalanobis entre $X$ y la media $\mu$. 
 \end{enumerate}
 \end{remark}
 
 ###
 
-Just like in the univariate case, the normal multivariate distribution is singled out among all other possible distributions by the Central Limit Theorem, that roughly states that the sum of a large number of independent and identically distributed random variables (properly standardized) converges to a normal distribution. 
+Como en el caso univariado, la normal multivariante es destacada por el Teorema Central del Límite, que a grandes rasgos dice que la suma de muchas variables i.i.d. (debidamente estandarizadas) converge a una normal. 
 
-### Multivariate Central Limit Theorem
+### Teorema central del límite (multivariante)
 
 \begin{theorem}
 Let $\{X_i\}_{i=1}^{\infty}$ be a sequence of independent and identically distributed 
@@ -92,19 +92,19 @@ Actually, most real-world data does not follow a normal distribution, and many s
 Furthermore, important statistical methods, like linear regression, principal component analysis and clustering do not yield good results when applied to a normal multivariate distribution.
 \end{remark}
 
-## Normal Multivariate Contours
+## Contornos de la normal multivariante
 
 
-### Normal Multivariate Contours
-Notice that the probability density function of the normal multivariate distribution is a Gaussian function in $p$ dimensions.
+### Contornos de la normal multivariante
+Observe que la función de densidad de la normal multivariante es gaussiana en $p$ dimensiones.
 
 \bigpause 
 
-This means that the contours of the distribution are ellipsoids centered at the mean $\mu$ and whose shape is controlled by $\Sigma$.
+Esto implica que los contornos son elipsoides centrados en $\mu$ y cuya forma está controlada por $\Sigma$.
 
 \bigpause
 
-The probability distribution of these contours is controlled by the $\chi^2$ distribution in the following sense:
+La probabilidad asociada a estos contornos está controlada por la distribución $\chi^2$ en el siguiente sentido:
 
 ###
 
@@ -115,7 +115,7 @@ $$
 
 \bigpause 
 
-Then, the contour that contains a proportion $\varpi$ of the probability mass of the distribution is given by the set of points $X$ that satisfy the equation
+Entonces, el contorno que contiene una proporción $\varpi$ de la masa de probabilidad está dado por los puntos $X$ que satisfacen
 $$
 (X - \mu) \Sigma^{-1} (X - \mu)^{T} = c 
 $$
@@ -135,7 +135,7 @@ The color gradient represents the density of the distribution, with darker color
 
 ###
 ```{r}
-#| fig-cap: "Bivariate Normal Distribution with Different Covariance Matrices"
+#| fig-cap: "Distribución normal bivariante con distintas matrices de covarianzas"
 #| fig-width: 12
 #| fig-height: 6
 #| echo: false
@@ -182,7 +182,7 @@ plot_bivariate_normal <- function(mu, Sigma, n_samples = 1000,
     labs(
       title = "",
       x = expression(X[1]), y = expression(X[2]),
-      color = "Density"
+      color = "Densidad"
     ) +
     theme_krul()
 
@@ -198,7 +198,7 @@ normal_plot <- (normal_plot_1 + normal_plot_2) /
   (normal_plot_3 + normal_plot_4) +
   plot_layout(widths = c(1, 1), heights = c(1, 1)) +
   plot_annotation(
-    title = "Contours of the Bivariate Normal ",
+    title = "Contornos de la normal bivariante ",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -210,7 +210,7 @@ normal_plot <- (normal_plot_1 + normal_plot_2) /
 normal_plot
 ```
 
-## Standardization of the Normal Multivariate Distribution 
+## Estandarización de la normal multivariante 
 
 ### Standardization of the Normal Multivariate Distribution
 

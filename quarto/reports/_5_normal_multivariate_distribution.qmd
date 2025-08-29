@@ -3,27 +3,27 @@
 ## Definición y propiedades básicas
 
 \begin{definition}
-Let $\mu$ be a (row) vector and let $\Sigma$ be a symmetric positive definite matrix. We say that a random (row) vector $X$ has \emph{normal multivariate distribution} with mean $\mu$ and covariance matrix $\Sigma$, in symbols $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, if its probability density is given by
+Sea $\mu$ un vector (renglón) y $\Sigma$ una matriz simétrica definida positiva. Decimos que un vector aleatorio (renglón) $X$ tiene \emph{distribución normal multivariante} con media $\mu$ y matriz de covarianzas $\Sigma$, en símbolos $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, si su densidad es
 $$
 \frac{1}{(2\pi)^{p/2} |\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(X - \mu) \Sigma^{-1} (X - \mu)^{T}\right)dX
 $$
 \end{definition}
 
-\begin{remark} Some things to notice about the definition above:
+\begin{remark} Algunas observaciones sobre la definición:
 \begin{enumerate}
-\item Just like in the univariate case, the normal multivariate distribution is completely determined by its mean $\mu$ and covariance matrix $\Sigma$.
-\item The covariance matrix $\Sigma$ must be symmetric and positive definite, which ensures that the distribution is well-defined and that the exponent in the density function is negative definite.
-\item The term 
+\item Al igual que en el caso univariado, la normal multivariante queda determinada por $\mu$ y $\Sigma$.
+\item $\Sigma$ debe ser simétrica y definida positiva, garantizando que la distribución esté bien definida y el exponente sea negativo definido.
+\item El término 
 $$
 |\Sigma| = \det(\Sigma)
 $$
-is the \emph{generalized variance} of the distribution. It can be interpreted as a measure of the "spread" of the distribution in the $p$-dimensional space.
-\item Notice that the term $(X - \mu) \Sigma^{-1} (X - \mu)^{T}$ is the square of the Mahalanobis distance between the random vector $X$ and the mean $\mu$. 
+es la \emph{varianza generalizada}. Puede interpretarse como una medida de la “dispersión” en el espacio de dimensión $p$.
+\item El término $(X - \mu) \Sigma^{-1} (X - \mu)^{T}$ es el cuadrado de la distancia de Mahalanobis entre $X$ y la media $\mu$. 
 \end{enumerate}
 \end{remark}
 
-Just like in the univariate case, the normal multivariate distribution is singled out among all other possible distributions by the Central Limit Theorem, that roughly states that the sum of a large number of independent and identically distributed random variables (properly standardized) converges to a normal distribution. The precise statement is as follows:
-\begin{theorem}[Multivariate Central Limit Theorem]
+Como en el caso univariado, la normal multivariante se destaca por el Teorema Central del Límite (TCL), que en términos generales afirma que la suma de muchas variables i.i.d. (debidamente estandarizadas) converge a una normal. El enunciado preciso es:
+\begin{theorem}[Teorema central del límite multivariante]
 Let $\{X_i\}_{i=1}^{\infty}$ be a sequence of independent and identically distributed 
 random vectors in $\mathbb{R}^p$ with mean vector $\mu$ and covariance matrix $\Sigma$. 
 Define the sample mean
@@ -34,27 +34,26 @@ Then, as $n \to \infty$,
 \[
 \sqrt{n}\,(\bar{X}_n - \mu) \;\xrightarrow{d}\; \mathcal{N}_p(0, \Sigma),
 \]
-where $\xrightarrow{d}$ denotes convergence in distribution and 
-$\mathcal{N}_p(0, \Sigma)$ is the $p$-dimensional multivariate normal distribution 
-with mean vector $0$ and covariance matrix $\Sigma$.
+donde $\xrightarrow{d}$ denota convergencia en distribución y 
+$\mathcal{N}_p(0, \Sigma)$ es la normal multivariante $p$‑dimensional con media $0$ y covarianzas $\Sigma$.
 \end{theorem}
 
 
 \begin{remark}
-Even though the Central Limit Theorem singles out the normal multivariate distribution as a particularly important distribution, it is not the only relevant distribution in multivariate statistics. Actually, most real-world data does not follow a normal distribution, and many statistical methods are designed to handle non-normal data. Furthermore, important statistical methods, like linear regression, principal component analysis and clustering do not yield good results when applied to a normal multivariate distribution.
+Aun cuando el TCL destaca a la normal multivariante, no es la única relevante en estadística multivariante. De hecho, muchos datos reales no siguen normalidad, y existen métodos para manejarla; además, técnicas como regresión lineal, PCA y clustering no arrojan buenos resultados aplicadas a una normal multivariante.
 \end{remark}
 
 ## Contornos de la normal multivariante
 
-Notice that the probability density function of the normal multivariate distribution is a Gaussian function in $p$ dimensions. This means that the contours of the distribution are ellipsoids centered at the mean $\mu$ and whose shape is controlled by $\Sigma$. The probability distribution of these contours is controlled by the $\chi^2$ distribution in the following sense: let $0 \leq \varpi \leq 1$ be a probability level, and let $c$ be such that 
+Observe que la densidad de la normal multivariante es gaussiana en $p$ dimensiones. Por ello, sus contornos son elipsoides centrados en $\mu$ y su forma está controlada por $\Sigma$. La probabilidad de estos contornos está gobernada por la $\chi^2$ así: sea $0\leq\varpi\leq 1$ y $c$ tal que
 $$
 \mathbb{P}(\chi^2_{p} \leq c) = \varpi
 $$
-Then, the contour that contains a proportion $\varpi$ of the probability mass of the distribution is given by the set of points $X$ that satisfy the equation
+Entonces, el contorno que contiene proporción $\varpi$ de masa de probabilidad es el conjunto de $X$ que satisfacen
 $$
 (X - \mu) \Sigma^{-1} (X - \mu)^{T} = c 
 $$
-In the following figure, we show the contours of the bivariate normal distribution with different covariance matrices. The contours are ellipses centered at the mean $\mu = (0, 0)$, and their shape is determined by the covariance matrix $\Sigma$. The color gradient represents the density of the distribution, with darker colors indicating higher density.
+En la figura siguiente se muestran contornos de normales bivariantes con distintas covarianzas. Son elipses centradas en $\mu=(0,0)$; el gradiente de color representa la densidad (más oscuro, mayor densidad).
 
 
 
@@ -135,7 +134,7 @@ normal_plot
 
 ## Estandarización de la normal multivariante 
 
-Just like in the univariate case, given a random vector $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, we can standardize it to obtain a new random vector $Z$ that follows the standard multivariate normal distribution $\mathcal{N}_{p}(0, I_p)$, where $I_p$ is the identity matrix of size $p$. To describe this standardization process, we first need to remember some linear algebra results. 
+Al igual que en el caso univariado, si $X\sim\mathcal{N}_{p}(\mu,\Sigma)$ podemos estandarizar para obtener $Z\sim\mathcal{N}_{p}(0,I_p)$, donde $I_p$ es la identidad de tamaño $p$. Para describirlo, recordemos algunos resultados de álgebra lineal. 
 
 \begin{theorem}[Singular Value Decomposition] 
 Let $\Sigma$ be a symmetric positive definite matrix of size $p \times p$. Then, there exists an orthogonal matrix $Q$ and a diagonal matrix $\Lambda$ with positive entries such that 
@@ -145,11 +144,11 @@ $$
 \end{theorem}
 
 \begin{note}
-Remember that a matrix $Q$ is orthogonal if $Q^{T}Q = I_p$, where $I_p$ is the identity matrix of size $p$. This means that the columns of $Q$ are orthonormal vectors, and thus they form a basis for $\mathbb{R}^p$.
+Recordemos que una matriz $Q$ es ortogonal si $Q^{T}Q=I_p$; sus columnas son ortonormales y forman una base de $\mathbb{R}^p$.
 \end{note}
 
 \begin{remark}
-The singular value decomposition (SVD) is a powerful tool in linear algebra that allows us to decompose a matrix into its constituent parts. In the case of the covariance matrix $\Sigma$, the SVD provides a way to express it in terms of its \emph{singular values} (the diagonal entries of $\Lambda$, also known as its \emph{eigenvalues}) and its \emph{singular vectors} (the columns of $Q$, also known as its \emph{eigenvectors}). This decomposition is particularly useful for understanding the geometry of the multivariate normal distribution.
+La descomposición en valores singulares (SVD) permite descomponer una matriz en valores (diagonal de $\Lambda$, también \emph{autovalores}) y vectores singulares (columnas de $Q$, \emph{autovectores}). Es útil para entender la geometría de la normal multivariante.
 \end{remark}
 
 Notice that, since $\Sigma$ is positive definite, the diagonal entries of

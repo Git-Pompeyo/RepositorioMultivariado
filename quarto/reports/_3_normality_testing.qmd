@@ -1,25 +1,25 @@
 # Pruebas de normalidad
 
-Although QQ plots are a good way to visually assess the normality of a dataset, they can be subjective and imprecise. Therefore, it becomes necessary to develop more objective and precise statistical tests to determine whether the data we are analyzing follows a normal distribution. In this chapter, we will explore some commonly used statistical tests for normality and discuss some transformations that can be performed on our data to make it more normal-like. 
+Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad, pueden ser subjetivos e imprecisos. Por ello, es necesario contar con pruebas estadísticas más objetivas y precisas para determinar si los datos siguen una distribución normal. En este capítulo exploraremos pruebas de normalidad comunes y algunas transformaciones para acercar los datos a la normalidad.
 
 ## Pruebas de normalidad 
 
-There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
+Existen varias pruebas estadísticas para evaluar si un conjunto sigue una normal. Algunas de las más usadas son:
 
 
 
 
 \begin{enumerate}
-\item \emph{Shapiro-Wilk test}: This test is based on the correlation between the data and the corresponding normal scores. It is a powerful test for small sample sizes (less than 50) and is widely used in practice. However, it can be overly sensitive to small deviations from normality in larger sample sizes. 
+\item \emph{Shapiro–Wilk}: basada en la correlación entre los datos y puntajes normales. Es potente para muestras pequeñas (menores a 50) y muy usada; puede ser demasiado sensible en muestras grandes.
 
-\item \emph{Kolmogorov-Smirnov test}: This test compares the empirical distribution function of the data with the cumulative distribution function of the normal distribution. It is a non-parametric test and can be used for any sample size. However, it is less powerful than the Shapiro-Wilk test for small sample sizes. It is also sensitive to scale and location parameters, which can affect the results of the test.
+\item \emph{Kolmogorov–Smirnov}: compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas; sensible a parámetros de escala y localización.
 
-\item \emph{Anderson-Darling test}: This test is similar to the Kolmogorov-Smirnov test but gives more weight to the tails of the distribution. It is a powerful test for small sample sizes and is widely used in practice.
+\item \emph{Anderson–Darling}: similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada.
 
-\item \emph{Jarque-Bera test}: This test is based on the skewness and kurtosis of the data. It is a powerful test for large sample sizes and is widely used in practice. However, it can be overly sensitive to small deviations from normality in smaller sample sizes.
+\item \emph{Jarque–Bera}: basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos.
 \end{enumerate}
 
-We will now apply these tests to the gamma sample data we created in the previous chapter:
+Aplicaremos estas pruebas a la muestra Gamma creada en el capítulo anterior:
 ```{r}
 #| output: false
 normality_tests_lookup_tbl <- tibble(
@@ -57,10 +57,10 @@ Los resultados de las pruebas de normalidad son los siguientes:
 ```{r}
 normality_test_gamma_sample_tbl
 ```
-As we can see, none of these tests was particularly successful, which is not surprising given that the gamma distribution is not normal. 
+Como era de esperarse (la Gamma no es normal), ninguna prueba resulta satisfactoria.
 
 ## Transformaciones 
-To make our data more normal-like, we can apply various transformations to any given sample. Some of the most common transformations include:
+Para acercar los datos a la normalidad, pueden aplicarse transformaciones. Algunas comunes son:
 \begin{enumerate}
 \item \emph{Box-Cox transformation}: This is a family of power transformations that can be applied only to data that is always positive. It is given by the formula:
 $$
@@ -69,7 +69,7 @@ $$
 \log(X) & \text{if } \lambda = 0 
 \end{cases}
 $$
-where $\lambda$ is some parameter.
+donde $\lambda$ es un parámetro.
 
 \item \emph{Yeo-Johnson transformation}: This transformation is similar to the Box-Cox transformation but can handle negative values. It is useful for data that is positively or negatively skewed.
 It is given by the formula:
@@ -81,10 +81,10 @@ $$
 \log(-X + 1) & \text{if } X < 0, \lambda = 2 
 \end{cases}
 $$
-where $\lambda$ is some parameter. 
+donde $\lambda$ es un parámetro. 
 \end{enumerate}
 
-We will now apply the Box-Cox transformation to the gamma sample data with parameters $\lambda = 0$, $0.25$, $0.5$, $0.75$, and $1$:
+Aplicaremos la transformación de Box–Cox a la muestra Gamma con $\lambda = 0$, $0.25$, $0.5$, $0.75$ y $1$:
 
 ```{r}
 #| fig-cap: "Comparación de distintas transformaciones de Box–Cox aplicadas a la muestra Gamma, con parámetro lambda = 0, 0.25, 0.5, 0.75 y 1."
@@ -190,7 +190,7 @@ box_cox_gamma_plot
 
 ## Optimización de normalidad (Box–Cox)
 
-As we saw in the previous section, the Box-Cox transformation can be used to make our data more normal-like. However, the choice of the parameter $\lambda$ is crucial for the success of the transformation. We wish to find the optimal value of $\lambda$ that maximizes the log-likelihood of the transformed data. This can be done using the `powerTransform` function from the `car` package, which performs a Box-Cox transformation and estimates the optimal value of $\lambda$. The following figure shows the log-likelihood profile for the Box-Cox transformation applied to the gamma sample data:
+Como vimos, la transformación de Box–Cox puede acercar los datos a la normalidad. La elección de $\lambda$ es crucial: buscamos el valor que maximiza la log‑verosimilitud. Esto puede realizarse con `car::powerTransform`, que estima el $\lambda$ óptimo. La figura muestra el perfil de log‑verosimilitud para la muestra Gamma:
 ```{r}
 #| fig-cap: "Perfil de log-verosimilitud para la transformación de Box–Cox aplicada a la muestra Gamma. La línea discontinua indica el valor óptimo de lambda."
 #| fig-width: 14
@@ -218,7 +218,7 @@ ggplot(df, aes(x = lambda, y = loglik)) +
   ) +
   theme_krul()
 ```
-Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:
+Finalmente, extraemos el $\lambda$ óptimo y transformamos los datos con ese valor:
 ```{r}
 optimal_lambda <- bc$lambda
 

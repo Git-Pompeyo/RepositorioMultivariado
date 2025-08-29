@@ -1,20 +1,20 @@
-# Skewness, Kurtosis and QQ Plots 
+# Asimetría, curtosis y gráficos QQ 
 
-### Skewness, Kurtosis and QQ Plots
+### Asimetría, curtosis y gráficos QQ
 
-As it is well known, any normal distribution is completely determined by its mean and standard deviation.
-
-\bigpause
-
-However, many real-world datasets do not follow a normal distribution.
+Como es bien sabido, cualquier distribución normal queda completamente determinada por su media y su desviación estándar.
 
 \bigpause
 
-In this presentation, we will explore some other distributions and show how the concepts of skewness and kurtosis can help us understand its shape.
+Sin embargo, muchos conjuntos de datos del mundo real no siguen una distribución normal.
 
 \bigpause
 
-We will also introduce QQ plots, which are useful graphical tools for comparing the distribution of a dataset against a theoretical distribution, which is usually taken to be normal.
+En esta presentación exploraremos otras distribuciones y mostraremos cómo los conceptos de asimetría y curtosis ayudan a entender su forma.
+
+\bigpause
+
+También introduciremos los gráficos QQ, herramientas útiles para comparar la distribución de un conjunto de datos contra una distribución teórica (usualmente la normal).
 
 ```{r}
 #| output: false
@@ -32,30 +32,30 @@ library(e1071)
 options(scipen = 999)
 ```
 
-## Skewness 
+## Asimetría 
 
-### Skewness
+### Asimetría
 
 \begin{definition}
-The \alert{skewness} of a random variable $X$ is defined as the third standardized moment, given by
+La \alert{asimetría} de una variable aleatoria $X$ es el tercer momento estandarizado, dado por
 $$
 \gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3},
 $$
-where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
+donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
 
 \pause
 
-Skewness measures the asymmetry of a probability distribution.
+La asimetría mide la falta de simetría de una distribución de probabilidad.
 
 \bigpause
 
-A distribution is said to be \alert{positively skewed} (or right-skewed) if it has a longer tail on the right side, and \alert{negatively skewed} (or left-skewed) if it has a longer tail on the left side.
+Una distribución es \alert{positivamente asimétrica} (o con cola a la derecha) si tiene una cola más larga a la derecha, y \alert{negativamente asimétrica} (o con cola a la izquierda) si la cola más larga está a la izquierda.
 
-### Gamma Distribution
+### Distribución Gamma
 
 \begin{definition}
-We say that a continuous random variable $X$ follows a \alert{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$, if its associated probability density function (PDF) is given by
+Decimos que una variable aleatoria continua $X$ sigue una \alert{distribución Gamma} con parámetro de forma $\alpha > 0$ y de tasa $\beta > 0$, si su función de densidad (PDF) es
 
 \begin{equation} \label{eq:gamma_pdf}
 f_X(x; \alpha, \beta) = 
@@ -65,18 +65,18 @@ f_X(x; \alpha, \beta) =
 \end{cases}
 \end{equation}
 
-where $\Gamma(\alpha)$ denotes the Gamma function, defined as
+donde $\Gamma(\alpha)$ denota la función Gamma, definida como
 
 $$
 \Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
 $$
 
-The parameters $\alpha$ and $\beta$ control the shape and rate of the distribution, respectively.
+Los parámetros $\alpha$ y $\beta$ controlan la forma y la tasa de la distribución, respectivamente.
 \end{definition}
 
 ###
 
-Among other applications, the Gamma distribution is frequently used to model the number of total insurance claims over a given time period.
+Entre otras aplicaciones, la distribución Gamma se usa con frecuencia para modelar el número total de reclamaciones de seguros en un periodo dado.
 
 \pause
 
@@ -91,7 +91,7 @@ This means that the skewness is always positive, and it approaches zero as $\alp
 ###
 
 ```{r}
-#| fig-cap: "PDF of the gamma distribution with mean and median highlighted."
+#| fig-cap: "PDF de la distribución Gamma con media y mediana destacadas."
 #| fig-width: 12
 #| fig-height: 5
 #| echo: false
@@ -136,7 +136,7 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
     "text",
     x = gamma_mean,
     y = 0.35,
-    label = "Mean",
+    label = "Media",
     color = c_palette["C red"],
     hjust = -0.1
   ) +
@@ -144,76 +144,76 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
     "text",
     x = gamma_median,
     y = 0.35,
-    label = "Median",
+    label = "Mediana",
     color = c_palette["C green"],
     hjust = 1.1
   ) +
   labs(
     title = paste(
-      "Gamma Distribution PDF (shape =", alpha, ", rate =", beta, ")"
+      "PDF de la distribución Gamma (shape =", alpha, ", rate =", beta, ")"
     ),
     x = "x",
-    y = "Density"
+    y = "Densidad"
   ) +
   theme_krul()
 
 gamma_distribution_plot
 ```
 
-## Kurtosis 
+## Curtosis 
 
-### Kurtosis
+### Curtosis
 
 \begin{definition}
-The \alert{kurtosis} of a random variable $X$ is defined as the fourth standardized moment, given by
+La \alert{curtosis} de una variable aleatoria $X$ es el cuarto momento estandarizado, dado por
 $$
 \beta_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},
 $$
-where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
+donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
 
 \pause
 
-Kurtosis measures the "tailedness" of a probability distribution.
+La curtosis mide el grosor de las colas de una distribución.
 
 \pause
 
-A distribution with high kurtosis has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis has lighter tails and a flatter peak.
+Una distribución con alta curtosis tiene colas más pesadas y un pico más agudo que una normal; con baja curtosis, colas más ligeras y un pico más plano.
 
 \pause
 
-The kurtosis of a normal distribution is 3, which is why frequently we are interested in computing the \alert{excess kurtosis} which is given by:
+La curtosis de una normal es 3; por ello suele calcularse la \alert{curtosis en exceso} dada por:
 $$
 \gamma_2 = \beta_2 - 3.
 $$
 
-### Laplace Distribution
+### Distribución de Laplace
 
 \begin{definition}
-We say that a continuous random variable $X$ follows a \alert{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$, if its associated probability density function (PDF) is given by
+Decimos que una variable aleatoria continua $X$ sigue una \alert{distribución de Laplace} con parámetro de localización $\mu \in \mathbb{R}$ y escala $b > 0$, si su PDF es
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right), \quad x \in \mathbb{R}.
 \end{equation}
-The parameters $\mu$ and $b$ control the location and scale of the distribution, respectively.
+Los parámetros $\mu$ y $b$ controlan la localización y la escala de la distribución, respectivamente.
 \end{definition}
 
 ###
 
-Among other applications, the Laplace distribution is often used in image processing and computer vision, particularly in modeling noise in images.
+Entre otras aplicaciones, la distribución de Laplace se utiliza en procesamiento de imágenes para modelar ruido.
 
 \pause
 
-\begin{remark} The excess kurtosis of a Laplace distribution is given by
+\begin{remark} La curtosis en exceso de una distribución de Laplace es
 $$
 \gamma_2 = 3.
 $$
-This means that the Laplace distribution has heavier tails than a normal distribution.
+Esto significa que la distribución de Laplace tiene colas más pesadas que la normal.
 \end{remark}
 
 ###
 
 ```{r}
-#| fig-cap: "PDF of the Laplace distribution with mean zero and variance one."
+#| fig-cap: "PDF de la distribución de Laplace con media cero y varianza uno."
 #| fig-width: 12
 #| fig-height: 5
 #| echo: false

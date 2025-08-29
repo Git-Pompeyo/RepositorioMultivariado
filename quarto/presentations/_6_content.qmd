@@ -8,10 +8,10 @@
 
 # Normal Multivariate Distribution
 
-# Principal Component Analysis
+# Análisis de componentes principales
 
 
-### Principal Component Analysis 
+### Análisis de componentes principales 
 
 ```{r}
 #| output: false
@@ -55,28 +55,28 @@ sample_data_plot <- sample_data_tbl %>%
     alpha = 1
   ) +
   labs(
-    title = "Sample Data",
+    title = "Datos de muestra",
     x = "X",
     y = "Y"
   ) +
   theme_krul()
 ```
 
-Principal Component Analysis (PCA) is a powerful technique used to reduce the dimensionality of a dataset while preserving as much information (measured by variance) as possible.
+El Análisis de Componentes Principales (PCA) es una técnica poderosa para reducir la dimensionalidad de un conjunto de datos preservando la mayor información posible (medida por la varianza).
 
 \bigpause 
 
-It transforms the original variables into a new set of uncorrelated variables called \alert{principal components,} which are ordered by the amount of variance they explain.
+Transforma las variables originales en un nuevo conjunto de variables no correlacionadas llamadas \alert{componentes principales}, ordenadas por la varianza que explican.
 
-## Understanding Total Variance
+## Entendiendo la varianza total
 
-### Understanding Total Variance
+### Entendiendo la varianza total
 
 Let $\Sigma$ be the covariance matrix of a given dataset.
 
 \bigpause
 
-The \alert{total variance} of the data is given by the trace of the covariance matrix: 
+La \alert{varianza total} de los datos viene dada por la traza de la matriz de covarianzas: 
 $$
 \mbox{Total Variance} = \Tr \Sigma = \sum_{i=1}^{p} \Sigma_{ii},
 $$
@@ -84,7 +84,7 @@ where $\Sigma_{ii}$ are the diagonal elements of $\Sigma$ representing the sampl
 
 ###
 
-Now, using the singular value decomposition (SVD) of $\Sigma$, we can find matrices $Q$, and $\Lambda$ such that: 
+Ahora, usando la descomposición en valores y vectores propios (SVD) de $\Sigma$, existen matrices $Q$ y $\Lambda$ tales que: 
 $$ 
 \Sigma = Q \Lambda Q^{T}, 
 $$
@@ -93,30 +93,30 @@ where $\Lambda$ is a diagonal matrix containing the singular values $\lambda_1, 
 \bigpause 
 
 
-These singular values can then be used to express the total variance as:
+Estos valores propios permiten expresar la varianza total como:
 $$
 \mbox{Total Variance} = \Tr \Sigma = \Tr Q \Lambda Q^{T} = \Tr \Lambda = \lambda_1 + \cdots + \lambda_p.
 $$
 
 ###
 
-The columns of $Q$ are known as the \alert{principal component directions} of our data and the singular values in $\Lambda$ indicate how much variance each principal component explains.
+Las columnas de $Q$ son las \alert{direcciones de componentes principales}; los valores de $\Lambda$ indican cuánta varianza explica cada componente.
 
 \bigpause
 
-The first principal component (associated with the largest singular value) captures the most variance, the second principal component (associated with the second largest singular value) captures the second most variance, and so on. 
+El primer componente (mayor valor propio) capta la mayor varianza; el segundo, la segunda mayor, y así sucesivamente. 
 
 ###
 
-These principal components induce a new coordinate system for our data.
+Estos componentes inducen un nuevo sistema de coordenadas para nuestros datos.
 
 \bigpause
 
-The values of our data in this new coordinate system are known as their \alert{principal component scores.} 
+Los valores en ese sistema son las \alert{puntuaciones de componentes principales}. 
 
 \bigpause
 
-They are related to the original variables through the equations:
+Se relacionan con las variables originales mediante:
 $$ 
  X = Q\, (PC) + \bar{x} 
 $$
@@ -124,7 +124,7 @@ and
 $$
 PC = Q^{T} (X - \bar{x}) 
 $$
-Here $X$ is our original coordinate vector, $PC$ is the coordinate vector corresponding to the principal component scores,  and $\bar{x}$ is the vector of means of our dataset.
+Aquí $X$ es el vector en coordenadas originales, $PC$ el vector de puntuaciones y $\bar{x}$ el vector de medias.
 
 \bigpause
 
@@ -141,18 +141,18 @@ sample_data_plot
 
 ###
 
-Recall that this dataset consists of 300 observations of two variables, $X$ and $Y$.
+Recuerde que este conjunto tiene 300 observaciones de dos variables, $X$ y $Y$.
 
 \bigpause
 
-The first variable is generated from a uniform distribution between $0$ and $10$.
+La primera variable proviene de una distribución uniforme entre $0$ y $10$.
 
 \bigpause
 
-The second variable is generated as $Y = X + \epsilon$, where $\epsilon$ is a normally distributed random error with mean $0$ and standard deviation $1$. 
+La segunda se genera como $Y = X + \epsilon$, con $\epsilon$ normal de media $0$ y desviación estándar $1$. 
 
 ###
-The covariance matrix of this dataset is given by:
+La matriz de covarianzas de este conjunto es:
 ```{r}
 #| echo: false
 Sigma <- cov(sample_data_tbl)
@@ -164,7 +164,7 @@ $$
 \end{bmatrix}
 $$
 \pause
-The total variance is:
+La varianza total es:
 $$
 \mbox{Total Variance} = \Tr \Sigma = \Sigma_{11} + \Sigma_{22} = `r Sigma[1,1] + Sigma[2,2]` 
 $$
@@ -280,7 +280,7 @@ compare_plot1 <- ggplot(compare_proj1_tbl) +
     alpha = 1
   ) +
   labs(
-    title = "First Principal Component Projection",
+    title = "Proyección en el primer componente principal",
     x = "X",
     y = "Y"
   ) +
@@ -301,7 +301,7 @@ compare_plot2 <- ggplot(compare_proj2_tbl) +
     alpha = 1
   ) +
   labs(
-    title = "Second Principal Component Projection",
+    title = "Proyección en el segundo componente principal",
     x = "X",
     y = "Y"
   ) +
@@ -311,7 +311,7 @@ compare_plot2 <- ggplot(compare_proj2_tbl) +
 compare_plot1 + compare_plot2 +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Principal Component Projections",
+    title = "Proyecciones de componentes principales",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -519,9 +519,9 @@ scree_plot <- scree_data %>%
   c_scale_color("C red", "C blue", "C green") +
   scale_x_continuous(breaks = 1:4) +
   labs(
-    title = "Scree Plot of Iris Dataset",
-    x = "Principal Component",
-    y = "Singular Value"
+    title = "Gráfico scree del conjunto Iris",
+    x = "Componente principal",
+    y = "Valor singular"
   ) +
   theme_krul() +
   theme(legend.position = "top")
@@ -540,9 +540,9 @@ cumulative_variance_plot <- cumulative_variance_data %>%
   scale_x_continuous(breaks = 1:4) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs(
-    title = "Cumulative Variance Explained by Principal Components",
-    x = "Principal Component",
-    y = "Cumulative Variance Explained"
+    title = "Varianza acumulada explicada por los componentes principales",
+    x = "Componente principal",
+    y = "Varianza acumulada explicada"
   ) +
   theme_krul() +
   theme(legend.position = "top")
@@ -551,7 +551,7 @@ cumulative_variance_plot <- cumulative_variance_data %>%
 scree_plot + cumulative_variance_plot +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Scree Plot and Cumulative Variance Plot for the Iris Dataset",
+    title = "Gráfico scree y varianza acumulada para el conjunto Iris",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -743,7 +743,7 @@ biplot_virginica <- create_biplot(
 biplot_setosa + biplot_versicolor + biplot_virginica +
   plot_layout(ncol = 3) +
   plot_annotation(
-    title = "Biplots of Iris Species (PC1 vs PC2)",
+    title = "Biplots de especies de Iris (PC1 vs PC2)",
     theme = theme(
       plot.title = element_text(size = 24, face = "bold")
     )

@@ -1,57 +1,57 @@
-# Tidy Data and the Tidyverse 
+# Datos ordenados y el Tidyverse 
 
-### Tidy Data and the Tidyverse
-The Tidyverse is a collection of R packages designed for data science.
-
-\bigpause
-
-It provides a consistent and user-friendly interface for data manipulation, visualization, and analysis. 
+### Datos ordenados y el Tidyverse
+El Tidyverse es una colección de paquetes de R diseñados para la ciencia de datos.
 
 \bigpause
 
-The core idea of behind the design of the Tidyverse is the concept of "tidy data".
+Proporciona una interfaz coherente y amigable para la manipulación, visualización y análisis de datos. 
+
+\bigpause
+
+La idea central detrás del diseño del Tidyverse es el concepto de "datos ordenados".
 
 ###
 
 \begin{definition}
-\alert{Tidy Data} is a way of structuring datasets to simplify its use. In tidy data:
+\alert{Datos ordenados} es una forma de estructurar conjuntos de datos para simplificar su uso. En datos ordenados:
 
 \begin{enumerate}
-  \item Each variable forms a column. \pause
-  \item Each observation forms a row. \pause
-  \item Each type of observational unit forms a table. \pause
+  \item Cada variable forma una columna. \pause
+  \item Cada observación forma una fila. \pause
+  \item Cada tipo de unidad observacional forma una tabla. \pause
 \end{enumerate}
 
-This structure allows for easier data manipulation, analysis, and visualization, as it aligns with the way data is typically processed in R. 
+Esta estructura facilita la manipulación, el análisis y la visualización de datos, pues se alinea con la forma en que normalmente se procesan en R. 
 \end{definition}
 
-## Tibbles and pipes
+## Tibbles y pipes
 
-### Tibbles and pipes
+### Tibbles y pipes
 
-In the Tidyverse, data is represented using a special type of data frame called a \alert{tibble}.
-
-\bigpause
-
-Tibbles are more user-friendly than traditional data frames, as they provide better printing and subsetting behavior.
+En el Tidyverse, los datos se representan con un tipo especial de data frame llamado \alert{tibble}.
 
 \bigpause
 
-They also allow for more intuitive handling of data. In particular, tibbles are designed to work seamlessly with the pipe operator (`%>%`), which allows for chaining together multiple operations in a clear and concise manner.
+Los tibbles son más amigables que los data frames tradicionales, pues ofrecen mejor impresión y comportamiento de subconjuntos.
 
 \bigpause
 
-To illustrate these ideas, in the next section we will perform data cleaning on the "WHO" dataset, to make sure that the associated tibble satisfies the tidy data principles.
+También permiten un manejo más intuitivo de los datos. En particular, están diseñados para funcionar fluidamente con el operador pipe (`%>%`), que permite encadenar múltiples operaciones de manera clara y concisa.
 
 \bigpause
 
-This is usually the first step in Exploratory Data Analysis (EDA) and is crucial for ensuring that the data is in a suitable format for analysis and visualization.
+Para ilustrar estas ideas, en la siguiente sección realizaremos la limpieza del conjunto de la OMS ("WHO"), para asegurar que el tibble asociado cumpla los principios de datos ordenados.
 
-## Tidying the WHO dataset
+\bigpause
 
-### Tidying the WHO dataset
+Esto suele ser el primer paso en el Análisis Exploratorio de Datos (EDA) y es crucial para garantizar que los datos estén en un formato adecuado para análisis y visualización.
 
-Before starting, we need to load the required libraries and load the WHO dataset: 
+## Ordenando el conjunto de la OMS
+
+### Ordenando el conjunto de la OMS
+
+Antes de comenzar, debemos cargar las librerías necesarias y el conjunto de la OMS: 
 ```{r}
 #| output: false
 library("tidyverse")
@@ -62,21 +62,21 @@ library("krulRutils")
 library("ISLR2")
 library("magrittr")
 
-options(scipen = 999) # Disable scientific notation
+options(scipen = 999) # Desactivar notación científica
 data(who)
 ``` 
 
 ###
 
-We can now start our "tidying" process.
+Ahora podemos iniciar nuestro proceso de "ordenamiento".
 
 \bigpause 
 
-The main problem with this dataset is that it contains variables (like "new_sp_m014") that are not very clear and that contain more than one piece of information.
+El principal problema de este conjunto es que contiene variables (como "new_sp_m014") poco claras y que contienen más de una pieza de información.
 
 \bigpause 
 
-So we need to separate these variables and introduce better names for them and their associated values. 
+Por ello debemos separarlas e introducir mejores nombres para ellas y sus valores asociados. 
 
 ###
 
@@ -108,7 +108,7 @@ who_tidy <- who_tidy %>%
 ```
 
 
-We now want to convert the columns "type", "sex", and "age" into factors. We start by constructing the following lookup tables:
+Ahora queremos convertir las columnas "type", "sex" y "age" en factores. Empezamos construyendo las siguientes tablas de correspondencia:
 
 ###
 
@@ -116,10 +116,10 @@ We now want to convert the columns "type", "sex", and "age" into factors. We sta
 who_type_lookup_tbl <- tibble(
   code = c("ep", "rel", "sn", "sp"),
   label = c(
-    "Extrapulmonary TB",
-    "Relapse case",
-    "Smear-Negative pulmonary TB",
-    "Smear-Positive pulmonary TB"
+    "Tuberculosis extrapulmonar",
+    "Caso de recaída",
+    "TB pulmonar baciloscopía negativa",
+    "TB pulmonar baciloscopía positiva"
   )
 )
 ```
@@ -129,7 +129,7 @@ who_type_lookup_tbl <- tibble(
 ```{r}
 who_sex_lookup_tbl <- tibble(
   code = c("f", "m"),
-  label = c("Female", "Male")
+  label = c("Mujer", "Hombre")
 )
 ```
 
@@ -152,7 +152,7 @@ who_age_lookup_tbl <- tibble(
 
 ###
 
-We can now append factor columns for the corresponding variables in the WHO dataset: 
+Ahora podemos añadir las columnas factor para las variables correspondientes en el conjunto de la OMS: 
 ```{r}
 who_factor <- who_tidy %>%
   convert_codes_to_factor(
@@ -209,45 +209,45 @@ who_type_sex_tbl <- who_factor %>%
   print(n = Inf)
 ```
 
-# The "Grammar of Graphics" and ggplot2
+# La "Gramática de los Gráficos" y ggplot2
 
-### The "Grammar of Graphics" and ggplot2
+### La "Gramática de los Gráficos" y ggplot2
 
-The concept of the "Grammar of Graphics" was introduced by Leland Wilkinson in his 1999 book \alert{The Grammar of Graphics}. 
-
-\bigpause
-
-This provides a framework for understanding how to create visualizations in a systematic way. It breaks down the process of creating a plot into components such as data, aesthetics, geometries, statistics, coordinates, and themes.
+El concepto de la "Gramática de los Gráficos" fue introducido por Leland Wilkinson en su libro de 1999 \alert{The Grammar of Graphics}. 
 
 \bigpause
 
-The `ggplot2` package  implements this grammar in R, allowing users to build complex visualizations by layering these components. 
+Esto proporciona un marco para entender cómo crear visualizaciones de forma sistemática. Descompone el proceso en componentes como datos, estéticas, geometrías, estadísticas, coordenadas y temas.
 
-## Layers in ggplot2
+\bigpause
 
-### Layers in ggplot2
+El paquete `ggplot2` implementa esta gramática en R, permitiendo construir visualizaciones complejas por capas. 
 
-In \texttt{ggplot2}, plots are constructed by adding multiple \alert{layers} that define the components of the visualization.
+## Capas en ggplot2
+
+### Capas en ggplot2
+
+En \texttt{ggplot2}, las gráficas se construyen añadiendo múltiples \alert{capas} que definen los componentes de la visualización.
 
 \bigpause 
 
-Each layer corresponds to a specific aspect of the plot, and together they form the complete graphic. 
+Cada capa corresponde a un aspecto específico de la gráfica y, juntas, forman la visualización completa. 
 
 ###
 
-These layers include:
+Estas capas incluyen:
 
 \begin{enumerate}
-\item \alert{Data:} The dataset to be visualized. This is the source of the information for the plot.
+\item \alert{Datos:} El conjunto a visualizar; es la fuente de la información de la gráfica.
 
-\item \alert{Aesthetics:} Mappings that relate variables in the data to visual properties of the plot, such as:
+\item \alert{Estéticas:} Mapeos que relacionan variables con propiedades visuales, por ejemplo:
     \begin{itemize}
-      \item Position on the x- and y-axes.
-      \item Color, fill.
-      \item Size, shape.
-      \item Transparency.
+      \item Posición en los ejes x e y.
+      \item Color, relleno.
+      \item Tamaño, forma.
+      \item Transparencia.
     \end{itemize}
-These mappings define \alert{what} data is shown and \alert{how} it is represented visually.
+Estos mapeos definen \alert{qué} datos se muestran y \alert{cómo} se representan visualmente.
 
 \seti
 
@@ -257,14 +257,14 @@ These mappings define \alert{what} data is shown and \alert{how} it is represent
 
 \begin{enumerate}
 \conti
-\item \alert{Geometries:} Geometric objects that display the data, for example:
+\item \alert{Geometrías:} Objetos geométricos que muestran los datos; por ejemplo:
     \begin{itemize}
-      \item \texttt{geom\_point()} for scatterplots.
-      \item \texttt{geom\_line()} for line graphs.
-      \item \texttt{geom\_col()} for bar charts.
-      \item \texttt{geom\_histogram()} for histograms.
+      \item \texttt{geom\_point()} para diagramas de dispersión.
+      \item \texttt{geom\_line()} para gráficas de líneas.
+      \item \texttt{geom\_col()} para barras.
+      \item \texttt{geom\_histogram()} para histogramas.
     \end{itemize}
-The geometry controls \alert{how} the data is drawn.
+La geometría controla \alert{cómo} se dibujan los datos.
 
 \seti
 
@@ -273,17 +273,17 @@ The geometry controls \alert{how} the data is drawn.
 ###
 \begin{enumerate}
 \conti
-\item \alert{Statistical transformations:}
-    Optional calculations applied to the data before plotting, such as:
+\item \alert{Transformaciones estadísticas:}
+    Cálculos opcionales aplicados a los datos antes de graficar, tales como:
     \begin{itemize}
-      \item \texttt{stat\_bin()} for binning data in histograms.
-      \item \texttt{stat\_smooth()} for fitting smooth curves.
+      \item \texttt{stat\_bin()} para agrupar en histogramas.
+      \item \texttt{stat\_smooth()} para ajustar curvas suaves.
     \end{itemize}
-    These are preprocessing steps for the data visualization.
+    Estos son pasos de preprocesamiento para la visualización.
 
-  \item \alert{Scales:} Define how data values are translated into visual properties, for example mapping numeric values to colors or shapes. Scales also control axis ticks, legends, and guides.
+  \item \alert{Escalas:} Definen cómo se traducen los valores a propiedades visuales; también controlan ejes, leyendas y guías.
 
-  \item \alert{Coordinates:} The coordinate system used for the plot, such as Cartesian (\texttt{coord\_cartesian()}), polar (\texttt{coord\_polar()}), or flipped coordinates (\texttt{coord\_flip()}).
+  \item \alert{Coordenadas:} El sistema de coordenadas usado, como cartesiano (\texttt{coord\_cartesian()}), polar (\texttt{coord\_polar()}) o invertido (\texttt{coord\_flip()}).
 
 \seti 
 \end{enumerate} 
@@ -293,24 +293,24 @@ The geometry controls \alert{how} the data is drawn.
 \begin{enumerate}
 \conti
 
-  \item \alert{Facets:} Methods to split the data into subsets and display multiple plots arranged in a grid:
+  \item \alert{Facetado:} Métodos para dividir los datos y mostrar múltiples gráficas en una cuadrícula:
     \begin{itemize}
       \item \texttt{facet\_wrap()}
       \item \texttt{facet\_grid()}
     \end{itemize}
 
-  \item \alert{Labels:} \texttt{labs()} adds titles, axis labels, and captions.
+  \item \alert{Etiquetas:} \texttt{labs()} agrega títulos, etiquetas de ejes y pies.
 
-  \item \alert{Themes:} \texttt{theme()} controls the overall appearance of the plot (fonts, background, gridlines).
+  \item \alert{Temas:} \texttt{theme()} controla la apariencia general (fuentes, fondo, rejillas).
 \end{enumerate}
 
-Each layer can be combined and customized to build complex and elegant plots. This \alert{layered grammar} allows you to think of your graphic as a composition of independent components rather than a single, monolithic object.
+Cada capa puede combinarse y personalizarse para construir gráficas complejas y elegantes. Esta \alert{gramática por capas} permite pensar la gráfica como la composición de componentes independientes, y no como un objeto monolítico.
 
-## Plotting with ggplot2
+## Graficación con ggplot2
 
 ###
 
-We will illustrate these concepts by plotting the number of cases of tuberculosis by type and sex, using the frequency tibble we created earlier. 
+Ilustraremos estos conceptos graficando el número de casos de tuberculosis por tipo y sexo, usando el tibble de frecuencias creado antes. 
 ```{r}
 #| output: false
 who_type_sex_plot <- who_type_sex_tbl %>%
@@ -318,10 +318,10 @@ who_type_sex_plot <- who_type_sex_tbl %>%
   geom_col(position = "dodge") +
   c_scale_fill("C rose", "C blue") +
   labs(
-    title = "Tuberculosis Cases by Type and Sex",
-    x = "Tuberculosis Type",
-    y = "Cases",
-    fill = "Sex"
+    title = "Casos de tuberculosis por tipo y sexo",
+    x = "Tipo de tuberculosis",
+    y = "Casos",
+    fill = "Sexo"
   ) +
   theme_krul()
 
@@ -349,19 +349,19 @@ who_type_sex_plot <- who_type_sex_tbl %>%
 who_type_sex_plot
 ```
 
-# The Billboard dataset 
+# El conjunto Billboard 
 
-### The Billboard dataset
+### El conjunto Billboard
 
-The problem with the Billboard dataset, according to the principles of "tidy data", is that the weeks in which a song appeared in the Billboard chart are represented as columns, which makes it difficult to analyze the data.
-
-\bigpause
-
-Using the techniques we have learned so far, we should tidy the Billboard dataset, so that it can be used to analyze the evolution of the ranking of the song "Who Let The Dogs Out" by "Baha Men" in the Billboard Hot 100 chart.
+El problema con el conjunto Billboard, según los principios de "datos ordenados", es que las semanas en que una canción aparece en la lista están representadas como columnas, lo cual dificulta el análisis.
 
 \bigpause
 
-The final visualization should look like the one shown below.
+Usando las técnicas aprendidas, debemos ordenar el conjunto para analizar la evolución del ranking de la canción "Who Let The Dogs Out" de "Baha Men" en el Billboard Hot 100.
+
+\bigpause
+
+La visualización final debe verse como la que se muestra a continuación.
 
 
 ###
@@ -404,4 +404,3 @@ Wickham, H., et al. (2019) Welcome to the tidyverse. \textit{Journal of Open Sou
 Wilkinson, L. (1999) \textit{The Grammar of Graphics}. Springer-Verlag.
 
 \end{thebibliography}
-

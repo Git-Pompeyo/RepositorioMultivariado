@@ -65,7 +65,7 @@ Notice that, since $\epsilon \sim \N(0,\Psi)$, this model is completely specifie
 
 ## Assessing Factorability 
 
-### Assessing Factorability
+### Evaluación de la factorizabilidad
 
 The first step in applying factor analysis to a dataset is to assess whether the data is suitable for factor analysis, i.e., whether the observed variables exhibit sufficient correlations to justify the use of a factor model. 
 
@@ -248,7 +248,7 @@ hs_data <- as_tibble(HolzingerSwineford1939) %>%
 
 ### Assessing Factorability
 
-We start our factor analysis process by assessing the factorability for tests x4–x9. First we collect all the required information. 
+Iniciamos el proceso evaluando la factorizabilidad para x4–x9. Primero reunimos la información necesaria. 
 ```{r}
 #| echo: false
 
@@ -260,7 +260,7 @@ n_eff <- nrow(hs_data)
 bart <- cortest.bartlett(Sigma, n = n_eff)
 kmo  <- KMO(Sigma)
 ```
-We now show the correlation heatmap:
+Mostramos el mapa de calor de correlaciones:
 
 ###
 ```{r}
@@ -285,8 +285,8 @@ ggplot(corr_df, aes(x = Var2, y = Var1, fill = r)) +
     midpoint = 0, limits = c(-1, 1)
   ) +
   labs(
-    title = "Correlation heatmap for tests x4–x9",
-    x = "", y = "", fill = "Correlation"
+    title = "Mapa de calor de correlaciones (x4–x9)",
+    x = "", y = "", fill = "Correlación"
   ) +
   theme(
     plot.title = element_text(size = 18, face = "bold"),
@@ -297,11 +297,11 @@ ggplot(corr_df, aes(x = Var2, y = Var1, fill = r)) +
 ```
 
 ### 
-Notice that there is a strong correlation among the verbal tests (x4, x5, x6) and among the speed tests (x7, x8, x9), but not such strong correlation between the two groups.
+Obsérvese la fuerte correlación entre las pruebas verbales (x4, x5, x6) y entre las de rapidez (x7, x8, x9), pero no entre ambos grupos.
 
 \bigpause
 
-This is a good indication that a two-factor model may be appropriate for this data. We now report the results of Bartlett's test and the KMO measure:
+Esto sugiere que una solución de dos factores es adecuada. Reportamos los resultados de Bartlett y la medida KMO:
 
 \bigpause 
 
@@ -311,15 +311,15 @@ This is a good indication that a two-factor model may be appropriate for this da
 \end{align*} 
 
 \bigpause 
-As we can see, all tests so far indicate that factor analysis is appropriate for this dataset.
+Como se observa, todas las pruebas indican que el AF es apropiado para este conjunto.
 
-### Deciding the Number of Factors 
+### Decidir el número de factores 
 
-We will now use a scree plot and a cumulative variance plot to help us decide on the number of factors to retain.
+Usaremos un gráfico scree y uno de varianza acumulada para decidir cuántos factores retener.
 
 \bigpause 
 
-Since we are using the correlation matrix, we will look for singular values greater than 1 (Kaiser criterion) and also look for an "elbow" in the scree plot.
+Como usamos la matriz de correlaciones, buscamos valores singulares > 1 (criterio de Kaiser) y el “codo” en el scree.
 
 ###
 ```{r}
@@ -352,9 +352,9 @@ scree_plot <- scree_df %>%
   ) +
   scale_x_continuous(breaks = scree_df$component) +
   labs(
-    title = "Scree Plot",
-    x = "Principal Component",
-    y = "Singular Value"
+    title = "Gráfico scree",
+    x = "Componente principal",
+    y = "Valor singular"
   ) +
   theme_krul()
 
@@ -368,16 +368,16 @@ cum_plot <- ggplot(scree_df, aes(x = component, y = cumulative)) +
     limits = c(0, 1)
   ) +
   labs(
-    title = "Cumulative Variance Plot",
-    x = "Principal Component",
-    y = "Cumulative Variance Explained"
+    title = "Varianza acumulada",
+    x = "Componente principal",
+    y = "Varianza acumulada explicada"
   ) +
   theme_krul()
 
 # Combine scree plot and cumulative variance plot
 scree_plot + cum_plot + plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Scree Plot and Cumulative Variance Plot",
+    title = "Gráfico scree y varianza acumulada",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -512,7 +512,7 @@ p_base <- ggplot() +
     hjust = -0.8
   ) +
   labs(
-    title = "Varimax Rotation",
+    title = "Rotación Varimax",
     x = "Factor 1",
     y = "Factor 2"
   ) +
@@ -558,7 +558,7 @@ p_rot <- ggplot() +
     hjust = -0.8
   ) +
   labs(
-    title = "Manual Rotation",
+    title = "Rotación manual",
     x = "Rotated Factor 1",
     y = "Rotated Factor 2"
   ) +

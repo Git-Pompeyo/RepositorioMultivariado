@@ -1,6 +1,6 @@
 # Los momentos estandarizados
 
-As it is well known, any normal distribution is completely determined by its mean and standard deviation. However, many real-world datasets do not follow a normal distribution. In this chapter, we will explore some other distributions and show how the concepts of skewness and kurtosis can help us understand its shape. We will also introduce QQ plots, which are useful graphical tools for comparing the distribution of a dataset against a theoretical distribution, which is usually taken to be normal. But before starting, let's load the necessary libraries and set some options. 
+Como es bien sabido, cualquier distribución normal queda determinada por su media y desviación estándar. Sin embargo, muchos conjuntos de datos reales no siguen una distribución normal. En este capítulo exploraremos otras distribuciones y mostraremos cómo los conceptos de asimetría (skewness) y curtosis ayudan a entender su forma. También introduciremos los gráficos QQ, herramientas útiles para comparar la distribución de un conjunto de datos con una distribución teórica (usualmente la normal). Antes de comenzar, carguemos las librerías necesarias y fijemos algunas opciones. 
 
 ```{r}
 #| output: false
@@ -26,17 +26,17 @@ options(scipen = 999)
 ## Asimetría 
 
 \begin{definition}
-The \emph{skewness} of a random variable $X$ is defined as the third standardized moment, given by
+La \emph{asimetría} de una variable aleatoria $X$ se define como el tercer momento estandarizado, dado por
 $$
 \gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3},
 $$
-where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
+donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
 
-Skewness measures the asymmetry of a probability distribution. A distribution is said to be \emph{positively skewed} (or right-skewed) if it has a longer tail on the right side, and \emph{negatively skewed} (or left-skewed) if it has a longer tail on the left side. A perfectly symmetric distribution has a skewness of zero. To illustrate this idea, we will introduce the gamma distributions.
+La asimetría mide la falta de simetría de una distribución. Una distribución es \emph{positivamente asimétrica} (cola a la derecha) si posee una cola más larga a la derecha, y \emph{negativamente asimétrica} (cola a la izquierda) si la cola más larga está a la izquierda. Una distribución perfectamente simétrica tiene asimetría cero. Para ilustrar estas ideas, introduciremos la distribución Gamma.
 
 \begin{definition}
-We say that a continuous random variable $X$ follows a \emph{Gamma distribution} with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$, if its associated probability density function (PDF) is given by
+Decimos que una variable aleatoria continua $X$ sigue una \emph{distribución Gamma} con parámetro de forma $\alpha > 0$ y parámetro de tasa $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por
 
 \begin{equation} \label{eq:gamma_pdf}
 f_X(x; \alpha, \beta) = 
@@ -45,23 +45,23 @@ f_X(x; \alpha, \beta) =
 0, & x \leq 0,
 \end{cases}
 \end{equation}
-where $\Gamma(\alpha)$ denotes the Gamma function, defined as
+donde $\Gamma(\alpha)$ denota la función Gamma, definida como
 $$
 \Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
 $$
 \end{definition}
 
-Among other applications, the Gamma distribution is frequently used to model the number of total insurance claims over a given time period.
+Entre otras aplicaciones, la distribución Gamma se usa frecuentemente para modelar el número total de reclamaciones de seguros en un periodo dado.
 
 \begin{remark}
-The skewness of a Gamma distribution is given by
+La asimetría de una distribución Gamma está dada por
 $$
 \gamma_1 = \frac{2}{\sqrt{\alpha}}.
 $$
-This means that the skewness is always positive, and it approaches zero as $\alpha$ increases. In other words, the distribution becomes more symmetric as $\alpha$ becomes larger.
+Esto implica que la asimetría es siempre positiva y tiende a cero conforme $\alpha$ aumenta; es decir, la distribución se vuelve más simétrica al crecer $\alpha$.
 \end{remark}
 
-We will now show how to plot the PDF of the Gamma distribution for $\alpha = 2$ and $\beta = 1$, highlighting the mean and median.
+Mostraremos cómo graficar la PDF de la distribución Gamma para $\alpha = 2$ y $\beta = 1$, destacando la media y la mediana.
 
 ```{r}
 #| fig-cap: "Función de densidad (PDF) de la distribución gamma con media y mediana destacadas."
@@ -137,34 +137,34 @@ gamma_distribution_plot
 ## Curtosis 
 
 \begin{definition}
-The \emph{kurtosis} of a random variable $X$ is defined as the fourth standardized moment, given by
+La \emph{curtosis} de una variable aleatoria $X$ se define como el cuarto momento estandarizado, dado por
 $$
 \beta_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},
 $$
-where $\mu = \mathbb{E}[X]$ is the mean and $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ is the standard deviation of $X$.
+donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
-Kurtosis measures the "tailedness" of a probability distribution. A distribution with high kurtosis (also known as a \emph{leptokurtic} distribution) has heavier tails and a sharper peak than a normal distribution, while a distribution with low kurtosis (also known as a \emph{platykurtic} distribution) has lighter tails and a flatter peak. The kurtosis of a normal distribution is 3, which is why we are usually interested in computing the \emph{excess kurtosis} which is given by:
+La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (\emph{leptocúrtica}) tiene colas más pesadas y un pico más agudo que la normal; con baja curtosis (\emph{platicúrtica}) tiene colas más ligeras y un pico más plano. La curtosis de la normal es 3; por ello suele calcularse la \emph{curtosis en exceso} dada por:
 $$
 \gamma_2 = \beta_2 - 3.
 $$
-To illustrate this idea, we will introduce the Laplace distribution.
+Para ilustrar, introducimos la distribución de Laplace.
 \begin{definition}
-We say that a continuous random variable $X$ follows a \emph{Laplace distribution} with location parameter $\mu \in \mathbb{R}$ and scale parameter $b > 0$, if its associated probability density function (PDF) is given by
+Decimos que una variable aleatoria continua $X$ sigue una \emph{distribución de Laplace} con parámetro de localización $\mu \in \mathbb{R}$ y de escala $b > 0$, si su PDF está dada por
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right), \quad x \in \mathbb{R}.
 \end{equation}
 \end{definition}
 
-Among other applications, the Laplace distribution is often used in image processing and computer vision, particularly in modeling noise in images.
+Entre otras aplicaciones, la distribución de Laplace se usa en procesamiento de imágenes y visión por computadora, particularmente para modelar ruido.
 
-\begin{remark} The excess kurtosis of a Laplace distribution is given by
+\begin{remark} La curtosis en exceso de una distribución de Laplace es
 $$
 \gamma_2 = 3.
 $$
-This means that the Laplace distribution has heavier tails than a normal distribution.
+Esto significa que la distribución de Laplace tiene colas más pesadas que la normal.
 \end{remark}
 
-We will now show how to plot the PDF of the Laplace distribution with mean zero and variance one.
+Mostramos ahora cómo graficar la PDF de la distribución de Laplace con media cero y varianza uno.
 
 ```{r}
 #| fig-cap: "PDF de la distribución de Laplace con media cero y varianza uno."
@@ -202,38 +202,38 @@ laplace_distribution_tbl %>%
 ```
 
 ## Gráficos QQ
-QQ plots, or quantile-quantile plots, are graphical tools used to compare the distribution of a dataset against a theoretical distribution, such as the normal distribution. They are particularly useful for assessing the normality of the data.
+Los gráficos QQ (quantile–quantile) son herramientas para comparar la distribución de un conjunto de datos con una distribución teórica (por ejemplo, la normal). Son especialmente útiles para evaluar la normalidad.
 
-To construct a QQ plot, you should follow these steps:
+Para construir un gráfico QQ, siga estos pasos:
 \begin{enumerate}
-    \item \textbf{Sort the sample data:}  
-    Arrange the data in increasing order:  
+    \item \textbf{Ordene los datos muestrales:}  
+    Coloque los datos en orden creciente:  
     \[
     x_{(1)} \leq x_{(2)} \leq \cdots \leq x_{(n)}.
     \]
     
-    \item \textbf{Calculate plotting positions (empirical quantiles):}  
-    For each ordered value \( x_{(i)} \), compute the corresponding probability  
+    \item \textbf{Calcule posiciones de trazado (cuantiles empíricos):}  
+    Para cada valor ordenado \( x_{(i)} \), calcule la probabilidad correspondiente  
     \[
     p_i = \frac{2i - 1}{2n}, \quad i = 1, 2, \ldots, n.
     \]
     
-    \item \textbf{Find theoretical quantiles of the normal distribution:}  
-    Compute the theoretical quantiles from the inverse cumulative distribution function (CDF) of the normal distribution:  
+    \item \textbf{Obtenga los cuantiles teóricos de la normal:}  
+    A partir de la función cuantil (inversa de la CDF) de la normal estándar:  
     \[
     q_i = \Phi^{-1}(p_i),
     \]
-    where \( \Phi^{-1} \) is the quantile function of the standard normal distribution.  
+    donde \( \Phi^{-1} \) es la función cuantil de la normal estándar.  
         
-    \item \textbf{Plot the points:}  
-    Plot the pairs \( (q_i, x_{(i)}) \) with \( q_i \) on the x-axis and \( x_{(i)} \) on the y-axis.
+    \item \textbf{Trace los puntos:}  
+    Grafique los pares \( (q_i, x_{(i)}) \) con \( q_i \) en el eje x y \( x_{(i)} \) en el eje y.
     
-    \item \textbf{Add a reference line:}  
-    Typically, we add a line through the first and third quartiles to help assess normality. \end{enumerate}
+    \item \textbf{Agregue una línea de referencia:}  
+    Trazar, por ejemplo, una recta por el primer y tercer cuartil ayuda a evaluar la normalidad. \end{enumerate}
 
-The closer the points lie to this line, the more the sample resembles the specified normal distribution.
+Mientras más cerca caigan los puntos de esa recta, más se parece la muestra a la distribución normal especificada.
 
-To illustrate these ideas, we will now generate samples from the Gamma and Laplace distributions, and then we will construct their associated QQ plots and histograms. First we construct the samples:
+Para ilustrar estas ideas, generaremos muestras de las distribuciones Gamma y Laplace y construiremos sus gráficos QQ e histogramas. Primero, generamos las muestras:
 ```{r}
 set.seed(123) # for reproducibility
 
@@ -260,7 +260,7 @@ laplace_sample_tbl <- tibble(
 )
 ```
 
-We will now construct the corresponding QQ plots and histograms. We will start with the Gamma distribution samples:
+Ahora construiremos los correspondientes gráficos QQ e histogramas. Empezamos con las muestras de la distribución Gamma:
 ```{r}
 #| fig-cap: "Gráfico QQ e histograma de las muestras de la distribución Gamma."
 #| fig-width: 10
@@ -312,7 +312,7 @@ gamma_plot <- gamma_qq_plot + gamma_histogram +
 gamma_plot
 ```
 
-We will now construct the QQ plot and histogram for the Laplace distribution samples:
+Construimos ahora el gráfico QQ y el histograma para las muestras de Laplace:
 ```{r}
 #| fig-cap: "Gráfico QQ e histograma de las muestras de la distribución de Laplace."
 #| fig-width: 10
@@ -398,7 +398,7 @@ gamma_sample_tbl %>%
   ) %>%
   glimpse()
 ```
-For the Laplace sample we have:
+Para la muestra de Laplace tenemos:
 ```{r}
 # Compute sample skewness and excess kurtosis for Laplace distribution
 laplace_sample_tbl %>%
@@ -411,52 +411,52 @@ laplace_sample_tbl %>%
 
 ## Escalamiento y estandarización 
 
-In many situations, it could happen that the units we are using to measure different variables in our data are not compatible. For example, we could have a dataset that contains the height of individuals in centimeters and their weight in kilograms. In such cases, it is often useful to \emph{scale} the variables so that they are comparable. In this section, we will discuss the most common methods for scaling and standardizing random variables and samples.
+En muchas situaciones, las unidades con que medimos distintas variables no son comparables (p.ej., estatura en cm y peso en kg). En esos casos conviene \emph{escalar} las variables para hacerlas comparables. En esta sección discutimos los métodos más comunes para escalar y estandarizar variables y muestras.
 
 ### Escalamiento de variables aleatorias
 
 \begin{definition} 
-An \emph{affine transformation} of a random variable $X$ is a transformation of the form 
+Una \emph{transformación afín} de una variable aleatoria $X$ es de la forma 
 $$
 Y = aX + b
 $$
-where $a$ and $b$ are constants.
+donde $a$ y $b$ son constantes.
 \end{definition}
 
 \begin{remark}
-In the context of statistics, affine transformations are often refered to as \emph{scaling} (even when they also include a translational component).
+En estadística, a menudo se habla de \emph{escalamiento} (aunque incluya traslación) para referirse a transformaciones afines.
 \end{remark}
 
-Now assume that $X$ is a random variable with mean $\mu$ and standard deviation $\sigma$. Then the random variable
+Suponga que $X$ tiene media $\mu$ y desviación estándar $\sigma$. Entonces la variable
 $$ 
 Y = aX + b 
 $$
-will have mean $a\mu + b$ and standard deviation $|a|\sigma$. In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
+tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, la variable
 $$
 Z = \frac{X - \mu}{\sigma}
 $$
-will have mean $0$ and standard deviation $1$. This particular affine transformation is called a \emph{standardization}, and the resulting random variable $Z$ is called the \emph{standardized} version of $X$. $Z$ is also sometimes called the \emph{z-score} of $X$.
+tendrá media $0$ y desviación estándar $1$. Esta transformación se llama \emph{estandarización}, y $Z$ es la versión \emph{estandarizada} de $X$ (también llamada \emph{puntaje z}).
 
 \begin{remark}
-Notice that if $X$ is not normally distributed, then $Z$ will \emph{not} be the standard normal distribution. Standardization does not make a non-normal distribution normal.
+Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en normal.
 \end{remark}
 
 \begin{observation}
-Notice that, by definition, 
+Por definición, 
 $$
 \gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
 $$
-and
+y
 $$
 \gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
 $$
 \end{observation}
 
-As an example, we will consider again the Gamma distrubution that we introduced earlier. In this case we have that 
+Como ejemplo, consideremos de nuevo la distribución Gamma. En este caso
 $$
 \mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
 $$
-Using this information, we can generate the plot of standadized version of the Gamma distribution and compare it with the original one.
+Con esta información, generamos la gráfica de la versión estandarizada de la Gamma y la comparamos con la original.
 ```{r}
 #| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
 #| fig-width: 8
@@ -543,36 +543,36 @@ combined_gamma_plot
 
 ### Escalamiento de muestras
 
-For a given a sample, it is not always known what the underlying distribution is. In particular, we may not know what the mean and the standard deviation of the underlying population are. However, we can still try to scale our data but we should keep in mind that in this case there is more than one scaling method. The most common are:
+Para una muestra dada, no siempre se conoce la distribución subyacente; en particular, pueden desconocerse la media y la desviación poblacionales. Aun así, podemos escalar los datos; hay varios métodos comunes:
 
 \begin{enumerate}
-    \item \emph{Standardization}: This method uses the sample mean and sample standard deviation to scale the data. The standardized sample is given by
+    \item \emph{Estandarización}: Usa la media y desviación muestrales. La muestra estandarizada es
     $$
     T = \frac{X - \bar{X}}{S},
     $$
-    where $\bar{X}$ is the sample mean and $S$ is the sample standard deviation. 
+    donde $\bar{X}$ es la media muestral y $S$ la desviación muestral. 
     
-    \item \emph{Min-Max Scaling}: This method scales the data to a fixed range, usually [0, 1]. The scaled sample is given by
+    \item \emph{Escalamiento Min–Max}: Escala a un rango fijo, usualmente [0,1]. La muestra escalada es
     $$
     T = \frac{X - \min(X)}{\max(X) - \min(X)},
     $$
-    where $\min(X)$ and $\max(X)$ are the minimum and maximum values of the sample, respectively. This method is very sensitive to outliers, as it uses the minimum and maximum values of the sample.
+    donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra. Es muy sensible a atípicos al usar extremos.
     
-    \item \emph{Robust Scaling}: This method scales the data using the median and interquartile range (IQR). The scaled sample is given by
+    \item \emph{Escalamiento robusto}: Usa la mediana y el rango intercuartil (IQR). La muestra escalada es
     $$
     T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
     $$
-    where $\text{IQR}(X) = Q_3 - Q_1$ is the interquartile range of the sample. This method is more robust to outliers than min-max scaling, as it uses the median and IQR instead of the minimum and maximum values.
+    donde $\text{IQR}(X) = Q_3 - Q_1$. Es más robusto a atípicos que Min–Max.
 
-    \item \emph{Normalization}: This method simply divides each data point by the corresponding vector norm. The normalized sample is given by
+    \item \emph{Normalización}: Divide cada dato por la norma del vector. La muestra normalizada es
     $$
     T = \frac{X}{\|X\|},
     $$
-    where $\|X\|$ is the vector norm of the sample. It is not used as often as the previous methods.
+    donde $\|X\|$ es la norma. Se usa con menor frecuencia que los anteriores.
 \end{enumerate}
 
 \begin{remark} 
-As we mentioned earlier, scaling does not make a non-normal distribution normal. In particular, the sample skewness and sample excess kurtosis of the scaled sample will be the same as those of the original sample.
+Como se mencionó, escalar no vuelve normal una distribución no normal. En particular, la asimetría y la curtosis en exceso muestrales no cambian.
 \end{remark}
 
 As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
@@ -677,12 +677,12 @@ scaled_gamma_plot
 
 ## Actividad: Visualizando la no normalidad de muestras
 
-For each of the following distributions, construct a sample of size 300 and compute their associated sample Skewness and Kurtosis. After that, construct and compare their associated QQ plots and histograms.
+Para cada una de las siguientes distribuciones, construya una muestra de tamaño 300 y calcule la asimetría y curtosis muestrales. Después, construya y compare sus gráficos QQ e histogramas.
 
 \begin{enumerate}
-    \item Exponential distribution with rate parameter $\lambda = 1$.
-    \item Uniform distribution on the interval $[0, 1]$.
-    \item Beta distribution with shape parameters $\alpha = 2$ and $\beta = 5$.
-    \item Cauchy distribution with location parameter $x_0 = 0$ and scale parameter $\gamma = 1$.
-    \item Chi-squared distribution with degrees of freedom $k = 3$.
+    \item Distribución exponencial con tasa $\lambda = 1$.
+    \item Distribución uniforme en $[0, 1]$.
+    \item Distribución beta con $\alpha = 2$ y $\beta = 5$.
+    \item Distribución de Cauchy con localización $x_0 = 0$ y escala $\gamma = 1$.
+    \item Distribución ji‑cuadrada con $k = 3$ grados de libertad.
 \end{enumerate}

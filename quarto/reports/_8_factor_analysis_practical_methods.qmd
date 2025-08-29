@@ -1,10 +1,10 @@
-# Factor Analysis: Practical Methods
+# Análisis factorial: métodos prácticos
 
-Recall from last chapter that the classical factor analysis model is given by 
+Recordemos del capítulo anterior que el modelo clásico de análisis factorial es 
 $$
 X = \mu + LF + \epsilon 
 $$
-where:
+donde:
 \begin{itemize}
     \item $X$ is a random vector of $p$ observed variables (indicators).
     \item $\mu$ is a constant vector of dimension $p$.
@@ -13,41 +13,41 @@ where:
     \item $\epsilon \sim \N(0,\Psi)$ is a vector of unique errors (specific variances) that are also assumed to be normally distributed with mean zero and diagonal covariance matrix $\Psi = \diag(\sigma_{1}^{2}, \ldots, \sigma_{p}^{2})$.
     \item The factors $F$ and the errors $\epsilon$ are assumed to be independent, in particular $\Cov[F,\epsilon] = 0$.
 \end{itemize}
-Notice that, since $\epsilon \sim \N(0,\Psi)$, this model is completely specified by the parameters $\mu$, $L$, and $\Psi$. In this chapter we will discuss practical methods for estimating these parameters from data, as well as methods for estimating the latent factors $F$ (known as \emph{factor scores}) for our observations once the model parameters have been estimated.
+Nótese que, como $\epsilon \sim \N(0,\Psi)$, este modelo queda completamente determinado por $\mu$, $L$ y $\Psi$. En este capítulo discutiremos métodos prácticos para estimar estos parámetros a partir de datos y para obtener las puntuaciones factoriales de $F$ una vez estimado el modelo.
 
 
-## Assessing Factorability 
+## Evaluación de la factorizabilidad 
 
-The first step in applying factor analysis to a dataset is to assess whether the data is suitable for factor analysis, i.e., whether the observed variables exhibit sufficient correlations to justify the use of a factor model. Several statistical tests and measures can be used to evaluate the factorability of a dataset: 
-
-\begin{enumerate}
-    \item \textbf{Correlation Matrix Examination:} A preliminary step is to visually inspect the correlation matrix of the observed variables. Look for patterns of high correlations (e.g., > 0.3) among variables, which suggest that they may share common underlying factors.
-    \item \textbf{Bartlett's Test of Sphericity:} This test evaluates the hypothesis that the correlation matrix is an identity matrix, which would indicate that the variables are uncorrelated and unsuitable for factor analysis. A significant result ($p$-value < 0.05) suggests that the variables are correlated enough to proceed with factor analysis.
-    \item \textbf{Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy:} The KMO statistic measures the proportion of variance in the observed variables that can be attributed to underlying common factors, relative to variance that is unique to each variable. It ranges from 0 to 1, with values closer to 1 indicating that factor analysis is likely to be useful. A KMO value above 0.6 is generally considered acceptable for factor analysis.
-\end{enumerate}
-
-## Deciding the Number of Factors 
-
-Determining the appropriate number of factors to retain in a factor analysis is a crucial step that can significantly impact the results and interpretations. Several methods can be employed to decide on the number of factors: 
+El primer paso es evaluar si los datos son adecuados para AF; es decir, si las variables observadas exhiben correlaciones suficientes que justifiquen un modelo factorial. Varias pruebas y medidas pueden emplearse:
 
 \begin{enumerate}
-    \item \textbf{Eigenvalue Criterion (Kaiser Criterion):} Retain factors with singular values greater than 1. This method is based on the idea that a factor should explain at least as much variance as a single observed variable.
-    \item \textbf{Scree Plot:} A scree plot displays the singular values in descending order. Look for an "elbow" point where the slope of the curve changes dramatically. The number of factors to retain is typically determined by the number of points before this elbow.
-    \item \textbf{Parallel Analysis:} This method involves comparing the observed singular values with those obtained from random data of the same size. Factors are retained if their singular values exceed those from the random data.
-    \item \textbf{Model Fit Indices:} For more advanced factor analysis methods (e.g., confirmatory factor analysis), various fit indices (e.g., RMSEA, TLI) can be used to assess how well the model fits the data for different numbers of factors.
+    \item \textbf{Revisión de la matriz de correlaciones:} inspección visual en busca de patrones altos (p.ej., > 0.3) que sugieran factores comunes.
+    \item \textbf{Prueba de esfericidad de Bartlett:} contrasta identidad; un resultado significativo ($p<0.05$) sugiere correlación suficiente.
+    \item \textbf{Kaiser–Meyer–Olkin (KMO):} mide la proporción de varianza atribuible a factores comunes; valores cercanos a 1 indican utilidad (típicamente > 0.6 es aceptable).
 \end{enumerate}
 
-## Extracting Factors
+## Decidir el número de factores 
 
-Once the number of factors has been determined, the next step is to extract the factors from the data. Several methods are available for factor extraction: 
+Determinar cuántos factores retener es crucial y puede afectar los resultados e interpretaciones. Algunos métodos:
+
 \begin{enumerate}
-    \item \textbf{Principal Axis Factoring (PAF):} This method focuses on the shared variance among variables and is suitable when the goal is to identify underlying constructs. It iteratively estimates communalities and extracts factors based on the reduced correlation matrix.
-    \item \textbf{Maximum Likelihood (ML) Factor Analysis:} This method estimates factor loadings by maximizing the likelihood of the observed data given the model. It allows for statistical testing of hypotheses about the factor structure and provides goodness-of-fit indices.
+    \item \textbf{Criterio de Kaiser:} retener valores singulares > 1.
+    \item \textbf{Gráfico scree:} buscar el “codo”.
+    \item \textbf{Análisis paralelo:} comparar con datos aleatorios del mismo tamaño.
+    \item \textbf{Índices de ajuste:} (RMSEA, TLI) para evaluar modelos con distinto número de factores.
 \end{enumerate}
 
-## Rotation of Factors 
+## Extracción de factores
 
-After extracting factors, it is often beneficial to rotate them to achieve a simpler and more interpretable structure. Rotation can be either orthogonal (factors remain uncorrelated) or oblique (factors are allowed to correlate). Common rotation methods include: 
+Una vez decidido el número de factores, el siguiente paso es extraerlos. Métodos disponibles:
+\begin{enumerate}
+    \item \textbf{Ejes principales (PAF):} se centra en la varianza compartida; estima comunalidades y extrae factores desde la matriz reducida.
+    \item \textbf{Máxima verosimilitud (ML):} estima cargas maximizando la verosimilitud; permite pruebas e índices de ajuste.
+\end{enumerate}
+
+## Rotación de factores 
+
+Tras extraer factores, suele ser útil rotarlos para lograr una estructura más simple e interpretable. La rotación puede ser ortogonal (sin correlación) u oblicua (con correlación). Métodos comunes:
 \begin{enumerate}
     \item \textbf{Varimax Rotation:} An orthogonal rotation method that maximizes the variance of squared loadings within each factor, leading to a simpler structure where each variable loads highly on one factor and low on others.
     \item \textbf{Quartimax Rotation:} Another orthogonal rotation method that simplifies the rows of the loading matrix, aiming to have each variable load highly on as few factors as possible.
@@ -132,9 +132,9 @@ n_eff <- nrow(hs_data)
 bart <- cortest.bartlett(Sigma, n = n_eff)
 kmo  <- KMO(Sigma)
 ```
-We now show the correlation heatmap:
+Mostramos ahora el mapa de calor de correlaciones:
 ```{r}
-#| fig-cap: "Correlation heatmap for tests x4–x9. Notice the strong correlations among the verbal tests (x4, x5, x6) and the speed tests (x7, x8, x9), suggesting that a two-factor model may be appropriate for this data."
+#| fig-cap: "Mapa de calor de correlaciones para x4–x9. Se observan correlaciones fuertes entre las pruebas verbales (x4, x5, x6) y entre las de rapidez (x7, x8, x9), sugiriendo un modelo de dos factores."
 #| fig-width: 5
 #| fig-height: 5
 
@@ -155,8 +155,8 @@ ggplot(corr_df, aes(x = Var2, y = Var1, fill = r)) +
   ) +
   coord_fixed() +
   labs(
-    title = "Correlation heatmap for tests x4–x9",
-    x = "", y = "", fill = "Correlation"
+    title = "Mapa de calor de correlaciones (x4–x9)",
+    x = "", y = "", fill = "Correlación"
   ) +
   theme(
     plot.title = element_text(size = 18, face = "bold"),
@@ -165,16 +165,16 @@ ggplot(corr_df, aes(x = Var2, y = Var1, fill = r)) +
     axis.ticks = element_blank()
   )
 ```
-Notice that there is a strong correlation among the verbal tests (x4, x5, x6) and among the speed tests (x7, x8, x9), but not such strong correlation between the two groups. This is a good indication that a two-factor model may be appropriate for this data. We now report the results of Bartlett's test and the KMO measure:
+Obsérvese la fuerte correlación entre pruebas verbales (x4, x5, x6) y entre rapidez (x7, x8, x9), pero no entre grupos. Esto sugiere que un modelo de dos factores es adecuado. Reportamos ahora Bartlett y KMO:
 \begin{align*}
 \mbox{Bartlett's test of sphericity} & = `r bart$p.value` \\
 \mbox{Kaiser-Meyer-Olkin measure} & = `r kmo$MSA`
 \end{align*} 
-As we can see, all tests so far indicate that factor analysis is appropriate for this dataset.
+Como se observa, todas las pruebas indican que el AF es apropiado para este conjunto.
 
-### Deciding the Number of Factors 
+### Decidir el número de factores 
 
-We will now use a scree plot and a cumulative variance plot to help us decide on the number of factors to retain. Since we are using the correlation matrix, we will look for singular values greater than 1 (Kaiser criterion) and also look for an "elbow" in the scree plot.
+Usaremos un gráfico scree y uno de varianza acumulada para decidir cuántos factores retener. Como usamos la matriz de correlaciones, buscamos valores singulares > 1 (Kaiser) y el "codo" en el scree.
 
 ```{r}
 #| fig-cap: "Scree plot and cumulative variance for tests x4–x9. Both plots suggest that a two-factor solution is appropriate for this dataset."

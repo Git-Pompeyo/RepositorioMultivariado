@@ -1,22 +1,22 @@
 # Análisis de componentes principales
 
-Principal Component Analysis (PCA) is a powerful technique used to reduce the dimensionality of a dataset while preserving as much information (measured by variance) as possible. It transforms the original variables into a new set of uncorrelated variables called principal components, which are ordered by the amount of variance they explain.
+El Análisis de Componentes Principales (PCA) es una técnica potente para reducir la dimensionalidad preservando la mayor información posible (medida por la varianza). Transforma las variables originales en un nuevo conjunto de variables no correlacionadas llamadas componentes principales, ordenadas por la varianza que explican.
 
 ## Entendiendo la varianza total
 
-Let $\Sigma$ be the covariance matrix of a given dataset. The \emph{total variance} of the data is given by the trace of the covariance matrix: 
+Sea $\Sigma$ la matriz de covarianzas del conjunto. La \emph{varianza total} se da por la traza: 
 $$
 \mbox{Total Variance} = \Tr \Sigma = \sum_{i=1}^{p} \Sigma_{ii},
 $$
-where $\Sigma_{ii}$ are the diagonal elements of $\Sigma$ representing the sample variance of each variable. Now, using the singular value decomposition (SVD) of $\Sigma$, we can find matrices $Q$, and $\Lambda$ such that: 
+donde $\Sigma_{ii}$ son las varianzas muestrales de cada variable. Usando la descomposición en valores/vectores propios (SVD) de $\Sigma$, existen matrices $Q$ y $\Lambda$ tales que: 
 $$ 
 \Sigma = Q \Lambda Q^{T}, 
 $$
-where $\Lambda$ is a diagonal matrix containing the singular values $\lambda_1, \ldots, \lambda_p$ of $\Sigma$. These singular values can then be used to express the total variance as:
+siendo $\Lambda$ diagonal con los valores propios $\lambda_1,\ldots,\lambda_p$. Entonces la varianza total puede escribirse como:
 $$
 \mbox{Total Variance} = \Tr \Sigma = \Tr Q \Lambda Q^{T} = \Tr \Lambda = \lambda_1 + \cdots + \lambda_p.
 $$
-The columns of $Q$ are known as the \emph{principal component directions} of our data and the singular values in $\Lambda$ indicate how much variance each principal component explains. The first principal component (associated with the largest singular value) captures the most variance, the second principal component (associated with the second largest singular value) captures the second most variance, and so on. These principal components induce a new coordinate system for our data, in other words, each data point can now be represented using its \emph{principal component score}, which are related to the original variables by the relations:
+Las columnas de $Q$ son las \emph{direcciones de los componentes principales}; los valores de $\Lambda$ indican cuánta varianza explica cada componente. El primero (mayor valor propio) capta la mayor varianza, el segundo la siguiente, y así sucesivamente. Estos componentes inducen un nuevo sistema de coordenadas; cada punto puede representarse por sus \emph{puntuaciones} de componentes, relacionadas con las variables por:
 $$ 
  X = Q\, (PC) + \bar{x} 
 $$
@@ -24,16 +24,16 @@ and
 \begin{equation} 
 PC = Q^{T} (X - \bar{x}) \label{eq:pc_scores}
 \end{equation}
-Here $X$ is our original coordinate vector, $PC$ is the coordinate vector corresponding to the principal component scores,  and $\bar{x}$ is the vector of means of our dataset.
+Aquí $X$ es el vector en coordenadas originales, $PC$ el de puntuaciones, y $\bar{x}$ el vector de medias.
 
-To illustrate these ideas, we will consider again the dataset shown in the following figure:
+Para ilustrar estas ideas, consideramos el conjunto de la figura:
 ```{r}
 #| fig-cap: "Datos de muestra con dos variables altamente correlacionadas."
 #| fig-width: 5
 #| fig-height: 5
 sample_data_plot
 ```
-Recall that this dataset consists of 300 observations of two variables, $X$ and $Y$, the first one generated from a uniform distribution between $0$ and $10$, and the second one generated as $Y = X + \epsilon$, where $\epsilon$ is a normally distributed random error with mean $0$ and standard deviation $1$. The covariance matrix of this dataset is:
+Este conjunto consta de 300 observaciones de dos variables, $X$ y $Y$: la primera es uniforme en $[0,10]$ y la segunda es $Y=X+\epsilon$, con $\epsilon$ normal de media 0 y desviación 1. La matriz de covarianzas es:
 ```{r}
 Sigma <- cov(sample_data_tbl)
 ```
@@ -43,11 +43,11 @@ $$
   `r Sigma[2,1]` & `r Sigma[2,2]` 
 \end{bmatrix}
 $$
-The total variance is:
+La varianza total es:
 $$
 \mbox{Total Variance} = \Tr \Sigma = \Sigma_{11} + \Sigma_{22} = `r Sigma[1,1] + Sigma[2,2]` 
 $$
-  We now look at the singular value decomposition of $\Sigma$, to obtain:
+  Consideramos ahora la descomposición espectral de $\Sigma$ para obtener:
 ```{r}
 # Compute singular vectors and values
 eig <- eigen(Sigma)
@@ -71,7 +71,7 @@ $$
 \end{array}
 \right]
 $$
-The principal component directions are given by the columns of $Q$, and the amount of variance explained by each component is given by the corresponding singular value in $\Lambda$. In particular, since the vector of means is given by: 
+Las direcciones de componentes principales son las columnas de $Q$ y la varianza explicada por cada componente es el valor propio correspondiente. En particular, como el vector de medias es: 
 ```{r}
 sample_mean_vector <- colMeans(sample_data_tbl)
 ```
@@ -79,7 +79,7 @@ sample_mean_vector <- colMeans(sample_data_tbl)
 \bar{x} & = `r sample_mean_vector[1]`  \\
 \bar{y} & = `r sample_mean_vector[2]`
 \end{align*}
-we have that the relation between the original variables and the principal component coordinates is given by: 
+tenemos que la relación entre variables originales y coordenadas de componentes principales es: 
 \begin{align*}
 X & = `r vectors[1,1]` PC_1 + `r vectors[1,2]` PC_2 + `r sample_mean_vector[1]` \\
 Y & = `r vectors[2,1]` PC_1 + `r vectors[2,2]` PC_2 + `r sample_mean_vector[2]` 
@@ -89,7 +89,7 @@ and
 PC_1 & = `r vectors[1,1]` (X - `r sample_mean_vector[1]`) + `r vectors[2,1]` (Y - `r sample_mean_vector[2]`) \\ 
 PC_2 & = `r vectors[1,2]` (X - `r sample_mean_vector[1]`) + `r vectors[2,2]` (Y - `r sample_mean_vector[2]`) 
 \end{align*}
-Using these formulas, we can find the projection of our original data into the first and second principal components. The results are shown in the following figure:
+Con estas fórmulas, obtenemos la proyección de los datos sobre el primer y segundo componente. Los resultados se muestran a continuación:
 
 ```{r}
 #| fig-cap: "Proyecciones sobre las direcciones de los componentes principales. Se pierde mucha más información al proyectar sobre el segundo componente."
@@ -184,14 +184,14 @@ compare_plot1 + compare_plot2 +
 
 ## Varianza acumulada y gráficos scree
 
-As we mentioned in the introduction to this chapter, PCA is often used for dimensionality reduction. This means that we want to reduce the number of variables in our dataset while retaining as much information as possible. To decide how many principal components to keep, we can look at the amount of variance explained by each component. A common way to visualize this information is through the use of a \emph{scree plot}. The scree plot associated to a given dataset displays the singular values on the $y$-axis and the component number on the $x$-axis. It helps to identify the point where the explained variance starts to level off, often referred to as the "elbow". Another useful plot is the \emph{cumulative variance plot}, which shows the cumulative proportion of variance explained by the principal components. Notice that the proportion of variance explained by the $k$-th principal component is given by: 
+Como se indicó, el PCA se usa para reducción de dimensión. Buscamos reducir variables reteniendo la mayor información. Para decidir cuántos componentes conservar, examinamos la varianza explicada por cada uno. Es común usar un \emph{gráfico scree}, que muestra valores propios en $y$ y el índice del componente en $x$; ayuda a identificar el “codo”. Otro gráfico útil es el de \emph{varianza acumulada}, que muestra la proporción acumulada explicada. La proporción explicada por el componente $k$ es: 
 $$ 
 \frac{\lambda_k}{\sum_{i=1}^{p} \lambda_i}
 $$
-This plot helps to determine how many components are needed to explain a desired amount of total variance, such as $70\%$ or $90\%$. 
+Este gráfico ayuda a determinar cuántos componentes se requieren para explicar, por ejemplo, $70\%$ o $90\%$ de la varianza total. 
 
 
-To illustrate this, we will use the well-known "iris" dataset, which contains measurements of four features (sepal length, sepal width, petal length, and petal width) for three species of iris flowers (setosa, versicolor, and virginica). We will perform PCA on the four features and create a scree plot to visualize the variance explained by each principal component. First, we load the data and compute the covariance matrix for each species: 
+Para ilustrar, usaremos el conocido conjunto "iris", con cuatro mediciones (largo/ancho de sépalo y pétalo) para tres especies (setosa, versicolor, virginica). Realizaremos PCA y construiremos el scree para visualizar la varianza explicada por cada componente. Primero, cargamos los datos y calculamos covarianzas por especie: 
 ```{r}
 # Load the iris dataset
 data(iris)
