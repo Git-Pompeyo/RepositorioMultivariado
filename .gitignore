@@ -4,5 +4,6 @@
 renv/library/
 renv/staging/
 output/
+AGENTS.md
 
 /.quarto/
