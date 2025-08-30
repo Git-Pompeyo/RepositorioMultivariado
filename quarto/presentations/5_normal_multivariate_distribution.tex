@@ -1,0 +1,792 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+  ignorenonframetext,
+  aspectratio=169]{beamer}
+\newif\ifbibliography
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% remove section numbering
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{section title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{subsection title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+\usepackage{caption}
+% Make caption package work with longtable
+\makeatletter
+\def\fnum@table{\tablename~\thetable}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+%% BEAMER THEME ITHACA 2013: Main tex file for compiling
+%$ Compile this file. 
+%%
+%% Copyright 2013 by Raul Gomez
+%% This file may be distributed and/or modified
+%% 	1. under the LaTeX Project Public License and/or
+%% 	2. under the GNU Public License.
+%% 
+%% This theme is based on Flip's Theme by Flip Tanedo.
+
+%% Please see notes.txt for comments on Beamer Theme Ithaca 2013
+%% By default, this template is meant to be run with XeLaTeX (for fonts)
+%% To run in PDFLaTeX, remove fontspec and any font commands
+
+%% Discussion of Beamer vs XeLaTeX vs LuaLaTeX
+%% http://tex.stackexchange.com/questions/29497/xelatex-preventing-beamer-from-using-different-backgrounds
+
+
+
+%\documentclass[12 pt,hyperref={pdfpagelabels=false}]{beamer}
+%\documentclass[aspectratio=169]{beamer}
+
+
+
+\usetheme[
+%	bullet=square,           % Default option: circle
+%	nobigpagenumber,         % No big circled page number on lower right
+%       nofootline,		 % No footline
+	grey                    % For a neutral grey background color
+%	watermark=BG_both,	 % png file for the watermark
+	]{Ithaca}
+
+
+
+%%%%%%%%%%
+% FONTS %
+%%%%%%%%%%
+
+%% Default font: lmodern, doesn't require fontspec % solves some default warnings
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}	
+\usepackage{mathptmx}
+\usepackage{frutiger}		
+
+%% Protects fonts from Beamer screwing with them
+%% http://tex.stackexchange.com/questions/10488/force-computer-modern-in-math-mode
+\usefonttheme{professionalfonts}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% Usual LaTeX Packages %
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathrsfs} 			% For Weinberg-esque letters
+\usepackage{cancel}			% For "SUSY-breaking" symbol
+\usepackage{slashed}   		        % for slashed characters in math mode
+\usepackage{bbm}                	% for \mathbbm{1} (unit matrix)
+\usepackage{amsthm}			% For theorem environment
+\usepackage{multirow}			% For multi row cells in table
+\usepackage{young}			% For Young Tableaux
+\usepackage{xspace}			% For spacing after commands
+\usepackage{wrapfig}			% for Text wrap around figures
+\usepackage{framed}
+\usepackage{pgf}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{float}
+
+
+
+\graphicspath{{images/}}		% Put all images in this directory. Avoids clutter.
+
+\newcommand{\cG}{\mathcal{T}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\Span}{\operatorname{Span}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\RP}{\mathbb{RP}}
+\newcommand{\g}{\mathfrak{g}}
+\newcommand{\n}{\mathfrak{n}}
+\newcommand{\m}{\mathfrak{m}}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\sl}{\mathfrak{sl}}
+\renewcommand{\S}{\mathscr{S}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\SL}{\operatorname{SL}}
+\newcommand{\PGL}{\operatorname{PGL}}
+\renewcommand{\a}{\mathfrak{a}}
+\newcommand{\ind}{\operatorname{ind}}
+\newcommand{\Ext}{\operatorname{Ext}}
+\newcommand{\Tor}{\operatorname{Tor}}
+\newcommand{\hot}{\widehat{\otimes}}
+\newcommand{\Fre}{{Fr\'{e}chet \,}}
+\newcommand{\Sc}{{\mathcal S}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\Orb}{\mathcal{O}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\renewcommand{\N}{\mathcal{N}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\E}{\mathbb{E}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theorem, Definition and Remark Environments%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\theoremstyle{plain}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{conjecture}[theorem]{Conjecture}
+%\newtheorem{claim}[theorem]{Claim}
+%\newtheorem{algorithm}[theorem]{Algorithm}
+%\newtheorem{axiom}[theorem]{Axiom}
+%\newtheorem{criterion}[theorem]{Criterion}
+
+\theoremstyle{definition}
+%\newtheorem{condition}[theorem]{Condition}
+%\newtheorem{exercise}[theorem]{Exercise}
+%\newtheorem{notation}[theorem]{Notation}
+%\newtheorem{case}[theorem]{Case}
+%\newtheorem{question}[theorem]{Question}
+
+\theoremstyle{remark}
+%\newtheorem{remark}[theorem]{Remark}
+%\newtheorem{remarks}[theorem]{Remarks}
+%\newtheorem{summary}[theorem]{Summary}
+%\newtheorem{observation}[theorem]{Observation}
+%\newtheorem{conclusion}[theorem]{Conclusion}
+%\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+
+
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Section and subsection adjustments %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\AtBeginSection{}
+\AtBeginSubsection{}	 
+
+
+
+
+%%%%%%%%%%%%
+% Preamble %
+%%%%%%%%%%%%
+
+\title[MA2003B]{8 Análisis factorial: métodos prácticos}
+\subtitle{MA2003B Aplicación de métodos multivariados \\ en ciencia de datos}
+\institute[Tec de Monterrey]{EIC}
+\date{Campus Monterrey}
+\logo{\includegraphics[height=1.0cm]{tecnologico-de-monterrey-blue}}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdfauthor={rgomez@tec.mx},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+
+\author{rgomez@tec.mx}
+\date{}
+
+\begin{document}
+
+
+\begin{frame}[plain]{}
+\phantomsection\label{section}
+\addtocounter{framenumber}{-1}
+
+\begin{center}
+\Huge\textcolor{structure}{\inserttitle}
+
+\vfill
+
+\Large\insertsubtitle
+
+\vfill
+
+\vspace{1em}
+
+\vfill
+
+
+\large \raisebox{.25cm}{Raul Gomez} \qquad \insertlogo
+
+
+\vfill
+
+\end{center}
+\end{frame}
+
+\section{Introducción al Tidyverse}\label{introducciuxf3n-al-tidyverse}
+
+\section{Los momentos estandarizados}\label{los-momentos-estandarizados}
+
+\section{Pruebas de normalidad}\label{pruebas-de-normalidad}
+
+\section{Introducción al análisis
+multivariante}\label{introducciuxf3n-al-anuxe1lisis-multivariante}
+
+\section{Distribución normal
+multivariante}\label{distribuciuxf3n-normal-multivariante}
+
+\subsection{Definición y propiedades
+básicas}\label{definiciuxf3n-y-propiedades-buxe1sicas}
+
+\begin{frame}{Definición y propiedades básicas}
+\phantomsection\label{definiciuxf3n-y-propiedades-buxe1sicas-1}
+\begin{definition}
+Sea $\mu$ un vector (renglón) y $\Sigma$ una matriz simétrica definida positiva. Decimos que un vector aleatorio (renglón) $X$ tiene \alert{distribución normal multivariante} con media $\mu$ y matriz de covarianzas $\Sigma$, en símbolos $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, si su densidad es
+$$
+\frac{1}{(2\pi)^{p/2} |\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(X - \mu) \Sigma^{-1} (X - \mu)^{T}\right)dX
+$$
+\end{definition}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-1}
+\begin{remark} Algunas observaciones sobre la definición:
+\begin{enumerate}
+\item Al igual que en el caso univariado, la normal multivariante queda completamente determinada por $\mu$ y $\Sigma$. \pause
+\item La matriz $\Sigma$ debe ser simétrica y definida positiva para que la distribución esté bien definida y el exponente sea negativo definido. \pause
+\item El término 
+$$
+|\Sigma| = \det(\Sigma)
+$$
+es la \alert{varianza generalizada} de la distribución. Puede interpretarse como una medida de la "dispersión" en el espacio de dimensión $p$. \pause
+\item El término $(X - \mu) \Sigma^{-1} (X - \mu)^{T}$ es el cuadrado de la distancia de Mahalanobis entre $X$ y la media $\mu$. 
+\end{enumerate}
+\end{remark}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-2}
+Como en el caso univariado, la normal multivariante es destacada por el
+Teorema Central del Límite, que a grandes rasgos dice que la suma de
+muchas variables i.i.d. (debidamente estandarizadas) converge a una
+normal.
+\end{frame}
+
+\begin{frame}{Teorema central del límite (multivariante)}
+\phantomsection\label{teorema-central-del-luxedmite-multivariante}
+\begin{theorem}
+Sea $\{X_i\}_{i=1}^{\infty}$ una sucesión de vectores aleatorios i.i.d. en $\mathbb{R}^p$ con media $\mu$ y covarianzas $\Sigma$. Defina la media muestral
+\[
+\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i.
+\]
+Entonces, cuando $n \to \infty$,
+\[
+\sqrt{n}\,(\bar{X}_n - \mu) \;\xrightarrow{d}\; \mathcal{N}_p(0, \Sigma),
+\]
+donde $\xrightarrow{d}$ denota convergencia en distribución y $\mathcal{N}_p(0, \Sigma)$ es la normal multivariante de dimensión $p$ con media $0$ y covarianzas $\Sigma$.
+\end{theorem}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-3}
+\begin{remark}
+Aun cuando el TCL destaca a la normal multivariante como especialmente importante, no es la única distribución relevante en estadística multivariante.
+
+\bigpause 
+
+De hecho, la mayoría de los datos reales no siguen una normal, y muchos métodos están diseñados para datos no normales.
+
+\bigpause
+
+Además, métodos importantes como regresión lineal, ACP y clustering no producen buenos resultados cuando se aplican a una normal multivariante.
+\end{remark}
+\end{frame}
+
+\subsection{Contornos de la normal
+multivariante}\label{contornos-de-la-normal-multivariante}
+
+\begin{frame}{Contornos de la normal multivariante}
+\phantomsection\label{contornos-de-la-normal-multivariante-1}
+Observe que la función de densidad de la normal multivariante es
+gaussiana en \(p\) dimensiones.
+
+\bigpause
+
+Esto implica que los contornos son elipsoides centrados en \(\mu\) y
+cuya forma está controlada por \(\Sigma\).
+
+\bigpause
+
+La probabilidad asociada a estos contornos está controlada por la
+distribución \(\chi^2\) en el siguiente sentido:
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-4}
+Sea \(0 \leq \varpi \leq 1\) un nivel de probabilidad, y sea \(c\) tal
+que \[
+\mathbb{P}(\chi^2_{p} \leq c) = \varpi
+\]
+
+\bigpause
+
+Entonces, el contorno que contiene una proporción \(\varpi\) de la masa
+de probabilidad está dado por los puntos \(X\) que satisfacen \[
+(X - \mu) \Sigma^{-1} (X - \mu)^{T} = c 
+\]
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-5}
+En la siguiente figura mostramos los contornos de la normal bivariante
+con distintas matrices de covarianzas.
+
+\bigpause
+
+Los contornos son elipses centradas en \(\mu = (0, 0)\), y su forma está
+determinada por \(\Sigma\).
+
+\bigpause
+
+El gradiente de color representa la densidad: colores más oscuros
+indican mayor densidad.
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-6}
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{5_normal_multivariate_distribution_files/figure-beamer/unnamed-chunk-2-1.pdf}}
+
+}
+
+\caption{Distribución normal bivariante con distintas matrices de
+covarianzas}
+
+\end{figure}%
+\end{frame}
+
+\subsection{Estandarización de la normal
+multivariante}\label{estandarizaciuxf3n-de-la-normal-multivariante}
+
+\begin{frame}{Estandarización de la distribución normal multivariante}
+\phantomsection\label{estandarizaciuxf3n-de-la-distribuciuxf3n-normal-multivariante}
+Al igual que en el caso univariado, dado
+\(X \sim \mathcal{N}_{p}(\mu, \Sigma)\), podemos estandarizarlo para
+obtener \(Z \sim \mathcal{N}_{p}(0, I_p)\), donde \(I_p\) es la
+identidad de tamaño \(p\).
+
+\bigpause
+
+Para describir este proceso, recordemos algunos resultados de álgebra
+lineal.
+\end{frame}
+
+\begin{frame}{Singular Value Decomposition}
+\phantomsection\label{singular-value-decomposition}
+\begin{theorem}
+Sea $\Sigma$ simétrica definida positiva de tamaño $p \times p$. Entonces existe una matriz ortogonal $Q$ y una diagonal $\Lambda$ con entradas positivas tales que 
+$$
+\Sigma = Q \Lambda Q^{T}
+$$
+\end{theorem}
+
+\pause
+
+\begin{remark}
+Recuerde que $Q$ es ortogonal si $Q^{T}Q = I_p$, donde $I_p$ es la identidad de tamaño $p$. Sus columnas son ortonormales y forman una base de $\mathbb{R}^p$.
+\end{remark}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-7}
+\begin{remark}
+La descomposición en valores singulares (SVD) es una herramienta que descompone una matriz en partes constitutivas.
+
+\bigpause 
+
+Para $\Sigma$, la SVD la expresa en términos de sus \alert{valores singulares} (entradas diagonales de $\Lambda$, también llamados \alert{autovalores}) y sus \alert{vectores singulares} (columnas de $Q$, también llamados \alert{autovectores}).
+
+\bigpause
+
+Esta descomposición es muy útil para entender la geometría de la normal multivariante.
+\end{remark}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-8}
+Obsérvese que, como \(\Sigma\) es definida positiva, las entradas
+diagonales de \[
+\Lambda = \left[
+\begin{array}{cccc}
+\lambda_1 & 0 & \cdots & 0 \\
+0 & \lambda_2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \lambda_p
+\end{array}
+\right]
+\] son todas positivas.
+
+\bigpause
+
+En particular, podemos definir la matriz \[
+D = \left[
+\begin{array}{cccc}
+\sqrt{\lambda_1} & 0 & \cdots & 0 \\
+0 & \sqrt{\lambda_2} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \sqrt{\lambda_p}
+\end{array}
+\right]
+\] que satisface \(D^2 = \Lambda\).
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-9}
+Si ahora tomamos \[ 
+\sigma = D Q^{T}
+\]
+
+\bigpause
+
+entonces \[
+\Sigma = \sigma^{T} \sigma
+\]
+
+\bigpause
+
+En particular, podemos definir la \alert{estandarización} de \(X\) como
+\[
+Z = (X - \mu) \sigma^{-1} = (X - \mu) Q D^{-1} = (X - \mu) Q \Lambda^{-1/2}
+\] in which case \(Z \sim \mathcal{N}_{p}(0, I_p)\).
+\end{frame}
+
+\subsection{Interpretación geométrica de la
+SVD}\label{interpretaciuxf3n-geomuxe9trica-de-la-svd}
+
+\begin{frame}{Interpretación geométrica de la SVD}
+\phantomsection\label{interpretaciuxf3n-geomuxe9trica-de-la-svd-1}
+Antes consideramos la normal multivariante con media \[ 
+\mu = [0, 0] 
+\] y matriz de covarianzas \[
+\Sigma = \left[
+\begin{array}{cc}
+1 & 0.6 \\
+0.6 & 1 
+\end{array} 
+\right] 
+\]
+
+\bigpause
+
+Según la SVD, podemos escribir esta matriz de covarianzas como \[ 
+\Sigma = Q \Lambda Q^{T} 
+\] for some orthogonal matrix \(Q\) and diagonal matrix \(\Lambda\).
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-10}
+En este caso obtenemos: \[
+Q = \left[
+\begin{array}{cc}
+ 0.7071068 & -0.7071068 \\
+ 0.7071068 & 0.7071068
+\end{array}
+\right]
+\] y \[
+\Lambda = \left[
+\begin{array}{cc}
+ 1.6 & 0 \\
+0 & 0.4
+\end{array}
+\right]
+\] en donde los vectores singulares son las columnas de \(Q\) y los
+valores singulares son las entradas diagonales de \(\Lambda\).
+
+\bigpause
+
+Geometrically, the singular vectors represent the directions of the axes
+of the ellipsoid that defines the contours of the normal multivariate
+distribution, and the square root of the singular values represent the
+lengths of these axes.
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-11}
+\begin{center}
+\pandocbounded{\includegraphics[keepaspectratio]{5_normal_multivariate_distribution_files/figure-beamer/unnamed-chunk-4-1.pdf}}
+\end{center}
+\end{frame}
+
+\subsection{Clausura bajo transformaciones
+lineales}\label{clausura-bajo-transformaciones-lineales}
+
+\begin{frame}{Clausura bajo transformaciones lineales}
+\phantomsection\label{clausura-bajo-transformaciones-lineales-1}
+\begin{theorem}
+Sea $X \sim \mathcal{N}_{p}(\mu, \Sigma)$. Para cualquier matriz $A$ de tamaño $m \times p$ y vector $b$ de tamaño $m$, el vector aleatorio 
+$$
+Y = AX + b 
+$$ 
+también tiene distribución normal multivariante: $Y \sim \mathcal{N}_{m}(A\mu + b, A\Sigma A^{T})$. 
+\end{theorem}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-12}
+\begin{remark} 
+El teorema dice que si aplicamos una transformación lineal a un vector normal multivariante, el resultado es también normal multivariante.
+
+\bigpause 
+
+La media y la covarianza del transformado vienen dadas por las fórmulas del teorema.
+
+\bigpause
+
+Es útil en aplicaciones como regresión, donde transformamos datos preservando la normalidad de residuales.
+
+\bigpause
+
+En la práctica se usa para derivar la distribución de combinaciones lineales de variables aleatorias.
+
+\end{remark}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-13}
+\begin{example} 
+Sea $X \sim \mathcal{N}_{2}(\mu, \Sigma)$ con media $\mu = (1, 2)$ y matriz de covarianzas 
+$$ 
+\Sigma = \left[ 
+\begin{array}{cc} 
+1 & 0.5 \\ 
+0.5 & 2 
+\end{array} 
+\right] 
+$$ 
+
+\pause
+
+Ahora, considere la transformación lineal 
+$$ 
+Y = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} X + \begin{bmatrix} 0 \\ 1 \end{bmatrix} 
+$$ 
+
+\pause
+
+En otras palabras, 
+\begin{align*}
+Y_1 & = 2X_1 + X_2 \\ 
+Y_2 & = 3X_2 + 1 
+\end{align*}
+\end{example}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-14}
+\begin{example}
+
+Usando la clausura bajo transformaciones lineales, obtenemos media y covarianzas de $Y$:
+\begin{align*} 
+\text{Mean: } & A\mu + b = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 1 \\ 2 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 4 \\ 7 \end{bmatrix} \\ 
+\text{Covariance: } & A\Sigma A^{T} = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 1 & 0.5 \\ 0.5 & 2 \end{bmatrix} \begin{bmatrix} 2 & 0 \\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 8 & 9 \\ 9 & 18 \end{bmatrix} 
+\end{align*} 
+
+\pause
+
+Así,  
+$$Y \sim \mathcal{N}_{2}\left(\begin{bmatrix} 4 \\ 7 \end{bmatrix}, \begin{bmatrix} 8 & 9 \\ 9 & 18 \end{bmatrix}\right)
+$$ 
+\end{example}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-15}
+\begin{remark} Nótese que proyectar a un subespacio es lineal; por tanto, cualquier subconjunto de componentes de una normal multivariante también es normal multivariante.
+
+\bigpause
+
+Esta propiedad permite analizar subconjuntos de variables manteniendo la suposición de normalidad. 
+\end{remark}
+\end{frame}
+
+\subsection{Pruebas de normalidad
+multivariante}\label{pruebas-de-normalidad-multivariante}
+
+\begin{frame}{Pruebas de normalidad multivariante}
+\phantomsection\label{pruebas-de-normalidad-multivariante-1}
+Existen varias pruebas para verificar si un conjunto de datos sigue una
+normal multivariante. Son esenciales porque muchos métodos asumen
+normalidad. Algunas comunes y su implementación en R:
+
+\begin{enumerate}
+  \item \alert{Prueba de Mardia:}  
+    Basada en asimetría y curtosis multivariantes.  
+    Para normal multivariante, asimetría ≈ 0 y curtosis ≈ \(p(p+2)\). En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "mardia")}.
+    
+  \item \alert{Prueba de Henze–Zirkler (HZ):}  
+    Usa la función característica empírica para medir desvíos de normalidad. Buen poder global; adecuada en dimensiones moderadas. En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "hz")}.
+    
+\seti 
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{}
+\phantomsection\label{section-16}
+\begin{enumerate} 
+
+\conti
+
+  \item \alert{Prueba de Royston:}  
+    Extensión multivariante de Shapiro–Wilk (producto de estadísticas univariadas aplicado a componentes principales). Fácil de interpretar; pierde poder en alta dimensión. En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "royston")}.
+    
+  \item \alert{Prueba de Doornik–Hansen:}  
+    Combina asimetría y curtosis en una prueba ómnibus, alternativa robusta a Mardia. En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "dh")}.
+    
+  \item \alert{Métodos gráficos (Q–Q de chi‑cuadrada):}  
+    Graficar distancias de Mahalanobis contra cuantiles de $\chi^2$. Desviaciones de la recta indican no normalidad. En R: \texttt{multivariate\_diagnostic\_plot(data = tus\_datos, type = "qq")}.
+\end{enumerate}
+\end{frame}
+
+
+
+
+\end{document}

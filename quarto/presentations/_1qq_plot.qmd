@@ -81,11 +81,11 @@ Entre otras aplicaciones, la distribución Gamma se usa con frecuencia para mode
 \pause
 
 \begin{remark}
-The skewness of a Gamma distribution is given by
+La asimetría de una distribución Gamma está dada por
 $$
 \gamma_1 = \frac{2}{\sqrt{\alpha}}.
 $$
-This means that the skewness is always positive, and it approaches zero as $\alpha$ increases. In other words, the distribution becomes more symmetric as $\alpha$ becomes larger.
+Esto implica que la asimetría es siempre positiva y que se acerca a cero conforme $\alpha$ crece. En otras palabras, la distribución se vuelve más simétrica a medida que $\alpha$ aumenta.
 \end{remark}
 
 ###
@@ -241,35 +241,35 @@ laplace_distribution_tbl %>%
   ggplot(aes(x = x_data, y = density)) +
   geom_line(color = c_palette["C blue"], linewidth = 1) +
   labs(
-    title = "Laplace Distribution PDF (mean = 0, var = 1)",
+    title = "PDF de la distribución de Laplace (media = 0, var = 1)",
     x = "x",
-    y = "Density"
+    y = "Densidad"
   ) +
   theme_krul()
 ```
 
-## QQ Plots
+## Gráficos QQ
 
-### QQ Plots
+### Gráficos QQ
 
-QQ plots, or quantile-quantile plots, are graphical tools used to compare the distribution of a dataset against a theoretical distribution, such as the normal distribution.
+Los gráficos QQ, o gráficos cuantil-cuantil, son herramientas gráficas para comparar la distribución de un conjunto de datos contra una distribución teórica, como la normal.
 
 \bigpause
 
-They are particularly useful for assessing the normality of the data.
+Son especialmente útiles para evaluar la normalidad de los datos.
 
-### Constructing a QQ Plot
+### Cómo construir un gráfico QQ
 
-To construct a QQ plot, you should follow these steps:
+Para construir un gráfico QQ, sigue estos pasos:
 \begin{enumerate}
-    \item  \alert{Sort the sample data:}  
-    Arrange the data in increasing order:  
+    \item  \alert{Ordena los datos muestrales:}  
+    Acomoda los datos en orden creciente:  
     \[
     x_{(1)} \leq x_{(2)} \leq \cdots \leq x_{(n)}.
     \]
     
-    \item  \alert{Calculate plotting positions (empirical quantiles):}  
-    For each ordered value \( x_{(i)} \), compute the corresponding probability  
+    \item  \alert{Calcula las posiciones de trazado (cuantiles empíricos):}  
+    Para cada valor ordenado \( x_{(i)} \), calcula la probabilidad correspondiente  
     \[
     p_i = \frac{2i - 1}{2n}, \quad i = 1, 2, \ldots, n.
     \]
@@ -277,30 +277,30 @@ To construct a QQ plot, you should follow these steps:
 \seti
  \end{enumerate}       
 
-### Constructing a QQ Plot
+### Cómo construir un gráfico QQ
 
 \begin{enumerate}
 
 \conti
 
-    \item  \alert{Find theoretical quantiles of the normal distribution:}  
-    Compute the theoretical quantiles from the inverse cumulative distribution function (CDF) of the normal distribution:  
+    \item  \alert{Encuentra los cuantiles teóricos de la distribución normal:}  
+    Calcula los cuantiles teóricos usando la función de distribución acumulada inversa (CDF inversa) de la normal:  
     \[
     q_i = \Phi^{-1}(p_i),
     \]
-    where \( \Phi^{-1} \) is the quantile function of the standard normal distribution.  
+    donde \( \Phi^{-1} \) es la función cuantil de la normal estándar.  
 
 
 
-    \item  \alert{Plot the points:}  
-    Plot the pairs \( (q_i, x_{(i)}) \) with \( q_i \) on the x-axis and \( x_{(i)} \) on the y-axis.
+    \item  \alert{Traza los puntos:}  
+    Grafica los pares \( (q_i, x_{(i)}) \) con \( q_i \) en el eje x y \( x_{(i)} \) en el eje y.
     
-    \item  \alert{Add a reference line:}  
-    Typically, we add a line through the first and third quartiles to help assess normality. 
+    \item  \alert{Agrega una línea de referencia:}  
+    Típicamente se agrega una línea que pasa por el primer y tercer cuartil para ayudar a evaluar la normalidad. 
 
 \end{enumerate}
 
-The closer the points lie to this line, the more the sample resembles the specified normal distribution.
+Mientras más cerca caigan los puntos de esta línea, más se parece la muestra a la distribución normal especificada.
 
 
 ###
@@ -333,7 +333,7 @@ laplace_sample_tbl <- tibble(
 ```
 
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Gamma distribution samples."
+#| fig-cap: "Gráfico QQ e histograma de la muestra de la distribución Gamma."
 #| fig-width: 12
 #| fig-height: 5
 #| echo: false
@@ -348,9 +348,9 @@ gamma_qq_plot <- gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plot",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráfico QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -363,9 +363,9 @@ gamma_histogram <- gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histogram",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histograma",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
@@ -373,7 +373,7 @@ gamma_plot <- gamma_qq_plot + gamma_histogram +
   plot_layout(ncol = 2) +
 
   plot_annotation(
-    title = "Gamma Distribution: QQ Plot and Histogram",
+    title = "Distribución Gamma: gráfico QQ e histograma",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -388,7 +388,7 @@ gamma_plot
 
 ###
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Laplace distribution samples."
+#| fig-cap: "Gráfico QQ e histograma de la muestra de la distribución de Laplace."
 #| fig-width: 12
 #| fig-height: 5
 #| echo: false
@@ -404,9 +404,9 @@ laplace_qq_plot <- laplace_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plot",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráfico QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -419,16 +419,16 @@ laplace_histogram <- laplace_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histogram",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histograma",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 laplace_plot <- laplace_qq_plot + laplace_histogram +
   plot_layout(ncol = 2) +
 
   plot_annotation(
-    title = "Laplace Distribution: QQ Plot and Histogram",
+    title = "Distribución de Laplace: gráfico QQ e histograma",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -439,36 +439,36 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
 laplace_plot
 ```
 
-## Sample Skewness and Kurtosis 
+## Asimetría y curtosis muestrales 
 
-### Sample Skewness and Kurtosis
+### Asimetría y curtosis muestrales
 
-So far we have defined skewness and kurtosis for random variables.
-
-\bigpause
-
-However, in practice, we often work with samples rather than entire populations.
+Hasta ahora hemos definido asimetría y curtosis para variables aleatorias.
 
 \bigpause
 
-Therefore, we need to define sample skewness and sample kurtosis.
+Sin embargo, en la práctica trabajamos con muestras, no con poblaciones completas.
+
+\bigpause
+
+Por lo tanto, necesitamos definir la asimetría muestral y la curtosis muestral.
 
 ###
 
 \begin{definition}
-Let $x_1, x_2, \dots, x_n$ be a sample of size $n$. 
-The \alert{sample mean} $\bar{x}$ and \alert{sample variance} $s^{2}$ are given by
+Sea $x_1, x_2, \dots, x_n$ una muestra de tamaño $n$. 
+La \alert{media muestral} $\bar{x}$ y la \alert{varianza muestral} $s^{2}$ son
 \[
 \bar{x} = \frac{1}{n} \sum_{i=1}^n x_i,
 \qquad
 s^{2} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2.
 \]
-The \alert{sample skewness} $g_1$ given by
+La \alert{asimetría muestral} $g_1$ es
 \[
 g_1 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^3.
 \]
-The \alert{sample excess kurtosis} $g_2$ 
-is given by
+La \alert{curtosis en exceso muestral} $g_2$ 
+viene dada por
 $$
 g_2 = \frac{n(n+1)}{(n-1)(n-2)(n-3)}
 \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^4
@@ -479,10 +479,10 @@ $$
 ### 
 
 
-As an example, we will compute the sample skewness and sample excess kurtosis of the Gamma and Laplace samples we showed earlier.
+Como ejemplo, calcularemos la asimetría y la curtosis en exceso muestrales de las muestras Gamma y Laplace mostradas antes.
 \bigpause 
 
-For the Gamma sample we have:
+Para la muestra Gamma tenemos:
 ```{r}
 #| echo: false
 # Compute sample skewness and excess kurtosis for Gamma distribution
@@ -498,7 +498,7 @@ gamma_sample_tbl %>%
 \bigpause
 
 
-For the Laplace sample we have:
+Para la muestra de Laplace tenemos:
 ```{r}
 #| echo: false
 # Compute sample skewness and excess kurtosis for Laplace distribution
@@ -511,84 +511,84 @@ laplace_sample_tbl %>%
 ```
 
 
-# Scaling and Standardization 
+# Escalamiento y estandarización 
 
-### Scaling and Standardization
+### Escalamiento y estandarización
 
-In many situations, it could happen that the units we are using to measure different variables in our data are not compatible.
-
-\bigpause 
-
-For example, we could have a dataset that contains the height of individuals in centimeters and their weight in kilograms.
+En muchas situaciones, puede suceder que las unidades con las que medimos distintas variables no sean compatibles.
 
 \bigpause 
 
-In such cases, it is often useful to \alert{scale} the variables so that they are comparable. 
+Por ejemplo, podríamos tener un conjunto con estaturas en centímetros y pesos en kilogramos.
 
-## Scaling Random Variables
+\bigpause 
 
-### Scaling Random Variables
+En tales casos, suele ser útil \alert{escalar} las variables para hacerlas comparables. 
+
+## Escalamiento de variables aleatorias
+
+### Escalamiento de variables aleatorias
 
 \begin{definition} 
-An \alert{affine transformation} of a random variable $X$ is a transformation of the form 
+Una \alert{transformación afín} de una variable aleatoria $X$ es una transformación de la forma 
 $$
 Y = aX + b
 $$
-where $a$ and $b$ are constants.
+donde $a$ y $b$ son constantes.
 \end{definition}
 
 \pause
 
 \begin{remark}
-In the context of statistics, affine transformations are often refered to as \alert{scaling} (even when they also include a translational component).
+En estadística, a las transformaciones afines a menudo se les llama \alert{escalamientos} (aunque incluyan un componente de traslación).
 \end{remark}
 
 
 ###
 
-Now assume that $X$ is a random variable with mean $\mu$ and standard deviation $\sigma$.
+Supongamos ahora que $X$ tiene media $\mu$ y desviación estándar $\sigma$.
 
 \bigpause 
 
-Then the random variable
+Entonces la variable aleatoria
 $$ 
 Y = aX + b 
 $$
-will have mean $a\mu + b$ and standard deviation $|a|\sigma$.
+tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$.
 
 \bigpause 
 
-In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
+En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, entonces la variable
 $$
 Z = \frac{X - \mu}{\sigma}
 $$
-will have mean $0$ and standard deviation $1$.
+tendrá media $0$ y desviación estándar $1$.
 
 ### 
-In particular, if we choose $a = 1/\sigma$ and $b = -\mu/\sigma$, then the random variable
+En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, entonces la variable
 $$
 Z = \frac{X - \mu}{\sigma}
 $$
-will have mean $0$ and standard deviation $1$.
+tendrá media $0$ y desviación estándar $1$.
 
 \bigpause
 
-This particular affine transformation is called a \alert{standardization}, and the resulting random variable $Z$ is called the \alert{standardized} version of $X$. $Z$ is also sometimes called the \alert{z-score} of $X$.
+Esta transformación afín particular se llama \alert{estandarización}, y la variable resultante $Z$ es la versión \alert{estandarizada} de $X$. A $Z$ también se le llama \alert{puntaje z} de $X$.
 
 \pause
 
 \begin{remark}
-Notice that if $X$ is not normally distributed, then $Z$ will \alert{not} be the standard normal distribution. Standardization does not make a non-normal distribution normal.
+Obsérvese que si $X$ no es normal, entonces $Z$ \alert{no} tendrá distribución normal estándar. Estandarizar no vuelve normal a una distribución que no lo es.
 \end{remark}
 
 ###
 
 \begin{observation}
-Notice that, by definition, 
+Por definición, 
 $$
 \gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
 $$
-and
+y
 $$
 \gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
 $$
@@ -597,16 +597,16 @@ $$
 
 ### 
 
-As an example, we will consider again the Gamma distrubution that we introduced earlier. In this case we have that 
+Como ejemplo, consideremos de nuevo la distribución Gamma que introdujimos antes. En este caso tenemos 
 $$
 \mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
 $$
 \pause 
-Using this information, we can generate the plot of standadized version of the Gamma distribution and compare it with the original one.
+Con esta información podemos graficar la versión estandarizada de la distribución Gamma y compararla con la original.
 
 ###
 ```{r}
-#| fig-cap: "Comparison of the probability density function (PDF) of the original and standardized Gamma distribution."
+#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y estandarizada."
 #| fig-width: 12
 #| fig-height: 5
 #| echo: false
@@ -646,7 +646,7 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
     "text",
     x = z_gamma_mean,
     y = 0.55,
-    label = "Mean",
+    label = "Media",
     color = c_palette["C red"],
     hjust = -0.1
   ) +
@@ -654,17 +654,17 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
     "text",
     x = z_gamma_median,
     y = 0.55,
-    label = "Median",
+    label = "Mediana",
     color = c_palette["C green"],
     hjust = 1.1
   ) +
   coord_cartesian(ylim = c(0, 0.6)) +
   labs(
     title = paste(
-      "Standardized"
+      "Estandarizada"
     ),
     x = "X",
-    y = "Density"
+    y = "Densidad"
   ) +
   theme_krul()
 
@@ -676,7 +676,7 @@ gamma_distribution_plot <- gamma_distribution_plot +
 combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Gamma Distribution: Original and Standardized",
+    title = "Distribución Gamma: original y estandarizada",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -689,35 +689,35 @@ combined_gamma_plot
 ```
 
 
-## Scaling Samples
+## Escalamiento de muestras
 
-### Scaling Samples 
+### Escalamiento de muestras 
 
-For a given a sample, it is not always known what the underlying distribution is.
-
-\bigpause 
-
-In particular, we may not know what the mean and the standard deviation of the underlying population are.
+Para una muestra dada, no siempre se conoce la distribución subyacente.
 
 \bigpause 
 
-However, we can still try to scale our data but we should keep in mind that in this case there is more than one scaling method.
+En particular, puede que no sepamos la media ni la desviación estándar de la población.
+
+\bigpause 
+
+Aun así, podemos intentar escalar los datos, teniendo en cuenta que hay más de un método de escalamiento.
 
 ###
-The most common are:
+Los más comunes son:
 
 \begin{enumerate}
-    \item \alert{Standardization}: This method uses the sample mean and sample standard deviation to scale the data. The standardized sample is given by
+    \item \alert{Estandarización}: usa la media muestral y la desviación estándar muestral para escalar los datos. La muestra estandarizada es
     $$
     T = \frac{X - \bar{X}}{S},
     $$
-    where $\bar{X}$ is the sample mean and $S$ is the sample standard deviation. 
+    donde $\bar{X}$ es la media muestral y $S$ la desviación estándar muestral. 
     
-    \item \alert{Min-Max Scaling}: This method scales the data to a fixed range, usually [0, 1]. The scaled sample is given by
+    \item \alert{Escalamiento Min‑Max}: ajusta los datos a un rango fijo, usualmente [0, 1]. La muestra escalada es
     $$
     T = \frac{X - \min(X)}{\max(X) - \min(X)},
     $$
-    where $\min(X)$ and $\max(X)$ are the minimum and maximum values of the sample, respectively. This method is very sensitive to outliers, as it uses the minimum and maximum values of the sample.
+    donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra, respectivamente. Es muy sensible a atípicos, pues usa extremos.
 \seti 
 \end{enumerate} 
 
@@ -725,34 +725,34 @@ The most common are:
 \begin{enumerate}
 \conti
 
-    \item \alert{Robust Scaling}: This method scales the data using the median and interquartile range (IQR). The scaled sample is given by
+    \item \alert{Escalamiento robusto}: escala usando la mediana y el rango intercuartílico (IQR). La muestra escalada es
     $$
     T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
     $$
-    where $\text{IQR}(X) = Q_3 - Q_1$ is the interquartile range of the sample. This method is more robust to outliers than min-max scaling, as it uses the median and IQR instead of the minimum and maximum values.
+    donde $\text{IQR}(X) = Q_3 - Q_1$ es el rango intercuartílico. Es más robusto a atípicos que Min‑Max, pues usa mediana e IQR.
 
-    \item \alert{Normalization}: This method simply divides each data point by the corresponding vector norm. The normalized sample is given by
+    \item \alert{Normalización}: divide cada dato por la norma del vector. La muestra normalizada es
     $$
     T = \frac{X}{\|X\|},
     $$
-    where $\|X\|$ is the vector norm of the sample. It is not used as often as the previous methods.
+    donde $\|X\|$ es la norma. Se usa menos que los anteriores.
 \end{enumerate}
 
 ###
 
 \begin{remark} 
-As we mentioned earlier, scaling does not make a non-normal distribution normal. In particular, the sample skewness and sample excess kurtosis of the scaled sample will be the same as those of the original sample.
+Como ya se mencionó, escalar no vuelve normal a una distribución no normal. En particular, la asimetría y curtosis en exceso muestrales no cambian.
 \end{remark}
 
 \pause
 
-As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
+Como ejemplo, consideraremos los distintos métodos aplicados a la muestra Gamma generada antes.  
 
 
 ###
 
 ```{r}
-#| fig-cap: "Comparison of different scaling methods applied to the Gamma distribution sample."
+#| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a la muestra Gamma."
 #| fig-width: 14
 #| fig-height: 7
 #| echo: false
@@ -810,9 +810,9 @@ scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plots",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráficos QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -830,9 +830,9 @@ scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histograms",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histogramas",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
@@ -869,26 +869,26 @@ For each of the following distributions, construct a sample of size 300 and comp
 
 ### Normality Testing
 
-Although QQ plots are a good way to visually assess the normality of a dataset, they can be subjective and imprecise.
+Aunque los gráficos QQ son útiles para evaluar visualmente la normalidad, pueden ser subjetivos e imprecisos.
 
 \bigpause 
 
-Therefore, it becomes necessary to develop more objective and precise statistical tests to determine whether the data we are analyzing follows a normal distribution.
+Por ello, es necesario recurrir a pruebas estadísticas más objetivas y precisas para determinar si los datos siguen una distribución normal.
 
 \bigpause 
 
-We will now explore some commonly used statistical tests for normality and discuss some transformations that can be performed on our data to make it more normal-like. 
+Exploraremos ahora pruebas comunes de normalidad y algunas transformaciones para acercar los datos a la normalidad. 
 
-## Normality Tests 
+## Pruebas de normalidad 
 
-### Normality Tests
+### Pruebas de normalidad
 
-There are several statistical tests that can be used to determine whether a dataset follows a normal distribution. Some of the most commonly used tests include:
+Existen varias pruebas para determinar si un conjunto sigue una normal. Algunas de las más usadas son:
 
 \begin{enumerate}
-\item \alert{Shapiro-Wilk test}: This test is based on the correlation between the data and the corresponding normal scores. It is a powerful test for small sample sizes (less than 50) and is widely used in practice. However, it can be overly sensitive to small deviations from normality in larger sample sizes. 
+\item \alert{Shapiro–Wilk}: basada en la correlación entre los datos y puntajes normales. Potente en muestras pequeñas (< 50), aunque puede ser demasiado sensible en muestras grandes. 
 
-\item \alert{Kolmogorov-Smirnov test}: This test compares the empirical distribution function of the data with the cumulative distribution function of the normal distribution. It is a non-parametric test and can be used for any sample size. However, it is less powerful than the Shapiro-Wilk test for small sample sizes. It is also sensitive to scale and location parameters, which can affect the results of the test.
+\item \alert{Kolmogorov–Smirnov}: compara la función de distribución empírica con la CDF normal. No paramétrica, aplicable a cualquier tamaño; menos potente que Shapiro–Wilk en muestras pequeñas y sensible a escala y localización.
 \seti 
 \end{enumerate} 
 
@@ -899,12 +899,12 @@ There are several statistical tests that can be used to determine whether a data
 
 \conti
 
-\item \alert{Anderson-Darling test}: This test is similar to the Kolmogorov-Smirnov test but gives more weight to the tails of the distribution. It is a powerful test for small sample sizes and is widely used in practice.
+\item \alert{Anderson–Darling}: similar a KS pero da más peso a las colas; potente en muestras pequeñas.
 
-\item \alert{Jarque-Bera test}: This test is based on the skewness and kurtosis of the data. It is a powerful test for large sample sizes and is widely used in practice. However, it can be overly sensitive to small deviations from normality in smaller sample sizes.
+\item \alert{Jarque–Bera}: basada en asimetría y curtosis; potente en muestras grandes, pero puede ser muy sensible en muestras pequeñas.
 \end{enumerate}
 
-We will now apply these tests to the gamma sample data we created in the previous chapter:
+Aplicaremos ahora estas pruebas a la muestra Gamma creada en el capítulo anterior:
 
 ###
 
@@ -943,7 +943,7 @@ normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
   select(test_factor, p_value)
 ```
 
-The results of the normality tests are as follows: 
+Los resultados de las pruebas de normalidad son los siguientes: 
 ```{r}
 #| echo: false
 normality_test_gamma_sample_tbl
@@ -951,23 +951,23 @@ normality_test_gamma_sample_tbl
 
 \bigpause
 
-As we can see, none of these tests was particularly successful, which is not surprising given that the gamma distribution is not normal. 
+Como podemos ver, ninguna de estas pruebas fue particularmente exitosa, lo cual no sorprende dado que la distribución Gamma no es normal. 
 
-## Transformations 
+## Transformaciones 
 
-### Transformations
+### Transformaciones
 
-To make our data more normal-like, we can apply various transformations to any given sample. Some of the most common transformations include:
+Para que los datos se parezcan más a normales, podemos aplicar distintas transformaciones a una muestra. Algunas comunes son:
 
 \begin{enumerate}
-\item \alert{Box-Cox transformation}: This is a family of power transformations that can be applied only to data that is always positive. It is given by the formula:
+\item \alert{Transformación de Box–Cox}: familia de potencias aplicable sólo a datos positivos. Se define por:
 $$
 \tilde{X} = \begin{cases}
 \frac{X^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\
 \log(X) & \text{if } \lambda = 0 
 \end{cases}
 $$
-where $\lambda$ is some parameter.
+donde $\lambda$ es un parámetro.
 \seti 
 
 \end{enumerate} 
@@ -978,8 +978,8 @@ where $\lambda$ is some parameter.
 
 \conti
 
-\item \alert{Yeo-Johnson transformation}: This transformation is similar to the Box-Cox transformation but can handle negative values. It is useful for data that is positively or negatively skewed.
-It is given by the formula:
+\item \alert{Transformación de Yeo–Johnson}: similar a Box–Cox pero admite valores negativos; útil para asimetrías positivas o negativas.
+Está dada por:
 $$
 \tilde{X} = \begin{cases}
 \frac{((X + 1)^\lambda - 1)}{\lambda} & \text{if } X \geq 0, \lambda \neq 0 \\
@@ -988,16 +988,16 @@ $$
 \log(-X + 1) & \text{if } X < 0, \lambda = 2 
 \end{cases}
 $$
-where $\lambda$ is some parameter. 
+donde $\lambda$ es un parámetro. 
 \end{enumerate}
 
 
-We will now apply the Box-Cox transformation to the gamma sample data with parameters $\lambda = 0$, $0.25$, $0.5$, $0.75$, and $1$:
+Aplicaremos ahora la transformación de Box–Cox a la muestra Gamma con $\lambda = 0$, $0.25$, $0.5$, $0.75$ y $1$:
 
 ###
 
 ```{r}
-#| fig-cap: "Comparison of different Box-Cox transformations."
+#| fig-cap: "Comparación de diferentes transformaciones Box–Cox."
 #| fig-width: 14
 #| fig-height: 7
 #| echo: false
@@ -1051,9 +1051,9 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plots",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráficos QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -1071,16 +1071,16 @@ box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histograms",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histogramas",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
 box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Comparison of Box-Cox Transformations with Different Lambda Values",
+    title = "Comparación de transformaciones Box–Cox con distintos valores de lambda",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -1092,22 +1092,22 @@ box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
 box_cox_gamma_plot
 ```
 
-## Normality Score Optimization
+## Optimización de normalidad
 
-### Normality Score Optimization
+### Optimización de normalidad
 
-We wish to find the optimal value of $\lambda$ that maximizes the log-likelihood of the transformed data. 
+Queremos encontrar el valor óptimo de $\lambda$ que maximiza la log‑verosimilitud de los datos transformados. 
 
 
 \bigpause
 
-The following figure shows the log-likelihood profile for the Box-Cox transformation applied to the gamma sample data:
+La siguiente figura muestra el perfil de log‑verosimilitud para la transformación de Box–Cox aplicada a la muestra Gamma:
 
 
 ###
 ```{r}
 #| echo: false
-#| fig-cap: "Log-likelihood profile for the Box-Cox transformation."
+#| fig-cap: "Perfil de log‑verosimilitud para la transformación de Box–Cox."
 #| fig-width: 14
 #| fig-height: 6
 
@@ -1127,16 +1127,16 @@ ggplot(df, aes(x = lambda, y = loglik)) +
   geom_line(color = c_pal("C blue"), linewidth = 1) +
   geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
   labs(
-    title = "Box–Cox Transformation",
+    title = "Transformación de Box–Cox",
     x = expression(lambda),
-    y = "Log-likelihood"
+    y = "Log‑verosimilitud"
   ) +
   theme_krul()
 ```
 
 ### 
 
-Finally, we can extract the optimal value of $\lambda$ and transform the data using this value:
+Finalmente, podemos extraer el valor óptimo de $\lambda$ y transformar los datos con ese valor:
 ```{r}
 #| echo: false
 optimal_lambda <- bc$lambda
@@ -1169,11 +1169,11 @@ optimal_gamma_sample_tbl %>%
 ```
 \bigpause 
 
-As we can see, the Box-Cox transformation with the optimal value of $\lambda$ significantly improves the normality of the data, as all the normality tests now yield high $p$-values. We now show the QQ plot and histogram of the transformed data:
+Como puede verse, la transformación de Box–Cox con el $\lambda$ óptimo mejora significativamente la normalidad: todas las pruebas arrojan valores‑$p$ altos. A continuación mostramos el gráfico QQ y el histograma de los datos transformados:
 
 ###
 ```{r}
-#| fig-cap: "QQ plot and histogram of the Optimal Gamma Distribution Transformation."
+#| fig-cap: "Gráfico QQ e histograma de la transformación Gamma óptima."
 #| fig-width: 10
 #| fig-height: 5
 #| echo: false
@@ -1189,9 +1189,9 @@ optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
     linewidth = 0.5
   ) +
   labs(
-    title = "QQ Plot",
-    x = "Theoretical Quantiles",
-    y = "Sample Quantiles"
+    title = "Gráfico QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
   ) +
   theme_krul()
 
@@ -1204,16 +1204,16 @@ optimal_gamma_histogram <- optimal_gamma_sample_tbl %>%
     alpha = 0.7
   ) +
   labs(
-    title = "Histogram",
-    x = "Sample Values",
-    y = "Density"
+    title = "Histograma",
+    x = "Valores muestrales",
+    y = "Densidad"
   ) +
   theme_krul()
 
 optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Optimal Gamma Distribution Transformation",
+    title = "Transformación Gamma óptima",
     theme = theme(
       plot.title = element_text(
         size = 24,

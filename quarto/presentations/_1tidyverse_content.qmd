@@ -192,7 +192,7 @@ who_factor <- who_factor %>%
 
 ###
 
-Finally, we want to use this information to analyze the number of cases of tuberculosis by type and sex. We start by generating the corresponding frequency tibble.
+Finalmente, queremos usar esta información para analizar el número de casos de tuberculosis por tipo y sexo. Comenzamos generando el tibble de frecuencias correspondiente.
 ```{r}
 #| output: false
 who_type_sex_tbl <- who_factor %>%
@@ -339,10 +339,10 @@ who_type_sex_plot <- who_type_sex_tbl %>%
   geom_col(position = "dodge") +
   c_scale_fill("C rose", "C blue") +
   labs(
-    title = "Tuberculosis Cases by Type and Sex",
-    x = "Tuberculosis Type",
-    y = "Cases",
-    fill = "Sex"
+    title = "Casos de tuberculosis por tipo y sexo",
+    x = "Tipo de tuberculosis",
+    y = "Casos",
+    fill = "Sexo"
   ) +
   theme_krul()
 
@@ -369,7 +369,7 @@ La visualización final debe verse como la que se muestra a continuación.
 \centering
 \includegraphics[width=0.8\textwidth]{images/dogs_out_plot.png}
 
-### Bibliography
+### Bibliografía
 
 \begin{thebibliography}{99}
 
@@ -393,7 +393,7 @@ Wickham, H. (2019) Functional programming with purrr. \textit{UseR! Conference}.
 
 \end{thebibliography}
 
-### Bibliography
+### Bibliografía
 
 \begin{thebibliography}{99}
 

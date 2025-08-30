@@ -1,12 +1,12 @@
-# An Introduction to the Tidyverse
+# Introducción al Tidyverse
 
-# The Standardized Moments
+# Momentos estandarizados
 
-# Normality Testing
+# Pruebas de normalidad
 
-# Introduction to Multivariate Analysis
+# Introducción al análisis multivariante
 
-# Normal Multivariate Distribution
+# Distribución normal multivariante
 
 # Análisis de componentes principales
 
@@ -72,7 +72,7 @@ Transforma las variables originales en un nuevo conjunto de variables no correla
 
 ### Entendiendo la varianza total
 
-Let $\Sigma$ be the covariance matrix of a given dataset.
+Sea $\Sigma$ la matriz de covarianzas de un conjunto dado.
 
 \bigpause
 
@@ -80,7 +80,7 @@ La \alert{varianza total} de los datos viene dada por la traza de la matriz de c
 $$
 \mbox{Total Variance} = \Tr \Sigma = \sum_{i=1}^{p} \Sigma_{ii},
 $$
-where $\Sigma_{ii}$ are the diagonal elements of $\Sigma$ representing the sample variance of each variable.
+en donde $\Sigma_{ii}$ son las entradas diagonales de $\Sigma$ (varianzas de cada variable).
 
 ###
 
@@ -88,7 +88,7 @@ Ahora, usando la descomposición en valores y vectores propios (SVD) de $\Sigma$
 $$ 
 \Sigma = Q \Lambda Q^{T}, 
 $$
-where $\Lambda$ is a diagonal matrix containing the singular values $\lambda_1, \ldots, \lambda_p$ of $\Sigma$.
+en donde $\Lambda$ es diagonal y contiene los valores singulares $\lambda_1, \ldots, \lambda_p$ de $\Sigma$.
 
 \bigpause 
 
@@ -120,7 +120,7 @@ Se relacionan con las variables originales mediante:
 $$ 
  X = Q\, (PC) + \bar{x} 
 $$
-and 
+y 
 $$
 PC = Q^{T} (X - \bar{x}) 
 $$
@@ -128,7 +128,7 @@ Aquí $X$ es el vector en coordenadas originales, $PC$ el vector de puntuaciones
 
 \bigpause
 
-To illustrate these ideas, we will consider again the dataset shown in the following figure:
+Para ilustrar estas ideas, consideremos de nuevo el conjunto mostrado en la siguiente figura:
 
 ###
 ```{r}
@@ -171,7 +171,7 @@ $$
 
 ###
 
-We now look at the singular value decomposition of $\Sigma$, to obtain:
+Ahora vemos la descomposición en valores singulares de $\Sigma$ para obtener:
 ```{r}
 #| echo: false
 # Compute the singular vectors and values
@@ -187,7 +187,7 @@ Q = \left[
 \end{array}
 \right]
 $$
-and 
+y 
 $$
 \Lambda = \left[
 \begin{array}{cc}
@@ -199,11 +199,11 @@ $$
 
 ###
 
-The principal component directions are given by the columns of $Q$, and the amount of variance explained by each component is given by the corresponding singular value in $\Lambda$.
+Las direcciones de los componentes principales son las columnas de $Q$, y la varianza explicada por cada componente la da el valor singular correspondiente en $\Lambda$.
 
 \bigpause
 
-In particular, since the vector of means is given by: 
+En particular, como el vector de medias es: 
 ```{r}
 #| echo: false
 sample_mean_vector <- colMeans(sample_data_tbl)
@@ -215,19 +215,19 @@ sample_mean_vector <- colMeans(sample_data_tbl)
 
 ###
 
-we have that the relation between the original variables and the principal component coordinates is given by: 
+tenemos que la relación entre variables originales y coordenadas en componentes principales es: 
 \begin{align*}
 X & = `r vectors[1,1]` PC_1 + `r vectors[1,2]` PC_2 + `r sample_mean_vector[1]` \\
 Y & = `r vectors[2,1]` PC_1 + `r vectors[2,2]` PC_2 + `r sample_mean_vector[2]` 
 \end{align*}
-and 
+y 
 \begin{align*} 
 PC_1 & = `r vectors[1,1]` (X - `r sample_mean_vector[1]`) + `r vectors[2,1]` (Y - `r sample_mean_vector[2]`) \\ 
 PC_2 & = `r vectors[1,2]` (X - `r sample_mean_vector[1]`) + `r vectors[2,2]` (Y - `r sample_mean_vector[2]`) 
 \end{align*}
 \pause
 
-using these formulas, we can find the projection of our original data into the first and second principal components. The results are shown in the following figure:
+usando estas fórmulas, podemos proyectar los datos originales en el primero y segundo componentes principales. Los resultados se muestran a continuación:
 
 ###
 
@@ -321,54 +321,54 @@ compare_plot1 + compare_plot2 +
   )
 ```
 
-## Cumulative Variance and Scree Plots
+## Varianza acumulada y gráficos scree
 
 ###
 
-Principal Component Analysis is often used for dimensionality reduction.
+El ACP se usa a menudo para reducción de dimensionalidad.
 
 \bigpause 
 
-In other words, we want to reduce the number of variables in our dataset while retaining as much information as possible.
+Es decir, queremos reducir el número de variables reteniendo tanta información como sea posible.
 
 \bigpause 
 
-To decide how many principal components to keep, we can look at the amount of variance explained by each component.
+Para decidir cuántos componentes conservar, revisamos la varianza explicada por cada uno.
 
 ###
 
-A common way to visualize this information is through the use of a \alert{scree plot}.
+Una forma común de visualizar esto es mediante el \alert{gráfico scree}.
 
 \bigpause
 
-The scree plot associated to a given dataset displays the singular values on the $y$-axis and the component number on the $x$-axis.
+El scree muestra los valores singulares en el eje $y$ y el número de componente en el eje $x$.
 
 \bigpause 
 
-It helps to identify the point where the explained variance starts to level off, often referred to as the "elbow".
+Ayuda a identificar el punto donde la varianza explicada se estabiliza (el “codo”).
 
 ###
 
-Another useful plot is the \alert{cumulative variance plot}, which shows the cumulative proportion of variance explained by the principal components.
+Otro gráfico útil es el de \alert{varianza acumulada}, que muestra la proporción acumulada explicada por los componentes.
 
 \bigpause
 
-Notice that the proportion of variance explained by the $k$-th principal component is given by: 
+La proporción de varianza explicada por el $k$‑ésimo componente es: 
 $$ 
 \frac{\lambda_k}{\sum_{i=1}^{p} \lambda_i}
 $$
-This plot helps to determine how many components are needed to explain a desired amount of total variance, such as $70\%$ or $90\%$. 
+Este gráfico ayuda a decidir cuántos componentes se requieren para explicar, por ejemplo, $70\%$ o $90\%$ de la varianza. 
 
 ###
 
-To illustrate this, we will use the well-known \alert{Iris} dataset, which contains measurements of four features: 
+Para ilustrar esto, usaremos el conjunto \alert{Iris}, que contiene mediciones de cuatro variables: 
 \begin{enumerate}
   \item Sepal Length
   \item Sepal Width
   \item Petal Length
   \item Petal Width 
 \end{enumerate} 
-For three species of iris flowers: 
+Para tres especies de iris: 
 \begin{enumerate}
   \item Iris setosa
   \item Iris versicolor
@@ -378,11 +378,11 @@ For three species of iris flowers:
 
 ###
 
-We will perform PCA on the four features and create a scree plot to visualize the variance explained by each principal component.
+Aplicaremos ACP a las cuatro variables y crearemos un scree para visualizar la varianza explicada por cada componente.
 
 \bigpause 
 
-The covariance matrices for each species are given by:
+Las matrices de covarianzas para cada especie son:
 
 ###
 ```{r}
@@ -435,7 +435,7 @@ eig_virginica <- eigen(cov_matrix_virginica)
 
 ###
 
-The singular values for each species are given by: 
+Los valores singulares para cada especie son: 
 \begin{align*}
 \Lambda_{setosa} & = \begin{bmatrix} 
   `r round(eig_setosa$values[1], 2)` & 0 & 0 & 0 \\ 
@@ -459,7 +459,7 @@ The singular values for each species are given by:
 
 ###
 
-The associated principal component directions are given by the columns of the matrices
+Las direcciones de componentes principales asociadas son las columnas de las matrices
 \begin{align*}
 Q_{setosa} & = \left[
 \begin{array}{cccc}
@@ -561,39 +561,39 @@ scree_plot + cumulative_variance_plot +
   )
 ```
 
-## Loadings and Biplots 
+## Cargas y biplots 
 
-### Loadings and Biplots
+### Cargas y biplots
 
-Recall that equation 
+Recuerde que la ecuación 
 $$
 PC = Q^{T} (X - \bar{x})
 $$
-gives the relation between the original variables and the principal component scores.
+da la relación entre las variables originales y las puntuaciones en componentes.
 
 \bigpause
 
-Using this equation, we can quickly compute these scores for each observation in our dataset.
+Con esta ecuación podemos calcular rápidamente las puntuaciones para cada observación.
 
 \bigpause 
 
-The coefficients appearing in this equation are known as the \alert{loadings} of the principal components, and they indicate how much each original variable contributes to each principal component.
+Los coeficientes de esta ecuación son las \alert{cargas} de los componentes; indican cuánto aporta cada variable a cada componente.
 
 ###
 
-A \alert{biplot} is a graphical representation that displays both the principal component scores of the observations and the loadings of the variables on the same plot.
+Un \alert{biplot} muestra simultáneamente las puntuaciones de las observaciones y las cargas de las variables en el mismo gráfico.
 
 \bigpause 
 
-This allows us to visualize how the original variables contribute to the principal components and how the observations are distributed in the space defined by these components.
+Esto permite visualizar cómo contribuyen las variables y cómo se distribuyen las observaciones en el espacio de componentes.
 
 \bigpause
 
-To illustrate this concept, we will create biplots for the first two principal components of the \alert{iris} dataset for each species.
+Para ilustrar el concepto, crearemos biplots de los dos primeros componentes del conjunto \alert{iris} por especie.
 
 \bigpause
 
-We start by finding the loadings corresponding to each species, for which we simply take the first two columns of the matrices $Q_{setosa}$, $Q_{versicolor}$, and $Q_{virginica}$ shown above. 
+Comenzamos encontrando las cargas de cada especie: tomamos las dos primeras columnas de $Q_{setosa}$, $Q_{versicolor}$ y $Q_{virginica}$ mostradas arriba. 
 
 ###
 
@@ -628,11 +628,11 @@ We start by finding the loadings corresponding to each species, for which we sim
 
 ###
 
-We can then compute the principal component scores for each observation by simply multiplying the values of our original variables by these matrices.
+Podemos entonces calcular las puntuaciones en componentes para cada observación multiplicando los valores originales por estas matrices.
 
 \bigpause
 
-The resulting biplots for each species are shown in the following figure:
+Los biplots resultantes para cada especie se muestran en la figura siguiente:
 
 ###
 
@@ -713,7 +713,7 @@ create_biplot <- function(scores_tbl, loadings_tbl, species_name) {
       size = 5
     ) +
     labs(
-      title = paste("Biplot for", species_name),
+      title = paste("Biplot para", species_name),
       x = "PC1",
       y = "PC2"
     ) +
@@ -750,19 +750,19 @@ biplot_setosa + biplot_versicolor + biplot_virginica +
   )
 ```
 
-## Summary of the PCA Process
+## Resumen del proceso de ACP
 
-### Summary of the PCA Process
+### Resumen del proceso de ACP
 
-In general, when performing PCA, it is recommended to follow these steps:
+En general, al realizar ACP se recomienda seguir estos pasos:
 
 
 \begin{enumerate}
-\item \textbf{Standardize the data (if needed).} It is not always easy to decide whether to standardize the data or not. Here are some guidelines:
+\item \textbf{Estandarizar los datos (si es necesario).} No siempre es obvio si estandarizar o no. Guías:
     \begin{itemize}
-      \item If the variables are measured on different scales (e.g., height in cm and weight in kg), standardization is usually recommended.
-      \item If the variables are on the same scale and have similar variances, standardization may not be necessary.
-      \item If the variables have very different variances, standardization can help to give equal weight to all variables.
+      \item Si las variables están en escalas distintas (ej. estatura en cm, peso en kg), suele recomendarse estandarizar.
+      \item Si están en la misma escala y varianzas similares, podría no ser necesario.
+      \item Si las varianzas difieren mucho, estandarizar ayuda a dar peso similar a todas.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -770,10 +770,10 @@ In general, when performing PCA, it is recommended to follow these steps:
 ###
 \begin{enumerate}
 \conti
-  \item \textbf{Compute the covariance matrix.}
+  \item \textbf{Calcular la matriz de covarianzas.}
     \begin{itemize}
-      \item The matrix captures how variables vary together.
-      \item Its size is $p \times p$, where $p$ is the number of variables.
+      \item Captura cómo varían conjuntamente las variables.
+      \item Es de tamaño $p \times p$, donde $p$ es el número de variables.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -781,10 +781,10 @@ In general, when performing PCA, it is recommended to follow these steps:
 ###
 \begin{enumerate}
 \conti
-  \item \textbf{Find the singular value decomposition (SVD) of the covariance matrix.}
+  \item \textbf{Encontrar la SVD de la matriz de covarianzas.}
     \begin{itemize}
-      \item Eigenvalues measure the variance explained by each principal component.
-      \item Eigenvectors give the directions (linear combinations of variables) of the components.
+      \item Los autovalores miden la varianza explicada por cada componente.
+      \item Los autovectores dan las direcciones (combinaciones lineales) de los componentes.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -792,10 +792,10 @@ In general, when performing PCA, it is recommended to follow these steps:
 ###
 \begin{enumerate}
 \conti
-  \item \textbf{Rank the components.}
+  \item \textbf{Ordenar los componentes.}
     \begin{itemize}
-      \item Order the singular values from largest to smallest.
-      \item The singular vector corresponding to the largest singular value is the first principal component.
+      \item Ordenar los valores singulares de mayor a menor.
+      \item El vector singular del mayor valor es el primer componente principal.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -803,11 +803,11 @@ In general, when performing PCA, it is recommended to follow these steps:
 ###
 \begin{enumerate}
 \conti
-  \item \textbf{Decide how many components to keep.}
+  \item \textbf{Decidir cuántos componentes conservar.}
     \begin{itemize}
-      \item \textit{Kaiser criterion}: keep the singular values $> 1$ (for correlation matrix).
-      \item \textit{Scree plot}: look for the “elbow” where explained variance levels off.
-      \item \textit{Cumulative variance}: keep enough components to explain about $70\%-90\%$ of the total variance.
+      \item \textit{Criterio de Kaiser}: conservar valores singulares $> 1$ (para matriz de correlación).
+      \item \textit{Gráfico scree}: buscar el “codo” donde se estabiliza la varianza explicada.
+      \item \textit{Varianza acumulada}: conservar los necesarios para explicar ~$70\%-90\%$.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -815,10 +815,10 @@ In general, when performing PCA, it is recommended to follow these steps:
 ###
 \begin{enumerate}
 \conti
-  \item \textbf{Find the principal component scores and loadings.}
+  \item \textbf{Obtener puntuaciones y cargas.}
     \begin{itemize}
-      \item Project the original data onto the selected principal components.
-      \item Use the formula: $PC = Q^{T} (X - \bar{x})$.
+      \item Proyectar los datos originales en los componentes seleccionados.
+      \item Usar la fórmula: $PC = Q^{T} (X - \bar{x})$.
     \end{itemize}
 \seti 
 \end{enumerate}
@@ -826,12 +826,12 @@ In general, when performing PCA, it is recommended to follow these steps:
 ###
 \begin{enumerate}
 \conti
-  \item \textbf{Interpret the components.}
+  \item \textbf{Interpretar los componentes.}
     \begin{itemize}
-      \item Examine the \textit{loadings} to see which variables contribute the most.
-      \item Larger absolute values indicate stronger influence.
-      \item Use biplots to visualize scores and loadings together.
-      \item Apply dimension reduction before regression, clustering, or other analyses.
-      \item Apply noise reduction by discarding low-variance components.
+      \item Examinar las \textit{cargas} para ver qué variables contribuyen más.
+      \item Valores absolutos mayores indican mayor influencia.
+      \item Usar biplots para ver puntuaciones y cargas.
+      \item Reducir dimensión antes de regresión, clustering u otros análisis.
+      \item Reducir ruido descartando componentes de baja varianza.
     \end{itemize}
 \end{enumerate}

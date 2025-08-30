@@ -1,16 +1,16 @@
-# An Introduction to the Tidyverse
+# Introducción al Tidyverse
 
-# The Standardized Moments
+# Momentos estandarizados
 
-# Normality Testing
+# Pruebas de normalidad
 
-# Introduction to Multivariate Analysis
+# Introducción al análisis multivariante
 
-# Normal Multivariate Distribution
+# Distribución normal multivariante
 
-# Principal Component Analysis
+# Análisis de componentes principales
 
-# Factor Analysis: Theoretical Models
+# Análisis factorial: modelos teóricos
 
 # Factor Analysis: Practical Methods
 
@@ -41,21 +41,21 @@ options(scipen = 999)
 
 ### Factor Analysis: Practical Methods
 
-Recall from last chapter that the classical factor analysis model is given by 
+Recordemos del capítulo anterior que el modelo clásico de AF está dado por 
 $$
 X = \mu + LF + \epsilon 
 $$
-where:
+donde:
 
 \bigpause
 
 \begin{itemize}
-    \item $X$ is a random vector of $p$ observed variables (indicators).
-    \item $\mu$ is a constant vector of dimension $p$.
-    \item $L$ is a $p \times m$ constant matrix known as the matrix of \emph{factor loadings.}
-    \item $F \sim \N(0,I_{m})$ is a vector of $m$ latent factors (unobserved variables) that are assumed to be normally distributed with mean zero and identity covariance matrix.
-    \item $\epsilon \sim \N(0,\Psi)$ is a vector of unique errors (specific variances) that are also assumed to be normally distributed with mean zero and diagonal covariance matrix $\Psi = \diag(\sigma_{1}^{2}, \ldots, \sigma_{p}^{2})$.
-    \item The factors $F$ and the errors $\epsilon$ are assumed to be independent, in particular $\Cov[F,\epsilon] = 0$.
+    \item $X$ es un vector aleatorio de $p$ variables observadas (indicadores).
+    \item $\mu$ es un vector constante de dimensión $p$.
+    \item $L$ es una matriz $p \times m$ de \emph{cargas factoriales}.
+    \item $F \sim \N(0,I_{m})$ es un vector de $m$ factores latentes (no observados), normales con media cero e identidad como covarianzas.
+    \item $\epsilon \sim \N(0,\Psi)$ es un vector de errores únicos (varianzas específicas), normales con media cero y covarianzas diagonales $\Psi = \diag(\sigma_{1}^{2}, \ldots, \sigma_{p}^{2})$.
+    \item Se asume independencia entre $F$ y $\epsilon$, en particular $\Cov[F,\epsilon] = 0$.
 \end{itemize}
 
 ###
@@ -81,153 +81,153 @@ Several statistical tests and measures can be used to evaluate the factorability
     \item \textbf{Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy:} The KMO statistic measures the proportion of variance in the observed variables that can be attributed to underlying common factors, relative to variance that is unique to each variable. It ranges from 0 to 1, with values closer to 1 indicating that factor analysis is likely to be useful. A KMO value above 0.6 is generally considered acceptable for factor analysis.
 \end{enumerate}
 
-## Deciding the Number of Factors 
+## Decidir el número de factores 
 
-### Deciding the Number of Factors
+### Decidir el número de factores
 
-Determining the appropriate number of factors to retain in a factor analysis is a crucial step that can significantly impact the results and interpretations.
+Determinar cuántos factores retener es un paso crucial que impacta los resultados e interpretaciones.
 
 \bigpause
 
-Several methods can be employed to decide on the number of factors: 
+Pueden emplearse varios métodos: 
 
 ###
 
 \begin{enumerate}
-    \item \textbf{Eigenvalue Criterion (Kaiser Criterion):} Retain factors with singular values greater than 1. This method is based on the idea that a factor should explain at least as much variance as a single observed variable.
-    \item \textbf{Scree Plot:} A scree plot displays the singular values in descending order. Look for an "elbow" point where the slope of the curve changes dramatically. The number of factors to retain is typically determined by the number of points before this elbow.
-    \item \textbf{Parallel Analysis:} This method involves comparing the observed singular values with those obtained from random data of the same size. Factors are retained if their singular values exceed those from the random data.
-    \item \textbf{Model Fit Indices:} For more advanced factor analysis methods (e.g., confirmatory factor analysis), various fit indices (e.g., RMSEA, TLI) can be used to assess how well the model fits the data for different numbers of factors.
+    \item \textbf{Criterio de autovalor (Kaiser):} conservar factores con valores singulares > 1.
+    \item \textbf{Gráfico scree:} buscar el “codo” donde la pendiente cambia notablemente.
+    \item \textbf{Análisis paralelo:} comparar valores singulares observados con los de datos aleatorios del mismo tamaño; conservar si los supera.
+    \item \textbf{Índices de ajuste:} en métodos confirmatorios (CFA), usar RMSEA, TLI, etc., para evaluar el ajuste según el número de factores.
 \end{enumerate}
 
-## Extracting Factors
+## Extracción de factores
 
-### Extracting Factors
+### Extracción de factores
 
-Once the number of factors has been determined, the next step is to extract the factors from the data. Several methods are available for factor extraction: 
+Una vez decidido el número de factores, el siguiente paso es extraerlos. Métodos comunes: 
 
 \pause
 
 \begin{enumerate}
-    \item \textbf{Principal Axis Factoring (PAF):} This method focuses on the shared variance among variables and is suitable when the goal is to identify underlying constructs. It iteratively estimates communalities and extracts factors based on the reduced correlation matrix.
-    \item \textbf{Maximum Likelihood (ML) Factor Analysis:} This method estimates factor loadings by maximizing the likelihood of the observed data given the model. It allows for statistical testing of hypotheses about the factor structure and provides goodness-of-fit indices.
+    \item \textbf{Ejes principales (PAF):} se centra en la varianza compartida; estima comunalidades iterativamente y extrae factores de la matriz de correlación reducida.
+    \item \textbf{Máxima verosimilitud (ML):} estima cargas maximizando la verosimilitud; permite contrastes sobre la estructura y entrega índices de ajuste.
 \end{enumerate}
 
-## Rotation of Factors 
+## Rotación de factores 
 
-### Rotation of Factors
+### Rotación de factores
 
-After extracting factors, it is often beneficial to rotate them to achieve a simpler and more interpretable structure.
-
-\bigpause
-
-Rotation can be either orthogonal (factors remain uncorrelated) or oblique (factors are allowed to correlate).
+Tras extraer factores, suele ser útil rotarlos para lograr una estructura más simple e interpretable.
 
 \bigpause
 
-Common rotation methods include: 
+La rotación puede ser ortogonal (factores no correlacionados) u oblicua (factores correlacionados).
+
+\bigpause
+
+Métodos comunes: 
 
 ###
 
 \begin{enumerate}
-    \item \textbf{Varimax Rotation:} An orthogonal rotation method that maximizes the variance of squared loadings within each factor, leading to a simpler structure where each variable loads highly on one factor and low on others.
-    \item \textbf{Quartimax Rotation:} Another orthogonal rotation method that simplifies the rows of the loading matrix, aiming to have each variable load highly on as few factors as possible.
-    \item \textbf{Equamax Rotation:} A hybrid orthogonal rotation method that combines the goals of varimax and quartimax, balancing the simplification of both rows and columns of the loading matrix.
-    \item \textbf{Promax Rotation:} An oblique rotation method that allows factors to correlate. It starts with a varimax rotation and then raises the loadings to a power to achieve a simpler structure.
+    \item \textbf{Varimax:} ortogonal; maximiza la varianza de las cargas al cuadrado en cada factor, promoviendo estructuras simples.
+    \item \textbf{Quartimax:} ortogonal; simplifica filas de la matriz de cargas buscando que cada variable cargue en pocos factores.
+    \item \textbf{Equamax:} ortogonal híbrido; equilibra objetivos de varimax y quartimax.
+    \item \textbf{Promax:} oblicua; parte de varimax y eleva cargas a una potencia para simplificar permitiendo correlación entre factores.
 \end{enumerate}
 
-## Computing Factor Scores 
+## Cálculo de puntuaciones factoriales 
 
-### Computing Factor Scores
+### Cálculo de puntuaciones factoriales
 
-Once the factor loadings have been estimated and the factors have been rotated the next step is to compute factor scores for each observation in the dataset.
-
-\bigpause
-
-Factor scores represent the estimated values of the latent factors for each individual based on their observed variable scores.
+Tras estimar cargas y rotar, el siguiente paso es calcular las puntuaciones factoriales de cada observación.
 
 \bigpause
 
-Several methods can be used to compute factor scores: 
+Las puntuaciones representan los valores estimados de los factores latentes para cada individuo, a partir de sus variables observadas.
+
+\bigpause
+
+Existen varios métodos para calcularlas: 
 
 ###
 
 \begin{enumerate}
-    \item \textbf{Regression Method:} This method estimates factor scores by regressing the observed variables on the estimated factor loadings. It provides unbiased estimates of factor scores but may not preserve the original variance of the factors.
-    \item \textbf{Bartlett Method:} This method computes factor scores by minimizing the residual variance of the observed variables. It tends to produce factor scores that are more reliable and have lower measurement error.
-    \item \textbf{Anderson-Rubin Method:} This method generates factor scores that are uncorrelated and standardized. It is particularly useful when the factors are assumed to be orthogonal.
+    \item \textbf{Método de regresión:} estima puntuaciones al ajustar variables observadas sobre las cargas; es insesgado pero puede no preservar la varianza original de los factores.
+    \item \textbf{Método de Bartlett:} minimiza la varianza residual de las variables; produce puntuaciones más fiables y con menor error de medición.
+    \item \textbf{Método de Anderson–Rubin:} genera puntuaciones no correlacionadas y estandarizadas; útil cuando los factores se asumen ortogonales.
 \end{enumerate}
 
-## Assessing Model Fit 
+## Evaluación del ajuste del modelo 
 
-### Assessing Model Fit
+### Evaluación del ajuste del modelo
 
-After fitting a factor analysis model, it is important to assess how well the model fits the data.
+Tras ajustar un modelo de AF, es importante evaluar qué tan bien ajusta a los datos.
 
 \bigpause
 
-Several statistical tests and fit indices can be used to evaluate model fit: 
+Pueden usarse varias pruebas e índices de ajuste: 
 
 ###
 \begin{enumerate}
-    \item \textbf{Chi-Square Test of Model Fit:} This test evaluates the null hypothesis that the model-implied covariance matrix matches the observed covariance matrix. A non-significant result ($p$-value > 0.05) suggests that the model fits the data well.
-    \item \textbf{Root Mean Square Error of Approximation (RMSEA):} This index measures the discrepancy between the observed and model-implied covariance matrices per degree of freedom. Values less than 0.06 indicate a good fit.
-    \item \textbf{Tucker-Lewis Index (TLI):} This index compares the fit of the specified model to a null model. Values greater than 0.95 indicate a good fit.
-    \item \textbf{Standardized Root Mean Square Residual (SRMR):} This index measures the average discrepancy between observed and predicted correlations. Values less than 0.08 indicate a good fit.
+    \item \textbf{Chi‑cuadrada de ajuste:} contrasta que la matriz de covarianzas implicada por el modelo coincide con la observada. Un $p$ no significativo (> 0.05) sugiere buen ajuste.
+    \item \textbf{RMSEA:} discrepancia por g.l. entre matrices observada e implicada; < 0.06 suele indicar buen ajuste.
+    \item \textbf{TLI:} compara el ajuste del modelo con uno nulo; > 0.95 indica buen ajuste.
+    \item \textbf{SRMR:} discrepancia media estandarizada entre correlaciones observadas y predichas; < 0.08 indica buen ajuste.
 \end{enumerate}
 
-## Visualizing the Model 
+## Visualización del modelo 
 
-### Visualizing the Model
+### Visualización del modelo
 
-Visualizing the results of a factor analysis can help in interpreting the factors and understanding the relationships among variables.
+Visualizar resultados del AF ayuda a interpretar factores y relaciones entre variables.
 
 \bigpause 
 
-Common visualization techniques include: 
+Técnicas comunes: 
 
 ###
 \begin{enumerate}
-    \item \textbf{Scree Plot:} A scree plot displays the singular values in descending order, helping to visualize the number of factors to retain.
-    \item \textbf{Factor Loading Plot:} A scatter plot of factor loadings can help visualize how variables load on different factors, especially after rotation.
-    \item \textbf{Biplot:} A biplot combines factor scores and loadings in a single plot, allowing for the visualization of both observations and variable relationships in the factor space.
-    \item \textbf{Heatmap of Loadings:} A heatmap can be used to visualize the magnitude of factor loadings across variables and factors, highlighting patterns and clusters.
+    \item \textbf{Gráfico scree:} valores singulares en orden descendente; ayuda a decidir factores a retener.
+    \item \textbf{Gráfico de cargas:} dispersión de cargas para ver cómo cargan variables, especialmente tras rotación.
+    \item \textbf{Biplot:} combina puntuaciones y cargas en un solo gráfico.
+    \item \textbf{Mapa de calor de cargas:} visualiza magnitudes de cargas por variable y factor.
 \end{enumerate}
 
 ###
 
 \begin{remark}
-Notice that Factor Loading Plots and Biplots only make sense when we have 2 or 3 factors, otherwise we cannot visualize them properly.
+Los gráficos de cargas y los biplots sólo tienen sentido con 2 o 3 factores; de otro modo no se visualizan adecuadamente.
 \end{remark}
 
 
-## Example: Factor Analysis of the Holzinger-Swineford Dataset
+## Ejemplo: AF del conjunto Holzinger–Swineford
 
-### Example: Factor Analysis of the Holzinger-Swineford Dataset
+### Ejemplo: AF del conjunto Holzinger–Swineford
 
-We will now provide an example of factor analysis using the "HolzingerSwineford1939" dataset from the "lavaan" package.
-
-\bigpause
-
-This dataset contains scores from a battery of 9 cognitive tests administered to 301 students in grades 7 and 8.
+Mostraremos un ejemplo con el conjunto "HolzingerSwineford1939" del paquete "lavaan".
 
 \bigpause
 
-The tests were designed to measure 3 latent abilities: visual/spatial, verbal, and speed. For this example we will focus only on tests x4 to x9 so that we can fit a two-factor model and visualize the results in a biplot.
+Este conjunto contiene puntajes de 9 pruebas cognitivas aplicadas a 301 estudiantes de 7º y 8º grado.
+
+\bigpause
+
+Las pruebas buscan medir 3 habilidades latentes: visoespacial, verbal y velocidad. Aquí nos enfocamos en x4–x9 para ajustar un modelo de dos factores y visualizar el biplot.
 
 \bigpause 
 
-The exact description of each test is given below:
+La descripción de cada prueba es la siguiente:
 
 ###
 
 \begin{enumerate}
-\item \textbf{Paragraph (x4)}: Reading comprehension. Students read short paragraphs and answer questions about the main idea, details, and simple inferences.
-\item \textbf{Sentence (x5)}: Sentence completion. Choose the word or phrase that best completes a sentence so it is clear and grammatical; emphasizes vocabulary‑in‑context and syntax.
-\item \textbf{Word Meaning (x6)}: Vocabulary. Select the best synonym/definition for a target word; reflects breadth of lexical knowledge.
-\item \textbf{Addition (x7)}: Timed arithmetic fluency. Complete many simple addition problems quickly and accurately; captures processing speed with minimal reasoning load.
-\item \textbf{Counting Dots (x8)}: Rapid visual enumeration. Quickly count small groups of dots across many items; measures visual scanning and speeded accuracy.
-\item \textbf{Straight–Curved Capitals (x9)}: Perceptual discrimination speed. Scan capital letters and mark those with only straight strokes (versus any curved strokes), under strict time limits.
+\item \textbf{Paragraph (x4)}: Comprensión lectora. Leer párrafos cortos y responder sobre idea principal, detalles e inferencias.
+\item \textbf{Sentence (x5)}: Completar oraciones. Elegir la palabra o frase que mejor complete una oración; enfatiza vocabulario en contexto y sintaxis.
+\item \textbf{Word Meaning (x6)}: Vocabulario. Seleccionar el mejor sinónimo/definición de una palabra objetivo.
+\item \textbf{Addition (x7)}: Aritmética cronometrada. Completar sumas simples rápida y correctamente; mide velocidad de procesamiento.
+\item \textbf{Counting Dots (x8)}: Conteo visual rápido. Contar grupos pequeños de puntos en muchos ítems; mide escaneo visual y precisión.
+\item \textbf{Straight–Curved Capitals (x9)}: Discriminación perceptual. Identificar letras mayúsculas con sólo trazos rectos, bajo límite de tiempo.
 \end{enumerate}
 
 ```{r}
@@ -389,11 +389,11 @@ scree_plot + cum_plot + plot_layout(ncol = 2) +
 
 ###
 
-Notice that both the scree plot and the cumulative variance plot suggest that a two-factor solution is appropriate for analysing the six tests included in this dataset.
+Nótese que tanto el scree como la varianza acumulada sugieren que una solución de dos factores es apropiada para las seis pruebas consideradas.
 
-### Extracting, Rotating, and Scoring Factors
+### Extracción, rotación y puntuación de factores
 
-Even though extracting, rotating and scoring factors are theoretically separate steps, in practice they are often performed together using specialized software or statistical packages. Here we will use the `psych::fa` function to perform all three steps at once. We will fit a 2-factor model using maximum likelihood (ML) estimation, compute factor scores using the regression method, and perform a varimax rotation to simplify the factor structure. 
+Aun cuando extraer, rotar y puntuar son pasos teóricamente distintos, en la práctica suelen realizarse juntos con paquetes estadísticos. Usaremos `psych::fa` para hacer los tres a la vez: ajustaremos un modelo de 2 factores por máxima verosimilitud (ML), calcularemos puntuaciones por el método de regresión y aplicaremos rotación varimax para simplificar la estructura.
 
 
 ###
@@ -421,9 +421,9 @@ scores <- fa_rot$scores %>%
   mutate(Obs = row_number())
 ```
 
-### Assessing Model Fit 
+### Evaluación del ajuste 
 
-We now evaluate how well the 2‑factor ML solution reproduces the observed correlations. For this, we perform the tests $\chi$‑squared, RMSEA, CFI, TLI, and RMSR. 
+Evaluamos ahora qué tan bien la solución ML de 2 factores reproduce las correlaciones observadas. Para ello calculamos $\chi^2$, RMSEA, CFI, TLI y RMSR. 
 
 ###
 ```{r}
@@ -465,18 +465,18 @@ num <- sum(lt_offdiag(res_cor)^2, na.rm = TRUE)
 den <- sum(lt_offdiag(S_obs_cor)^2, na.rm = TRUE)
 srmr <- sqrt(num / den)
 ```
-The results of these tests are:
+Los resultados de estas pruebas son:
 \begin{align*} 
 \mbox{$\chi^{2}$ Test} & = `r pval` \\ 
 \mbox{RMSEA} & = `r rmsea` \\ 
 \mbox{TLI} & = `r tli` \\ 
 \mbox{RMSR} & = `r srmr` 
 \end{align*}
-All tests indicate that the 2‑factor model fits the data well.
+Todas las pruebas indican que el modelo de 2 factores ajusta bien a los datos.
 
-### Visualizing the Model
+### Visualización del modelo
 
-Finally, we will visualize the model using a biplot. We will also rotate the factors manually to illustrate what could happen if we did not choose an appropriate rotation method. 
+Finalmente, visualizaremos el modelo con un biplot. También rotaremos manualmente los factores para ilustrar qué podría ocurrir si no eligiéramos una rotación adecuada. 
 
 ###
 ```{r}
@@ -559,8 +559,8 @@ p_rot <- ggplot() +
   ) +
   labs(
     title = "Rotación manual",
-    x = "Rotated Factor 1",
-    y = "Rotated Factor 2"
+    x = "Factor 1 rotado",
+    y = "Factor 2 rotado"
   ) +
   theme_krul()
 

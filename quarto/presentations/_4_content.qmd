@@ -29,11 +29,11 @@ Estos conceptos son fundamentales para entender las relaciones entre múltiples 
 ### El vector de medias y la matriz de covarianzas
 
 \begin{definition}
-Let $\Pi$ be a population and let 
+Sea $\Pi$ una población y sea 
 $$ 
 X: \Pi \to \mathbb{R}^{p} 
 $$ 
-sea un vector aleatorio (renglón). El \alert{vector de medias} de $X$ se define como
+un vector aleatorio (renglón). El \alert{vector de medias} de $X$ se define como
 $$
 \mu = \mathbb{E}[X] = \left[ \mathbb{E}[X_1], \mathbb{E}[X_2], \ldots, \mathbb{E}[X_p] \right] = [\mu_1, \mu_2, \ldots, \mu_p]
 $$
@@ -77,7 +77,7 @@ La matriz de covarianzas muestral es un estimador insesgado de la matriz de cova
 ###
 
 \begin{example}
-Consider the following sample matrix of size $n=5$ from a population $\Pi$:
+Considere la siguiente matriz muestral de tamaño $n=5$ de una población $\Pi$:
 $$
 \left[
 \begin{array}{ccc}
@@ -94,7 +94,7 @@ $$
 ###
 
 \begin{example}
-To obtain the sample mean vector, we compute:
+Para obtener el vector de medias muestral, calculamos:
 $$
 \begin{aligned}
 \bar{x}_1 &= \frac{2+4+6+8+10}{5} = 6 \\
@@ -105,7 +105,7 @@ $$
 
 \pause
 
-In other words,
+En otras palabras,
 $$
 \bar{x} = [6, 3, 5]
 $$
@@ -114,14 +114,14 @@ $$
 ###
 
 \begin{example}
-The sample variance of $X_j$ is:
+La varianza muestral de $X_j$ es:
 $$
 \hat{\Sigma}_{X_j} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x_j})^2
 $$
 
 \pause
 
-Therefore,
+Por lo tanto,
 $$
 \begin{aligned}
 \hat{\Sigma}_{X_1} &= \frac{(2-6)^2 + (4-6)^2 + (6-6)^2 + (8-6)^2 + (10-6)^2}{4} = 10 \\
@@ -135,11 +135,11 @@ $$
 ###
 
 \begin{example}
-The sample covariance between $X_j$ and $X_k$ is:
+La covarianza muestral entre $X_j$ y $X_k$ es:
 $$
 \hat{\Sigma}_{X_j, X_k} = \frac{1}{n-1} \sum_{i=1}^n (x_{ij} - \bar{x}_j)(x_{ik} - \bar{x}_k)
 $$
-This computations can be done in a similar way as before, the results are:
+Estos cálculos pueden hacerse de forma similar a lo anterior; los resultados son:
 $$
 \begin{aligned}
 \hat{\Sigma}_{X_1, X_2}  = -4.5 \\
@@ -154,7 +154,7 @@ $$
 
 \begin{example}
 
-The resulting covariance matrix is then:
+La matriz de covarianzas resultante es:
 $$
 \hat{\Sigma}=
 \left[
@@ -199,11 +199,11 @@ La distancia de Mahalanobis mide la separación en un espacio multivariante cons
 
 ###
 
-To illustrate this point, we will consider the following dataset:
+Para ilustrar este punto, consideraremos el siguiente conjunto de datos:
 
 \bigpause 
 
-We start by taking a random sample $x$ of size $n=300$ from a uniform distribution in the interval $[0, 10]$.
+Comenzamos tomando una muestra aleatoria $x$ de tamaño $n=300$ de una distribución uniforme en el intervalo $[0, 10]$.
 ```{r}
 #| echo: false
 set.seed(123)
@@ -212,7 +212,7 @@ x_data <- runif(n, min = 0, max = 10)
 ``` 
 \pause 
 
-We will construct some error vector $\epsilon$ from a normal distribution with mean 0 and standard deviation 1.
+Construiremos un vector de error $\epsilon$ de una normal con media 0 y desviación estándar 1.
 ```{r}
 #| echo: false
 epsilon_data <- rnorm(n, mean = 0, sd = 1)
@@ -220,7 +220,7 @@ epsilon_data <- rnorm(n, mean = 0, sd = 1)
 
 \pause
 
-We can now construct the vector
+Ahora podemos construir el vector
 $$
 y = x + \epsilon
 $$
@@ -235,12 +235,12 @@ sample_data_tbl <- tibble(
 ```
 \pause
 
-The associated scatter plot of the data is shown below:
+El diagrama de dispersión asociado se muestra a continuación:
 
 
 ###
 ```{r}
-#| fig-cap: "Scatter plot of the sample data. Notice that the X and Y variables are highly correlated."
+#| fig-cap: "Diagrama de dispersión de los datos muestrales. Nótese la alta correlación entre X y Y."
 #| fig-width:  5
 #| fig-height: 5
 #| echo: false
@@ -263,12 +263,12 @@ sample_data_plot
 ```
 
 ###
-We now add the points (1, 1) and (5, 2) to our data:
+Ahora añadimos los puntos (1, 1) y (5, 2) a los datos:
 
 
 ###
 ```{r}
-#| fig-cap: "Scatter Plot with extra sample points. Notice that one of these points is clearly an outlier."
+#| fig-cap: "Dispersión con puntos extra. Uno de ellos es claramente atípico."
 #| fig-width:  5
 #| fig-height: 5
 #| echo: false
@@ -289,11 +289,11 @@ extra_sample_data_plot
 ```
 
 ###
-Notice that one of these points is clearly an outlier.
+Obsérvese que uno de estos puntos es claramente atípico.
 
 \bigpause 
 
-We would like to have some concrete measure to show this.
+Nos gustaría contar con una medida concreta que lo muestre.
 
 \bigpause
 
@@ -307,11 +307,11 @@ sample_mean_tbl <- tibble(
   y_bar = sample_mean_vector[2]
 )
 ```
-However, if we use the Euclidean distance, we obtain that it is actually the outlier point that is closer to the sample mean vector:
+Sin embargo, si usamos la distancia euclidiana, obtenemos que el punto atípico es en realidad el más cercano al vector de medias muestral:
 
 ###
 ```{r}
-#| fig-cap: "Scatter Plot with sample mean vector and a circle representing points that are at a constant Euclidean distance from the center of our data."
+#| fig-cap: "Dispersión con media muestral y círculo de distancia euclidiana constante al centro de los datos."
 #| fig-width:  5
 #| fig-height: 5
 #| echo: false
@@ -334,12 +334,12 @@ euclidean_sample_data_plot
 
 
 ###
-On the other hand, if we compute the Mahalanobis distance, we obtain that the outlier point is actually further away from the sample mean vector:
+Por otro lado, si calculamos la distancia de Mahalanobis, obtenemos que el punto atípico está más alejado del vector de medias muestral:
 
 
 ###
 ```{r}
-#| fig-cap: "Scatter Plot with sample mean vector and a ellipse representing points that are at a constant Mahalanobis distance from the center of our data."
+#| fig-cap: "Dispersión con media muestral y elipse de distancia de Mahalanobis constante al centro de los datos."
 #| fig-width:  5
 #| fig-height: 5
 #| echo: false
@@ -356,76 +356,76 @@ annotated_sample_data_plot <- extra_sample_data_plot +
 annotated_sample_data_plot
 ```
 
-## Scaling and Standardization 
+## Escalamiento y estandarización 
 
 
-### Scaling and Standardization
+### Escalamiento y estandarización
 
-Now assume that we have a random vector $X$ with mean vector $\mu$ and covariance matrix $\Sigma$. We can define a new random vector $Y$ as follows: 
+Supongamos ahora que tenemos un vector aleatorio $X$ con vector de medias $\mu$ y matriz de covarianzas $\Sigma$. Podemos definir un nuevo vector aleatorio $Y$ como sigue: 
 $$
 Y^{T} = A X^{T} + b 
 $$
-where $A$ is a $p \times p$ matrix and $b$ is a $p$-dimensional vector.
+donde $A$ es una matriz $p \times p$ y $b$ un vector de dimensión $p$.
 
 \bigpause 
 
-The mean vector and covariance matrix of the new random vector $Y$ can be computed as follows:
+El vector de medias y la matriz de covarianzas del nuevo vector aleatorio $Y$ se obtienen como:
 $$
 \mu_Y^{T} = \mathbb{E}[Y]^{T} = A \mu^{T} + b 
 $$
-and
+y
 $$
 \Sigma_Y = \Cov[Y] = A \Sigma A^{T} 
 $$
 
 ###
 
-As we will show later, it is always possible to find a matrix $A$ and a vector $b$ such that the new random vector $Y$ has mean vector $\mu_Y = 0$ and covariance matrix $\Sigma_Y = I_p$, where $I_p$ is the identity matrix of size $p \times p$.
+Como mostraremos más adelante, siempre es posible encontrar una matriz $A$ y un vector $b$ tales que $Y$ tenga media $\mu_Y = 0$ y covarianzas $\Sigma_Y = I_p$, donde $I_p$ es la identidad de tamaño $p \times p$.
 
 \bigpause
 
-This process is known as a \alert{standardization} of the random vector $X$.
+Este proceso se conoce como \alert{estandarización} del vector aleatorio $X$.
 
-## Activity: The Geometry of Multivariate Data
+## Actividad: La geometría de los datos multivariantes
 
-### Activity: The Geometry of Multivariate Data
+### Actividad: La geometría de los datos multivariantes
 
-\textbf{Part A: Theoretical Exercises}
+\textbf{Parte A: Ejercicios teóricos}
 
 \begin{enumerate}
-    \item Prove that the Mahalanobis distance reduces to the Euclidean distance if the covariance matrix is the identity.
-    \item Show that Mahalanobis distance is invariant under affine transformations.
-    \item Show that if you standardize each variable in a multivariate dataset, the covariance matrix becomes the coorrelation matrix.
-    \item Assume that $X_1$ and $X_2$ are two independent random variables following the standard normal distribution. Show that $d_M(X, 0)^{2}$ follows a chi-square distribution with 2 degrees of freedom, where $d_M(X, 0)$ is the Mahalanobis distance from the origin.
+    \item Pruebe que la distancia de Mahalanobis se reduce a la euclidiana si la matriz de covarianzas es la identidad.
+    \item Muestre que la distancia de Mahalanobis es invariante bajo transformaciones afines.
+    \item Muestre que si estandariza cada variable en un conjunto multivariante, la matriz de covarianzas se vuelve la matriz de correlaciones.
+    \item Suponga que $X_1$ y $X_2$ son independientes y normales estándar. Muestre que $d_M(X, 0)^{2}$ sigue una $\chi^2$ con 2 g.l., donde $d_M(X, 0)$ es la distancia de Mahalanobis al origen.
 \end{enumerate}
 
 ###
 
-\textbf{Part B: Practical Exercises}
+\textbf{Parte B: Ejercicios prácticos}
 
 \begin{enumerate}
-    \item Generate a 2D dataset of 50 points (two correlated variables).
-    \item Compute the sample mean vector and covariance matrix.
-    \item Write a function in R that computes the Mahalanobis distance of each point from the mean.
-    \item Identify the point with the largest Mahalanobis distance.
-    \item Plot the dataset using \texttt{ggplot2}.
-    \item Draw Mahalanobis distance ellipses for distances 1, 2, and 3.
-    \item Color points depending on whether their distance is greater than 1, 2, or 3.
-    \item Create a 3-variable dataset.
-    \item Compute Mahalanobis distances in 3D.
-    \item Plot pairs of variables with projected ellipses.
-    \item Compare Euclidean distances from the mean with Mahalanobis distances.
+    \item Genere un conjunto bidimensional de 50 puntos (dos variables correlacionadas).
+    \item Calcule el vector de medias y la matriz de covarianzas muestrales.
+    \item Escriba una función en R que calcule la distancia de Mahalanobis de cada punto a la media.
+    \item Identifique el punto con mayor distancia de Mahalanobis.
+    \item Grafique el conjunto con \texttt{ggplot2}.
+    \item Dibuje elipses de distancia de Mahalanobis para distancias 1, 2 y 3.
+    \item Coloree puntos según si su distancia es mayor que 1, 2 o 3.
+    \item Cree un conjunto de 3 variables.
+    \item Calcule distancias de Mahalanobis en 3D.
+    \item Grafique pares de variables con elipses proyectadas.
+    \item Compare distancias euclidianas a la media contra distancias de Mahalanobis.
 \end{enumerate}
 
 
 ###
 
-\textbf{Part C: Advanced Exercises}
+\textbf{Parte C: Ejercicios avanzados}
 
 \begin{enumerate}
-    \item Simulate 5 points in 3 dimensions with one variable as a linear combination of the others.
-    \item Try to compute Mahalanobis distance and discuss singularity of covariance.
-    \item Apply a linear transformation to a 2D dataset and verify invariance of Mahalanobis distances.
-    \item Write an R function that returns points forming a Mahalanobis-distance ellipse.
-    \item Overlay Mahalanobis-distance ellipses of arbitrary radius on a scatter plot.
+    \item Simule 5 puntos en 3 dimensiones con una variable como combinación lineal de las otras.
+    \item Intente calcular la distancia de Mahalanobis y discuta la singularidad de la covarianza.
+    \item Aplique una transformación lineal a un conjunto 2D y verifique la invarianza de las distancias de Mahalanobis.
+    \item Escriba una función en R que devuelva puntos que formen una elipse de distancia de Mahalanobis.
+    \item Sobreponga elipses de distancia de Mahalanobis de radio arbitrario en un diagrama de dispersión.
 \end{enumerate}

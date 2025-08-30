@@ -63,33 +63,29 @@ Como en el caso univariado, la normal multivariante es destacada por el Teorema 
 ### Teorema central del límite (multivariante)
 
 \begin{theorem}
-Let $\{X_i\}_{i=1}^{\infty}$ be a sequence of independent and identically distributed 
-random vectors in $\mathbb{R}^p$ with mean vector $\mu$ and covariance matrix $\Sigma$. 
-Define the sample mean
+Sea $\{X_i\}_{i=1}^{\infty}$ una sucesión de vectores aleatorios i.i.d. en $\mathbb{R}^p$ con media $\mu$ y covarianzas $\Sigma$. Defina la media muestral
 \[
 \bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i.
 \]
-Then, as $n \to \infty$,
+Entonces, cuando $n \to \infty$,
 \[
 \sqrt{n}\,(\bar{X}_n - \mu) \;\xrightarrow{d}\; \mathcal{N}_p(0, \Sigma),
 \]
-where $\xrightarrow{d}$ denotes convergence in distribution and 
-$\mathcal{N}_p(0, \Sigma)$ is the $p$-dimensional multivariate normal distribution 
-with mean vector $0$ and covariance matrix $\Sigma$.
+donde $\xrightarrow{d}$ denota convergencia en distribución y $\mathcal{N}_p(0, \Sigma)$ es la normal multivariante de dimensión $p$ con media $0$ y covarianzas $\Sigma$.
 \end{theorem}
 
 ###
 
 \begin{remark}
-Even though the Central Limit Theorem singles out the normal multivariate distribution as a particularly important distribution, it is not the only relevant distribution in multivariate statistics.
+Aun cuando el TCL destaca a la normal multivariante como especialmente importante, no es la única distribución relevante en estadística multivariante.
 
 \bigpause 
 
-Actually, most real-world data does not follow a normal distribution, and many statistical methods are designed to handle non-normal data.
+De hecho, la mayoría de los datos reales no siguen una normal, y muchos métodos están diseñados para datos no normales.
 
 \bigpause
 
-Furthermore, important statistical methods, like linear regression, principal component analysis and clustering do not yield good results when applied to a normal multivariate distribution.
+Además, métodos importantes como regresión lineal, ACP y clustering no producen buenos resultados cuando se aplican a una normal multivariante.
 \end{remark}
 
 ## Contornos de la normal multivariante
@@ -108,7 +104,7 @@ La probabilidad asociada a estos contornos está controlada por la distribución
 
 ###
 
-Let $0 \leq \varpi \leq 1$ be a probability level, and let $c$ be such that 
+Sea $0 \leq \varpi \leq 1$ un nivel de probabilidad, y sea $c$ tal que 
 $$
 \mathbb{P}(\chi^2_{p} \leq c) = \varpi
 $$
@@ -122,15 +118,15 @@ $$
 
 ###
 
-In the following figure, we show the contours of the bivariate normal distribution with different covariance matrices.
+En la siguiente figura mostramos los contornos de la normal bivariante con distintas matrices de covarianzas.
 
 \bigpause
 
-The contours are ellipses centered at the mean $\mu = (0, 0)$, and their shape is determined by the covariance matrix $\Sigma$.
+Los contornos son elipses centradas en $\mu = (0, 0)$, y su forma está determinada por $\Sigma$.
 
 \bigpause
 
-The color gradient represents the density of the distribution, with darker colors indicating higher density.
+El gradiente de color representa la densidad: colores más oscuros indican mayor densidad.
 
 
 ###
@@ -212,18 +208,18 @@ normal_plot
 
 ## Estandarización de la normal multivariante 
 
-### Standardization of the Normal Multivariate Distribution
+### Estandarización de la distribución normal multivariante
 
-Just like in the univariate case, given a random vector $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, we can standardize it to obtain a new random vector $Z$ that follows the standard multivariate normal distribution $\mathcal{N}_{p}(0, I_p)$, where $I_p$ is the identity matrix of size $p$.
+Al igual que en el caso univariado, dado $X \sim \mathcal{N}_{p}(\mu, \Sigma)$, podemos estandarizarlo para obtener $Z \sim \mathcal{N}_{p}(0, I_p)$, donde $I_p$ es la identidad de tamaño $p$.
 
 \bigpause 
 
-To describe this standardization process, we first need to remember some linear algebra results. 
+Para describir este proceso, recordemos algunos resultados de álgebra lineal. 
 
 ### Singular Value Decomposition
 
 \begin{theorem}
-Let $\Sigma$ be a symmetric positive definite matrix of size $p \times p$. Then, there exists an orthogonal matrix $Q$ and a diagonal matrix $\Lambda$ with positive entries such that 
+Sea $\Sigma$ simétrica definida positiva de tamaño $p \times p$. Entonces existe una matriz ortogonal $Q$ y una diagonal $\Lambda$ con entradas positivas tales que 
 $$
 \Sigma = Q \Lambda Q^{T}
 $$
@@ -232,26 +228,26 @@ $$
 \pause
 
 \begin{remark}
-Remember that a matrix $Q$ is orthogonal if $Q^{T}Q = I_p$, where $I_p$ is the identity matrix of size $p$. This means that the columns of $Q$ are orthonormal vectors, and thus they form a basis for $\mathbb{R}^p$.
+Recuerde que $Q$ es ortogonal si $Q^{T}Q = I_p$, donde $I_p$ es la identidad de tamaño $p$. Sus columnas son ortonormales y forman una base de $\mathbb{R}^p$.
 \end{remark}
 
 ###
 
 \begin{remark}
-The singular value decomposition (SVD) is a powerful tool in linear algebra that allows us to decompose a matrix into its constituent parts.
+La descomposición en valores singulares (SVD) es una herramienta que descompone una matriz en partes constitutivas.
 
 \bigpause 
 
-In the case of the covariance matrix $\Sigma$, the SVD provides a way to express it in terms of its \alert{singular values} (the diagonal entries of $\Lambda$, also known as its \alert{eigenvalues}) and its \alert{singular vectors} (the columns of $Q$, also known as its \alert{eigenvectors}).
+Para $\Sigma$, la SVD la expresa en términos de sus \alert{valores singulares} (entradas diagonales de $\Lambda$, también llamados \alert{autovalores}) y sus \alert{vectores singulares} (columnas de $Q$, también llamados \alert{autovectores}).
 
 \bigpause
 
-This decomposition is particularly useful for understanding the geometry of the multivariate normal distribution.
+Esta descomposición es muy útil para entender la geometría de la normal multivariante.
 \end{remark}
 
 ###
 
-Notice that, since $\Sigma$ is positive definite, the diagonal entries of
+Obsérvese que, como $\Sigma$ es definida positiva, las entradas diagonales de
 $$
 \Lambda = \left[
 \begin{array}{cccc}
@@ -262,11 +258,11 @@ $$
 \end{array}
 \right]
 $$
-are all positive.
+son todas positivas.
 
 \bigpause 
 
-In particular, we can define a new matrix 
+En particular, podemos definir la matriz 
 $$
 D = \left[
 \begin{array}{cccc}
@@ -277,39 +273,39 @@ D = \left[
 \end{array}
 \right]
 $$
-satisfying $D^2 = \Lambda$.
+que satisface $D^2 = \Lambda$.
 
 ###
 
-If we now take
+Si ahora tomamos
 $$ 
 \sigma = D Q^{T}
 $$
 
 \bigpause
 
-then 
+entonces 
 $$
 \Sigma = \sigma^{T} \sigma
 $$
 
 \bigpause
 
-In particular, we can define the \alert{standardization} of the random vector $X$ as 
+En particular, podemos definir la \alert{estandarización} de $X$ como 
 $$
 Z = (X - \mu) \sigma^{-1} = (X - \mu) Q D^{-1} = (X - \mu) Q \Lambda^{-1/2}
 $$
 in which case $Z \sim \mathcal{N}_{p}(0, I_p)$.
 
-## Geometric Interpretation of the SVD
+## Interpretación geométrica de la SVD
 
-### Geometric Interpretation of the SVD
+### Interpretación geométrica de la SVD
 
-Earlier in this chapter we considered the Normal Multivariate Distribution with mean 
+Antes consideramos la normal multivariante con media 
 $$ 
 \mu = [0, 0] 
 $$ 
-and covariance matrix 
+y matriz de covarianzas 
 $$
 \Sigma = \left[
 \begin{array}{cc}
@@ -321,7 +317,7 @@ $$
 
 \bigpause 
 
-According to the SVD, we can write this covariance matrix as 
+Según la SVD, podemos escribir esta matriz de covarianzas como 
 $$ 
 \Sigma = Q \Lambda Q^{T} 
 $$
@@ -344,7 +340,7 @@ vectors <- eig$vectors
 values <- eig$values
 ``` 
 
-In this case we obtain: 
+En este caso obtenemos: 
 $$
 Q = \left[
 \begin{array}{cc}
@@ -353,7 +349,7 @@ Q = \left[
 \end{array}
 \right]
 $$
-and 
+y 
 $$
 \Lambda = \left[
 \begin{array}{cc}
@@ -362,7 +358,7 @@ $$
 \end{array}
 \right]
 $$
-where the singular vectors are the columns of $Q$ and the singular values are the diagonal entries of $\Lambda$.
+en donde los vectores singulares son las columnas de $Q$ y los valores singulares son las entradas diagonales de $\Lambda$.
 
 \bigpause 
 
@@ -420,42 +416,42 @@ ggplot() +
 ```
 
 
-## Closure under Linear Transformations 
+## Clausura bajo transformaciones lineales 
 
-### Closure under Linear Transformations
+### Clausura bajo transformaciones lineales
 
 \begin{theorem}
-Let $X \sim \mathcal{N}_{p}(\mu, \Sigma)$ be a random vector with normal multivariate distribution. Then, for any matrix $A$ of size $m \times p$ and any vector $b$ of size $m$, the random vector 
+Sea $X \sim \mathcal{N}_{p}(\mu, \Sigma)$. Para cualquier matriz $A$ de tamaño $m \times p$ y vector $b$ de tamaño $m$, el vector aleatorio 
 $$
 Y = AX + b 
 $$ 
-also has a normal multivariate distribution, specifically $Y \sim \mathcal{N}_{m}(A\mu + b, A\Sigma A^{T})$. 
+también tiene distribución normal multivariante: $Y \sim \mathcal{N}_{m}(A\mu + b, A\Sigma A^{T})$. 
 \end{theorem}
 
 
 ### 
 
 \begin{remark} 
-This theorem states that if we apply a linear transformation to a random vector with a normal multivariate distribution, the resulting random vector will also have a normal multivariate distribution.
+El teorema dice que si aplicamos una transformación lineal a un vector normal multivariante, el resultado es también normal multivariante.
 
 \bigpause 
 
-The mean and covariance of the transformed vector are given by the formulas in the theorem.
+La media y la covarianza del transformado vienen dadas por las fórmulas del teorema.
 
 \bigpause
 
-This property is particularly useful in applications such as regression analysis, where we often need to transform the data to fit a model while maintaining the normality of the residuals.
+Es útil en aplicaciones como regresión, donde transformamos datos preservando la normalidad de residuales.
 
 \bigpause
 
-In practice, this theorem is often used to derive the distribution of linear combinations of random variables, which is a common operation in multivariate statistics. 
+En la práctica se usa para derivar la distribución de combinaciones lineales de variables aleatorias.
 
 \end{remark}
 
 ###
 
 \begin{example} 
-Let $X \sim \mathcal{N}_{2}(\mu, \Sigma)$ be a random vector with mean $\mu = (1, 2)$ and covariance matrix 
+Sea $X \sim \mathcal{N}_{2}(\mu, \Sigma)$ con media $\mu = (1, 2)$ y matriz de covarianzas 
 $$ 
 \Sigma = \left[ 
 \begin{array}{cc} 
@@ -467,14 +463,14 @@ $$
 
 \pause
 
-Now, consider the linear transformation 
+Ahora, considere la transformación lineal 
 $$ 
 Y = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} X + \begin{bmatrix} 0 \\ 1 \end{bmatrix} 
 $$ 
 
 \pause
 
-In other words, 
+En otras palabras, 
 \begin{align*}
 Y_1 & = 2X_1 + X_2 \\ 
 Y_2 & = 3X_2 + 1 
@@ -485,7 +481,7 @@ Y_2 & = 3X_2 + 1
 
 \begin{example}
 
-Using the closure under linear transformations theorem, we can find the mean and covariance of $Y$:
+Usando la clausura bajo transformaciones lineales, obtenemos media y covarianzas de $Y$:
 \begin{align*} 
 \text{Mean: } & A\mu + b = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 1 \\ 2 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 4 \\ 7 \end{bmatrix} \\ 
 \text{Covariance: } & A\Sigma A^{T} = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 1 & 0.5 \\ 0.5 & 2 \end{bmatrix} \begin{bmatrix} 2 & 0 \\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 8 & 9 \\ 9 & 18 \end{bmatrix} 
@@ -493,33 +489,33 @@ Using the closure under linear transformations theorem, we can find the mean and
 
 \pause
 
-Thus,  
+Así,  
 $$Y \sim \mathcal{N}_{2}\left(\begin{bmatrix} 4 \\ 7 \end{bmatrix}, \begin{bmatrix} 8 & 9 \\ 9 & 18 \end{bmatrix}\right)
 $$ 
 \end{example}
 
 ###
 
-\begin{remark} Notice that since projection into a subspace is a linear transformation, the closure under linear transformations theorem implies that any subset of the components of a normal multivariate distribution also has a normal multivariate distribution.
+\begin{remark} Nótese que proyectar a un subespacio es lineal; por tanto, cualquier subconjunto de componentes de una normal multivariante también es normal multivariante.
 
 \bigpause
 
-This is a very useful property, as it allows us to analyze subsets of variables while still maintaining the normality assumption. 
+Esta propiedad permite analizar subconjuntos de variables manteniendo la suposición de normalidad. 
 \end{remark}
 
-## Multivariate Normality Testing 
+## Pruebas de normalidad multivariante 
 
-### Multivariate Normality Testing
+### Pruebas de normalidad multivariante
 
-There are several statistical tests to check whether a given dataset follows a multivariate normal distribution. These tests are essential in multivariate statistics, as many methods assume normality. Here are some of the most commonly used tests, together with their implementation in R:
+Existen varias pruebas para verificar si un conjunto de datos sigue una normal multivariante. Son esenciales porque muchos métodos asumen normalidad. Algunas comunes y su implementación en R:
 
 \begin{enumerate}
-  \item \alert{Mardia's Test:}  
-    Based on multivariate skewness and kurtosis.  
-    For a multivariate normal distribution, skewness should be close to 0 and kurtosis close to \(p(p+2)\), where \(p\) is the number of variables. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "mardia")}.
+  \item \alert{Prueba de Mardia:}  
+    Basada en asimetría y curtosis multivariantes.  
+    Para normal multivariante, asimetría ≈ 0 y curtosis ≈ \(p(p+2)\). En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "mardia")}.
     
-  \item \alert{Henze-Zirkler (HZ) Test:}  
-    Uses the empirical characteristic function to measure deviations from normality. It has good global power and is suitable for moderate dimensions. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "hz")}.
+  \item \alert{Prueba de Henze–Zirkler (HZ):}  
+    Usa la función característica empírica para medir desvíos de normalidad. Buen poder global; adecuada en dimensiones moderadas. En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "hz")}.
     
 \seti 
 \end{enumerate} 
@@ -529,12 +525,12 @@ There are several statistical tests to check whether a given dataset follows a m
 
 \conti
 
-  \item \alert{Royston's Test:}  
-    A multivariate extension of the Shapiro-Wilk test, based on the product of univariate Shapiro-Wilk statistics applied to principal components. Easy to interpret, though power decreases in high dimensions. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "royston")}.
+  \item \alert{Prueba de Royston:}  
+    Extensión multivariante de Shapiro–Wilk (producto de estadísticas univariadas aplicado a componentes principales). Fácil de interpretar; pierde poder en alta dimensión. En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "royston")}.
     
-  \item \alert{Doornik-Hansen Test:}  
-    Combines skewness and kurtosis into a single omnibus test, providing a robust alternative to Mardia. Implemented in R via \texttt{MVN::mvn(your\_data, mvn\_test = "dh")}.
+  \item \alert{Prueba de Doornik–Hansen:}  
+    Combina asimetría y curtosis en una prueba ómnibus, alternativa robusta a Mardia. En R: \texttt{MVN::mvn(tus\_datos, mvn\_test = "dh")}.
     
-  \item \alert{Graphical Methods (Chi-square Q-Q plots):}  
-    Plot the Mahalanobis distances of the data against the quantiles of a chi-square distribution. Deviations from a straight line indicate departures from multivariate normality. Implemented in R via \texttt{multivariate\_diagnostic\_plot(data = your\_data, type = "qq") }.
+  \item \alert{Métodos gráficos (Q–Q de chi‑cuadrada):}  
+    Graficar distancias de Mahalanobis contra cuantiles de $\chi^2$. Desviaciones de la recta indican no normalidad. En R: \texttt{multivariate\_diagnostic\_plot(data = tus\_datos, type = "qq")}.
 \end{enumerate}
