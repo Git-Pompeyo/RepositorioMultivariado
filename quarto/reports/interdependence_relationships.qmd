@@ -73,3 +73,7 @@ format:
 
 {{< include _7_factor_analysis_theoretical_models.qmd >}}
 {{< include _8_factor_analysis_practical_methods.qmd >}}
+
+\part{Análisis de Conglomerados}
+
+{{< include _9_hierarchical_clustering.qmd >}}

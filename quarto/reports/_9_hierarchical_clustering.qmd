@@ -1,0 +1,208 @@
+# Análisis de conglomerados jerárquicos
+
+\emph{Clustering} (agrupamiento) es una técnica de aprendizaje no supervisado que agrupa puntos de datos similares con base en sus características. A diferencia del aprendizaje supervisado, el agrupamiento no depende de etiquetas o categorías predefinidas; en su lugar, identifica patrones y estructuras dentro de los propios datos. Los métodos de agrupamiento suelen clasificarse en dos familias principales:
+\begin{enumerate} 
+\item \textbf{Agrupamiento jerárquico}: Estos métodos construyen un \emph{dendrograma} (también llamado \emph{diagrama de árbol}) que representa la estructura taxonómica de los datos. Es especialmente útil para conjuntos de datos pequeños y cuando se desconoce el número de conglomerados. 
+\item \textbf{Agrupamiento no jerárquico}: Métodos como K-medias y DBSCAN particionan los datos en un número predefinido de conglomerados o con base en densidad. Generalmente escalan mejor para conjuntos de datos grandes.
+\end{enumerate}
+
+En este capítulo nos enfocaremos en el agrupamiento jerárquico, dejando los métodos no jerárquicos para el siguiente.
+
+
+## Entendiendo los dendrogramas 
+
+Un dendrograma es un diagrama en forma de árbol que ilustra la estructura taxonómica de los datos de acuerdo con un algoritmo de agrupamiento jerárquico. Proporciona una representación visual de cómo se agrupan los puntos según sus similitudes. El eje vertical representa la distancia o disimilitud entre conglomerados, mientras que el eje horizontal representa los puntos individuales o los propios conglomerados. Al “cortar” el dendrograma a una altura específica, podemos determinar el número de conglomerados que deseamos considerar para el análisis. 
+
+Como ilustración, consideremos el diagrama de dispersión del conjunto de datos Iris (considerando únicamente las variables "Sepal.Length" y "Sepal.Width"), donde cada punto está coloreado según la especie de la flor:
+```{r}
+#| fig-cap: "Scatter plot of the Iris dataset, separated by species and considering only the variables 'Sepal.Length' and 'Sepal.Width'."
+#| fig-width: 6
+#| fig-height: 4
+
+
+data(iris)
+
+iris_plot <- iris %>%
+  ggplot(aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point(
+    size = 0.8,
+    alpha = 1
+  ) +
+  c_scale_color("C green", "C blue", "C red") +
+  labs(
+    title = "Iris Dataset: Sepal Length vs Sepal Width",
+    x = "Sepal Length (cm)",
+    y = "Sepal Width (cm)"
+  ) +
+  theme_krul() +
+  theme(legend.position = "top")
+
+iris_plot
+```
+Ahora consideraremos un dendrograma asociado a este conjunto y mostraremos cómo cortarlo a distintas alturas conduce a diferentes números de conglomerados:
+```{r}
+#| fig-cap: "Hierarchical clustering of the Iris dataset considering only the variables 'Sepal.Length' and 'Sepal.Width'. The dashed lines indicate the cut points for the given numbers of clusters (k = 1, 3, 4, 6)."
+#| fig-width:  10
+#| fig-height: 12
+# Use the built-in iris dataset only
+iris_tbl <- as_tibble(iris)
+
+k_values <- c(1, 3, 4, 6)
+
+# Cluster on the chosen 2D projection to match the plot
+standardized_sepal_matrix <- iris_tbl %>%
+  select(Sepal.Length, Sepal.Width) %>%
+  scale()
+
+distances <- stats::dist(standardized_sepal_matrix, method = "euclidean")
+sepal_hclust <- stats::hclust(distances, method = "ward.D2")
+
+sepal_tbl <- iris_tbl %>%
+  select(Sepal.Length, Sepal.Width) %>%
+  mutate(.row_id = row_number())
+
+# Build long data for facets by k
+long_pts <- lapply(k_values, function(k) {
+  cluster <- stats::cutree(sepal_hclust, k = k)
+  tibble::tibble(
+    .row_id = seq_along(cluster),
+    cluster = factor(as.integer(cluster)),
+    k = factor(paste0("k = ", k), levels = paste0("k = ", k_values))
+  )
+})
+
+long_pts <- bind_rows(long_pts)
+sepal_cluster_tbl <- left_join(long_pts, sepal_tbl, by = ".row_id")
+
+# Polygons for each (k, cluster)
+sepal_poly_tbl <- cluster_polygons(
+  sepal_cluster_tbl,
+  Sepal.Length, Sepal.Width,
+  k, cluster
+)
+
+sepal_cluster_plot <- sepal_cluster_tbl %>%
+  ggplot(aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point(color = "black", alpha = 1, size = 0.8) +
+  labs(
+    title = "Clusters",
+    x = "Sepal Length",
+    y = "Sepal Width"
+  ) +
+  theme_krul() +
+  facet_wrap(~k, ncol = 1, scales = "fixed")
+
+sepal_cluster_plot <- sepal_cluster_plot +
+  geom_path(
+    data = sepal_poly_tbl,
+    aes(
+      x = Sepal.Length,
+      y = Sepal.Width,
+      group = interaction(k, cluster),
+      color = cluster
+    ),
+    linewidth = 0.8,
+    alpha = 0.5
+  ) +
+  c_scale_color(
+    "C green",
+    "C blue",
+    "C red",
+    "C magenta",
+    "C yellow",
+    "C cyan"
+  ) +
+  labs(color = "Cluster")
+
+# Dendrogram geometry (replicated across facets)
+sepal_dendro_data <- ggdendro::dendro_data(sepal_hclust, type = "rectangle")
+k_fac <- factor(paste0("k = ", k_values), levels = paste0("k = ", k_values))
+
+dendro_segments_faceted <- sepal_dendro_data$segments %>%
+  mutate(.rep = 1) %>%
+  tidyr::crossing(k = k_fac) %>%
+  select(-.rep)
+
+# One dashed cut line per k facet
+dendro_cuts_tbl <- tibble::tibble(
+  k = k_fac,
+  y_cut = vapply(
+    k_values,
+    function(k) cut_dendrogram_height_for_k(sepal_hclust, k),
+    numeric(1)
+  )
+)
+
+dendro_faceted <- ggplot() +
+  geom_segment(
+    data = dendro_segments_faceted,
+    aes(x = x, y = y, xend = xend, yend = yend),
+    linewidth = 0.4
+  ) +
+  geom_hline(
+    data = dendro_cuts_tbl,
+    aes(yintercept = y_cut),
+    linetype = "dashed",
+    color = c_pal("C red")
+  ) +
+  labs(title = "Dendrogram cuts", x = NULL, y = "Height") +
+  theme_krul() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    panel.grid = element_blank()
+  ) +
+  facet_wrap(~k, ncol = 1, scales = "fixed")
+
+combined_plot <-  (dendro_faceted | sepal_cluster_plot) +
+  plot_layout(widths = c(1, 2)) +
+  plot_annotation(
+    title = "Hierarchical Clustering of the Iris Dataset",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+combined_plot
+```
+
+## Realización del agrupamiento jerárquico
+
+Existen varios métodos para realizar agrupamiento jerárquico, pero los más comunes son: 
+\begin{itemize}
+\item \textbf{Agrupamiento aglomerativo}: Enfoque ascendente en el que cada punto inicia como su propio conglomerado y, de manera iterativa, se fusionan parejas de conglomerados según su similitud hasta formar uno solo o hasta cumplir un criterio de parada.
+\item \textbf{Agrupamiento divisivo}: Enfoque descendente en el que todos los puntos empiezan en un único conglomerado y este se divide recursivamente en conglomerados más pequeños según su disimilitud hasta que cada punto queda solo o se cumple un criterio de parada.
+\end{itemize}
+
+Una vez elegido el método, es necesario definir una métrica de distancia para medir la similitud entre puntos. Algunas métricas comunes son: 
+\begin{itemize} 
+\item \textbf{Distancia euclidiana}: La métrica más utilizada; calcula la distancia en línea recta entre dos puntos en un espacio multidimensional. 
+\item \textbf{Distancia de Mahalanobis}: Considera las correlaciones entre variables y es útil al tratar con datos multivariados. 
+\item \textbf{Distancia de Canberra}: Sensible a pequeños cambios en los datos y útil cuando se trabaja con datos dispersos (escasos). La fórmula de la distancia de Canberra entre dos puntos $p$ y $q$ es: 
+$$ 
+d(p, q) = \sum_{i=1}^{n} \frac{|p_i - q_i|}{|p_i| + |q_i|} 
+$$
+donde $n$ es el número de dimensiones, y $p_i$ y $q_i$ son las coordenadas de los puntos $p$ y $q$, respectivamente.
+\item \textbf{Distancia Manhattan}: También conocida como norma $L^{1}$ o distancia de taxista; calcula la distancia entre dos puntos sumando las diferencias absolutas de sus coordenadas. Es particularmente útil en alta dimensión o cuando los datos tienen estructura en rejilla. La fórmula para dos puntos $p$ y $q$ es: 
+$$ 
+d(p, q) = \sum_{i=1}^{n} |p_i - q_i| 
+$$
+\item \textbf{Distancia de Minkowski}: Generaliza las distancias Euclidiana y Manhattan, permitiendo distintos valores del parámetro $p$ para controlar el cálculo. Para dos puntos $p$ y $q$ se define como:
+$$
+d(p, q) = \left( \sum_{i=1}^{n} |p_i - q_i|^p \right)^{1/p} 
+$$
+Cuando $p = 1$, corresponde a la distancia Manhattan; cuando $p = 2$, a la distancia Euclidiana.
+\end{itemize}
+
+Finalmente, debemos elegir un criterio de enlace para determinar cómo se calcula la distancia entre conglomerados. Algunos criterios comunes son:
+\begin{itemize}
+\item \textbf{Enlace simple (single)}: Define la distancia entre dos conglomerados como la distancia mínima entre cualquier par de puntos de cada conglomerado. Tiende a producir cadenas largas y es sensible al ruido y a valores atípicos. 
+\item \textbf{Enlace completo (complete)}: Define la distancia entre dos conglomerados como la distancia máxima entre cualquier par de puntos de cada conglomerado. Tiende a crear conglomerados compactos y aproximadamente esféricos, y es menos sensible al ruido y a atípicos que el enlace simple. 
+\item \textbf{Enlace promedio (average)}: Define la distancia entre dos conglomerados como la distancia promedio entre todos los pares de puntos de cada conglomerado. Proporciona un balance entre enlace simple y completo y es menos sensible al ruido y a atípicos. 
+\item \textbf{Enlace de Ward}: Minimiza la varianza total intra-conglomerado al fusionar los conglomerados que ocasionan el menor incremento de varianza. Suele producir conglomerados compactos y aproximadamente esféricos, y es menos sensible al ruido y a atípicos que otros criterios de enlace. 
+\end{itemize}
+
+Una vez elegidos el método, la métrica de distancia y el criterio de enlace, podemos realizar el agrupamiento jerárquico con la función `hclust` en R. Como se mostró en el ejemplo anterior, luego podemos visualizar los resultados con un dendrograma y cortarlo a una altura específica para determinar el número de conglomerados.

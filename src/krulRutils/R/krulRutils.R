@@ -8,6 +8,128 @@ library(broom)
 library(nortest)
 library(tseries)
 
+#' Construct simple outline polygons for clustered 2D data
+#'
+#' Builds per-group outline polygons over a 2D projection using a
+#' convex hull when groups have 3+ points, a padded rectangle for 2 points,
+#' and a small circle for singletons. Intended for layering with ggplot2
+#' to visualize cluster boundaries across grouping variables (e.g., k, cluster).
+#'
+#' @param tbl A tibble or data.frame containing at least `xvar`, `yvar`, and
+#'   the grouping columns passed in `...`.
+#' @param xvar Bare column name for the x coordinate.
+#' @param yvar Bare column name for the y coordinate.
+#' @param ... Bare column name(s) used to group rows into clusters
+#'   (e.g., `k, cluster`).
+#'
+#' @return A tibble with columns `xvar`, `yvar`, and the grouping columns
+#'   passed in `...`, where each row is a vertex of an outline polygon for a
+#'   group. Suitable for use with `geom_path()` and
+#'   `group = interaction(...)`.
+#'
+#' @examples
+#' library(dplyr)
+#' iris_tbl <- as_tibble(iris) %>% mutate(.row_id = row_number())
+#' # Example grouping by Species only
+#' poly <- cluster_polygons(iris_tbl, Sepal.Length, Sepal.Width, Species)
+#'
+#' @export
+cluster_polygons <- function(tbl, xvar, yvar, ...) {
+  id_quos <- rlang::enquos(...)
+
+  xrange <- tbl %>%
+    dplyr::pull({{ xvar }}) %>%
+    range(na.rm = TRUE)
+
+  yrange <- tbl %>%
+    dplyr::pull({{ yvar }}) %>%
+    range(na.rm = TRUE)
+
+  xpad <- diff(xrange) * 0.03
+  ypad <- diff(yrange) * 0.03
+
+  if (length(id_quos) == 0) {
+    grouped <- dplyr::group_by(tbl, .dummy = 1L, .drop = TRUE)
+  } else {
+    grouped <- dplyr::group_by(tbl, !!!id_quos, .drop = TRUE)
+  }
+
+  groups <- dplyr::group_split(grouped)
+  keys <- dplyr::group_keys(grouped)
+
+  polys <- lapply(seq_along(groups), function(i) {
+    d <- groups[[i]]
+    xs <- dplyr::pull(d, {{ xvar }})
+    ys <- dplyr::pull(d, {{ yvar }})
+    n <- length(xs)
+    if (n >= 3) {
+      idx <- grDevices::chull(xs, ys)
+      xy <- cbind(xs[idx], ys[idx])
+      xy <- rbind(xy, xy[1, , drop = FALSE])
+    } else if (n == 2) {
+      xmin <- min(xs) - xpad
+      xmax <- max(xs) + xpad
+      ymin <- min(ys) - ypad
+      ymax <- max(ys) + ypad
+      xy <- rbind(
+        c(xmin, ymin),
+        c(xmin, ymax),
+        c(xmax, ymax),
+        c(xmax, ymin),
+        c(xmin, ymin)
+      )
+    } else if (n == 1) {
+      cx <- xs[1]
+      cy <- ys[1]
+      ang <- seq(0, 2 * pi, length.out = 40)
+      r <- max(xpad, ypad, 1e-3)
+      xy <- cbind(cx + r * cos(ang), cy + r * sin(ang))
+    } else {
+      return(NULL)
+    }
+
+    # Assign column names before converting to tibble to avoid name-repair warning
+    colnames(xy) <- c(
+      rlang::as_name(rlang::enquo(xvar)),
+      rlang::as_name(rlang::enquo(yvar))
+    )
+    poly <- tibble::as_tibble(xy)
+
+    meta <- keys[i, , drop = FALSE]
+    meta_rep <- meta[rep(1, nrow(poly)), , drop = FALSE]
+    dplyr::bind_cols(poly, meta_rep)
+  })
+
+  polys <- polys[!vapply(polys, is.null, logical(1))]
+  if (!length(polys)) return(NULL)
+  dplyr::bind_rows(polys)
+}
+
+
+#' Compute a dendrogram cut height that yields k clusters
+#'
+#' Given an `hclust` object, returns a height value `h` such that
+#' cutting the dendrogram at that height with `cutree(hc, h = h)` produces
+#' exactly `k` clusters (for 1 <= k <= n). The value is chosen midway between
+#' the merge heights that transition from `k+1` to `k` clusters.
+#'
+#' @param hc An object of class `hclust`.
+#' @param k Integer, desired number of clusters (1 to n).
+#'
+#' @return A numeric height at which to cut the dendrogram.
+#' @examples
+#' # hc <- hclust(dist(iris[, 1:4]))
+#' # h  <- cut_dendrogram_height_for_k(hc, k = 3)
+#' @export
+cut_dendrogram_height_for_k <- function(hc, k) {
+  h <- hc$height
+  n <- length(h) + 1
+  m <- n - k
+  if (m <= 0) return(min(h, na.rm = TRUE) - 1e-6)     # effectively n clusters
+  if (m >= length(h)) return(max(h, na.rm = TRUE) + 1e-6) # effectively 1 cluster
+  (h[m] + h[m + 1]) / 2
+}
+
 #' Convert codes in a tibble column to a labeled factor using a lookup table
 #'
 #' @param data_tbl A tibble containing the data with codes to convert.
