@@ -1,22 +1,22 @@
-# An Introduction to the Tidyverse
+# Introducción al Tidyverse
 
-# The Standardized Moments
+# Los momentos estandarizados
 
-# Normality Testing
+# Pruebas de normalidad
 
-# Introduction to Multivariate Analysis
+# Introducción al análisis multivariante
 
-# Normal Multivariate Distribution
+# Distribución normal multivariante
 
-# Principal Component Analysis
+# Análisis de componentes principales
 
-# Factor Analysis: Theoretical Models
+# Análisis factorial: modelos teóricos
 
-# Factor Analysis: Practical Methods
+# Análisis factorial: métodos prácticos
 
-# Hierarchical Clustering
+# Análisis de conglomerados jerárquicos
 
-### Hierarchical Clustering
+### Análisis de conglomerados jerárquicos
 
 
 ```{r}
@@ -42,47 +42,47 @@ options(scipen = 999)
 ```
 
 
-\alert{Clustering} is an unsupervised learning technique that groups similar data points together based on their features. 
+\alert{Clustering} (agrupamiento) es una técnica de aprendizaje no supervisado que agrupa puntos de datos similares con base en sus características. 
 
 \bigpause
 
-Unlike supervised learning, clustering does not rely on predefined labels or categories.
+A diferencia del aprendizaje supervisado, el agrupamiento no depende de etiquetas o categorías predefinidas.
 
 \bigpause
 
-Instead, it identifies patterns and structures within the data itself.
+En su lugar, identifica patrones y estructuras dentro de los propios datos.
 
 ###
 
-Clustering methods are usually categorized into two main families: \pause
+Los métodos de agrupamiento suelen clasificarse en dos familias principales: \pause
 \begin{enumerate} 
-\item \alert{Hierarchical Clustering}: These methods create a \alert{dendrogram} (also known as a \alert{tree diagram}) representing the taxonomic structure of our data. It is specially useful for small datasets and when the number of clusters is unknown. \pause
-\item \alert{Non-Hierarchical Clustering}: These methods, such as K-means and DBSCAN, partition the data into a predefined number of clusters or based on density. They are generally more scalable for larger datasets.
+\item \alert{Agrupamiento jerárquico}: Estos métodos crean un \alert{dendrograma} (también llamado \alert{diagrama de árbol}) que representa la estructura taxonómica de los datos. Es especialmente útil para conjuntos pequeños y cuando se desconoce el número de conglomerados. \pause
+\item \alert{Agrupamiento no jerárquico}: Métodos como K-medias y DBSCAN particionan los datos en un número predefinido de conglomerados o con base en la densidad. Generalmente escalan mejor para conjuntos grandes.
 \end{enumerate}
 
 
 
-## Understanding Dendrograms 
+## Entendiendo los dendrogramas 
 
-### Understanding Dendrograms
+### Entendiendo los dendrogramas
 
-A dendrogram is a tree-like diagram that illustrates the taxonomic structure of our data according to a hierarchical clustering algorithm.
-
-\bigpause
-
-It provides a visual representation of how data points are grouped together based on their similarities.
+Un dendrograma es un diagrama en forma de árbol que ilustra la estructura taxonómica de nuestros datos de acuerdo con un algoritmo de agrupamiento jerárquico.
 
 \bigpause
 
-The vertical axis represents the distance or dissimilarity between clusters, while the horizontal axis represents the individual data points or clusters.
+Proporciona una representación visual de cómo se agrupan los puntos según sus similitudes.
+
+\bigpause
+
+El eje vertical representa la distancia o disimilitud entre conglomerados, mientras que el eje horizontal representa los puntos individuales o los propios conglomerados.
 
 ###
 
-By cutting the dendrogram at a specific height, we can determine the number of clusters that we want to consider for our analysis. 
+Al cortar el dendrograma a una altura específica, podemos determinar el número de conglomerados que deseamos considerar para nuestro análisis. 
 
 \bigpause
 
-As an illustration, lets consider the scatter plot of the Iris dataset (considering only the variables "Sepal.Length" and "Sepal.Width") where each point is colored according to the species of the flower:
+Como ilustración, consideremos el diagrama de dispersión del conjunto Iris (considerando sólo las variables "Sepal.Length" y "Sepal.Width"), donde cada punto está coloreado según la especie de la flor:
 
 ###
 
@@ -113,7 +113,7 @@ iris_plot
 ```
 ###
 
-We will now consider a dendrogram associated to this dataset and show how cutting it at different heights leads to different numbers of clusters: 
+Ahora consideraremos un dendrograma asociado a este conjunto y mostraremos cómo cortarlo a distintas alturas conduce a diferentes números de conglomerados: 
 
 ### 
 ```{r}
@@ -238,70 +238,70 @@ combined_plot <-  (dendro_faceted | sepal_cluster_plot) +
 combined_plot
 ```
 
-## Performing Hierarchical Clustering
+## Realización del agrupamiento jerárquico
 
-### Performing Hierarchical Clustering
+### Realización del agrupamiento jerárquico
 
-There are several methods to perform hierarchical clustering, but the most common ones are: \pause
+Existen varios métodos para realizar agrupamiento jerárquico, pero los más comunes son: \pause
 \begin{itemize}
-\item \alert{Agglomerative Clustering}: This is a bottom-up approach where each data point starts as its own cluster, and pairs of clusters are merged iteratively based on their similarity until a single cluster is formed or a stopping criterion is met. \pause
-\item \alert{Divisive Clustering}: This is a top-down approach where all data points start in a single cluster, and the cluster is recursively split into smaller clusters based on dissimilarity until each data point is its own cluster or a stopping criterion is met.
+\item \alert{Agrupamiento aglomerativo}: Enfoque ascendente en el que cada punto inicia como su propio conglomerado y, de manera iterativa, se fusionan parejas de conglomerados según su similitud hasta formar uno solo o cumplir un criterio de parada. \pause
+\item \alert{Agrupamiento divisivo}: Enfoque descendente en el que todos los puntos empiezan en un único conglomerado y este se divide recursivamente en conglomerados más pequeños con base en la disimilitud hasta que cada punto queda solo o se satisface un criterio de parada.
 \end{itemize}
 
 ###
 
-Once we have chosen the method, we need to define a distance metric to measure the similarity between data points.
+Una vez elegido el método, debemos definir una métrica de distancia para medir la similitud entre puntos de datos.
 
 \bigpause
 
-Common distance metrics include: 
+Algunas métricas de distancia comunes incluyen: 
 
 ###
 \begin{itemize} 
-\item \alert{Euclidean Distance}: This is the most common distance metric, which calculates the straight-line distance between two points in a multi-dimensional space. \pause
-\item \alert{Mahalanobis Distance}: This metric takes into account the correlations between variables and is useful when dealing with multivariate data. \pause
-\item \alert{Canberra Distance}: This metric is sensitive to small changes in the data and is useful when dealing with sparse data. The formula for the Canberra distance between two points $p$ and $q$ is given by: 
+\item \alert{Distancia euclidiana}: La métrica más común; calcula la distancia en línea recta entre dos puntos en un espacio multidimensional. \pause
+\item \alert{Distancia de Mahalanobis}: Considera las correlaciones entre variables y es útil al trabajar con datos multivariados. \pause
+\item \alert{Distancia de Canberra}: Sensible a pequeños cambios en los datos y útil cuando se trabaja con datos dispersos (escasos). La fórmula para la distancia de Canberra entre dos puntos $p$ y $q$ es: 
 $$ 
 d(p, q) = \sum_{i=1}^{n} \frac{|p_i - q_i|}{|p_i| + |q_i|} 
 $$
-where $n$ is the number of dimensions, and $p_i$ and $q_i$ are the coordinates of points $p$ and $q$ respectively.
+donde $n$ es el número de dimensiones, y $p_i$ y $q_i$ son las coordenadas de los puntos $p$ y $q$, respectivamente.
 \end{itemize} 
 
 ### 
 
 \begin{itemize}
-\item \alert{Manhattan Distance}: Also known as the $L^{1}$ norm or taxicab distance, this metric calculates the distance between two points by summing the absolute differences of their coordinates. It is particularly useful when dealing with high-dimensional data or when the data has a grid-like structure. The formula for the Manhattan distance between two points $p$ and $q$ is given by: 
+\item \alert{Distancia Manhattan}: También conocida como norma $L^{1}$ o distancia de taxista; calcula la distancia entre dos puntos sumando las diferencias absolutas de sus coordenadas. Es especialmente útil en alta dimensión o cuando los datos tienen estructura en rejilla. La fórmula para la distancia Manhattan entre dos puntos $p$ y $q$ es: 
 $$ 
 d(p, q) = \sum_{i=1}^{n} |p_i - q_i| 
 $$
 \pause
-\item \alert{Minkowski Distance}: This is a generalization of the Euclidean and Manhattan distances, which allows for different values of the parameter $p$ to control the distance calculation. The formula for the Minkowski distance between two points $p$ and $q$ is given by:
+\item \alert{Distancia de Minkowski}: Generalización de las distancias Euclidiana y Manhattan, que permite distintos valores del parámetro $p$ para controlar el cálculo. La distancia de Minkowski entre dos puntos $p$ y $q$ se define como:
 $$
 d(p, q) = \left( \sum_{i=1}^{n} |p_i - q_i|^p \right)^{1/p} 
 $$
-When $p = 1$, it corresponds to the Manhattan distance, and when $p = 2$, it corresponds to the Euclidean distance.
+Cuando $p = 1$, corresponde a la distancia Manhattan; cuando $p = 2$, corresponde a la distancia Euclidiana.
 \end{itemize}
 
 
 ###
 
-Finally, we need to choose a linkage criterion to determine how the distance between clusters is calculated. Common linkage criteria include: \pause
+Finalmente, debemos elegir un criterio de enlace para determinar cómo se calcula la distancia entre conglomerados. Algunos criterios comunes son: \pause
 \begin{itemize}
-\item \alert{Single Linkage}: This criterion defines the distance between two clusters as the minimum distance between any pair of points from each cluster. It tends to create long, chain-like clusters and is sensitive to noise and outliers. \pause
-\item \alert{Complete Linkage}: This criterion defines the distance between two clusters as the maximum distance between any pair of points from each cluster. It tends to create compact, spherical clusters and is less sensitive to noise and outliers compared to single linkage.
+\item \alert{Enlace simple (single)}: Define la distancia entre dos conglomerados como la mínima distancia entre cualquier par de puntos de cada conglomerado. Tiende a crear conglomerados alargados en cadena y es sensible al ruido y a los valores atípicos. \pause
+\item \alert{Enlace completo (complete)}: Define la distancia entre dos conglomerados como la máxima distancia entre cualquier par de puntos de cada conglomerado. Tiende a crear conglomerados compactos y aproximadamente esféricos, y es menos sensible al ruido y a atípicos que el enlace simple.
 \end{itemize} 
 
 ###
 
 \begin{itemize}
-\item \alert{Average Linkage}: This criterion defines the distance between two clusters as the average distance between all pairs of points from each cluster. It provides a balance between single and complete linkage and is less sensitive to noise and outliers. \pause
-\item \alert{Ward's Linkage}: This criterion minimizes the total within-cluster variance by merging clusters that result in the smallest increase in variance. It tends to create compact, spherical clusters and is less sensitive to noise and outliers compared to other linkage criteria. 
+\item \alert{Enlace promedio (average)}: Define la distancia entre dos conglomerados como la distancia promedio entre todos los pares de puntos de cada conglomerado. Proporciona un equilibrio entre enlace simple y completo, y es menos sensible al ruido y a atípicos. \pause
+\item \alert{Enlace de Ward}: Minimiza la varianza total intra‑conglomerado al fusionar los conglomerados que implican el menor incremento de varianza. Suele crear conglomerados compactos y aproximadamente esféricos, y es menos sensible al ruido y a atípicos en comparación con otros criterios.
 \end{itemize}
 
 ###
 
-Once we have chosen the method, distance metric, and linkage criterion, we can perform hierarchical clustering using the `hclust` function in R.
+Una vez elegidos el método, la métrica de distancia y el criterio de enlace, podemos realizar el agrupamiento jerárquico usando la función `hclust` en R.
 
 \bigpause
 
-As was shown in the previous example, we can then visualize the results using a dendrogram and cut the dendrogram at a specific height to determine the number of clusters.
+Como se mostró en el ejemplo anterior, después podemos visualizar los resultados con un dendrograma y cortarlo a una altura específica para determinar el número de conglomerados.
