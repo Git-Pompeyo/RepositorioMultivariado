@@ -77,3 +77,4 @@ format:
 \part{Análisis de Conglomerados}
 
 {{< include _9_hierarchical_clustering.qmd >}}
+{{< include _10_non_hierarchical_clustering.qmd >}}

@@ -1,0 +1,129 @@
+# Agrupamiento no jerárquico
+
+En el \emph{agrupamiento no jerárquico} particionamos los datos en un número predeterminado de conglomerados. En este caso no obtenemos un dendrograma, sino un conjunto plano de conglomerados. Existen muchos métodos de agrupamiento no jerárquico, pero la mayoría pueden clasificarse como \emph{métodos de particionado}, \emph{métodos basados en densidad} o \emph{métodos basados en modelos}.
+
+## Métodos de particionado 
+
+Estos métodos crean una partición de los datos en un conjunto de $k$ conglomerados, donde $k$ lo especifica el usuario. Se basan en optimizar alguna función objetivo que mide la calidad del agrupamiento. Los métodos de particionado más comunes son:
+
+\begin{itemize} 
+\item \textbf{Agrupamiento k-means}: Este método busca particionar los datos en $k$ conglomerados de forma que se minimice la suma de distancias cuadráticas entre cada punto y el centroide de su conglomerado asignado. El algoritmo asigna iterativamente los puntos al centroide más cercano y actualiza los centroides hasta converger. 
+\item \textbf{Agrupamiento k-medoids}: Similar a k-means, pero en lugar de usar la media de los puntos como centroide, utiliza un punto real de los datos (el medoide) que minimiza la suma de distancias a los demás puntos del conglomerado. Esto hace a k-medoids más robusto al ruido y a valores atípicos. 
+\item \textbf{CLARA (Clustering LARge Applications)}: Extensión de k-medoids diseñada para conjuntos grandes; muestrea un subconjunto de datos y aplica k-medoids a esa muestra. 
+\item \textbf{PAM (Partitioning Around Medoids)}: Implementación específica de k-medoids que usa una estrategia voraz para encontrar los medoides y asignar puntos a conglomerados. 
+\end{itemize}
+
+## Métodos basados en densidad 
+
+Estos métodos identifican conglomerados con base en la densidad de puntos en el espacio de datos. Pueden encontrar conglomerados de formas arbitrarias y son robustos al ruido. Los métodos más comunes son:
+\begin{itemize}
+\item \textbf{DBSCAN (Density-Based Spatial Clustering of Applications with Noise)}: Define conglomerados como zonas de alta densidad separadas por regiones de baja densidad. Requiere dos parámetros: el radio $\epsilon$ que define la vecindad de un punto y el número mínimo de puntos requerido para formar una región densa. Los puntos que no pertenecen a ningún conglomerado se consideran ruido. 
+\item \textbf{OPTICS (Ordering Points To Identify the Clustering Structure)}: Extensión de DBSCAN que ordena los puntos según su densidad, permitiendo identificar conglomerados a distintos niveles de densidad. 
+\item \textbf{Mean Shift}: Método que desplaza iterativamente cada punto hacia la media de los puntos en su vecindad, encontrando los modos de la distribución. Los conglomerados se forman alrededor de esos modos. 
+\end{itemize} 
+
+## Métodos basados en modelos 
+
+Suponen que los datos provienen de una mezcla de distribuciones de probabilidad subyacentes y buscan identificar dichas distribuciones, asignando puntos a conglomerados según su verosimilitud de pertenencia. Los más comunes son: 
+\begin{itemize}
+\item \textbf{Modelos de Mezclas Gaussianas (GMM)}: Modelan los datos como mezcla de varias distribuciones gaussianas, cada una representando un conglomerado. Los parámetros se estiman mediante el algoritmo de Expectación–Maximización (EM) y los puntos se asignan según probabilidades posteriores. 
+\item \textbf{Agrupamiento Bayesiano}: Utiliza inferencia bayesiana para estimar parámetros de las distribuciones subyacentes y asignar puntos a conglomerados. Puede incorporar conocimiento previo y manejar la incertidumbre del proceso de agrupamiento. 
+\item \textbf{Análisis de Clases Latentes (LCA)}: Usado para datos categóricos; asume que los datos provienen de una mezcla de clases latentes. Estima parámetros de las clases y asigna puntos según probabilidades posteriores. 
+\end{itemize}
+
+## Elección del método adecuado 
+
+La elección del método de agrupamiento no jerárquico depende de las características de los datos y de los objetivos del análisis. Algunas pautas: 
+\begin{itemize} 
+\item Si los datos son continuos y se espera que los conglomerados sean aproximadamente esféricos y de tamaño similar, k-means o k-medoids pueden ser apropiados. 
+\item Si hay ruido o valores atípicos, o se esperan conglomerados de diferentes formas y tamaños, métodos basados en densidad como DBSCAN u OPTICS pueden ser más adecuados. 
+\item Si se cree que los datos provienen de una mezcla de distribuciones subyacentes, métodos basados en modelos como GMM o el agrupamiento bayesiano pueden ser la mejor opción. 
+\item Si los datos son categóricos, el Análisis de Clases Latentes (LCA) puede ser el método más apropiado. 
+\item Si el conjunto es grande, considere métodos como CLARA, diseñados para manejar grandes volúmenes eficientemente. 
+\end{itemize}
+
+## Evaluación de los resultados de agrupamiento 
+
+Evaluar la calidad del agrupamiento es crucial para confirmar que el método elegido capturó la estructura subyacente. Algunas técnicas comunes son: 
+\begin{itemize}
+\item \textbf{Validación interna}: Usa métricas basadas en los propios datos, sin referencia externa. Entre las más comunes:
+  \begin{itemize}
+  \item \emph{Índice de Silueta}: Mide qué tan similar es un punto a su propio conglomerado frente a otros. Valores altos indican conglomerados bien definidos.
+  \item \emph{Índice de Davies–Bouldin}: Evalúa la razón de similitud promedio de cada conglomerado con su más similar. Valores bajos indican mejor agrupamiento.
+  \item \emph{Índice de Calinski–Harabasz}: Mide la razón varianza entre–conglomerados vs. intra–conglomerados. Valores altos indican conglomerados mejor definidos.
+  \end{itemize}
+  \item \textbf{Validación externa}: Compara contra etiquetas conocidas o verdad-terreno, si existen. Métricas comunes:
+  \begin{itemize}
+  \item \emph{Índice de Rand Ajustado (ARI)}: Mide la similitud con la verdad-terreno, ajustando por azar. Valores altos indican mayor acuerdo.
+  \item \emph{Información Mutua Normalizada (NMI)}: Cuantifica la información compartida entre el agrupamiento y la verdad-terreno. Valores altos indican mayor acuerdo.
+  \end{itemize}
+  \item \textbf{Análisis de estabilidad}: Evalúa la robustez aplicando el algoritmo a subconjuntos o añadiendo ruido. Resultados consistentes entre corridas indican estabilidad. 
+  \item \textbf{Inspección visual}: Diagramas de dispersión, mapas de calor o dendrogramas (si aplica) ayudan a entender la estructura y a detectar posibles problemas. 
+\end{itemize}
+
+
+## Ejemplo en R 
+
+Mostramos ahora cómo implementar distintos métodos de agrupamiento no jerárquico en R usando el conjunto `iris`. Iniciamos cargando las librerías necesarias.
+
+```{r}
+#| output: false
+
+library(cluster)
+library(dbscan)
+library(mclust)
+library(krulRutils)
+``` 
+Luego preparamos los datos y mostramos una figura comparando los resultados de distintos métodos de agrupamiento.
+
+```{r}
+#| fig-cap: "Resultados de agrupamiento en el conjunto iris usando únicamente Sepal.Width y Sepal.Length. Nótese la diferencia de formas de los conglomerados según el método."
+#| fig-width: 8
+#| fig-height: 6
+
+set.seed(123)
+
+# Usar únicamente Sepal.Width y Sepal.Length
+iris_tbl <- as_tibble(iris) %>%
+  select(Sepal.Width, Sepal.Length)
+
+iris_matrix <- as.matrix(iris_tbl)
+
+# k-means (particionado)
+iris_kmeans <- kmeans(iris_matrix, centers = 3, nstart = 50)$cluster
+
+# PAM (k-medoids, particionado)
+iris_pam <- pam(iris_matrix, k = 3)$clustering
+
+# GMM (basado en modelos, mezclas gaussianas)
+gmm <- Mclust(iris_matrix, G = 3)$classification
+
+
+db_raw <- choose_dbscan(iris_matrix, min_pts = 5)
+db <- assign_noise_to_nearest(iris_matrix, db_raw$cluster)
+
+# Unir resultados para graficación facetada
+labs <- list(
+  `k-means` = iris_kmeans,
+  PAM = iris_pam,
+  GMM = gmm,
+  DBSCAN = db
+)
+
+plot_df <- bind_rows(lapply(names(labs), function(m) {
+  tibble(
+    sepal_width = iris_tbl$Sepal.Width,
+    sepal_length = iris_tbl$Sepal.Length,
+    method = m,
+    cluster = factor(labs[[m]])
+  )
+}))
+
+ggplot(plot_df, aes(sepal_width, sepal_length, color = cluster)) +
+  geom_point(size = 1.3, alpha = 1) +
+  c_scale_color("C red", "C green", "C blue") +
+  facet_wrap(~ method, ncol = 2) +
+  labs(title = "Agrupamiento de Iris (sépalos)",
+       x = "Ancho de sépalo", y = "Largo de sépalo") +
+  theme_krul()
+```

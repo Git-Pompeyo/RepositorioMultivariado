@@ -130,6 +130,124 @@ cut_dendrogram_height_for_k <- function(hc, k) {
   (h[m] + h[m + 1]) / 2
 }
 
+#' Choose DBSCAN parameters targeting a clustered solution
+#'
+#' Tries a grid of `eps` values (with fixed `minPts`) and returns the
+#' `dbscan::dbscan()` result whose number of non-noise clusters is closest to a
+#' target and with the lowest noise proportion. If an exact match to the target
+#' number of clusters is found with acceptable noise proportion, it is returned
+#' immediately. The selected result carries an attribute `"eps"` with the
+#' chosen epsilon.
+#'
+#' This helper is useful for quick, pedagogical exploration and small/medium
+#' datasets. It performs a simple grid search and does not guarantee a globally
+#' optimal solution.
+#'
+#' @param data_matrix A numeric matrix of observations (rows) by features (cols).
+#' @param min_pts Integer; DBSCAN `minPts` parameter (default 5).
+#' @param eps_grid Numeric vector of candidate `eps` values to try.
+#'   Defaults to `seq(0.15, 0.8, by = 0.01)`.
+#' @param max_noise_prop Maximum acceptable noise fraction for an exact target
+#'   match (default `0.1`).
+#' @param target_k Desired number of clusters to aim for (default `3`).
+#'
+#' @return An object returned by `dbscan::dbscan()` for the chosen `eps`, with
+#'   an additional attribute `"eps"` storing the selected epsilon.
+#'
+#' @examples
+#' \dontrun{
+#'   set.seed(123)
+#'   X <- scale(as.matrix(iris[, 1:2]))
+#'   res <- choose_dbscan(X, min_pts = 5, target_k = 3)
+#'   attr(res, "eps")
+#'   table(res$cluster)
+#' }
+#'
+#' @export
+choose_dbscan <- function(
+  data_matrix,
+  min_pts = 5,
+  eps_grid = seq(0.15, 0.8, by = 0.01),
+  max_noise_prop = 0.1,
+  target_k = 3
+) {
+  # fast path: try to find exact target_k with acceptable noise
+  for (eps in eps_grid) {
+    res <- dbscan::dbscan(data_matrix, eps = eps, minPts = min_pts)
+    k <- length(unique(res$cluster[res$cluster > 0]))
+    noise_prop <- mean(res$cluster == 0)
+    if (k == target_k && noise_prop <= max_noise_prop) {
+      attr(res, "eps") <- eps
+      return(res)
+    }
+  }
+
+  # fallback: rank by closeness to target_k, then by noise proportion
+  cand <- lapply(eps_grid, function(eps) {
+    res <- dbscan::dbscan(data_matrix, eps = eps, minPts = min_pts)
+    k <- length(unique(res$cluster[res$cluster > 0]))
+    list(eps = eps, res = res, k = k, noise = mean(res$cluster == 0))
+  })
+  ord <- order(
+    vapply(cand, function(x) abs(x$k - target_k), numeric(1)),
+    vapply(cand, function(x) x$noise, numeric(1))
+  )
+  best <- cand[[ord[1]]]
+  attr(best$res, "eps") <- best$eps
+  best$res
+}
+
+#' Reassign DBSCAN noise to the nearest cluster centroid
+#'
+#' Given a matrix of observations and a vector of cluster labels where
+#' label 0 denotes noise (as returned by `dbscan::dbscan()`), this helper
+#' reassigns each noise point to the nearest cluster based on squared
+#' Euclidean distance to per-cluster centroids. If there is no noise, the
+#' original labels are returned unchanged.
+#'
+#' This is a pragmatic post-processing step for visualization/teaching to
+#' avoid orphaned points in faceted plots. It is not part of the DBSCAN
+#' algorithm and should be used with care in analytical pipelines.
+#'
+#' @param data_matrix Numeric matrix with rows as observations and columns as
+#'   features.
+#' @param cluster_labels Integer vector of cluster assignments where 0 marks
+#'   noise and positive integers mark clusters. Length must match
+#'   `nrow(data_matrix)`.
+#'
+#' @return Integer vector of the same length as `cluster_labels` with noise
+#'   points reassigned to the nearest centroid of existing clusters.
+#'
+#' @examples
+#' \dontrun{
+#'   set.seed(123)
+#'   X <- scale(as.matrix(iris[, 1:2]))
+#'   db <- choose_dbscan(X, min_pts = 5)
+#'   labels_no_noise <- assign_noise_to_nearest(X, db$cluster)
+#' }
+#'
+#' @export
+assign_noise_to_nearest <- function(data_matrix, cluster_labels) {
+  output_labels <- cluster_labels
+  noise_idx <- which(output_labels == 0)
+  if (length(noise_idx) == 0) return(output_labels)
+
+  keep <- output_labels > 0
+  if (!any(keep)) return(output_labels)
+
+  centers <- t(sapply(
+    sort(unique(output_labels[keep])),
+    function(k) colMeans(data_matrix[output_labels == k, , drop = FALSE])
+  ))
+  rownames(centers) <- as.character(sort(unique(output_labels[keep])))
+
+  for (i in noise_idx) {
+    d <- apply(centers, 1, function(cn) sum((data_matrix[i, ] - cn)^2))
+    output_labels[i] <- as.integer(names(which.min(d)))
+  }
+  output_labels
+}
+
 #' Convert codes in a tibble column to a labeled factor using a lookup table
 #'
 #' @param data_tbl A tibble containing the data with codes to convert.
