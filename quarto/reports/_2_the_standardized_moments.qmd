@@ -575,7 +575,7 @@ Para una muestra dada, no siempre se conoce la distribución subyacente; en part
 Como se mencionó, escalar no vuelve normal una distribución no normal. En particular, la asimetría y la curtosis en exceso muestrales no cambian.
 \end{remark}
 
-As an example, we will consider the different scaling methods applied to the Gamma sample we generated earlier.  
+Como ejemplo, consideraremos los distintos métodos de escalado aplicados a la muestra de la distribución Gamma que generamos anteriormente.  
 ```{r}
 #| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a la muestra Gamma. Note que los QQ-plots son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma."
 #| fig-width: 12
@@ -684,5 +684,5 @@ Para cada una de las siguientes distribuciones, construya una muestra de tamaño
     \item Distribución uniforme en $[0, 1]$.
     \item Distribución beta con $\alpha = 2$ y $\beta = 5$.
     \item Distribución de Cauchy con localización $x_0 = 0$ y escala $\gamma = 1$.
-    \item Distribución ji‑cuadrada con $k = 3$ grados de libertad.
+    \item Distribución $\chi^{2}_{k}$ con $k = 3$ grados de libertad.
 \end{enumerate}

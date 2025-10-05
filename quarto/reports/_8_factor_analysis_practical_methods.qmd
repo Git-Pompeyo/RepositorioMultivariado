@@ -6,12 +6,12 @@ X = \mu + LF + \epsilon
 $$
 donde:
 \begin{itemize}
-    \item $X$ is a random vector of $p$ observed variables (indicators).
-    \item $\mu$ is a constant vector of dimension $p$.
-    \item $L$ is a $p \times m$ constant matrix known as the matrix of \emph{factor loadings.}
-    \item $F \sim \N(0,I_{m})$ is a vector of $m$ latent factors (unobserved variables) that are assumed to be normally distributed with mean zero and identity covariance matrix.
-    \item $\epsilon \sim \N(0,\Psi)$ is a vector of unique errors (specific variances) that are also assumed to be normally distributed with mean zero and diagonal covariance matrix $\Psi = \diag(\sigma_{1}^{2}, \ldots, \sigma_{p}^{2})$.
-    \item The factors $F$ and the errors $\epsilon$ are assumed to be independent, in particular $\Cov[F,\epsilon] = 0$.
+\item $X$ es un vector aleatorio de $p$ variables observadas (indicadores).
+\item $\mu$ es un vector constante de dimensión $p$.
+\item $L$ es una matriz constante $p \times m$ conocida como la matriz de \emph{cargas factoriales.}
+\item $F \sim \N(0,I_{m})$ es un vector de $m$ factores latentes (variables no observadas) que se asumen distribuidos normalmente con media cero y matriz de covarianzas identidad.
+\item $\epsilon \sim \N(0,\Psi)$ es un vector de errores únicos (varianzas específicas) que también se asumen distribuidos normalmente con media cero y matriz de covarianzas diagonal $\Psi = \diag(\sigma_{1}^{2}, \ldots, \sigma_{p}^{2})$.
+\item Se asume que los factores $F$ y los errores $\epsilon$ son independientes; en particular, $\Cov[F,\epsilon] = 0$.
 \end{itemize}
 Nótese que, como $\epsilon \sim \N(0,\Psi)$, este modelo queda completamente determinado por $\mu$, $L$ y $\Psi$. En este capítulo discutiremos métodos prácticos para estimar estos parámetros a partir de datos y para obtener las puntuaciones factoriales de $F$ una vez estimado el modelo.
 

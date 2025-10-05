@@ -1,4 +1,5 @@
 ---
+lang: es
 format:
    pdf:
      documentclass: book

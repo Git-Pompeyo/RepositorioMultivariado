@@ -24,13 +24,12 @@ es la \emph{varianza generalizada}. Puede interpretarse como una medida de la �
 
 Como en el caso univariado, la normal multivariante se destaca por el Teorema Central del Límite (TCL), que en términos generales afirma que la suma de muchas variables i.i.d. (debidamente estandarizadas) converge a una normal. El enunciado preciso es:
 \begin{theorem}[Teorema central del límite multivariante]
-Let $\{X_i\}_{i=1}^{\infty}$ be a sequence of independent and identically distributed 
-random vectors in $\mathbb{R}^p$ with mean vector $\mu$ and covariance matrix $\Sigma$. 
-Define the sample mean
+Sea $\{X_i\}_{i=1}^{\infty}$ una sucesión de vectores aleatorios independientes e idénticamente distribuídos en $\mathbb{R}^p$ con vector de medias $\mu$ y matriz de covarianzas $\Sigma$. 
+Definimos la media muestral como
 \[
 \bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i.
 \]
-Then, as $n \to \infty$,
+Entonces, cuando $n \to \infty$, tenemos que
 \[
 \sqrt{n}\,(\bar{X}_n - \mu) \;\xrightarrow{d}\; \mathcal{N}_p(0, \Sigma),
 \]
@@ -136,8 +135,8 @@ normal_plot
 
 Al igual que en el caso univariado, si $X\sim\mathcal{N}_{p}(\mu,\Sigma)$ podemos estandarizar para obtener $Z\sim\mathcal{N}_{p}(0,I_p)$, donde $I_p$ es la identidad de tamaño $p$. Para describirlo, recordemos algunos resultados de álgebra lineal. 
 
-\begin{theorem}[Singular Value Decomposition] 
-Let $\Sigma$ be a symmetric positive definite matrix of size $p \times p$. Then, there exists an orthogonal matrix $Q$ and a diagonal matrix $\Lambda$ with positive entries such that 
+\begin{theorem}[Descomposición en valores singulares]
+Sea $\Sigma$ una matriz simétrica definida positiva de dimensión $p \times p$. Entonces, existe una matriz ortogonal $Q$ y una matriz diagonal $\Lambda$ con entradas positivas tal que 
 $$
 \Sigma = Q \Lambda Q^{T}
 $$
@@ -162,7 +161,7 @@ $$
 \end{array}
 \right]
 $$
-are all positive. In particular, we can define a new matrix 
+son todas positivas. En particular, podemos definir una nueva matriz
 $$
 D = \left[
 \begin{array}{cccc}
@@ -173,28 +172,28 @@ D = \left[
 \end{array}
 \right]
 $$
-satisfying $D^2 = \Lambda$. If we now take
+que satisface la condición $D^2 = \Lambda$. Si ahora tomamos
 $$ 
 \sigma = D Q^{T}
 $$
-then 
+entonces
 $$
 \Sigma = \sigma^{T} \sigma
 $$
-In particular, we can define the \emph{standardization} of the random vector $X$ as 
+En particular, podemos definir la \emph{standarización} del vector aleatorio $X$ como 
 $$
 Z = (X - \mu) \sigma^{-1} = (X - \mu) Q D^{-1} = (X - \mu) Q \Lambda^{-1/2}
 $$
-in which case $Z \sim \mathcal{N}_{p}(0, I_p)$.
+en cuyo caso $Z \sim \mathcal{N}_{p}(0, I_p)$.
 
 
-## Geometric Interpretation of the SVD
+## Interpretación Geométrica de la SVD 
 
-Earlier in this chapter we considered the Normal Multivariate Distribution with mean 
+Anteriormente en este capítulo consideramos la distribución normal multivariante con media
 $$ 
 \mu = [0, 0] 
 $$ 
-and covariance matrix 
+y matriz de covarianzas
 $$
 \Sigma = \left[
 \begin{array}{cc}

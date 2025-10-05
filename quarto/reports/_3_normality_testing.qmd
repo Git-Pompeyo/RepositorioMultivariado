@@ -175,7 +175,7 @@ box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
 box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Comparación de transformaciones Box–Cox con distintos valores de lambda",
+    title = "Transformaciones Box–Cox con distintos valores de lambda",
     theme = theme(
       plot.title = element_text(
         size = 24,

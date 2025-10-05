@@ -20,7 +20,7 @@ Las columnas de $Q$ son las \emph{direcciones de los componentes principales}; l
 $$ 
  X = Q\, (PC) + \bar{x} 
 $$
-and 
+y 
 \begin{equation} 
 PC = Q^{T} (X - \bar{x}) \label{eq:pc_scores}
 \end{equation}
@@ -62,7 +62,7 @@ Q = \left[
 \end{array}
 \right]
 $$
-and 
+y 
 $$
 \Lambda = \left[
 \begin{array}{cc}
@@ -84,7 +84,7 @@ tenemos que la relación entre variables originales y coordenadas de componentes
 X & = `r vectors[1,1]` PC_1 + `r vectors[1,2]` PC_2 + `r sample_mean_vector[1]` \\
 Y & = `r vectors[2,1]` PC_1 + `r vectors[2,2]` PC_2 + `r sample_mean_vector[2]` 
 \end{align*}
-and 
+y 
 \begin{align*} 
 PC_1 & = `r vectors[1,1]` (X - `r sample_mean_vector[1]`) + `r vectors[2,1]` (Y - `r sample_mean_vector[2]`) \\ 
 PC_2 & = `r vectors[1,2]` (X - `r sample_mean_vector[1]`) + `r vectors[2,2]` (Y - `r sample_mean_vector[2]`) 
@@ -218,7 +218,7 @@ eig_setosa <- eigen(cov_matrix_setosa)
 eig_versicolor <- eigen(cov_matrix_versicolor)
 eig_virginica <- eigen(cov_matrix_virginica)
 ```
-The covariance matrices for each species are given by: 
+La matriz de covarianza de cada especie es:
 \begin{align*}
 \Sigma_{setosa} & = \begin{bmatrix} 
   `r round(cov_matrix_setosa[1,1], 2)` & `r round(cov_matrix_setosa[1,2], 2)` & `r round(cov_matrix_setosa[1,3], 2)` & `r round(cov_matrix_setosa[1,4], 2)` \\ 
@@ -239,7 +239,7 @@ The covariance matrices for each species are given by:
   `r round(cov_matrix_virginica[4,1], 2)` & `r round(cov_matrix_virginica[4,2], 2)` & `r round(cov_matrix_virginica[4,3], 2)` & `r round(cov_matrix_virginica[4,4], 2)`
 \end{bmatrix}
 \end{align*}
-The singular values for each species are given by: 
+Los valores singulares de cada especie son:
 \begin{align*}
 \Lambda_{setosa} & = \begin{bmatrix} 
   `r round(eig_setosa$values[1], 2)` & 0 & 0 & 0 \\ 
@@ -260,7 +260,7 @@ The singular values for each species are given by:
   0 & 0 & 0 & `r round(eig_virginica$values[4], 2)`
 \end{bmatrix}
 \end{align*}
-The associated principal component directions are given by the columns of the matrices
+Las direcciones asociadas a las componentes principales son las columnas de las matrices
 \begin{align*}
 Q_{setosa} & = \left[
 \begin{array}{cccc}
@@ -288,10 +288,9 @@ Q_{virginica} & = \left[
 \right]
 \end{align*}
 
-
-The scree plot and cumulative variance plot for the three species are shown in the following figure:
+El diagrama de valores singulares (scree plot) y el de varianza acumulada para las tres especies se muestran en la figura siguiente:
 ```{r}
-#| fig-cap: "Principal Component Analysis of the Iris Dataset by Species. To decide the number of components to keep, we can use the scree plot (left) and look for the 'elbow' where the explained variance levels off. Alternatively, we can use the cumulative variance plot (right) to determine how many components are needed to explain a desired amount of total variance, such as 70% or 90%."
+#| fig-cap: "Análisis de Componentes Principales (ACP) del conjunto de datos Iris por especie. Para decidir cuántos componentes conservar, podemos usar el gráfico de sedimentación (scree plot, izquierda) y buscar el “codo” donde la varianza explicada se estabiliza. Alternativamente, podemos usar el gráfico de varianza acumulada (derecha) para determinar cuántos componentes se necesitan para explicar una cantidad deseada de varianza total, como 70% o 90%."
 #| fig-width: 16
 #| fig-height: 8
 
