@@ -8,3 +8,5 @@ AGENTS.md
 calcifer_abilities.md
 
 /.quarto/
+
+**/*.quarto_ipynb
