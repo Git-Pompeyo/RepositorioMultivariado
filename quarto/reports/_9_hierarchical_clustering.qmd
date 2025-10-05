@@ -15,7 +15,7 @@ Un dendrograma es un diagrama en forma de árbol que ilustra la estructura taxon
 
 Como ilustración, consideremos el diagrama de dispersión del conjunto de datos Iris (considerando únicamente las variables "Sepal.Length" y "Sepal.Width"), donde cada punto está coloreado según la especie de la flor:
 ```{r}
-#| fig-cap: "Scatter plot of the Iris dataset, separated by species and considering only the variables 'Sepal.Length' and 'Sepal.Width'."
+#| fig-cap: "Diagrama de dispersión del conjunto de datos Iris, separado por especie y considerando únicamente las variables 'Sepal.Length' y 'Sepal.Width'."
 #| fig-width: 6
 #| fig-height: 4
 
@@ -30,7 +30,7 @@ iris_plot <- iris %>%
   ) +
   c_scale_color("C green", "C blue", "C red") +
   labs(
-    title = "Iris Dataset: Sepal Length vs Sepal Width",
+    title = "Conjunto de datos Iris: Sepal.Length vs Sepal.Width",
     x = "Sepal Length (cm)",
     y = "Sepal Width (cm)"
   ) +
@@ -41,7 +41,7 @@ iris_plot
 ```
 Ahora consideraremos un dendrograma asociado a este conjunto y mostraremos cómo cortarlo a distintas alturas conduce a diferentes números de conglomerados:
 ```{r}
-#| fig-cap: "Hierarchical clustering of the Iris dataset considering only the variables 'Sepal.Length' and 'Sepal.Width'. The dashed lines indicate the cut points for the given numbers of clusters (k = 1, 3, 4, 6)."
+#| fig-cap: "Agrupamiento jerárquico del conjunto de datos Iris considerando únicamente las variables 'Sepal.Length' y 'Sepal.Width'. Las líneas punteadas indican los puntos de corte para los números de clústeres dados (k = 1, 3, 4, 6)."
 #| fig-width:  10
 #| fig-height: 12
 # Use the built-in iris dataset only
@@ -157,7 +157,7 @@ dendro_faceted <- ggplot() +
 combined_plot <-  (dendro_faceted | sepal_cluster_plot) +
   plot_layout(widths = c(1, 2)) +
   plot_annotation(
-    title = "Hierarchical Clustering of the Iris Dataset",
+    title = "Agrupamiento jerárquico del conjunto de datos Iris.",
     theme = theme(
       plot.title = element_text(
         size = 24,

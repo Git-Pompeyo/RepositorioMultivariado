@@ -49,24 +49,24 @@ Una vez decidido el número de factores, el siguiente paso es extraerlos. Métod
 
 Tras extraer factores, suele ser útil rotarlos para lograr una estructura más simple e interpretable. La rotación puede ser ortogonal (sin correlación) u oblicua (con correlación). Métodos comunes:
 \begin{enumerate}
-    \item \textbf{Varimax Rotation:} An orthogonal rotation method that maximizes the variance of squared loadings within each factor, leading to a simpler structure where each variable loads highly on one factor and low on others.
-    \item \textbf{Quartimax Rotation:} Another orthogonal rotation method that simplifies the rows of the loading matrix, aiming to have each variable load highly on as few factors as possible.
-    \item \textbf{Equamax Rotation:} A hybrid orthogonal rotation method that combines the goals of varimax and quartimax, balancing the simplification of both rows and columns of the loading matrix.
-    \item \textbf{Promax Rotation:} An oblique rotation method that allows factors to correlate. It starts with a varimax rotation and then raises the loadings to a power to achieve a simpler structure.
+    \item \textbf{Rotación Varimax:} Método de rotación ortogonal que maximiza la varianza de las cargas al cuadrado dentro de cada factor, logrando una estructura más simple donde cada variable carga fuertemente en un factor y débilmente en los demás.
+    \item \textbf{Rotación Quartimax:} Otro método de rotación ortogonal que simplifica las filas de la matriz de cargas, buscando que cada variable tenga cargas altas en la menor cantidad posible de factores.
+    \item \textbf{Rotación Equamax:} Método ortogonal híbrido que combina los objetivos de varimax y quartimax, equilibrando la simplificación de las filas y las columnas de la matriz de cargas.
+    \item \textbf{Rotación Promax:} Método de rotación oblicua que permite la correlación entre factores. Comienza con una rotación varimax y luego eleva las cargas a una potencia para obtener una estructura más simple.
 \end{enumerate}
 
-## Computing Factor Scores 
+## Cálculo de puntuaciones factoriales 
 
-Once the factor loadings have been estimated and the factors have been rotated (if applicable), the next step is to compute factor scores for each observation in the dataset. Factor scores represent the estimated values of the latent factors for each individual based on their observed variable scores. Several methods can be used to compute factor scores: 
+Una vez estimadas las cargas factoriales y rotados los factores (cuando aplica), el siguiente paso es calcular las puntuaciones factoriales para cada observación en el conjunto de datos. Estas puntuaciones representan los valores estimados de los factores latentes para cada persona a partir de sus puntuaciones observadas. Existen varios métodos para obtenerlas: 
 \begin{enumerate}
     \item \textbf{Método de regresión:} estima puntuaciones al regredir las variables observadas sobre las cargas estimadas; es insesgado, pero puede no preservar la varianza original de los factores.
     \item \textbf{Método de Bartlett:} calcula puntuaciones minimizando la varianza residual de las variables observadas; produce puntuaciones más fiables y con menor error de medición.
     \item \textbf{Método de Anderson–Rubin:} genera puntuaciones no correlacionadas y estandarizadas; útil cuando se asume ortogonalidad de los factores.
 \end{enumerate}
 
-## Assessing Model Fit 
+## Evaluación del ajuste global 
 
-After fitting a factor analysis model, it is important to assess how well the model fits the data. Several statistical tests and fit indices can be used to evaluate model fit: 
+Después de ajustar un modelo de análisis factorial, es importante evaluar qué tanto el modelo reproduce los datos observados. Diversas pruebas estadísticas e índices de ajuste permiten realizar esta evaluación: 
 \begin{enumerate}
     \item \textbf{Prueba $\chi^2$ de ajuste:} contrasta que la covarianza implícita del modelo coincida con la observada; un resultado no significativo ($p>0.05$) sugiere buen ajuste.
     \item \textbf{RMSEA:} discrepancia por grado de libertad entre covarianzas observada y modelada; valores < 0.06 indican buen ajuste.
@@ -74,14 +74,14 @@ After fitting a factor analysis model, it is important to assess how well the mo
     \item \textbf{SRMR:} discrepancia media estandarizada entre correlaciones observadas y predichas; valores < 0.08 indican buen ajuste.
 \end{enumerate}
 
-## Visualizing the Model 
+## Visualización del modelo 
 
-Visualizing the results of a factor analysis can help in interpreting the factors and understanding the relationships among variables. Common visualization techniques include: 
+Visualizar los resultados de un análisis factorial facilita la interpretación de los factores y el entendimiento de las relaciones entre variables. Algunas técnicas comunes son: 
 \begin{enumerate}
-    \item \textbf{Scree Plot:} A scree plot displays the singular values in descending order, helping to visualize the number of factors to retain.
-    \item \textbf{Factor Loading Plot:} A scatter plot of factor loadings can help visualize how variables load on different factors, especially after rotation.
-    \item \textbf{Biplot:} A biplot combines factor scores and loadings in a single plot, allowing for the visualization of both observations and variable relationships in the factor space.
-    \item \textbf{Heatmap of Loadings:} A heatmap can be used to visualize the magnitude of factor loadings across variables and factors, highlighting patterns and clusters.
+    \item \textbf{Gráfico scree:} muestra los valores singulares en orden descendente y ayuda a decidir cuántos factores conviene retener.
+    \item \textbf{Diagrama de cargas factoriales:} un diagrama de dispersión de las cargas para apreciar cómo se distribuyen las variables en los distintos factores, especialmente después de rotar.
+    \item \textbf{Biplot:} combina en una sola figura las puntuaciones factoriales y las cargas, permitiendo visualizar simultáneamente a las observaciones y las variables en el espacio de factores.
+    \item \textbf{Mapa de calor de cargas:} representa la magnitud de las cargas factoriales mediante colores, resaltando patrones y posibles agrupamientos.
 \end{enumerate}
 
 \begin{remark}
@@ -89,21 +89,22 @@ Los diagramas de cargas y los biplots solo tienen sentido cuando hay 2 o 3 facto
 \end{remark}
 
 
-## Example: Factor Analysis of the Holzinger-Swineford Dataset
+## Ejemplo: análisis factorial del conjunto Holzinger-Swineford
 
 Mostraremos ahora un ejemplo con el conjunto "HolzingerSwineford1939" del paquete "lavaan". Incluye puntuaciones de 9 pruebas cognitivas aplicadas a 301 estudiantes de 7º y 8º. Las pruebas miden 3 habilidades latentes: visual/espacial, verbal y rapidez. En este ejemplo nos enfocaremos en x4 a x9 para ajustar un modelo de dos factores y visualizarlo en un biplot.
-exact description of each test is given below:
+
+Una descripción detallada de cada prueba se presenta a continuación:
 
 \begin{enumerate}
-\item \textbf{Paragraph (x4)}: Reading comprehension. Students read short paragraphs and answer questions about the main idea, details, and simple inferences.
-\item \textbf{Sentence (x5)}: Sentence completion. Choose the word or phrase that best completes a sentence so it is clear and grammatical; emphasizes vocabulary‑in‑context and syntax.
-\item \textbf{Word Meaning (x6)}: Vocabulary. Select the best synonym/definition for a target word; reflects breadth of lexical knowledge.
-\item \textbf{Addition (x7)}: Timed arithmetic fluency. Complete many simple addition problems quickly and accurately; captures processing speed with minimal reasoning load.
-\item \textbf{Counting Dots (x8)}: Rapid visual enumeration. Quickly count small groups of dots across many items; measures visual scanning and speeded accuracy.
-\item \textbf{Straight–Curved Capitals (x9)}: Perceptual discrimination speed. Scan capital letters and mark those with only straight strokes (versus any curved strokes), under strict time limits.
+\item \textbf{Paragraph (x4)}: Comprensión lectora. Las y los estudiantes leen párrafos cortos y contestan preguntas sobre la idea principal, detalles e inferencias sencillas.
+\item \textbf{Sentence (x5)}: Completar oraciones. Elegir la palabra o frase que mejor complete una oración para que sea clara y gramatical; enfatiza vocabulario en contexto y sintaxis.
+\item \textbf{Word Meaning (x6)}: Vocabulario. Seleccionar el mejor sinónimo o definición para una palabra objetivo; refleja la amplitud del conocimiento léxico.
+\item \textbf{Addition (x7)}: Fluidez aritmética cronometrada. Resolver rápidamente muchas sumas sencillas con precisión; captura velocidad de procesamiento con una carga mínima de razonamiento.
+\item \textbf{Counting Dots (x8)}: Enumeración visual rápida. Contar con rapidez pequeños grupos de puntos a lo largo de muchos reactivos; mide el barrido visual y la precisión bajo presión de tiempo.
+\item \textbf{Straight–Curved Capitals (x9)}: Velocidad de discriminación perceptual. Revisar letras mayúsculas y marcar aquellas con solo trazos rectos (versus cualquier trazo curvo) bajo límites estrictos de tiempo.
 \end{enumerate}
 
-To perform this analysis, we will start by loading the necessary libraries and the dataset: 
+Para realizar este análisis, comenzaremos cargando las bibliotecas necesarias y el conjunto de datos: 
 ```{r}
 #| output: false
 
@@ -120,7 +121,7 @@ hs_data <- as_tibble(HolzingerSwineford1939) %>%
   select("x4", "x5", "x6", "x7", "x8", "x9")
 ```
 
-### Assessing Factorability
+### Evaluar la factorizabilidad
 
 Iniciamos el proceso evaluando la factorizabilidad para x4–x9. Primero reunimos la información requerida: 
 ```{r}
@@ -167,8 +168,8 @@ ggplot(corr_df, aes(x = Var2, y = Var1, fill = r)) +
 ```
 Obsérvese la fuerte correlación entre pruebas verbales (x4, x5, x6) y entre rapidez (x7, x8, x9), pero no entre grupos. Esto sugiere que un modelo de dos factores es adecuado. Reportamos ahora Bartlett y KMO:
 \begin{align*}
-\mbox{Bartlett's test of sphericity} & = `r bart$p.value` \\
-\mbox{Kaiser-Meyer-Olkin measure} & = `r kmo$MSA`
+\mbox{Prueba de esfericidad de Bartlett} & = `r bart$p.value` \\
+\mbox{Medida Kaiser-Meyer-Olkin} & = `r kmo$MSA`
 \end{align*} 
 Como se observa, todas las pruebas indican que el AF es apropiado para este conjunto.
 
@@ -177,7 +178,7 @@ Como se observa, todas las pruebas indican que el AF es apropiado para este conj
 Usaremos un gráfico scree y uno de varianza acumulada para decidir cuántos factores retener. Como usamos la matriz de correlaciones, buscamos valores singulares > 1 (Kaiser) y el "codo" en el scree.
 
 ```{r}
-#| fig-cap: "Scree plot and cumulative variance for tests x4–x9. Both plots suggest that a two-factor solution is appropriate for this dataset."
+#| fig-cap: "Gráfico scree y varianza acumulada para las pruebas x4–x9. Ambos gráficos sugieren que una solución de dos factores es adecuada para este conjunto de datos."
 #| fig-width: 14
 #| fig-height: 7
 
@@ -318,7 +319,7 @@ srmr <- sqrt(num / den)
 ```
 Los resultados son:
 \begin{align*} 
-\mbox{$\chi^{2}$ Test} & = `r pval` \\ 
+\mbox{Prueba $\chi^{2}$} & = `r pval` \\ 
 \mbox{RMSEA} & = `r rmsea` \\ 
 \mbox{TLI} & = `r tli` \\ 
 \mbox{RMSR} & = `r srmr` 
