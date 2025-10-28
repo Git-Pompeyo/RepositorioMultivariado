@@ -1,0 +1,42 @@
+# Regresión Lineal Simple
+
+Supongamos que tenemos un conjunto de datos $((x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n))$. Por ejemplo, consideremos el siguiente conjunto de datos simulado:
+
+```{r}
+#| output: false
+library(tidyverse)
+library(krulRutils)
+set.seed(123)
+n <- 10
+x_data <- runif(n, min = 0, max = 10)
+epsilon_data <- rnorm(n, mean = 0, sd = 1)
+y_data <- x_data + epsilon_data
+
+sample_data_tbl <- tibble(
+  x = x_data,
+  y = y_data
+)
+```
+Podemos visualizar estos datos mediante un diagrama de dispersión:
+
+```{r}
+#| fig-cap: "Diagrama de dispersión de los datos simulados."
+#| fig-width:  5
+#| fig-height: 5
+sample_data_plot <- sample_data_tbl %>%
+  ggplot(aes(x = x_data, y = y_data)) +
+  geom_point(
+    color = c_pal("C red"),
+    size = 0.8,
+    alpha = 1
+  ) +
+  coord_fixed() +
+  labs(
+    title = "",
+    x = "",
+    y = ""
+  ) +
+  theme_krul()
+
+sample_data_plot
+```
