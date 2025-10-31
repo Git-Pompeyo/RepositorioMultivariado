@@ -159,9 +159,9 @@ library(patchwork)
 
 set.seed(123)
 
-n <- 100
+n <- 500
 x_data1 <- runif(n, min = 0, max = 10)
-epsilon_data1 <- rnorm(n, mean = 0, sd = 10)
+epsilon_data1 <- rnorm(n, mean = 0, sd = 50)
 y_data1 <- (x_data1)^3 + epsilon_data1
 
 x_data2 <- runif(n, min = 0, max = 10)
