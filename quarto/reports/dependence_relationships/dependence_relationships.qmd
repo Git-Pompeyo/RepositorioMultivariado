@@ -60,5 +60,5 @@ format:
 
 \part{Análisis de Regresión}
 
-{{< include _1_simple_linear_regression.qmd >}}
+{{< include _1_least_squares_fitting.qmd >}}
 
