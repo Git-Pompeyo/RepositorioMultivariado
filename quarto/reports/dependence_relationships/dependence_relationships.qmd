@@ -61,4 +61,4 @@ format:
 \part{Análisis de Regresión}
 
 {{< include _1_least_squares_fitting.qmd >}}
-
+{{< include _2_linear_regression_model.qmd >}}
