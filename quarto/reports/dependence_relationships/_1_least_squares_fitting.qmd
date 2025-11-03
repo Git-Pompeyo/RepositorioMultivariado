@@ -262,4 +262,4 @@ sample_data_plot <- (sample_data1_plot + sample_data2_plot) /
 sample_data_plot
 ```
 
-Es bastante claro que en estos casos el ajuste por mínimos cuadrados no es el método adecuado para realizar predicciones confiables. En general, este método solo es efectivo cuando se cumplen ciertas hipótesis que estudiaremos en las siguientes secciones, cauando introduciremos el modelo de regresión lineal desde un punto de vista estadístico.
+Es bastante claro que en estos casos el ajuste por mínimos cuadrados no es el método adecuado para realizar predicciones confiables. En general, este método solo es efectivo cuando se cumplen ciertas hipótesis que estudiaremos en las siguientes secciones, cuando introduciremos el modelo de regresión lineal desde un punto de vista estadístico.

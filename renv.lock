@@ -3348,13 +3348,13 @@
       "Description": "Internal utility functions for this project.",
       "License": "GPL3",
       "Encoding": "UTF-8",
+      "LazyData": "true",
       "RoxygenNote": "7.3.2",
       "Imports": [
         "tidyverse"
       ],
       "RemoteType": "local",
-      "RemoteUrl": "/home/raul/Dropbox/Mathematics/Teaching/Tec/Learning/R Projects/MA2003B/src/krulRutils",
-      "NeedsCompilation": "no"
+      "RemoteUrl": "/home/raul/Dropbox/Mathematics/Teaching/Tec/Learning/R Projects/MA2003B/src/krulRutils"
     },
     "labeling": {
       "Package": "labeling",

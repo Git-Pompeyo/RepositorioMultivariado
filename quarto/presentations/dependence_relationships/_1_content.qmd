@@ -400,7 +400,7 @@ Es bastante claro que en estos casos el ajuste por mínimos cuadrados no es el m
 
 \bigpause 
 
-En general, este método solo es efectivo cuando se cumplen ciertas hipótesis que estudiaremos en las siguientes secciones, cauando introduciremos el modelo de regresión lineal desde un punto de vista estadístico.
+En general, este método solo es efectivo cuando se cumplen ciertas hipótesis que estudiaremos en las siguientes secciones, cuando introduciremos el modelo de regresión lineal desde un punto de vista estadístico.
 
 
 
