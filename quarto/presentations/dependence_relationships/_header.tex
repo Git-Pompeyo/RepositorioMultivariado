@@ -1,0 +1,161 @@
+%% BEAMER THEME ITHACA 2013: Main tex file for compiling
+%$ Compile this file. 
+%%
+%% Copyright 2013 by Raul Gomez
+%% This file may be distributed and/or modified
+%% 	1. under the LaTeX Project Public License and/or
+%% 	2. under the GNU Public License.
+%% 
+%% This theme is based on Flip's Theme by Flip Tanedo.
+
+%% Please see notes.txt for comments on Beamer Theme Ithaca 2013
+%% By default, this template is meant to be run with XeLaTeX (for fonts)
+%% To run in PDFLaTeX, remove fontspec and any font commands
+
+%% Discussion of Beamer vs XeLaTeX vs LuaLaTeX
+%% http://tex.stackexchange.com/questions/29497/xelatex-preventing-beamer-from-using-different-backgrounds
+
+
+
+%\documentclass[12 pt,hyperref={pdfpagelabels=false}]{beamer}
+%\documentclass[aspectratio=169]{beamer}
+
+
+
+\usetheme[
+%	bullet=square,           % Default option: circle
+%	nobigpagenumber,         % No big circled page number on lower right
+%       nofootline,		 % No footline
+	grey                    % For a neutral grey background color
+%	watermark=BG_both,	 % png file for the watermark
+	]{Ithaca}
+
+
+
+%%%%%%%%%%
+% FONTS %
+%%%%%%%%%%
+
+%% Default font: lmodern, doesn't require fontspec % solves some default warnings
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}	
+\usepackage{mathptmx}
+\usepackage{frutiger}		
+
+%% Protects fonts from Beamer screwing with them
+%% http://tex.stackexchange.com/questions/10488/force-computer-modern-in-math-mode
+\usefonttheme{professionalfonts}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% Usual LaTeX Packages %
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathrsfs} 			% For Weinberg-esque letters
+\usepackage{cancel}			% For "SUSY-breaking" symbol
+\usepackage{slashed}   		        % for slashed characters in math mode
+\usepackage{bbm}                	% for \mathbbm{1} (unit matrix)
+\usepackage{amsthm}			% For theorem environment
+\usepackage{multirow}			% For multi row cells in table
+\usepackage{young}			% For Young Tableaux
+\usepackage{xspace}			% For spacing after commands
+\usepackage{wrapfig}			% for Text wrap around figures
+\usepackage{framed}
+\usepackage{pgf}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{float}
+
+
+
+\graphicspath{{images/}}		% Put all images in this directory. Avoids clutter.
+
+\newcommand{\cG}{\mathcal{T}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\Span}{\operatorname{Span}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\RP}{\mathbb{RP}}
+\newcommand{\g}{\mathfrak{g}}
+\newcommand{\n}{\mathfrak{n}}
+\newcommand{\m}{\mathfrak{m}}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\sl}{\mathfrak{sl}}
+\renewcommand{\S}{\mathscr{S}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\SL}{\operatorname{SL}}
+\newcommand{\PGL}{\operatorname{PGL}}
+\renewcommand{\a}{\mathfrak{a}}
+\newcommand{\ind}{\operatorname{ind}}
+\newcommand{\Ext}{\operatorname{Ext}}
+\newcommand{\Tor}{\operatorname{Tor}}
+\newcommand{\hot}{\widehat{\otimes}}
+\newcommand{\Fre}{{Fr\'{e}chet \,}}
+\newcommand{\Sc}{{\mathcal S}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\Orb}{\mathcal{O}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\renewcommand{\N}{\mathcal{N}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\E}{\mathbb{E}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theorem, Definition and Remark Environments%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\theoremstyle{plain}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{conjecture}[theorem]{Conjecture}
+%\newtheorem{claim}[theorem]{Claim}
+%\newtheorem{algorithm}[theorem]{Algorithm}
+%\newtheorem{axiom}[theorem]{Axiom}
+%\newtheorem{criterion}[theorem]{Criterion}
+
+\theoremstyle{definition}
+%\newtheorem{condition}[theorem]{Condition}
+%\newtheorem{exercise}[theorem]{Exercise}
+%\newtheorem{notation}[theorem]{Notation}
+%\newtheorem{case}[theorem]{Case}
+%\newtheorem{question}[theorem]{Question}
+
+\theoremstyle{remark}
+%\newtheorem{remark}[theorem]{Remark}
+%\newtheorem{remarks}[theorem]{Remarks}
+%\newtheorem{summary}[theorem]{Summary}
+%\newtheorem{observation}[theorem]{Observation}
+%\newtheorem{conclusion}[theorem]{Conclusion}
+%\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+
+
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Section and subsection adjustments %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\AtBeginSection{}
+\AtBeginSubsection{}	 
+
+
+
+
+%%%%%%%%%%%%
+% Preamble %
+%%%%%%%%%%%%
+
+\title[MA2003B]{1 Método de mínimos cuadrados}
+\subtitle{MA2003B Aplicación de métodos multivariados \\ en ciencia de datos}
+\institute[Tec de Monterrey]{EIC}
+\date{Campus Monterrey}
+\logo{\includegraphics[height=1.0cm]{tecnologico-de-monterrey-blue}}
