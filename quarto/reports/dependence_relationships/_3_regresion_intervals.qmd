@@ -1,0 +1,3 @@
+# Intervalos de confianza y predicción en regresión lineal
+
+

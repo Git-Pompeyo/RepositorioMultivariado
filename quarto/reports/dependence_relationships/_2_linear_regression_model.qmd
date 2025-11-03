@@ -72,7 +72,7 @@ sample_data_tbl <- tibble(
   y = y_data
 )
 ```
-y consideremos el vector de observaciones 
+y consideremos el vector de observaciones dependientes
 $$
 y = (`{r} round(y_data, 2) `)
 $$

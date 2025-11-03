@@ -62,3 +62,4 @@ format:
 
 {{< include _1_least_squares_fitting.qmd >}}
 {{< include _2_linear_regression_model.qmd >}}
+{{< include _3_regresion_intervals.qmd >}}

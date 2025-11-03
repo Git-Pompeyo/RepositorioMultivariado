@@ -25,8 +25,8 @@ Notemos que podemos visualizar estos datos mediante un diagrama de dispersión:
 
 ```{r}
 #| fig-cap: "Diagrama de dispersión de los datos simulados."
-#| fig-width:  5
-#| fig-height: 5
+#| fig-width:  3
+#| fig-height: 3
 sample_data_plot <- sample_data_tbl %>%
   ggplot(aes(x = x, y = y)) +
   geom_point(
@@ -113,8 +113,8 @@ $$
 Para el ejemplo de datos simulados que presentamos al inicio de esta sección, podemos calcular la línea recta que mejor se ajusta a estos datos utilizando la función de regresión lineal en R:
 ```{r}
 #| fig-cap: "Línea recta que mejor se ajusta a los datos simulados."
-#| fig-width:  5
-#| fig-height: 5
+#| fig-width:  3
+#| fig-height: 3
 #| message: false
 
 fitted_data_tbl <- sample_data_tbl %>%
