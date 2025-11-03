@@ -212,7 +212,7 @@ Finalmente, al comparar esta expresión con la forma de la recta $y = \hat{\beta
 
 ### 
 
-\begin{observation}
+\begin{observacion}
 Recordemos que la covarianza muestral entre las observaciones $x$ e $y$ está dada por: 
 $$
 s_{xy} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y}) 
@@ -226,14 +226,14 @@ Por lo tanto, podemos reescribir el coeficiente $\hat{\beta}_1$ como:
 $$
 \hat{\beta}_1 = \frac{s_{xy}}{s_{x}^2} 
 $$
-\end{observation}
+\end{observacion}
 
 ###
 
 ```{r}
 #| fig-cap: "Línea recta que mejor se ajusta a los datos simulados."
-#| fig-width:  3
-#| fig-height: 3
+#| fig-width:  3.4
+#| fig-height: 3.4
 #| message: false
 #| echo: false
 
