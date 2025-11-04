@@ -45,15 +45,19 @@ Utilizamos ahora la función "lm" para obtener el modelo deseado:
 sample_model <- lm(y ~ x, data = sample_data_tbl)
 sample_model
 ```
+
 **Problema 2.** Lee los datos contenidos en el archivo "data/1_sample_data.csv" y genera un gráfico con estos puntos así como la recta ajustada usando el método de mínimos cuadrados.
 
 **Solución:** Empezamos por leer los datos que se nos dan:
+
 ```{r}
-#| message: false
+
 library(here)
 sample_data1_tbl <- read_csv(here("data","1_sample_data.csv" )) 
 ```
+
 Con esta información, podemos ahora generar el gráfico que se nos pide:
+
 ```{r}
 #| fig-cap: "Ajuste por mínimos cuadrados para diferentes conjuntos de datos."
 #| fig-width:  10
@@ -76,5 +80,3 @@ sample_data1_plot <- sample_data1_tbl %>%
 
 sample_data1_plot
 ```
-
-
