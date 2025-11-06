@@ -308,7 +308,7 @@ fitted_example_data_plot
 
 \vspace{0.8\baselineskip}
 
-Notemos que este proceso se puede aplicar a cualquier conjunto de datos dado, sin embargo una de las aplicaciones más comunes de este método es tratar de predecir el valor de la variable $Y$ dado un valor específico de la variable $X$ que no se encuentre en el conjunto de datos original. Se sigue que para que estas predicciones sean de utilidad, es necesario que el comportamiento de nuestros datos siga una tendencia lineal. En caso contrario, las predicciones podrían no ser confiables. Por ejemplo, consideremos el ajuste por el método de mínimos cuadrados para los siguientes conjuntos de datos: 
+Notemos que este proceso se puede aplicar a cualquier conjunto de datos dado, sin embargo una de las aplicaciones más comunes de este método es tratar de predecir el valor de la variable $Y_{0}$ dado un valor específico de la variable $X_{0}$ que no se encuentre en el conjunto de datos original. Se sigue que para que estas predicciones sean de utilidad, es necesario que el comportamiento de nuestros datos siga una tendencia lineal, ya que en caso contrario las predicciones podrían no ser confiables. Por ejemplo, consideremos el ajuste por el método de mínimos cuadrados para los siguientes conjuntos de datos: 
 ```{r}
 #| fig-cap: "Ajuste por mínimos cuadrados para diferentes conjuntos de datos."
 #| fig-width:  10
