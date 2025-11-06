@@ -10,7 +10,10 @@ Por ejemplo, consideremos el siguiente conjunto de datos simulado:
 #| output: false
 library(tidyverse)
 library(krulRutils)
+library(latex2exp)
+
 set.seed(123)
+
 n <- 50
 x_data <- runif(n, min = 0, max = 10)
 epsilon_data <- rnorm(n, mean = 0, sd = 1)
@@ -25,8 +28,8 @@ Notemos que podemos visualizar estos datos mediante un diagrama de dispersión:
 
 ```{r}
 #| fig-cap: "Diagrama de dispersión de los datos simulados."
-#| fig-width:  3
-#| fig-height: 3
+#| fig-width: 3.5
+#| fig-height: 3.5
 sample_data_plot <- sample_data_tbl %>%
   ggplot(aes(x = x, y = y)) +
   geom_point(
@@ -36,85 +39,28 @@ sample_data_plot <- sample_data_tbl %>%
   ) +
   coord_fixed() +
   labs(
-    title = "",
-    x = "",
-    y = ""
+    title = "Datos simulados",
+    x = TeX("$X_{0}$"),
+    y = TeX("$Y_{0}$")
   ) +
   theme_krul()
 
 sample_data_plot
 ```
 
-Buscamos ahora generar una línea recta que mejor se ajuste a estos datos. Hay varias formas de definir "mejor ajuste", pero una de las más comunes es minimizar la suma de los errores al cuadrado (SSE por sus siglas en inglés) entre los valores observados y los valores correspondientes sobre la línea recta propuesta. De manera más precisa, buscamos una recta 
+Nos gustaría encontrar la línea recta que mejor se ajuste a estos datos. Hay varias formas de definir "mejor ajuste", pero una de las más comunes es minimizar la suma de los errores al cuadrado (SSE por sus siglas en inglés) entre los valores observados y los valores correspondientes sobre la línea recta propuesta. De manera más precisa, buscamos una recta 
 $$
-Y= \hat{f}(X) = \hat{\beta}_0 + \hat{\beta}_1 X 
+Y_{0}= \hat{f}(X_{0}) = \hat{\beta}_0 + \hat{\beta}_1 X_{0}
 $$
 tal que si definimos $\hat{y}_{i} = \hat{f}(x_{i})$ entonces minimicemos la suma 
-$$
+\begin{equation}\label{eq:sse}
 \text{SSE} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 
-$$
-Para encontrar la fórmula para $\hat{\beta}_0$ y $\hat{\beta}_1$ en términos de nuestros datos, utilizaremos un poco de álgebra lineal. Empecemos por fijar el \emph{vector de las observaciones independientes:}
-$$
-x = (x_1, x_2, \ldots, x_n)
-$$
-y el \emph{vector de las observaciones dependientes:} 
-$$
-y = (y_1, y_2, \ldots, y_n)
-$$
-Consideraremos ahora el subespacio
-$$
-W = \{ \beta_0 1_{n}  + \beta_1 x \, | \, \beta_0, \beta_1 \in \R \} \subset \R^{n}
-$$
-donde $1_{n} = (1, 1, \ldots, 1)$ es el vector en $\R^{n}$ con todas sus entradas iguales a 1. Notemos que $W$ es un subespacio de dimensión 2 generado por los vectores $1_{n}$ y $x$. Nuestro objetivo es encontrar el vector $\hat{y} \in W$ que esté lo más cercano posible al vector de observaciones dependientes $y$. En otras palabras, buscamos minimizar el cuadrado de la distancia entre los vectores $y$ e $\hat{y}$:
-$$
-\| y - \hat{y} \|^2 = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 
-$$
-Para lograr esto, utilizaremos la proyección ortogonal. Recordemos que la proyección ortogonal de un vector $v$ sobre un subespacio $W$ es el vector en $W$ que está más cercano a $v$. En nuestro caso queremos proyectar el vector de observaciones $y$ sobre el subespacio $W$. Para ello primero necesitamos encontrar una base ortogonal para $W$, por lo que utilizaremos el proceso de Gram-Schmidt para ortogonalizar los vectores $1_{n}$ y $x$. Definimos entonces los vectores:
-\begin{align*}
-u_1 & = 1_{n} \\
-u_2 & = x - \frac{\langle x, u_1 \rangle}{\langle u_1, u_1 \rangle} u_1 = x - \bar{x} 1_{n}
-\end{align*}
-donde 
-$$
-\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
-$$
-es la media de las observaciones independientes. Como $u_1$ y $u_2$ son ortogonales, podemos calcular la proyección ortogonal de $y$ sobre $W$ utilizando la fórmula:
-$$
-\hat{y} = \frac{\langle y, u_1 \rangle}{\langle u_1, u_1 \rangle} u_1 + \frac{\langle y, u_2 \rangle}{\langle u_2, u_2 \rangle} u_2
-$$
-Desarrollando esta expresión, obtenemos:
-$$
-\hat{y} = \bar{y} 1_{n} + \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2} (x - \bar{x} 1_{n})
-$$
-donde 
-$$
-\bar{y} = \frac{1}{n} \sum_{i=1}^{n} y_i
-$$
-es la media de las observaciones dependientes. Finalmente, al comparar esta expresión con la forma de la recta $y = \hat{\beta}_0 + \hat{\beta}_1 x$, podemos identificar los coeficientes de la siguiente manera:
-\begin{align*}
-\hat{\beta}_1 & = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
-\hat{\beta}_0 & = \bar{y} - \hat{\beta}_1 \bar{x}
-\end{align*}
-\begin{observation}
-Recordemos que la covarianza muestral entre las observaciones $x$ e $y$ está dada por: 
-$$
-s_{xy} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y}) 
-$$
-y la varianza muestral de las observaciones $x$ está dada por:
-$$
-s_{x}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2 
-$$ 
-Por lo tanto, podemos reescribir el coeficiente $\hat{\beta}_1$ como: 
-$$
-\hat{\beta}_1 = \frac{s_{xy}}{s_{x}^2} 
-$$
-\end{observation}
+\end{equation}
 
-Para el ejemplo de datos simulados que presentamos al inicio de esta sección, podemos calcular la línea recta que mejor se ajusta a estos datos utilizando la función de regresión lineal en R:
 ```{r}
-#| fig-cap: "Línea recta que mejor se ajusta a los datos simulados."
-#| fig-width:  3
-#| fig-height: 3
+#| fig-cap: "Línea recta que mejor se ajusta a los datos simulados, bajo el criterio de mínimos cuadrados."
+#| fig-width:  3.5
+#| fig-height: 3.5
 #| message: false
 
 fitted_data_tbl <- sample_data_tbl %>%
@@ -139,14 +85,228 @@ fitted_data_plot <- fitted_data_tbl %>%
   ) +
   coord_fixed() +
   labs(
-    title = "",
-    x = "",
-    y = ""
+    title = "Recta ajustada",
+    x = TeX("$X_{0}$"),
+    y = TeX("$Y_{0}$")
   ) +
   theme_krul()
 
 fitted_data_plot
 ```
+
+Para encontrar la fórmula para $\hat{\beta}_0$ y $\hat{\beta}_1$ en términos de nuestros datos, utilizaremos un poco de álgebra lineal. Empecemos por fijar los vectores
+$$
+x = \left[ \begin{array}{c}
+x_1 \\ 
+x_2 \\ 
+\vdots \\ 
+x_n
+\end{array} \right]  \qquad y = \left[ \begin{array}{c} 
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{array} \right]
+$$
+que llamaremos el \emph{vector de las observaciones independientes} y el \emph{vector de las observaciones dependientes}, respectivamente. Fijamos ahora la llamada \emph{matriz de diseño}, dada por, 
+$$
+\Phi = \left[ \begin{array}{cc} 
+1 & x_1 \\ 
+1 & x_2 \\ 
+\vdots & \vdots \\ 
+1 & x_n 
+\end{array} \right] 
+$$
+y notamos que si definimos 
+$$
+\hat{y} = \left[ \begin{array}{c} 
+\hat{y}_1 \\ 
+\hat{y}_2 \\ 
+\vdots \\ 
+\hat{y}_n
+\end{array} \right]
+$$
+entonces $\hat{y} = \Phi \hat{\beta}$ donde
+$$
+\hat{\beta} = \left[ \begin{array}{c}
+\hat{\beta}_0 \\
+\hat{\beta}_1
+\end{array} \right]
+$$
+Notemos que para minimizar la suma de los errores al cuadrado dada en la ecuación \eqref{eq:sse}, necesitamos encontrar la proyección ortogonal del vector $y$ sobre el espacio generado por las columnas de la matriz $\Phi$. Empezamos por calcular la \emph{matriz de coefficientes} 
+$$
+D^{2} = \big(\Phi^{T} \Phi \big)^{-1} = \begin{bmatrix}
+\frac{1}{n} + \frac{\bar{x}^{2}}{S_{xx}} & -\frac{\bar{x}}{S_{xx}} \\[6pt] 
+-\frac{\bar{x}}{S_{xx}} & \frac{1}{S_{xx}} 
+\end{bmatrix}
+$$
+donde 
+$$
+\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i \qquad \text{y} \qquad S_{xx} = \sum_{i=1}^{n} (x_i - \bar{x})^2 
+$$
+Calculamos ahora la \emph{matriz de estimadores de mínimos cuadrados}
+$$
+A = D^{2} \Phi^{T} = \big(\Phi^{T} \Phi \big)^{-1} \Phi^{T}  
+=  \begin{bmatrix}
+\frac{1}{n} + \frac{\bar{x}(\bar{x} - x_1)}{S_{xx}} & \ldots & \frac{1}{n} + \frac{\bar{x}(\bar{x} - x_n)}{S_{xx}} \\[6pt]
+\frac{x_1 - \bar{x}}{S_{xx}} & \ldots & \frac{x_n - \bar{x}}{S_{xx}} 
+\end{bmatrix}
+$$
+y, finalmente, calculamos la \emph{matriz sombrero} 
+$$
+H = \Phi A = \Phi \big(\Phi^{T} \Phi \big)^{-1} \Phi^{T}
+$$
+Notemos que las entradas de la matriz $H$ están dadas por:
+$$
+h_{ij} = \frac{1}{n} + \frac{(x_i - \bar{x})(x_j - \bar{x})}{S_{xx}} 
+$$
+en particular,
+$$
+h_{ii} = \frac{1}{n} + \frac{(x_i - \bar{x})^2}{S_{xx}} 
+$$
+Utilizando estas matrices, podemos calcular 
+$$
+\hat{\beta} = A y  \qquad \text{y} \qquad \hat{y} = H y 
+$$ 
+Para ilustrar este procedimiento, consideremos el siguiente ejemplo.
+
+\vspace{0.8\baselineskip}
+
+\textbf{Ejemplo.} Consideremos el siguiente conjunto de datos: 
+```{r} 
+set.seed(123)
+
+n <- 5
+x_data <- 1:n
+epsilon_data <- rnorm(n, mean = 0, sd = n / 10)
+y_data <- x_data + epsilon_data
+sample_data_tbl <- tibble(
+  x = x_data,
+  y = y_data
+)
+```
+Notemos que los vectores de observaciones independientes y dependientes son: 
+$$
+x = \begin{bmatrix} 
+  `r round(x_data[1], 2)` \\
+  `r round(x_data[2], 2)` \\
+  `r round(x_data[3], 2)` \\
+  `r round(x_data[4], 2)` \\
+  `r round(x_data[5], 2)`
+\end{bmatrix} \qquad y = \begin{bmatrix}
+   `r round(y_data[1], 2)` \\
+   `r round(y_data[2], 2)` \\
+    `r round(y_data[3], 2)` \\
+    `r round(y_data[4], 2)` \\
+    `r round(y_data[5], 2)`
+\end{bmatrix}
+$$
+y la matriz de diseño es: 
+```{r}
+Phi <- matrix(c(rep(1, n), x_data), nrow = n, ncol = 2)
+```
+$$
+\Phi = \begin{bmatrix} 
+1 & `r round(x_data[1], 2)` \\ 
+1 & `r round(x_data[2], 2)` \\ 
+1 & `r round(x_data[3], 2)` \\
+1 & `r round(x_data[4], 2)` \\
+1 & `r round(x_data[5], 2)`
+\end{bmatrix}
+$$
+Calculamos ahora la matriz de coeficientes: 
+```{r}
+D2 <- solve(t(Phi) %*% Phi)
+```
+$$
+D^{2} = \begin{bmatrix}
+`r round(D2[1,1], 2)` & `r round(D2[1,2], 2)` \\
+`r round(D2[2,1], 2)` & `r round(D2[2,2], 2)`
+\end{bmatrix}
+$$
+y la matriz de estimadores de mínimos cuadrados: 
+```{r}
+A <- D2 %*% t(Phi)
+```
+$$
+A = \begin{bmatrix}
+`r paste(round(A[1,], 2), collapse = " & ")` \\
+`r paste(round(A[2,], 2), collapse = " & ")`
+\end{bmatrix}
+$$
+Finalmente, la matriz sombrero es: 
+```{r}
+H <- Phi %*% A
+```
+$$
+H = \begin{bmatrix}
+`r paste(round(H[1,], 2), collapse = " & ")` \\
+`r paste(round(H[2,], 2), collapse = " & ")` \\
+`r paste(round(H[3,], 2), collapse = " & ")` \\
+`r paste(round(H[4,], 2), collapse = " & ")` \\
+`r paste(round(H[5,], 2), collapse = " & ")`
+\end{bmatrix}
+$$
+Utilizando estas matrices, podemos rápidamente calcular los vectores $\hat{\beta}$ y $\hat{y}$: 
+```{r}
+beta_hat <- A %*% y_data
+y_hat <- H %*% y_data
+```
+$$
+\hat{\beta} = \begin{bmatrix}
+`r round(beta_hat[1], 2)` \\ 
+`r round(beta_hat[2], 2)`
+\end{bmatrix} \qquad \hat{y} = \begin{bmatrix}
+`r round(y_hat[1], 2)` \\ 
+`r round(y_hat[2], 2)` \\
+`r round(y_hat[3], 2)` \\
+`r round(y_hat[4], 2)` \\
+`r round(y_hat[5], 2)`
+\end{bmatrix}
+$$
+Notemos que en este caso la suma de los errores al cuadrado (SSE) es:
+```{r}
+sse <- sum((y_data - y_hat)^2)
+```
+$$
+\text{SSE} = `r round(sse, 2)`
+$$
+La siguiente figura ilustra el ajuste por mínimos cuadrados para este conjunto de datos: 
+```{r}
+#| fig-cap: "Ajuste por mínimos cuadrados para el conjunto de datos del ejemplo."
+#| fig-width:  3.5
+#| fig-height: 3.5
+#| message: false
+fitted_example_data_tbl <- sample_data_tbl %>%
+  mutate(
+    fitted = as.vector(y_hat)
+  )
+fitted_example_data_plot <- fitted_example_data_tbl %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_smooth(method = "lm", se = FALSE, color = c_pal("C blue")) +
+  geom_segment(
+    aes(xend = x, yend = fitted),
+    color = c_pal("C green"),
+    alpha = 1
+  ) +
+  geom_point(color = c_pal("C red"), size = 1, alpha = 1) +
+  geom_point(
+    aes(x = x, y = fitted),
+    color = c_pal("C red"),
+    size = 1,
+    alpha = 1
+  ) +
+  coord_fixed() +
+  labs(
+    title = "Recta ajustada",
+    x = TeX("$X_{0}$"),
+    y = TeX("$Y_{0}$")
+  ) +
+  theme_krul()
+fitted_example_data_plot
+```
+
+\vspace{0.8\baselineskip}
 
 Notemos que este proceso se puede aplicar a cualquier conjunto de datos dado, sin embargo una de las aplicaciones más comunes de este método es tratar de predecir el valor de la variable $Y$ dado un valor específico de la variable $X$ que no se encuentre en el conjunto de datos original. Se sigue que para que estas predicciones sean de utilidad, es necesario que el comportamiento de nuestros datos siga una tendencia lineal. En caso contrario, las predicciones podrían no ser confiables. Por ejemplo, consideremos el ajuste por el método de mínimos cuadrados para los siguientes conjuntos de datos: 
 ```{r}
