@@ -1,5 +1,5 @@
 ---
-title: "Ejemplo" 
+title: "Ejemplos" 
 author: "Raul Gomez"
 date: today
 format:
