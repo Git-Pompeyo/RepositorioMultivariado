@@ -1,13 +1,6 @@
 # krulRutils: A collection of utility functions for
 # data manipulation and visualization
 
-# Load required packages
-library(tidyverse)
-library(GGally)
-library(broom)
-library(nortest)
-library(tseries)
-
 #' Construct simple outline polygons for clustered 2D data
 #'
 #' Builds per-group outline polygons over a 2D projection using a
@@ -785,7 +778,7 @@ compute_ci <- function(
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(t.test(
+      broom::tidy(stats::t.test(
         {{ value_col }},
         conf.level = conf_level,
         alternative = alternative
@@ -818,7 +811,7 @@ t_test <- function(
     alternative = "two.sided") {
   conf_level <- 1 - alpha
 
-  result_lookup_tbl <- tibble(
+  result_lookup_tbl <- tibble::tibble(
     code = c("reject", "fail_reject"),
     label = c("Reject null hypothesis", "Fail to reject null hypothesis")
   )
@@ -826,7 +819,7 @@ t_test <- function(
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(t.test(
+      broom::tidy(stats::t.test(
         {{ value_col }},
         mu = mu_0,
         conf.level = conf_level,
@@ -1018,7 +1011,7 @@ tidy_shapiro_test <- function(
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(shapiro.test(
+      broom::tidy(stats::shapiro.test(
         {{ value_col }}
       )),
       .groups = "drop"
@@ -1046,7 +1039,7 @@ tidy_ks_test <- function(
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(ks.test(
+      broom::tidy(stats::ks.test(
         {{ value_col }},
         "pnorm",
         mean = mean({{ value_col }}, na.rm = TRUE),
@@ -1078,7 +1071,7 @@ tidy_ad_test <- function(
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(nortest::ad.test(
+      broom::tidy(nortest::ad.test(
         {{ value_col }}
       )),
       .groups = "drop"
@@ -1106,7 +1099,7 @@ tidy_jb_test <- function(
   data %>%
     group_by(...) %>%
     summarise(
-      tidy(tseries::jarque.bera.test(
+      broom::tidy(tseries::jarque.bera.test(
         {{ value_col }}
       )),
       .groups = "drop"
