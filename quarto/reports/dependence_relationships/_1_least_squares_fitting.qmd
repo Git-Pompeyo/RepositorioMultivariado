@@ -58,7 +58,7 @@ tal que si definimos $\hat{y}_{i} = \hat{f}(x_{i})$ entonces minimicemos la suma
 \end{equation}
 
 ```{r}
-#| fig-cap: "Línea recta que mejor se ajusta a los datos simulados, bajo el criterio de mínimos cuadrados."
+#| fig-cap: "Línea recta que mejor se ajusta a los datos simulados, bajo el criterio de mínimos cuadrados. En otras palabras, esta es la línea recta que minimiza el SSE."
 #| fig-width:  3.5
 #| fig-height: 3.5
 #| message: false
