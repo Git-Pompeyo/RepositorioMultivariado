@@ -3,7 +3,7 @@ Type: Package
 Title: Krul Utility Functions for R Projects
 Version: 0.1.0
 Author: Raul Gomez
-Maintainer: Raul Gomez <you@example.com>
+Maintainer: Raul Gomez <rgomez@tec.mx>
 Description: Internal utility functions for this project.
 License: GPL3
 Encoding: UTF-8
