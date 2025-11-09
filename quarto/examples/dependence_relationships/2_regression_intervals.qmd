@@ -235,13 +235,13 @@ $$
 Por tanto, podemos utilizar este valor para calcular los estádísticos
 
 $$
-T_{0} = \frac{\hat{B}_{0}-b_{0}}{\hat{s}d_{0}} \sim t_{n-2}=t_{1}
+T_{0} = \frac{\hat{B}_{0}-b_{0}}{\hat{S}d_{0}} \sim t_{n-2}=t_{1}
 $$
 
 y
 
 $$
-T_{1} = \frac{\hat{B}_{1}-b_{1}}{\hat{s}d_{1}} \sim t_{n-2}=t_{1}
+T_{1} = \frac{\hat{B}_{1}-b_{1}}{\hat{S}d_{1}} \sim t_{n-2}=t_{1}
 $$
 
 los valores obtenidos son:
@@ -301,7 +301,7 @@ $$
 Se sigue que el estadístico
 
 $$
-T_{c} = \frac{\hat{Y}_{0}-(b_{0}-b_{1}X_{0})}{\hat{s} d_{c}} \sim t_{n-2}=t_{1}
+T_{c} = \frac{\hat{Y}_{0}-(b_{0}+b_{1}X_{0})}{\hat{s} d_{c}} \sim t_{n-2}=t_{1}
 $$
 
 En particular, el intervalo de confianza para la media en un punto dado $X_{0} = x_{0}$ está dado por
