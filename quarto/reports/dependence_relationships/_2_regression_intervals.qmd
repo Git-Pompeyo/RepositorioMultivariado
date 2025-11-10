@@ -9,10 +9,21 @@ $$
 ((x_{1},y_{1}),(x_{2},y_{2}),\ldots,(x_{n},y_{n}))
 $$
 dado. De manera más precisa, consideremos vectores aleatorios 
-\begin{align*}
-X = & (X_{1}, X_{2}, \ldots, X_{n}) \\
-Y = & (Y_{1}, Y_{2}, \ldots, Y_{n}) 
-\end{align*}
+$$
+X = \begin{bmatrix}
+X_{1} \\
+X_{2} \\
+\vdots \\
+X_{n}
+\end{bmatrix}, \quad 
+Y = \begin{bmatrix}
+Y_{1} \\
+Y_{2} \\
+\vdots \\
+Y_{n}
+\end{bmatrix}
+$$
+
 que representan los posibles valores de las observaciones independientes y dependientes, respectivamente, en una muestra dada. En este contexto, un \emph{método de aprendizaje} consiste de una función $\hat{F}$, que depende de los vectores aleatorios $X$ e $Y$, y que cuando se evalúa en los datos observados produce una función $\hat{f}$ que aproxima a la función desconocida $f_{0}$. 
 
 \begin{note} 

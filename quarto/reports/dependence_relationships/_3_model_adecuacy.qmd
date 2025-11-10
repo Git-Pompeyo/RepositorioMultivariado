@@ -1,0 +1,31 @@
+# Adecuación del modelo
+
+Como mencionamos anteriormente, podemos ajustar una recta a cualquier conjunto de datos utilizando el método de mínimos cuadrados. Sin embargo, para que este ajuste sea válido, es necesario que se cumplan ciertas condiciones sobre los datos y el modelo. Consideraremos ahora algunas de las condiciones más importantes que deben cumplirse para que el modelo de regresión lineal simple sea adecuado.
+
+## Bondad de ajuste 
+
+Recordemos que dado un conjunto de datos
+$$
+x = \begin{bmatrix}
+x_{1} \\
+x_{2} \\
+\vdots \\
+x_{n}
+\end{bmatrix}, \quad 
+y = \begin{bmatrix}
+y_{1} \\
+y_{2} \\
+\vdots \\
+y_{n}
+\end{bmatrix}
+$$
+definimos 
+$$
+\Phi = \begin{bmatrix}
+1 & x_{1} \\
+1 & x_{2} \\
+\vdots & \vdots \\
+1 & x_{n}
+\end{bmatrix}
+$$
+y construimos las matrices $D^{2} = (\Phi^{T} \Phi)^{-1}$, $A = D^{2} \Phi^{T}$ y $H = \Phi A$. 
