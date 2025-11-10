@@ -28,4 +28,4 @@ $$
 1 & x_{n}
 \end{bmatrix}
 $$
-y construimos las matrices $D^{2} = (\Phi^{T} \Phi)^{-1}$, $A = D^{2} \Phi^{T}$ y $H = \Phi A$. 
+y construimos las matrices $D^{2} = (\Phi^{T} \Phi)^{-1}$, $A = D^{2} \Phi^{T}$ y $H = \Phi A$. Entonces el vector de coeficientes de la recta de mejor ajuste por mínimos cuadrados está dado por
