@@ -8,7 +8,7 @@ donde $f_{0}$ es una función desconocida que describe la relación entre ambas 
 $$
 ((x_{1},y_{1}),(x_{2},y_{2}),\ldots,(x_{n},y_{n}))
 $$
-dado. De manera más precisa, consideramos vectores aleatorios 
+dado. De manera más precisa, consideremos vectores aleatorios 
 \begin{align*}
 X = & (X_{1}, X_{2}, \ldots, X_{n}) \\
 Y = & (Y_{1}, Y_{2}, \ldots, Y_{n}) 
@@ -47,7 +47,7 @@ b_{0} \\
 b_{1}
 \end{bmatrix}
 $$
-es la matriz de parámetros desconocidos. Notemos que, en particular, el vector aleatorio $\hat{B}$ es un estimador insesgado del vector de parámetros $b$, es decir, $E[\hat{B}] = b$. Notemos además que si evaluamos el vector aleatorio $\hat{B}$ en los datos observados $Y = y$, obtenemos el vector de coeficientes $\hat{\beta}$ de la recta de mejor ajuste por mínimos cuadrados que obtuvimos en la sección anterior. Una vez hechas estas observaciones, nuestro siguiente objetivo será construir los intervalos de confianza para los parámetros $b_{0}$ y $b_{1}$.
+es el vector de parámetros desconocidos. Notemos que, en particular, el vector aleatorio $\hat{B}$ es un estimador insesgado del vector de parámetros $b$, es decir, $E[\hat{B}] = b$. Notemos además que si evaluamos el vector aleatorio $\hat{B}$ en los datos observados $Y = y$, obtenemos el vector de coeficientes $\hat{\beta}$ de la recta de mejor ajuste por mínimos cuadrados que obtuvimos en la sección anterior. Una vez hechas estas observaciones, nuestro siguiente objetivo será construir los intervalos de confianza para los parámetros $b_{0}$ y $b_{1}$.
 
 ## Estimación de parámetros por intervalos de confianza
 
@@ -62,8 +62,8 @@ S_{xx} = \sum_{i=1}^{n} (x_{i} - \bar{x})^{2}
 $$
 tal y como lo habíamos definido en la sección anterior. Entonces 
 \begin{align*} 
-\hat{B}_{0} & \sim N\left(b_{0}, \sigma^{2} d_0^{2}\right) \\ 
-\hat{B}_{1} & \sim N\left(b_{1}, \sigma^{2} d_1^{2}\right) 
+\hat{B}_{0} & \sim \mathcal{N}\left(b_{0}, \sigma^{2} d_0^{2}\right) \\ 
+\hat{B}_{1} & \sim \mathcal{N}\left(b_{1}, \sigma^{2} d_1^{2}\right) 
 \end{align*}
 Consideremos ahora la variable aleatoria 
 $$
@@ -111,7 +111,7 @@ $$
 $$
 Notemos que este vector aleatorio depende solamente de las variables $\hat{B}_{0}$ y $\hat{B}_{1}$ (las cuales, a su vez, dependen solamente de las variables $Y_{1}, Y_{2}, \ldots, Y_{n}$), y es independiente de la variable aleatoria $Y_{0}$. Usando nuevamente las propiedades de la distribución normal multivariada, podemos ver que 
 $$
-\hat{Y}_{0} \sim N\left( \Phi_{0}b, \sigma^{2} d_{c}^{2} \right) 
+\hat{Y}_{0} \sim \mathcal{N}\left( \Phi_{0}b, \sigma^{2} d_{c}^{2} \right) 
 $$
 donde 
 $$
@@ -135,7 +135,7 @@ donde
 $$
 d_{p}^{2} = 1 + d_{c}^{2} = 1 + \frac{1}{n} + \frac{(x_{0} - \bar{x})^{2}}{S_{xx}}
 $$
-Usando nuevamente la variable aleatoria $\hat{S}^{2}$, podemos ahora definir
+Usando nuevamente la variable aleatoria $\hat{S}^{2}$, podemos definir ahora
 $$
 T_{p} = \frac{Y_{0} - \hat{Y}_{0}}{\hat{S} d_{p}} \sim t_{n-2}
 $$
