@@ -1,191 +1,142 @@
-# Método de mínimos cuadrados
+# Adecuación del modelo
 
-# El modelo de regresión lineal simple
-
-# Intervalos de confianza y predicción en regresión lineal
-
-
-### Intervalos de confianza y predicción en regresión lineal
-En esta sección retomaremos nuestro modelo de regresión lineal simple, pero haremos más énfasis en su descripción utilizando álgebra lineal.
+### Modelo de regresión lineal múltiple
+Hasta el momento hemos considerado únicamente modelos con una sola variable independiente.
 
 \bigpause 
 
-Empecemos recordando que nuestro modelo está dado por la ecuación
-$$
-Y_{0} = b_{0} + b_{1} X_{0} + \epsilon_{0}
-$$
-donde $\epsilon_{0} \sim N(0, \sigma^{2})$.
+Sin embargo, en muchos casos es posible que la variable de interés dependa de múltiples variables independientes.
+
+\bigpause
+
+En este caso, el modelo de regresión lineal simple se extiende al modelo de regresión lineal múltiple, en el cual la variable dependiente $Y$ depende linealmente de múltiples variables independientes $X_{01}, X_{02}, \ldots, X_{0p}$. 
 
 ###
 
-Recordemos también que estamos considerando los vectores aleatorios 
+De manera más específica, supondremos que tenemos un modelo de la forma 
 $$
-X = \left[\begin{array}{c} 
-X_{1} \\
-\vdots \\ 
-X_{n}
-\end{array}\right]
-\qquad Y = \left[\begin{array}{c}
+Y_{0} = b_{0} + b_{1} X_{01} + b_{2} X_{02} + \cdots + b_{p} X_{0p} + \epsilon 
+$$
+\pause 
+
+En este modelo, $Y_{0}$ es la variable dependiente 
+
+\bigpause 
+
+Las variables independientes son: $X_{01}, X_{02}, \ldots, X_{0p}$ 
+
+\bigpause 
+
+Los parámetros del modelo son: $b_{0}, b_{1}, \ldots, b_{p}$
+
+\bigpause
+
+El término de error está dado por 
+$$
+\epsilon \sim \mathcal{N}(0, \sigma^{2})
+$$ 
+
+###
+
+Para considerar nuestras muestras de datos, consideraremos la matriz aleatoria 
+$$
+X = \begin{bmatrix}
+X_{11} & X_{12} & \ldots & X_{1p} \\
+X_{21} & X_{22} & \ldots & X_{2p} \\
+\vdots & \vdots & \ddots & \vdots \\
+X_{n1} & X_{n2} & \ldots & X_{np}
+\end{bmatrix}
+$$
+\pause
+
+mantendremos el vector aleatorio 
+$$
+Y = \begin{bmatrix}
 Y_{1} \\
+Y_{2} \\
 \vdots \\
 Y_{n}
-\end{array}\right]
+\end{bmatrix}
 $$
-
-\pause 
-Suponemos además que tenemos los vectores de observaciones 
-$$
-x = \left[\begin{array}{c} 
-x_{1} \\ 
-\vdots \\ 
-x_{n} 
-\end{array}\right] 
-\qquad y = \left[\begin{array}{c} 
-y_{1} \\ 
-\vdots \\ 
-y_{n} 
-\end{array}\right]
-$$
-donde cada par $(x_{i}, y_{i})$ es una realización del vector aleatorio $(X_{i}, Y_{i})$ para $i = 1, \ldots, n$.
+que hemos utilizado anteriormente.
 
 ###
-Consideraremos ahora la matriz de diseño 
+
+Supongamos ahora que tenemos un vector de observaciones independientes
 $$
-\Phi = \left[\begin{array}{cc} 
-1 & x_{1} \\ 
-\vdots & \vdots \\ 
-1 & x_{n} 
-\end{array}\right] 
-$$ 
+x = \begin{bmatrix} 
+x_{11} & x_{12} & \ldots & x_{1p} \\
+x_{21} & x_{22} & \ldots & x_{2p} \\
+\vdots & \vdots & \ddots & \vdots \\
+x_{n1} & x_{n2} & \ldots & x_{np}
+\end{bmatrix}
+$$
 \pause
-Entonces la fórmula para expresar nuestro método de aprendizaje de mínimos cuadrados puede escribirse de la siguiente manera: 
-$$ 
-\hat{B} = A Y 
+
+Entonces, podemos definir la matriz de diseño 
 $$
-donde 
+\Phi = \begin{bmatrix}
+1 & x_{11} & x_{12} & \ldots & x_{1p} \\ 
+1 & x_{21} & x_{22} & \ldots & x_{2p} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & x_{n1} & x_{n2} & \ldots & x_{np}
+\end{bmatrix}
 $$
-A = (\Phi^{T} \Phi)^{-1} \Phi^{T} 
+y podemos definir las matrices $D^{2} = (\Phi^{T} \Phi)^{-1}$, $A = D^{2} \Phi^{T}$ y $H = \Phi A$.
+
+
+### 
+
+Entonces, el vector de coeficientes de la recta de mejor ajuste por mínimos cuadrados está dado por 
 $$
-es la matriz de proyección sobre el subespacio generado por las columnas de la matriz de diseño $\Phi$.
+\hat{B} = AY \sim \mathcal{N}(b, \sigma^{2} D^{2}) 
+$$
+mientras que el vector de predicciones está dado por 
+$$
+\hat{Y} = HY 
+$$
+Notemos que en este caso el estimador para la varianza del error está dado por 
+$$
+\hat{S}^{2} =\frac{ \|Y - \hat{Y}\|^{2}}{n - (p + 1)} = \sum_{i=1}^{n} \frac{(Y_{i} - \hat{Y}_{i})^{2}}{n - (p + 1)}
+$$
+
+### 
+
+Ahora dado cualquier vector de observaciones dependientes 
+$$
+y = \begin{bmatrix}
+y_{1} \\
+y_{2} \\
+\vdots \\
+y_{n}
+\end{bmatrix}
+$$
+podemos evaluar los estimadores anteriores en los datos observados para obtener el vector de coeficientes de la recta de mejor ajuste por mínimos cuadrados.
 
 ###
 
-Notemos que como $\hat{B}$ es una combinación lineal de variables aleatorias normales, entonces $\hat{B}$ también es una variable aleatoria normal.
-
-\bigpause 
-
-En particular, podemos calcular su esperanza y su varianza de la siguiente manera:
-\begin{align*}
-E[\hat{B}] & = E[A Y] = A E[Y] = A \Phi B = B \\ 
-\text{Var}(\hat{B}) & = \text{Var}(A Y) = A \text{Var}(Y) A^{T} = \sigma^{2} A A^{T} = \sigma^{2} (\Phi^{T} \Phi)^{-1} 
-\end{align*} 
-donde hemos utilizado el hecho de que $\text{Var}(Y) = \sigma^{2} I_{n}$.
-
-\bigpause 
-
-Notemos, en particular, que el estimador $\hat{B}$ es insesgado, es decir, $E[\hat{B}] = B$.
-
-###
-
-De manera más explícita, la matriz de covarianza de $\hat{B}$ está dada por: 
+En particular, el vector de coeficientes está dado por 
 $$
-\text{Var}(\hat{B}) = \sigma^{2} \left[\begin{array}{cc} 
-\frac{1}{n} + \frac{\bar{x}^{2}}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} & -\frac{\bar{x}}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} \\ 
--\frac{\bar{x}}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} & \frac{1}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} 
-\end{array}\right] 
+\hat{\beta} = \begin{bmatrix}
+\hat{\beta}_{0} \\
+\hat{\beta}_{1} \\
+\vdots \\
+\hat{\beta}_{p} 
+\end{bmatrix} = A y
 $$
 \pause 
-
-Notemos que, en particular, 
+mientras que el vector de predicciones está dado por 
 $$
-\hat{B}_{0}\sim N\left(b_{0}, \sigma^{2} \left( \frac{1}{n} + \frac{\bar{x}^{2}}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} \right) \right)
-$$
-y 
-$$
-\hat{B}_{1} \sim N\left(b_{1}, \sigma^{2} \left( \frac{1}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} \right) \right)
+\hat{y} = \begin{bmatrix} 
+\hat{y}_{1} \\ 
+\hat{y}_{2} \\ 
+\vdots \\
+\hat{y}_{n}
+\end{bmatrix} = H y 
 $$
 
 ###
-Quisiéramos ahora construir intervalos de confianza para los parámetros $b_{0}$ y $b_{1}$.
 
-\bigpause 
-
-Para ello, necesitamos una estimación de la varianza $\sigma^{2}$.
-
-\bigpause 
-
-Recordemos que una estimación insesgada de $\sigma^{2}$ está dada por: 
-$$
-\hat{S}^{2} = \frac{1}{n-2} \sum_{i=1}^{n} (Y_{i} - \hat{F}(X_{i}))^{2} 
-$$
-donde $\hat{F}(X_{i}) = \hat{B}_{0} + \hat{B}_{1} X_{i}$.
-
-###
-
-Notemos que la cantidad $n-2$ aparece en el denominador porque hemos estimado dos parámetros a partir de los datos. Por tanto, la siguiente variable tiene una distribución $t$ de Student con $n-2$ grados de libertad: 
-$$
-T_{j} = \frac{\hat{B}_{j} - b_{j}}{\hat{S} \sqrt{\text{Var}(\hat{B}_{j})/\sigma^{2}}} \sim t_{n-2}
-$$
-para $j = 0, 1$.
-
-\bigpause 
-
-Por lo tanto, un intervalo de confianza para el parámetro $b_{j}$ con un nivel de confianza $1 - \alpha$ está dado por:
-$$
-\left( \hat{\beta}_{j} - t_{\alpha/2, n-2} \hat{s} \sqrt{\text{Var}(\hat{\beta}_{j})/\sigma^{2}}, \quad \hat{B}_{j} + t_{\alpha/2, n-2} \hat{s} \sqrt{\text{Var}(\hat{B}_{j})/\sigma^{2}} \right)
-$$
-donde $t_{\alpha/2, n-2}$ es el cuantil superior de orden $\alpha/2$ de la distribución $t$ de Student con $n-2$ grados de libertad.
+Notemos que podemos realizar estos cálculos para cualquier conjunto de datos dados, sin embargo, para que el modelo de regresión lineal múltiple sea adecuado, es necesario que se cumplan ciertas condiciones. 
 
 
-###
-
-Para construir un intervalo de confianza para la media de la variable dependiente $Y_{0}$ en un valor específico de la variable independiente $X_{0} = x_{0}$, consideremos la predicción puntual dada por: 
-$$
-\hat{Y}_{0} = \hat{B}_{0} + \hat{B}_{1} x_{0} 
-$$
-\pause 
-Notemos que $\hat{Y}_{0}$ es una variable aleatoria normal cuya esperanza y varianza están dadas por: 
-\begin{align*}
-E[\hat{Y}_{0}] & = E[\hat{B}_{0} + \hat{B}_{1} x_{0}] = b_{0} + b_{1} x_{0} \\ 
-\text{Var}(\hat{Y}_{0}) & = \text{Var}(\hat{B}_{0} + \hat{B}_{1} x_{0}) = \sigma^{2} \left( \frac{1}{n} + \frac{(x_{0} - \bar{x})^{2}}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} \right) 
-\end{align*} 
-Por lo tanto, la siguiente variable tiene una distribución $t$ de Student con $n-2$ grados de libertad: 
-$$ 
-T_{C} = \frac{\hat{Y}_{0} - E[\hat{Y}_{0}]}{\hat{S} \sqrt{\text{Var}(\hat{Y}_{0})/\sigma^{2}}} \sim t_{n-2}
-$$ 
-
-###
-Un intervalo de confianza para la media de la variable dependiente $Y_{0}$ en el valor $X_{0} = x_{0}$ con un nivel de confianza $1 - \alpha$ está dado por: 
-$$ 
-\left( \hat{Y}_{0} - t_{\alpha/2, n-2} \hat{S} \sqrt{\text{Var}(\hat{Y}_{0})/\sigma^{2}}, \quad \hat{Y}_{0} + t_{\alpha/2, n-2} \hat{S} \sqrt{\text{Var}(\hat{Y}_{0})/\sigma^{2}} \right) 
-$$ 
-
-\pause
-Finalmente, quisiéramos construir un intervalo de predicción para una nueva observación de la variable dependiente $Y_{0}$ en el valor $X_{0} = x_{0}$. Consideremos la nueva observación 
-$$ 
-Y_{0} = b_{0} + b_{1} x_0 + \epsilon_{0} 
-$$ 
-\pause 
-donde $\epsilon_{0} \sim N(0, \sigma^{2})$.
-
-\bigpause 
-
-Notemos que la diferencia entre la nueva observación $Y_{0}$ y la predicción puntual $\hat{Y}$ es una variable aleatoria normal cuya esperanza y varianza están dadas por: 
-\begin{align*} 
-E[Y_{0} - \hat{Y}_{0}] & = E[Y_{0}] - E[\hat{Y}_{0}] = 0 \\ 
-\text{Var}(Y_{0} - \hat{Y}_{0}) & = \text{Var}(Y_{0}) + \text{Var}(\hat{Y}_{0}) = \sigma^{2} \left( 1 + \frac{1}{n} + \frac{(x_{0} - \bar{x})^{2}}{\sum_{i=1}^{n} (x_{i} - \bar{x})^{2}} \right) 
-\end{align*} 
-
-###
-
-Por lo tanto, la siguiente variable tiene una distribución $t$ de Student con $n-2$ grados de libertad: 
-$$ 
-T_{P} = \frac{Y_{0} - \hat{Y}_{0}}{\hat{S} \sqrt{\text{Var}(Y_{0} - \hat{Y}_{0})/\sigma^{2}}} \sim t_{n-2}
-$$
-
-\pause 
-
-Un intervalo de predicción para una nueva observación de la variable dependiente $Y_{0}$ en el valor $X_{0} = x_{0}$ con un nivel de confianza $1 - \alpha$ está dado por: 
-$$ 
-\left( \hat{y}_{0} - t_{\alpha/2, n-2} \hat{s} \sqrt{\text{Var}(Y_{0} - \hat{Y}_{0})/\sigma^{2}}, \quad \hat{y}_{0} + t_{\alpha/2, n-2} \hat{s} \sqrt{\text{Var}(Y_{0} - \hat{Y}_{0})/\sigma^{2}} \right) 
-$$ 
