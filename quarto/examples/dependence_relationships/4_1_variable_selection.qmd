@@ -136,7 +136,7 @@ modelo_completo <- lm(mpg ~ ., data = mtcars)
 
 ```{r}
 modelo_backward_AIC <- step(
-  modelo_nulo, 
+  modelo_completo, 
   scope = list(lower = modelo_nulo, upper = modelo_completo), 
   direction = "backward"
   )
@@ -154,7 +154,7 @@ summary(modelo_backward_AIC)
 
 ```{r}
 modelo_backward_BIC <- step(
-  modelo_nulo, 
+  modelo_completo, 
   scope = list(lower = modelo_nulo, upper = modelo_completo), 
   direction = "backward", 
   k = log(nrow(mtcars)) # k = log(n) para BIC
