@@ -230,5 +230,23 @@ Finalmente, para el cuarto conjunto de datos:
 summary(model4)
 autoplot(model4)
 ```
+\vfill
+\newpage
+Pruebas:
+```{r}
+#| tbl-cap: "Primeras 6 filas del conjunto swiss"
+#| tbl-label: swiss-data
 
+library(tidyverse)
+
+swiss_tbl <- as_tibble(swiss)
+
+
+knitr::kable(
+  head(swiss_tbl, 6),
+  format = "latex",
+  booktabs = TRUE,
+  longtable = TRUE
+)
+```
 

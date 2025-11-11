@@ -1,0 +1,74 @@
+# Regresión Multivariada
+
+```{r}
+library(tidyverse)
+swiss_tbl <- as_tibble(swiss) %>%
+  print(n = 27)
+```
+
+# Ajuste del modelo multivariado
+
+```{r}
+Y1=swiss_tbl$Fertility
+Y2=swiss_tbl$Catholic
+X1=swiss_tbl$Agriculture
+X2=swiss_tbl$Examination
+fit <- lm(cbind(Y1, Y2) ~ X1 + X2)
+summary(fit)
+
+```
+
+## Análisis de residuales
+
+```{r}
+#Gráficas de los residuos de cada variable dependiente
+par(mfrow = c(2, 2))
+plot(fit$residuals[,1], main = "Residuos Y1", ylab = "Residuos", xlab ="Índice")
+abline(h=0,col="red")
+plot(fit$residuals[,2], main = "Residuos Y2", ylab = "Residuos", xlab = "Índice")
+abline(h=0,col="red")
+
+
+```
+
+```{r}
+# Comprobar la normalidad de los residuos (Q-Q plot)
+qqnorm(fit$residuals[,1], main = "Q-Q Plot Residuos Y1")
+qqline(fit$residuals[,1])
+qqnorm(fit$residuals[,2], main = "Q-Q Plot Residuos Y2")
+qqline(fit$residuals[,2])
+```
+
+```{r}
+library(MVN)
+
+# Prueba de Shapiro-Wilk para la normalidad de los residuos
+shapiro.test(fit$residuals[,1])
+shapiro.test(fit$residuals[,2])
+
+# Prueba de normalidad multivariante usando Mardia
+mardia_test <- mvn(data = fit$residuals, mvn_test = "mardia")
+
+# Mostrar resultados de la prueba de Mardia
+print("Mardia's Multivariate Normality Test:")
+print(mardia_test)
+```
+
+```{r}
+# Matriz de correlación de las variables dependientes
+cor_matrix <- cor(cbind(Y1, Y2))
+cor_matrix
+
+# Análisis de la multicolinealidad entre variables dependientes
+det(cor_matrix)  # Determinante de la matriz de correlaciÃ³n (no debe ser cercano a cero)
+
+# Análisis de correlación canónica (CCA)
+# utilizada para explorar y entender las relaciones lineales entre dos conjuntos de variables
+
+cca <- cancor(cbind(Y1, Y2), cbind(X1, X2))
+cca$cor  # Correlaciones canónicas
+
+# Interpretación de los resultados de CCA
+cca$xcoef  # Coeficientes de las variables dependientes
+cca$ycoef  # Coeficientes de las variables independientes
+```

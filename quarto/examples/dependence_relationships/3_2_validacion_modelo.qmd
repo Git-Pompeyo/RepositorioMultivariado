@@ -25,6 +25,7 @@ abline(h = 0, col = "red")
 
 # Prueba de RESET de Ramsey
 library(lmtest)
+resettest(model1)
 resettest(model2)
 ```
 
