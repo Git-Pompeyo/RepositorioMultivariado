@@ -22,3 +22,19 @@ step_result <- stepclass(species ~ ., data = penguin_data, method = "lda", direc
 # Print results
 print(step_result)
 ```
+
+Checking structure
+
+```{r}
+library(palmerpenguins)
+library(klaR)
+library(tidyverse)
+
+# Select only the required columns and remove rows with NAs
+penguin_data <- na.omit(penguins[, c("species", "bill_length_mm",
+"bill_depth_mm", "flipper_length_mm",
+"body_mass_g")])
+
+penguin_data %>%
+  glimpse()
+```
