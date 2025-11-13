@@ -1,0 +1,155 @@
+# 3.2 Significancia del modelo y de los parámetros
+
+Supongamos que tenemos un modelo de regresión lineal
+
+$$
+Y_{0} = b_{0} + b_{1}X_{0\, 1} + b_{2}X_{0\, 2} + \cdots + b_{p}X_{0\, p} + \epsilon_{0}
+$$
+
+con $\epsilon_{0}\sim \mathcal{N}(0,\sigma^{2})$, donde $b_{0}, b_{1}, \ldots, b_{p}$ y $\sigma^{2}$ son los parámetros de nuestro modelo. Cuando decimos que queremos evaluar la *significancia global* de nuestro modelo lo que buscamos es reunir evidencia, a través de una muestra, de que al menos uno de nuestros parámetros es distinto de cero. Para ilustrar este procedimiento, consideraremos un espacio muestral con $n$ observaciones y consideraremos sus variables aleatorias asociadas
+
+$$
+X = \begin{bmatrix}X_{11} & X_{12} & \ldots & X_{1p} \\X_{21} & X_{22} & \ldots & X_{2p} \\\vdots & \vdots & \ddots & \vdots \\X_{n1} & x_{n2} & \ldots & X_{np}\end{bmatrix} \qquad Y = \begin{bmatrix}Y_{1} \\Y_{2} \\\vdots \\Y_{n}\end{bmatrix}
+$$
+
+Notemos que en este caso una *muestra* con n observaciones corresponde a una realización
+
+$$
+X = x \qquad Y = y
+$$
+
+De estas variables aleatorias. Consideremos ahora el vector aleatorio ajustado $\hat{Y} = HY$, donde $H$ es la matriz sombrero asociada a nuestro conjunto de datos y consideremos también la *suma total de cuadrados*
+
+$$
+ \text{SST} = \sum_{i=1}^{n} (Y_{i} - \bar{Y})^{2} = \| Y - \bar{Y}\mathbf{1}_{n} \|^{2}
+$$
+
+donde
+
+$$
+\bar{Y} = \frac{1}{n} \sum_{i=1}^{n} Y_{i}
+$$
+
+es la media muestral de la variable dependiente y $\mathbf{1}_{n}$ es el vector columna con $n$ entradas y todas iguales a uno. Necesitaremos también considerar la *suma de los errores al cuadrado*
+
+$$
+\text{SSE} = \sum_{i=1}^{n} (Y_{i} - \hat{Y}_{i})^{2} = \| Y - \hat{Y} \|^{2}
+$$
+
+y la *suma de cuadrados de la regresión*
+
+$$
+\text{SSR} = \sum_{i=1}^{n} (\hat{Y}_{i} - \bar{Y})^{2} = \| \hat{Y} - \bar{Y}\mathbf{1} \|^{2}
+$$
+
+Ya una vez definidas estas cantidades, podemos ahora enunciar el procedimieto para evaluar la significancia de nuestro modelo.
+
+## Procedimiento para evaluar la significancia de un modelo de regresión lineal
+
+Para evaluar la significancia de un modelo de regresión lineal, seguiremos los siguientes pasos:
+
+1.  Plantear la hipótesis nula y la hipótesis alternativa: $$
+    \begin{array}{rl}H_{0}:  & \text{Todos los parámetros son iguales a cero, es decir $b_{1} = b_{2} = \cdots = b_{p} = 0$} \\H_{1}:  & \text{Al menos uno de los parámetros $b_{1}$, $b_{2}, \ldots, b_{p}$ es diferente de cero.}\end{array}
+    $$
+2.  Calcular el estadístico de prueba $$
+    F = \frac{SSR / p}{SSE / (n - p - 1)} \sim F_{p, n-p-1}
+    $$ para el vector de datos observados $Y = y$.
+3.  Calcular el $p$-valor de la prueba $$ 
+    p_{F} = P_{F_{p, n - p - 1}}(F \geq f) 
+    $$ donde $f$ es el valor del estadístico $F$ calculado en el paso anterior.
+4.  Si $p_{F} < \alpha$, para algún nivel de significancia $\alpha$ preestablecido, entonces rechazamos la hipótesis nula y concluimos que al menos uno de los parámetros $b_{1}, b_{2}, \ldots, b_{p}$ es significativamente diferente de cero.
+
+## Ejemplo
+
+Consideraremos los siguientes conjuntos de datos:
+
+```{r}
+#| fig-cap: "Significancia de los modelos"
+#| fig-width:  10
+#| fig-height: 5
+#| message: false
+
+library(tidyverse)
+library(krulRutils)
+library(patchwork)
+library(broom)
+library(purrr)
+library(dplyr)
+
+set.seed(123)
+
+x_data <- seq(0, 10, length.out = 100)
+epsilon_data <- rnorm(100, mean = 0, sd = 1)
+y_data1 <- 5 + epsilon_data
+y_data2 <- x_data + epsilon_data
+
+sample_data1_tbl <- tibble(
+  x = x_data,
+  y = y_data1
+)
+
+sample_data2_tbl <- tibble(
+  x = x_data,
+  y = y_data2
+)
+
+model1 <- lm(y ~ x, data = sample_data1_tbl)
+model2 <- lm(y ~ x, data = sample_data2_tbl)
+
+
+models <- list(
+  "Baja significancia" = model1,
+  "Alta significancia" = model2
+)
+
+model_F_table <- map_dfr(
+  models,
+  ~ glance(.x),
+  .id = "modelo"
+) %>%
+  transmute(
+    modelo,
+    R2          = r.squared,
+    F_estadístico = statistic, # this is the F
+    p_valor       = p.value
+  )
+
+
+sample_data1_plot <- sample_data1_tbl %>%
+  ggplot(aes(x = x, y = y)) +
+  coord_cartesian(ylim = c(-3,13)) +
+  geom_point(
+    color = c_pal("C red"),
+    size = 1,
+    alpha = 1
+  ) +
+  geom_smooth(method = "lm", se = FALSE, color = c_pal("C blue")) +
+  labs(
+    title = "Modelo con baja significancia",
+    x = "",
+    y = ""
+  ) +
+  theme_krul()
+
+sample_data2_plot <- sample_data2_tbl %>%
+  ggplot(aes(x = x, y = y)) +
+  coord_cartesian(ylim = c(-3,13)) +
+  geom_point(
+    color = c_pal("C red"),
+    size = 1,
+    alpha = 1
+  ) +
+  geom_smooth(method = "lm", se = FALSE, color = c_pal("C blue")) +
+  labs(
+    title = "Modelo con alta significancia",
+    x = "",
+    y = ""
+  ) +
+  theme_krul()
+
+sample_data_plot <- (sample_data1_plot + sample_data2_plot)
+
+sample_data_plot
+
+model_F_table
+```

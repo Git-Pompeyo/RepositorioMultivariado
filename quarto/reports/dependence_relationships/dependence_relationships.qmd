@@ -58,7 +58,8 @@ format:
 \pagenumbering{arabic}
 
 
-\part{Análisis de Regresión}
+\part{Análisis de Regresión Lineal}
 
 {{< include _1_least_squares_fitting.qmd >}}
 {{< include _2_regression_intervals.qmd >}}
+{{< include _3_likelihood_significance.qmd >}}
