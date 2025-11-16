@@ -1,0 +1,327 @@
+# Análisis Discriminante lineal en R
+
+El análisis discriminante es un método utilizado en Estadística Multivariada, Minería de Datos y Aprendizaje de Máquinas para encontrar una combinación lineal de rasgos que caracterizan o separan dos o más clases de objetos o eventos. La combinación resultante puede ser utilizada como un clasificador.
+
+En el análisis discriminante las variables de dependientes son categóricas y representan un criterio de clasificación de los registros o casos. Además tiene variables independientes continuas y se asume la hipótesis de que las variables independientes están normalmente distribuidas y que las matrices de covarianzas de las variables predictoras (independientes) en las diferentes clases son iguales.
+
+# Práctica: Análisis discriminante lineal
+
+## Librerías necesarias
+
+```{r}
+library(MASS)
+library(ggplot2)
+```
+
+## Lectura de datos
+
+En esta práctica trabajaremos con un dataset muy conocido en analisis de datos llamado *Iris* disponible en R.
+
+```{r}
+str(iris)
+head(iris)
+table(iris$Species)
+
+```
+
+El dataset se compone de 150 observaciones de flores de la planta iris. 
+
+* Existen tres tipos de clases de flores iris: virginica, setosa y versicolor. Hay 50 observaciones de cada uno de los tipos de flores.
+* Las variables o atributos que se miden de cada flor son:
+    1. El tipo de flor como variable categorica.
+    2. El largo y el ancho del pétalo en cm como variables numéricas.
+    3. El largo y el ancho del sépalo en cm como variables numéricas.
+
+*Idea clave*: construir un modelo de análisis discriminante lineal para clasificar la clase de flor de iris a la que pertenecen cada una de las observaciones utilizando las 4 variables numéricas como variables predictoras:
+
+ 1. Sepal.Lenght
+ 2. Sepal.Width
+ 3. Petal.Lenght
+ 4. Petal. Width
+ 
+ Estas variables se utilizarán para predecir la variable de respuesta **Species** que estará en uno de las 3 clasificaciones:
+ 
+ A. Setosa
+ B. Versicolor
+ C. Virginica
+ 
+## Visualización de los datos 
+ 
+```{r}
+#Asignamos un color a cada especie
+lookup=c(setosa='blue',versicolor='green', virginica='orange')
+
+#Creamos un vector con el color corresponidente a cada observacion de acuerdo a la columna Species
+col.ind=lookup[iris$Species]
+
+#Graficos de dispersion con el color de acuerdo al tipo de especie
+plot(iris[-5], pch=21, bg=col.ind, col="gray")
+
+```
+ 
+## Ajuste del modelo de análisis discriminante lineal
+
+Utilizamos la función lda() del paquete MASS para ajustar el modelo LDA a nuestros datos:
+
+```{r}
+# modelo LDA
+
+lda.model=lda(Species~., data=iris)
+
+#output
+
+lda.model
+
+
+```
+
+La información desplegada se interpreta de la siguiente manera:
+
+*Prior probabilities of group*: Representa las proporciones de cada especie (clase) en el conjunto de datos.
+
+*Group means*: Despliega los valores medios de cada predictor en cada una de las diferentes especies (clases)
+
+*Coefficientes of linear discriminants*: Despliega los coeficientes (pesos) de las variables predictoras de la combinación lineal que mejor separa a los grupos. A esta combinación lineal se le denomina **función discriminante**. Esto es:
+
+  $LDA_1 = 0.829*Sepal.Lenght + 1.534*Sepal.Width - 2.201*Petal.Length - 2.81*Petal.Width$
+  
+  $LDA_2 = 0.024*Sepal.Lenght + 2.165*Sepal.Width - 0.932*Petal.Length + 2.839*Petal.Width$
+
+El máximo numero de funciones discriminantes útiles que pueden separar los datos es el mínimo entre $G-1$ y $p$ donde $G$ es el número de grupos (clases) y $p$ es el número de variables predictoras. En este caso será el mínimo entre 2 y 4. Por lo que el modelo ajusta a lo más 2 funciones discriminantes para separar las flores por especie utilizando las 4 variables numéricas.
+
+*Proportion of trace*: Despliega el porentaje de separación alcanzado por cada una de las funciones discriminantes lineales.
+
+## Predicciones utilizando el modelo LDA
+
+```{r}
+predicted=predict(lda.model)
+
+names(predicted)
+
+head(predicted$class)
+head(predicted$posterior)
+head(predicted$x)
+
+```
+
+Se regresa una lista de 3 variables:
+
+*class*: La clase que se predice para la observación
+
+*posterior*: La probabilidad posterior de que la observación pertenece a esa clase
+
+*x*: Los valores discriminantes lineales
+
+## Visualización de los resultados
+
+histograma de valores de cada función discriminante
+
+```{r}
+
+ldahist(data=predicted$x[,1],g=iris$Species, main="Histograma de la función discriminante LD1")
+ldahist(data=predicted$x[,2],g=iris$Species, main="Histograma de la función discriminante LD2")
+```
+
+
+Visualizaremos la forma en que los discriminantes lineales separan las tres clases diferentes 
+
+```{r}
+#definimos los datos a graficar
+plot(LD2~LD1, data=predicted$x, pch=21,col="gray",bg=col.ind)
+
+```
+
+
+```{r}
+#Asignamos un color a cada especie
+lookup2=c(setosa='blue',versicolor='green', virginica='orange')
+
+#Creamos un vector con el color corresponidente a cada observacion de acuerdo a la columna Species
+col.ind2=lookup2[predicted$class]
+
+#Graficos de dispersion con el color de acuerdo al tipo de especie
+plot(iris[-5], pch=21, bg=col.ind, col="gray")
+plot(iris[-5], pch=21, bg=col.ind2, col="gray")
+
+
+```
+
+## Calidad de la predicción
+
+```{r}
+
+table(pred=predicted$class, true=iris$Species)
+
+# porcentaje de observaciones clasificadas erróneamente
+1-mean(predicted$class==iris$Species)
+
+
+```
+
+# Validación de los supuestos
+
+* Las variables predictoras tienen distribución normal
+* Las matrices de varianzas y covarianzas son iguales en las diferentes clases
+
+```{r}
+# Gráficos de densidad
+par(mfrow=c(2,2))
+plot(density(iris$Sepal.Length), main = 'Density Plot of Sepal Length', xlab = ' Sepal Length')
+plot(density(iris$Sepal.Width), main = 'Density Plot of Sepal Width', xlab = ' Sepal Width')
+plot(density(iris$Petal.Length), main = 'Density Plot of Petal Length', xlab = ' Petal Width')
+plot(density(iris$Petal.Width), main = 'Density Plot of Petal Width', xlab = 'Petal Width')
+```
+
+
+```{r}
+#pruebas de normalidad
+library(nortest)
+Sepal.Lenght.p = ad.test(iris$Sepal.Length)$p
+Sepal.Width.p = ad.test(iris$Sepal.Width)$p
+Petal.Lenght.p =ad.test(iris$Petal.Length)$p
+Petal.Width.p =ad.test(iris$Petal.Width)$p
+normal.test =data.frame(Sepal.Lenght.p, Sepal.Width.p, Petal.Lenght.p, Petal.Width.p)
+normal.test
+```
+
+
+
+```{r}
+#Identificando la posible transformación
+
+PL=iris$Petal.Length
+PW=iris$Petal.Width
+SL=iris$Sepal.Length
+SW=iris$Sepal.Width
+
+
+par(mfrow=c(2,2))
+bSL=boxcox(lm(SL~1),    # lm or aov objects or formulas
+       lambda = seq(-2, 2, 1/10), # Vector of values of lambda
+       plotit = TRUE,  # Create a plot or not
+           # Logical. Controls if spline interpolation is used
+       eps = 1/50,     # Tolerance for lambda. Defaults to 0.02.
+       xlab = expression(lambda), # X-axis title
+       ylab = "SL_log-Likelihood",   # Y-axis title
+      
+    ) # Additional arguments for model fitting
+
+bSW=boxcox(lm(SW~1),ylab = "SW_log-Likelihood") 
+
+bPL=boxcox(lm(PL~1),ylab = "PL_log-Likelihood") 
+
+bPW=boxcox(lm(PW~1),ylab = "PW_log-Likelihood")
+
+```
+
+
+
+
+```{r}
+# conjunto de valores lambda
+lambdaSL=bSL$x[which.max(bSL$y)]
+lambdaSW= bSW$x[which.max(bSW$y)]
+lambdaPL= bPL$x[which.max(bPL$y)]
+lambdaPW= bPW$x[which.max(bPW$y)]
+
+#vector de lambdas
+lambda=data.frame(lambdaSL,lambdaSW, lambdaPL, lambdaPW)
+lambda
+
+#transformaciones
+newSL=( SL^lambdaSL - 1) / lambdaSL
+newSW=( SW^lambdaSW - 1) / lambdaSW
+newPL=( PL^lambdaPL - 1) / lambdaPL
+newPW=( PW^lambdaPW - 1) / lambdaPW
+
+#Nuevo data frame con las variables transformadas
+Mt=data.frame(newSL, newSW, newPL, newPW)
+head(Mt)
+
+#Pruebas de normalidad a las nuevas variables
+normal.new.test=data.frame(ad.test(newSW)$p, ad.test(newSL)$p,ad.test(newPL)$p,ad.test(newPW)$p)
+
+#comparacion de pruebas
+normal.test
+normal.new.test
+
+#gráficos de densidad de las nuevas variables
+par(mfrow=c(2,2))
+plot(density(Mt$newSL), main = 'Density Plot of Sepal Length', xlab = ' Sepal Length')
+plot(density(Mt$newSW), main = 'Density Plot of Sepal Width', xlab = ' Sepal Width')
+plot(density(Mt$newPL), main = 'Density Plot of Petal Length', xlab = ' Petal Width')
+plot(density(Mt$newPW), main = 'Density Plot of Petal Width', xlab = 'Petal Width')
+
+
+```
+
+# Prueba para las matrices de varianzas y covarianzas
+
+Ho: Var-cov M setosa = var cov M versi = var-cov M virginica
+
+Ha: al menos dos matrices no son iguales
+
+```{r}
+library(heplots)
+library(car)
+library(carData)
+library(broom)
+
+# todas las variables predictoras antes y después de la transformación
+boxM(iris[,-5],iris[,5],conf.level=0.99)
+boxM(Mt,iris[,5],conf.level=0.99)
+
+#sólo aquellas que se distribuyen Normalmente antes y después de la trasnformación
+boxM(iris[ ,c(1,2)], iris[,5],conf.level=0.99)
+boxM(Mt[ ,1:2],iris[,5],conf.level=0.99)
+```
+
+
+# Probando el modelo LDA con las variables transformadas
+
+```{r}
+# modelo LDA
+
+Newiris=data.frame(newSL,newSW,newPL,newPW,iris[,5])
+names(Newiris)=c("NSL","NSW","NPL","NPW","Especies")
+head(Newiris)
+lda.model2=lda(Especies~., data=Newiris)
+
+#output
+
+lda.model2
+
+predicted2=predict(lda.model2)
+
+names(predicted2)
+
+head(predicted2$class)
+head(predicted2$posterior)
+head(predicted2$x)
+
+table(pred=predicted2$class, true=iris$Species)
+
+# porcentaje de observaciones clasificadas erróneamente
+1-mean(predicted2$class==iris$Species)
+```
+
+
+# Modelo discriminante cuadrático
+
+Puesto que no se satisface el supuesto de igualdad en las matrices de covarianzas
+
+```{r}
+#modelo cuadrático QDA
+qda.model=qda(Species~.,data=iris)
+qda.model
+
+#Predicciones
+qpredicted=predict(qda.model)
+
+#Muestra la trabla de las predicciones correctas y erróneas
+table(pred=qpredicted$class, true=iris$Species)
+
+# porcentaje de observaciones clasificadas erróneamente
+1-mean(qpredicted$class==iris$Species)
+```
+
