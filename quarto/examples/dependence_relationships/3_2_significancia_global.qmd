@@ -150,6 +150,8 @@ sample_data2_plot <- sample_data2_tbl %>%
 sample_data_plot <- (sample_data1_plot + sample_data2_plot)
 
 sample_data_plot
+```
 
+```{r}
 model_F_table
 ```
