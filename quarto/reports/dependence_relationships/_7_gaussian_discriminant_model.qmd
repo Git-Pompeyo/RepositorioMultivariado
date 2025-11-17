@@ -1,0 +1,81 @@
+# El modelo discriminante Gaussiano
+
+El \emph{análisis discriminante lineal} (LDA, por sus siglas en inglés) es un método de clasificación supervisada que permite separar dos o más clases basándose en las características más relevantes capturadas por un conjunto de datos dado. Este método de clasificación se basa en el \emph{modelo discriminante gaussiano}, que asume que nuestra población se encuentra separada en $K$ clases distintas (también conocidas como grupos o categorías) por una variable categórica $G$. El modelo también asume que tenemos un vector aleatorio continuo
+$$
+X = \begin{bmatrix} 
+X_1 \\ 
+X_2 \\ 
+\vdots \\
+X_p 
+\end{bmatrix}
+$$
+que captura las características relevantes de los individuos en nuestra población. Una de la hipótesis más importantes de este modelo es que para cada grupo $G = i$, el vector aleatorio $X$ sigue una distribución normal multivariada con media $\mu_i$ y matriz de covarianza $\Sigma$, es decir,
+$$
+X | (G = i) \sim \mathcal{N}(\mu_i, \Sigma)
+$$
+Notemos que la matriz de covarianza es la misma para todos los grupos. Esta condición es conocida como \emph{homocedasticidad} y es uno de los supuestos fundamentales del modelo discriminante gaussiano.
+
+## El clasificador Bayesiano 
+
+Recordemos que una \emph{función de clasificación} es una función $g$ que asigna a cada observación $X = x$ una clase $G = i$, es decir, $g(x) = i$. El objetivo del análisis discriminante lineal es encontrar una función de clasificación que minimice la \emph{tasa de error de clasificación}, la cual está dada por 
+$$
+R(g) = E[1_{g(X) \neq G}] = P(g(X) \neq G) 
+$$
+donde $1_{g(X) \neq G}$ es una variable indicadora que toma el valor de 1 si la clasificación es incorrecta y 0 en caso contrario, $E[1_{g(X) \neq G}]$ es la esperanza de esta variable aleatoria y $P(g(X) \neq G)$ es la probabilidad de que la clasificación sea incorrecta. La solución al problema de encontrar la función de clasificación óptima está dada por el teorema de Bayes: 
+\begin{theorem}[Teorema de Bayes para clasificación] 
+El clasificador que minimiza la taza de error de clasificación es el \emph{clasificador de Bayes} $\hat{g}$ que está dado por 
+$$
+\hat{g}(x) = \arg \max_{i} P(G = i | X = x) 
+$$
+donde $P(G = i | X = x)$ es la probabilidad condicional de que la clase sea $G = i$ dado que la observación es $X = x$.
+\end{theorem}
+
+## Las funciones discriminantes lineales 
+
+Buscamos ahora una forma más explícita para el clasificador de Bayes bajo el modelo discriminante gaussiano. Empezaremos por introducir las llamadas \emph{probabilidades previas} (también conocidas como \emph{probabilidades a priori} o \emph{priors}) de cada clase, las cuales están dadas por 
+$$
+\pi_i = P(G = i) 
+$$ 
+Notemos que este valor es simplemente la probabilidad de que un individuo seleccionado al azar de entre nuestra población pertenezca a la clase $G = i$. También consideraremos las \emph{probabilidades posteriores} (también conocidas como \emph{probabilidades a posteriori} o \emph{posteriors}) de cada clase, las cuales están dadas por 
+$$
+P(G = i | X = x) 
+$$ 
+En este caso, este valor representa la probabilidad de que un individuo pertenezca a la clase $G = i$ una vez que hemos observado sus características $X = x$. Para calcular este valor, recordemos que estamos suponiendo que $X | (G = i) \sim \mathcal{N}(\mu_i, \Sigma)$, por lo que la función de densidad condicional de $X$ dado $G = i$ está dada por 
+$$
+f_{i}(X) = \frac{1}{(2 \pi)^{p/2} |\Sigma|^{1/2}} \exp \left( -\frac{1}{2} (X - \mu_i)^T \Sigma^{-1} (X - \mu_i) \right) 
+$$
+Usando la fórmula de Bayes, podemos expresar las probabilidades posteriores en términos de las probabilidades previas y las funciones de densidad condicional: 
+$$
+P(G = i | X = x) = \frac{\pi_i f_{i}(x)}{\sum_{j} \pi_j f_{j}(x)}
+$$
+Notemos que el denominador en el lado derecho de esta ecuación es el mismo para todas las clases. En particular, la probabilidad posterior $P(G = i | X = x)$ es un múltiplo positivo de la cantidad $\pi_i f_{i}(x)$, en símbolos, 
+$$
+P(G = i | X = x) \propto \pi_i f_{i}(x)
+$$ 
+Se sigue que para encontrar el clasificador de Bayes, podemos concentrarnos en la expresión $\pi_i f_{i}(x)$. De hecho, como el logaritmo es una función monótonamente creciente, nos basta con concentrarnos en maximizar 
+\begin{align*}
+\log(\pi_i f_{i}(x)) = & \log(\pi_i) + \log(f_{i}(x)) \\
+                     = &  \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} (x - \mu_i)^T \Sigma^{-1} (x - \mu_i) \\
+                      = & \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} x^T \Sigma^{-1} x + x^T \Sigma^{-1} \mu_i - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i 
+\end{align*}
+Notemos que la expresión 
+$$
+- \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} x^T \Sigma^{-1} x 
+$$
+aparece en todas nuestras clases. Por lo tanto, si definimos las \emph{funciones discriminantes lineales} como 
+$$ 
+\delta_i(x) = x^T \Sigma^{-1} \mu_i - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i + \log(\pi_i)  
+$$
+entonces tenemos que las diferencias 
+$$
+\Delta_{i,j}(x) = \log(\pi_i f_{i}(x)) - \log(\pi_j f_{j}(x)) = \delta_i(x) - \delta_j(x) 
+$$
+dependen únicamente de estas funciones. En particular, el clasificador de Bayes se puede reescribir como
+$$
+\hat{g}(x) = \arg \max_{i} \delta_i(x)
+$$
+
+
+
+
+
