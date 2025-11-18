@@ -123,7 +123,11 @@ $$
 a_j = \arg \max_{a} J(a) \quad \text{sujeto a} \quad \text{Cov}[Y_i, Y_j|  G] = 0 \quad \text{para } i < j
 $$ 
 \end{itemize} 
-Es importante notar que el número máximo de variables canónicas que se pueden obtener es $\min(p, K - 1)$, donde $p$ es el número de características en nuestro vector aleatorio $X$ y $K$ es el número de clases en nuestra población. Esto se debe a que la matriz de dispersión entre los grupos $\text{SB}$ tiene rango máximo $r = \min(p, K - 1)$. Finalmente, notemos que si 
+Es importante notar que el número máximo de variables canónicas que se pueden obtener es $\min(p, K - 1)$, donde $p$ es el número de características en nuestro vector aleatorio $X$ y $K$ es el número de clases en nuestra población. Esto se debe a que la matriz de dispersión entre los grupos $\text{SB}$ tiene rango máximo $r = \min(p, K - 1)$. Se puede demostrar
+
+
+
+Finalmente, notemos que si 
 $$
 \Delta_{i,j}(x) = \delta_i(x) - \delta_j(x) 
 $$
