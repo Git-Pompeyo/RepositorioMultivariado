@@ -9,7 +9,7 @@ X_2 \\
 X_p 
 \end{bmatrix}
 $$
-que captura las características relevantes de los individuos en nuestra población. Una de la hipótesis más importantes de este modelo es que para cada grupo $G = i$, el vector aleatorio $X$ sigue una distribución normal multivariada con media $\mu_i$ y matriz de covarianza $\Sigma$, es decir,
+que captura las características relevantes de los individuos en nuestra población. Una de las hipótesis más importantes de este modelo es que para cada grupo $G = i$, el vector aleatorio $X$ sigue una distribución normal multivariada con media $\mu_i$ y matriz de covarianza $\Sigma$, es decir,
 $$
 X | (G = i) \sim \mathcal{N}(\mu_i, \Sigma)
 $$
@@ -56,7 +56,7 @@ Se sigue que para encontrar el clasificador de Bayes, podemos concentrarnos en l
 \begin{align*}
 \log(\pi_i f_{i}(x)) = & \log(\pi_i) + \log(f_{i}(x)) \\
                      = &  \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} (x - \mu_i)^T \Sigma^{-1} (x - \mu_i) \\
-                      = & \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} x^T \Sigma^{-1} x + x^T \Sigma^{-1} \mu_i - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i 
+                      = & \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} x^T \Sigma^{-1} x + \mu_{i}^{T} \Sigma^{-1} x - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i 
 \end{align*}
 Notemos que la expresión 
 $$
@@ -64,7 +64,7 @@ $$
 $$
 aparece en todas nuestras clases. Por lo tanto, si definimos las \emph{funciones discriminantes lineales} como 
 $$ 
-\delta_i(x) = x^T \Sigma^{-1} \mu_i - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i + \log(\pi_i)  
+\delta_i(x) = \mu_{i}^{T} \Sigma^{-1} x - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i + \log(\pi_i)  
 $$
 entonces tenemos que las diferencias 
 $$
@@ -75,7 +75,60 @@ $$
 \hat{g}(x) = \arg \max_{i} \delta_i(x)
 $$
 
+## Las variables canónicas 
 
-
-
-
+Además de proporcionar un método de clasificación, una de las aplicaciones más importantes del análisis discriminante lineal es la reducción de la dimensionalidad de los datos. De manera más explícita, el análisis discriminante lineal nos permite definir nuevas variables, llamadas \emph{variables canónicas}, que capturan toda la información relevante para separar las distintas clases, pero en un espacio de menor dimensión. Para poder definir estas variables, empecemos por notar que la media total de la población está dada por 
+$$
+\mu = E[X] = \sum_{i} \pi_i \mu_i 
+$$ 
+Definimos ahora la \emph{matriz de dispersión total} como 
+$$
+\text{ST} = E\big[(X - \mu)(X - \mu)^T\big] = \text{Var}[X] 
+$$
+Consideraremos también la \emph{matriz de dispersión dentro de los grupos}, la cual está dada por 
+$$
+\text{SW} = E_{G}\big[ \text{Var}_{X}[X | G] \big] = \sum_{i} \pi_i \Sigma = \Sigma 
+$$
+donde $E_{G}$ representa la esperanza con respecto a la variable categórica $G$ y $\text{Var}_{X}[X | G]$ representa la varianza condicional de $X$ dado $G$. Finalmente, consideraremos la \emph{matriz de dispersión entre los grupos}, la cual está dada por 
+$$ 
+\text{SB} = \text{Var}_{G}\big[ E_{X}[X | G] \big] = \sum_{i} \pi_i (\mu_i - \mu)(\mu_i - \mu)^T 
+$$ 
+donde $\text{Var}_{G}$ representa la varianza con respecto a la variable categórica $G$ y $E_{X}[X | G]$ representa la esperanza condicional de $X$ dado $G$. Ya con estas definiciones, podemos escribir la \emph{fórmula de la descomposición de la varianza} que nos dice que
+$$ 
+\text{ST} = \text{SW} + \text{SB} 
+$$ 
+Notemos ahora que si $a = [a_{1}, a_{2}, \ldots, a_{p}]$ es una matriz de $1 \times p$, entonces podemos considerar la variable aleatoria $Y = a X$, la cual es una combinación lineal de las variables originales $X_1, X_2, \ldots, X_p$. La varianza total de esta nueva variable está dada por $$
+\text{Var}[Y] = a (\text{ST}) a^T 
+$$ 
+la varianza dentro de los grupos está dada por 
+$$ 
+E_{G}\big[ \text{Var}_{Y}[Y | G] \big] = a (\text{SW}) a^T = a \Sigma a^T 
+$$ 
+y la varianza entre los grupos está dada por 
+$$ 
+\text{Var}_{G}\big[ E_{Y}[Y | G] \big] = a ( \text{SB}) a^T 
+$$
+Para construir nuestras variable canónicas, buscamos variables que maximicen la varianza entre los grupos en relación con la varianza dentro de los grupos. En otras palabras, queremos maximizar el \emph{cociente de Rayleigh} definido como
+$$
+J(a) = \frac{a \text{SB} a^T}{a \text{SW} a^T} 
+$$ 
+De manera más precisa, el \emph{criterio de Fisher} nos dice que las variables canónicas deben de satisfacer las siguientes condiciones: 
+\begin{itemize} 
+\item La primera variable canónica $Y_1 = a_1 X$ es aquella que maximiza el cociente $J(a)$, es decir,
+$$
+a_1 = \arg \max_{a} J(a) 
+$$ 
+\item La $j$-ésima variable canónica $Y_j = a_j X$ es aquella que maximiza el cociente $J(a)$ bajo la restricción de que no esté correlacionada, dentro de los grupos, con las variables canónicas anteriores, es decir, 
+$$ 
+a_j = \arg \max_{a} J(a) \quad \text{sujeto a} \quad \text{Cov}[Y_i, Y_j|  G] = 0 \quad \text{para } i < j
+$$ 
+\end{itemize} 
+Es importante notar que el número máximo de variables canónicas que se pueden obtener es $\min(p, K - 1)$, donde $p$ es el número de características en nuestro vector aleatorio $X$ y $K$ es el número de clases en nuestra población. Esto se debe a que la matriz de dispersión entre los grupos $\text{SB}$ tiene rango máximo $r = \min(p, K - 1)$. Finalmente, notemos que si 
+$$
+\Delta_{i,j}(x) = \delta_i(x) - \delta_j(x) 
+$$
+entonces podemos expresar estas diferencias en términos de las variables canónicas como 
+$$
+\Delta_{i,j}(x) = \sum_{m=1}^{M} c_{i,j,m} Y_m + d_{i,j} 
+$$ 
+donde $M = \min(p, K - 1)$, los coeficientes $c_{i,j,m}$ dependen de las medias de cada clase y la matriz de covarianza común, y los términos $d_{i,j}$ dependen de las probabilidades previas de cada clase. Esta expresión nos muestra que las variables canónicas capturan toda la información relevante para la clasificación en un espacio de menor dimensión.
