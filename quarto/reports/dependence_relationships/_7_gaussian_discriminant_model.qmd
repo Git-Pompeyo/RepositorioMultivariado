@@ -123,16 +123,8 @@ $$
 a_j = \arg \max_{a} J(a) \quad \text{sujeto a} \quad \text{Cov}[Y_i, Y_j|  G] = 0 \quad \text{para } i < j
 $$ 
 \end{itemize} 
-Es importante notar que el número máximo de variables canónicas que se pueden obtener es $\min(p, K - 1)$, donde $p$ es el número de características en nuestro vector aleatorio $X$ y $K$ es el número de clases en nuestra población. Esto se debe a que la matriz de dispersión entre los grupos $\text{SB}$ tiene rango máximo $r = \min(p, K - 1)$. Se puede demostrar
-
-
-
-Finalmente, notemos que si 
+Es importante notar que el número máximo de variables canónicas que se pueden obtener es $\min(p, K - 1)$, donde $p$ es el número de características en nuestro vector aleatorio $X$ y $K$ es el número de clases en nuestra población. Esto se debe a que la matriz de dispersión entre los grupos $\text{SB}$ tiene rango máximo $r = \min(p, K - 1)$. Finalmente,  se puede verificar que las funciones 
 $$
 \Delta_{i,j}(x) = \delta_i(x) - \delta_j(x) 
 $$
-entonces podemos expresar estas diferencias en términos de las variables canónicas como 
-$$
-\Delta_{i,j}(x) = \sum_{m=1}^{M} c_{i,j,m} Y_m + d_{i,j} 
-$$ 
-donde $M = \min(p, K - 1)$, los coeficientes $c_{i,j,m}$ dependen de las medias de cada clase y la matriz de covarianza común, y los términos $d_{i,j}$ dependen de las probabilidades previas de cada clase. Esta expresión nos muestra que las variables canónicas capturan toda la información relevante para la clasificación en un espacio de menor dimensión.
+solo dependen de las primeras $r$ variables canónicas. En particular, esto implica que el clasificador de Bayes también solo depende de estas variables.

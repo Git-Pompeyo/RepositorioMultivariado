@@ -1,0 +1,257 @@
+# El modelo discriminante Gaussiano
+
+### El modelo discriminante Gaussiano
+
+El \alert{análisis discriminante lineal} (LDA, por sus siglas en inglés) es un método de clasificación supervisada que permite separar dos o más clases basándose en las características más relevantes capturadas por un conjunto de datos dado.
+
+\bigpause 
+
+Este método de clasificación se basa en el \alert{modelo discriminante gaussiano}, que asume que nuestra población se encuentra separada en $K$ clases distintas (también conocidas como grupos o categorías) por una variable categórica $G$.
+
+\bigpause 
+
+El modelo también asume que tenemos un vector aleatorio continuo
+$$
+X = \begin{bmatrix} 
+X_1 \\ 
+X_2 \\ 
+\vdots \\
+X_p 
+\end{bmatrix}
+$$
+que captura las características relevantes de los individuos en nuestra población.
+
+###
+
+Una de las hipótesis más importantes de este modelo es que para cada grupo $G = i$, el vector aleatorio $X$ sigue una distribución normal multivariada con media $\mu_i$ y matriz de covarianza $\Sigma$, es decir,
+$$
+X | (G = i) \sim \mathcal{N}(\mu_i, \Sigma)
+$$
+\pause
+Notemos que la matriz de covarianza es la misma para todos los grupos.
+
+\bigpause 
+
+Esta condición es conocida como \alert{homocedasticidad} y es uno de los supuestos fundamentales del modelo discriminante gaussiano.
+
+## El clasificador Bayesiano 
+
+
+### El clasificador Bayesiano
+
+Recordemos que una \alert{función de clasificación} es una función $g$ que asigna a cada observación $X = x$ una clase $G = i$, es decir, $g(x) = i$.
+
+\bigpause 
+
+El objetivo del análisis discriminante lineal es encontrar una función de clasificación que minimice la \alert{tasa de error de clasificación}, la cual está dada por 
+$$
+R(g) = E[1_{g(X) \neq G}] = P(g(X) \neq G) 
+$$
+donde $1_{g(X) \neq G}$ es una variable indicadora que toma el valor de 1 si la clasificación es incorrecta y 0 en caso contrario, $E[1_{g(X) \neq G}]$ es la esperanza de esta variable aleatoria y $P(g(X) \neq G)$ es la probabilidad de que la clasificación sea incorrecta.
+
+###
+
+\begin{teorema}[Teorema de Bayes para clasificación] 
+El clasificador que minimiza la taza de error de clasificación es el \alert{clasificador de Bayes} $\hat{g}$ que está dado por 
+$$
+\hat{g}(x) = \arg \max_{i} P(G = i | X = x) 
+$$
+donde $P(G = i | X = x)$ es la probabilidad condicional de que la clase sea $G = i$ dado que la observación es $X = x$.
+\end{teorema}
+
+## Las funciones discriminantes lineales 
+
+### Las funciones discriminantes lineales
+
+Buscamos ahora una forma más explícita para el clasificador de Bayes bajo el modelo discriminante gaussiano.
+
+\bigpause
+
+Empezaremos por introducir las llamadas \alert{probabilidades previas} (también conocidas como \alert{probabilidades a priori} o \alert{priors}) de cada clase, las cuales están dadas por 
+$$
+\pi_i = P(G = i) 
+$$ 
+\pause 
+
+Notemos que este valor es simplemente la probabilidad de que un individuo seleccionado al azar de entre nuestra población pertenezca a la clase $G = i$.
+
+###
+
+También consideraremos las \alert{probabilidades posteriores} (también conocidas como \alert{probabilidades a posteriori} o \alert{posteriors}) de cada clase, las cuales están dadas por 
+$$
+P(G = i | X = x) 
+$$ 
+En este caso, este valor representa la probabilidad de que un individuo pertenezca a la clase $G = i$ una vez que hemos observado sus características $X = x$.
+
+\bigpause 
+
+Para calcular este valor, recordemos que estamos suponiendo que $X | (G = i) \sim \mathcal{N}(\mu_i, \Sigma)$, por lo que la función de densidad condicional de $X$ dado $G = i$ está dada por 
+$$
+f_{i}(X) = \frac{1}{(2 \pi)^{p/2} |\Sigma|^{1/2}} \exp \left( -\frac{1}{2} (X - \mu_i)^T \Sigma^{-1} (X - \mu_i) \right) 
+$$
+
+###
+
+Usando la fórmula de Bayes, podemos expresar las probabilidades posteriores en términos de las probabilidades previas y las funciones de densidad condicional: 
+$$
+P(G = i | X = x) = \frac{\pi_i f_{i}(x)}{\sum_{j} \pi_j f_{j}(x)}
+$$
+
+\pause 
+
+
+Notemos que el denominador en el lado derecho de esta ecuación es el mismo para todas las clases.
+
+\bigpause 
+
+En particular, la probabilidad posterior $P(G = i | X = x)$ es un múltiplo positivo de la cantidad $\pi_i f_{i}(x)$, en símbolos, 
+$$
+P(G = i | X = x) \propto \pi_i f_{i}(x)
+$$ 
+
+###
+
+Se sigue que para encontrar el clasificador de Bayes, podemos concentrarnos en la expresión $\pi_i f_{i}(x)$.
+
+\bigpause 
+
+De hecho, como el logaritmo es una función monótonamente creciente, nos basta con concentrarnos en maximizar 
+\begin{align*}
+\log(\pi_i f_{i}(x)) = & \log(\pi_i) + \log(f_{i}(x)) \\
+                     = &  \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} (x - \mu_i)^T \Sigma^{-1} (x - \mu_i) \\
+                      = & \log(\pi_i) - \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} x^T \Sigma^{-1} x + \mu_{i}^{T} \Sigma^{-1} x - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i 
+\end{align*}
+
+###
+
+Notemos que la expresión 
+$$
+- \frac{p}{2} \log(2 \pi) - \frac{1}{2} \log(|\Sigma|) - \frac{1}{2} x^T \Sigma^{-1} x 
+$$
+aparece en todas nuestras clases.
+
+\bigpause 
+
+Por lo tanto, si definimos las \alert{funciones discriminantes lineales} como 
+$$ 
+\delta_i(x) = \mu_{i}^{T} \Sigma^{-1} x - \frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i + \log(\pi_i)  
+$$
+entonces tenemos que las diferencias 
+$$
+\Delta_{i,j}(x) = \log(\pi_i f_{i}(x)) - \log(\pi_j f_{j}(x)) = \delta_i(x) - \delta_j(x) 
+$$
+dependen únicamente de estas funciones.
+
+\bigpause 
+
+En particular, el clasificador de Bayes se puede reescribir como
+$$
+\hat{g}(x) = \arg \max_{i} \delta_i(x)
+$$
+
+## Las variables canónicas 
+
+### Las variables canónicas
+
+Además de proporcionar un método de clasificación, una de las aplicaciones más importantes del análisis discriminante lineal es la reducción de la dimensionalidad de los datos.
+
+\bigpause 
+
+De manera más explícita, el análisis discriminante lineal nos permite definir nuevas variables, llamadas \alert{variables canónicas}, que capturan toda la información relevante para separar las distintas clases, pero en un espacio de menor dimensión.
+
+\bigpause 
+
+Para poder definir estas variables, empecemos por notar que la media total de la población está dada por 
+$$
+\mu = E[X] = \sum_{i} \pi_i \mu_i 
+$$ 
+
+###
+
+Definimos ahora la \alert{matriz de dispersión total} como 
+$$
+\text{ST} = E\big[(X - \mu)(X - \mu)^T\big] = \text{Var}[X] 
+$$
+\pause 
+
+Consideraremos también la \alert{matriz de dispersión dentro de los grupos}, la cual está dada por 
+$$
+\text{SW} = E_{G}\big[ \text{Var}_{X}[X | G] \big] = \sum_{i} \pi_i \Sigma = \Sigma 
+$$
+donde $E_{G}$ representa la esperanza con respecto a la variable categórica $G$ y $\text{Var}_{X}[X | G]$ representa la varianza condicional de $X$ dado $G$.
+
+\bigpause 
+
+Finalmente, consideraremos la \alert{matriz de dispersión entre los grupos}, la cual está dada por 
+$$ 
+\text{SB} = \text{Var}_{G}\big[ E_{X}[X | G] \big] = \sum_{i} \pi_i (\mu_i - \mu)(\mu_i - \mu)^T 
+$$ 
+donde $\text{Var}_{G}$ representa la varianza con respecto a la variable categórica $G$ y $E_{X}[X | G]$ representa la esperanza condicional de $X$ dado $G$.
+
+###
+
+Ya con estas definiciones, podemos escribir la \alert{fórmula de la descomposición de la varianza} que nos dice que
+$$ 
+\text{ST} = \text{SW} + \text{SB} 
+$$ 
+\pause
+Notemos ahora que si $a = [a_{1}, a_{2}, \ldots, a_{p}]$ es una matriz de $1 \times p$, entonces podemos considerar la variable aleatoria $Y = a X$, la cual es una combinación lineal de las variables originales $X_1, X_2, \ldots, X_p$.
+
+\bigpause 
+
+La varianza total de esta nueva variable está dada por 
+$$
+\text{Var}[Y] = a (\text{ST}) a^T 
+$$ 
+\pause
+la varianza dentro de los grupos está dada por 
+$$ 
+E_{G}\big[ \text{Var}_{Y}[Y | G] \big] = a (\text{SW}) a^T = a \Sigma a^T 
+$$ 
+\pause
+y la varianza entre los grupos está dada por 
+$$ 
+\text{Var}_{G}\big[ E_{Y}[Y | G] \big] = a ( \text{SB}) a^T 
+$$
+
+###
+
+Para construir nuestras variable canónicas, buscamos variables que maximicen la varianza entre los grupos en relación con la varianza dentro de los grupos.
+
+\bigpause 
+
+En otras palabras, queremos maximizar el \alert{cociente de Rayleigh} definido como
+$$
+J(a) = \frac{a \text{SB} a^T}{a \text{SW} a^T} 
+$$ 
+
+
+###
+De manera más precisa, el \alert{criterio de Fisher} nos dice que las variables canónicas deben de satisfacer las siguientes condiciones: 
+\begin{itemize} 
+\item \pause  La primera variable canónica $Y_1 = a_1 X$ es aquella que maximiza el cociente $J(a)$, es decir,
+$$
+a_1 = \arg \max_{a} J(a) 
+$$ 
+\item \pause  La $j$-ésima variable canónica $Y_j = a_j X$ es aquella que maximiza el cociente $J(a)$ bajo la restricción de que no esté correlacionada, dentro de los grupos, con las variables canónicas anteriores, es decir, 
+$$ 
+a_j = \arg \max_{a} J(a) \quad \text{sujeto a} \quad \text{Cov}[Y_i, Y_j|  G] = 0 \quad \text{para } i < j
+$$ 
+\end{itemize} 
+
+###
+
+Es importante notar que el número máximo de variables canónicas que se pueden obtener es $\min(p, K - 1)$, donde $p$ es el número de características en nuestro vector aleatorio $X$ y $K$ es el número de clases en nuestra población.
+
+\bigpause 
+
+Esto se debe a que la matriz de dispersión entre los grupos $\text{SB}$ tiene rango máximo $r = \min(p, K - 1)$.
+
+
+\bigpause
+
+Finalmente, se puede verificar que las funciones 
+$$
+\Delta_{i,j}(x) = \delta_i(x) - \delta_j(x) 
+$$
+solo dependen de las primeras $r$ variables canónicas. En particular, esto implica que el clasificador de Bayes también solo depende de estas variables.
