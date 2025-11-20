@@ -1,0 +1,129 @@
+# Ajuste y adecuación del modelo discriminante gaussiano
+
+En el capítulo anterior discutimos el modelo del discriminante gaussiano desde un punto de vista teórico. También describimos como reducir la dimensionalidad de nuestro modelo proyectando los resultados de nuestras observaciones en el espacio LDA que construímos en ese capítulo y, finalmente, mostramos como podemos construir funciones discriminantes lineales que nos permiten clasificar nuestras observaciones basadas solamente en la información contenida en nuestro espacio LDA. En este capítulo estudiaremos como podemos ajustar este modelo a un conjunto de datos dado y verificar la adecuación de este ajuste. Una vez que tenemos un modelo ajustado y verificado, podemos utilizar las técnicas descritas en el capítulo anterior para reducir la dimensionalidad de nuestro conjunto de datos y construir funciones discriminantes lineales que nos permitan clasificar nuevas observaciones.
+
+
+## Ajuste del modelo discriminante gaussiano 
+
+Recordemos que el modelo discriminante gaussiano depende de los siguientes parámetros: 
+
+\begin{itemize} 
+\item Los vectores de medias $\mu_k$ para cada clase $k=1,\ldots,K$. 
+\item La matriz de covarianza común $\Sigma$. 
+\item Los pesos a priori $\pi_k$ para cada clase $k=1,\ldots,K$.
+\end{itemize} 
+
+Nuestro objetivo es estimar estos parámetros a partir de un conjunto de datos etiquetado $\{(x_i, g_i)\}_{i=1}^n$, donde $x_i$ es el vector de características y $g_i$ es la etiqueta de clase correspondiente. Existen dos enfoques principales para ajustar el modelo discriminante gaussiano: el enfoque clásico de LDA que utiliza la estimación de Fisher (FE) para la matriz de varianza común, y el enfoque basado en la estimación por máxima verosimilitud (MLE).
+
+### El método de estimación de Fisher (FE) 
+
+Para este método de estimación, utilizamos estimadores insesgados para los parámetros del modelo discriminante gaussiano. Las fórmulas para estimar los parámetros son las siguientes: 
+
+\begin{itemize}
+\item Las medias de cada clase se estiman como el promedio de los vectores de características dentro de cada clase:
+$$
+\hat{\mu}_k = \frac{1}{n_k} \sum_{i| g_i = k} x_i, 
+$$ 
+donde $n_k$ es el número de observaciones en la clase $k$, y estmos sumando sobre todos los índices $i$ tales que la etiqueta de clase $g_i$ es igual a $k$.
+\item La matriz de covarianza común se estima como la media ponderada de las matrices de covarianza dentro de cada clase: 
+$$
+\hat{\Sigma}_{\text{MLE}} = \frac{1}{n - K} \sum_{k=1}^K \sum_{i| g_i = k} (x_i - \hat{\mu}_k)(x_i - \hat{\mu}_k)^T,
+$$ 
+\item Los pesos a priori se estiman como la proporción de observaciones en cada clase: 
+$$ 
+\hat{\pi}_k = \frac{n_k}{n} 
+$$
+\end{itemize}
+
+Este enfoque es el que se utiliza comúnmente en la literatura estadística y que se implemnte en R a través de la función \texttt{lda()} del paquete \texttt{MASS}.
+
+### El método de máxima verosimilitud (MLE) 
+
+En este método de estimación, buscamos los parámetros que maximizan la función de verosimilitud del modelo discriminante gaussiano dado el conjunto de datos etiquetado. En este caso, las fórmulas para estimar los parámetros son:
+
+\begin{itemize}
+\item Las medias de cada clase se estiman de la misma manera que en el método FE:
+$$
+\hat{\mu}_k = \frac{1}{n_k} \sum_{i| g_i = k} x_i
+$$
+\item La matriz de covarianza común se estima como:
+$$
+\hat{\Sigma}_{\text{MLE}} = \frac{1}{n} \sum_{k=1}^K \sum_{i| g_i = k} (x_i - \hat{\mu}_k)(x_i - \hat{\mu}_k)^T
+$$
+\item Los pesos a priori se estiman como: 
+$$
+\hat{\pi}_k = \frac{n_k}{n}
+$$
+\end{itemize}
+
+Notemos que en este caso, el estimador de la matriz de covarianza común es sesgado, pero consistente. Este enfoque es más común en la literatura de aprendizaje automático y se utiliza en implementaciones como la función \texttt{LinearDiscriminantAnalysis} del paquete \texttt{scikit-learn} en Python.
+
+### Comparación de los enfoques FE y MLE 
+
+Notemos que la única diferencia entre estos dos enfoques está dada en la forma en la que estimamos la matriz de covarianza común $\Sigma$. De manera más precisa, tenemos que:
+$$
+\hat{\Sigma}_{\text{FE}} = \frac{n}{n-K} \hat{\Sigma}_{\text{MLE}} 
+$$ 
+En términos prácticos, esto significa que cuando utilizamos el enfoque FE para calcular las funciones discriminantes, estas funciones le dan más importancia a los valores de los priors en comparación con el enfoque MLE que le da más peso al cálculo de las medias de las clases. Cada uno de estos métodos tiene sus propias ventajas y desventajas, y la elección entre ellos depende de las características específicas del conjunto de datos y del problema en cuestión. A continuación, presentamos una tabla que resume las situaciones en las que cada enfoque puede ser más adecuado:
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Contexto} 
+& \textbf{FE LDA} 
+& \textbf{MLE LDA} \\
+\midrule
+Tamaño de muestra muy pequeño
+& \checkmark & \\
+
+Priors muy desbalanceados 
+& \checkmark & \\
+
+Confianza alta en los valores de los priors
+& \checkmark & \\
+
+Clases balanceadas
+  & & \checkmark \\
+
+Clases bien separadas
+& & \checkmark \\
+
+Alta dimensionalidad 
+& \checkmark & \\
+
+Muestras muy grandes
+  & \checkmark & \checkmark \\
+
+\bottomrule
+\end{tabular}
+\caption{Comparación de los enfoques FE y MLE para el ajuste del modelo discriminante gaussiano.} 
+\end{table}
+
+
+## Verificación de la adecuación del modelo discriminante gaussiano
+
+Una vez ajustado el modelo discriminante gaussiano a un conjunto de datos, es crucial verificar la adecuación de este ajuste. Esto implica evaluar si las suposiciones del modelo se cumplen y si el modelo es capaz de capturar la estructura subyacente de los datos. A continuación describiremos las pruebas y técnicas más comunes para verificar la adecuación del modelo discriminante gaussiano.
+
+### Pruebas de normalidad multivariada 
+
+Una de las suposiciones fundamentales del modelo discriminante gaussiano es que las observaciones dentro de cada clase siguen una distribución normal multivariada. Para verificar esta suposición, podemos utilizar pruebas estadísticas como la prueba de Mardia, la prueba de Henze-Zirkler o la prueba de Royston. Estas pruebas evalúan si los datos dentro de cada clase se ajustan a una distribución normal multivariada. Para realizar estas pruebas en R, podemos utilizar el paquete \texttt{MVN} que proporciona funciones para llevar a cabo estas pruebas de normalidad multivariada.
+
+Otro método para evaluar la normalidad multivariada es mediante gráficos Q-Q multivariados o gráficos de dispersión de pares de variables dentro de cada clase. Estos gráficos nos permiten visualizar si los datos se ajustan a la distribución normal multivariada esperada.
+
+### Pruebas de Homoscedasticidad
+
+Para evaluar si las matrices de covarianza de las diferentes clases son iguales (homoscedasticidad), podemos utilizar la prueba de Box's M. Esta prueba evalúa la hipótesis nula de que todas las matrices de covarianza son iguales contra la alternativa de que al menos una es diferente. En R, podemos utilizar la función \texttt{boxM()} del paquete \texttt{biotools} para llevar a cabo esta prueba.
+
+Además de la prueba de Box's M, podemos utilizar gráficos de dispersión de las variables dentro de cada clase para visualizar las diferencias en las matrices de covarianza. Si las elipses de dispersión son similares en forma y tamaño, esto sugiere homoscedasticidad.
+
+### Evaluación del rendimiento del modelo 
+
+Finalmente, es importante evaluar el rendimiento del modelo discriminante gaussiano en términos de su capacidad para clasificar correctamente las observaciones. Podemos utilizar técnicas como la validación cruzada para estimar la tasa de error de clasificación del modelo. Además, podemos construir una matriz de confusión para visualizar el desempeño del modelo en términos de verdaderos positivos, falsos positivos, verdaderos negativos y falsos negativos. 
+
+## Modelos alternativos 
+
+En caso de que las suposiciones del modelo discriminante gaussiano no se cumplan, podemos considerar modelos alternativos como el modelo discriminante cuadrático (QDA) que permite diferentes matrices de covarianza para cada clase, o modelos basados en técnicas no paramétricas como los árboles de decisión o los métodos de vecinos más cercanos (k-NN). Estos modelos pueden ser más flexibles y adaptarse mejor a conjuntos de datos que no cumplen con las suposiciones del modelo discriminante gaussiano.
+
+

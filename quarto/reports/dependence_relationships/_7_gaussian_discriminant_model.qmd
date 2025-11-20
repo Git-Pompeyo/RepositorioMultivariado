@@ -1,4 +1,4 @@
-# El modelo discriminante Gaussiano
+# El modelo discriminante gaussiano
 
 El \emph{análisis discriminante lineal} (LDA, por sus siglas en inglés) es un método de clasificación supervisada que permite separar dos o más clases basándose en las características más relevantes capturadas por un conjunto de datos dado. Este método de clasificación se basa en el \emph{modelo discriminante gaussiano}, que asume que nuestra población se encuentra separada en $K$ clases distintas (también conocidas como grupos o categorías) por una variable categórica $G$. El modelo también asume que tenemos un vector aleatorio continuo
 $$
@@ -15,7 +15,7 @@ X | (G = i) \sim \mathcal{N}(\mu_i, \Sigma)
 $$
 Notemos que la matriz de covarianza es la misma para todos los grupos. Esta condición es conocida como \emph{homocedasticidad} y es uno de los supuestos fundamentales del modelo discriminante gaussiano.
 
-## El clasificador Bayesiano 
+## El clasificador bayesiano 
 
 Recordemos que una \emph{función de clasificación} es una función $g$ que asigna a cada observación $X = x$ una clase $G = i$, es decir, $g(x) = i$. El objetivo del análisis discriminante lineal es encontrar una función de clasificación que minimice la \emph{tasa de error de clasificación}, la cual está dada por 
 $$

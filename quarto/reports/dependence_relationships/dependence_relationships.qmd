@@ -67,3 +67,4 @@ format:
 \part{Análisis Discriminante Lineal}
 
 {{< include _7_gaussian_discriminant_model.qmd >}}
+{{< include _8_gaussian_discriminant_model_fit_adecuacy.qmd >}}
