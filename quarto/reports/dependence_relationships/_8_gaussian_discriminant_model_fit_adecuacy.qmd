@@ -125,5 +125,3 @@ Finalmente, es importante evaluar el rendimiento del modelo discriminante gaussi
 ## Modelos alternativos 
 
 En caso de que las suposiciones del modelo discriminante gaussiano no se cumplan, podemos considerar modelos alternativos como el modelo discriminante cuadrático (QDA) que permite diferentes matrices de covarianza para cada clase, o modelos basados en técnicas no paramétricas como los árboles de decisión o los métodos de vecinos más cercanos (k-NN). Estos modelos pueden ser más flexibles y adaptarse mejor a conjuntos de datos que no cumplen con las suposiciones del modelo discriminante gaussiano.
-
-
