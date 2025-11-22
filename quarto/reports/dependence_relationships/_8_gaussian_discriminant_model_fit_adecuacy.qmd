@@ -35,7 +35,7 @@ $$
 $$
 \end{itemize}
 
-Este enfoque es el que se utiliza comúnmente en la literatura estadística y que se implemnte en R a través de la función \texttt{lda()} del paquete \texttt{MASS}.
+Este enfoque es el que se utiliza comúnmente en la literatura estadística y que se implementa en R a través de la función \texttt{lda()} del paquete \texttt{MASS}.
 
 ### El método de máxima verosimilitud (MLE) 
 
