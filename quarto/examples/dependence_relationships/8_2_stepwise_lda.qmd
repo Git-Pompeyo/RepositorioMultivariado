@@ -1,0 +1,115 @@
+# Selección paso a paso para LDA con `palmerpenguins`
+
+Usaremos `stepclass()` del paquete `{klaR}` para escoger automáticamente el subconjunto de variables que mejor separa las especies de pingüinos (datos de `palmerpenguins`). Al final entrenaremos un LDA con las variables elegidas y revisaremos su desempeño.
+
+## Preparación de los datos
+
+```{r}
+library(palmerpenguins)
+library(klaR)
+library(MASS)
+library(tidyverse)
+
+set.seed(123)
+
+penguin_data <- penguins %>%
+  select(species, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) %>%
+  drop_na() %>%
+  mutate(species = droplevels(species)) %>%
+  as.data.frame()
+
+penguin_data %>%
+  as_tibble() %>%
+  group_by(species) %>%
+  summarise(n = n(), across(where(is.numeric), mean), .groups = "drop")
+```
+
+## Búsqueda paso a paso con `stepclass()`
+
+Pedimos una búsqueda en ambas direcciones (`forward` y `backward`) usando LDA como método de clasificación.
+
+```{r}
+step_result <- stepclass(
+  species ~ .,
+  data = penguin_data,
+  method = "lda",
+  direction = "both",
+  trace = FALSE
+)
+
+step_result  # muestra las variables añadidas/eliminadas en cada paso
+
+best_formula <- step_result$formula
+best_formula
+```
+
+## Modelo final y exactitud
+
+Entrenamos un LDA con la fórmula seleccionada y calculamos la proporción de aciertos sobre el mismo conjunto (solo a modo ilustrativo; en práctica separaríamos entrenamiento y prueba).
+
+```{r}
+lda_fit <- lda(best_formula, data = penguin_data)
+pred <- predict(lda_fit)$class
+
+table(Real = penguin_data$species, Predicho = pred)
+
+mean(pred == penguin_data$species)
+```
+
+## Comparando búsquedas adelante/atrás/ambas
+
+Corremos `stepclass()` con las tres estrategias y comparamos la fórmula elegida y la exactitud aparente (sobre el mismo conjunto; en práctica separaríamos entrenamiento/prueba).
+
+```{r}
+
+step_fwd <- stepclass(
+  species ~ .,
+  data = penguin_data,
+  method = "lda",
+  direction = "forward",
+  trace = FALSE
+)
+
+step_bwd <- stepclass(
+  species ~ .,
+  data = penguin_data,
+  method = "lda",
+  direction = "backward",
+  trace = FALSE
+)
+
+step_bth <- stepclass(
+  species ~ .,
+  data = penguin_data,
+  method = "lda",
+  direction = "both",
+  trace = FALSE
+)
+
+
+form_fwd  <- step_fwd$formula
+form_bwd  <- step_bwd$formula
+form_bth  <- step_bth$formula
+
+
+fit_fwd  <- lda(form_fwd,  data = penguin_data)
+fit_bwd  <- lda(form_bwd,  data = penguin_data)
+fit_bth  <- lda(form_bth,  data = penguin_data)
+
+
+acc_fwd  <- mean(predict(fit_fwd)$class  == penguin_data$species)
+acc_bwd  <- mean(predict(fit_bwd)$class  == penguin_data$species)
+acc_bth  <- mean(predict(fit_bth)$class == penguin_data$species)
+
+resultado <- tibble(
+  direccion = c("hacia adelante", "hacia atrás", "mixta"),
+  formula_final   = c(
+    paste(deparse(form_fwd), collapse = " "),
+    paste(deparse(form_bwd), collapse = " "),
+    paste(deparse(form_bth), collapse = " ")
+  ),
+  exactitud = c(acc_fwd, acc_bwd, acc_bth)
+)
+
+resultado
+```

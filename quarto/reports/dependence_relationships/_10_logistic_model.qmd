@@ -1,0 +1,225 @@
+# El modelo logístico
+
+En el método de regresión logística, buscamos clasificar las observaciones dadas en dos categorías (usualmente etiquetadas como 0 y 1) basándonos en una o más variables predictoras. A diferencia de la regresión lineal, que predice valores continuos, la regresión logística predice la probabilidad de que una observación pertenezca a una categoría específica. Una vez que hemos determinado estas probabilidades, podemos utilizar el teorema de clasificación de Bayes para asignar cada observación a la categoría más probable. Notemos que el objetivo principal de este método es similar al del Análisis Discriminante Lineal (LDA), pero la regresión logística no asume que las variables predictoras sigan una distribución normal, lo que la hace más flexible en ciertos contextos. En este capítulo estudiaremos las hipótesis estadísticas asociadas con este modelo, y su implementación.
+
+## La función logística y la función logit 
+
+Recordemos que la \emph{función logística} está definida como: 
+\begin{equation}
+  p = h(z) = \frac{1}{1 + e^{-z}} \label{eq:logistic_function}
+\end{equation}
+y proporciona una biyección entre los números reales y el intervalo (0, 1). Dado que las probabilidades de un evento siempre se encuentran en este intervalo, la función logística es ideal para modelar probabilidades.
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-cap: "Gráfica de la función logística. Notemos que esta función establece una biyección entre los números reales y el intervalo (0, 1), lo cual es ideal para modelar probabilidades."
+#| message: false
+
+# Definición de la función logística
+logistic_function <- function(z) {
+  1 / (1 + exp(-z))
+}
+
+# Ejemplo de uso de la función logística
+z_data <- seq(-10, 10, length.out = 100)
+p_data <- logistic_function(z_data)
+
+logistic_tbl <- tibble(
+  z = z_data,
+  p = p_data
+)
+
+logistic_plot <- logistic_tbl %>%
+  ggplot(aes(x = z, y = p)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = -5, y = 0.3,
+    label = TeX("$p = \\frac{1}{1 + e^{-z}}$"),
+    parse = TRUE,
+    size = 4,
+    color = c_pal("C blue")
+  ) +
+  labs(
+    title = "La función logística",
+    x = TeX("$z$"),
+    y = TeX("$p$")
+  ) +
+  theme_krul()
+
+
+suppressWarnings(print(logistic_plot))
+```
+Notemos que la expresión dada en la ecuación \eqref{eq:logistic_function} es invertible, por lo tanto podemos despejar $z$ en términos de $p$. Haciendo esto, obtenemos la \emph{función logit}, definida como: 
+\begin{equation}
+z = h^{-1}(p) = \log\left(\frac{p}{1-p}\right) \label{eq:logit_function} 
+\end{equation}
+La función logit transforma probabilidades (valores entre 0 y 1) en valores reales, lo que es útil para modelar relaciones lineales en el contexto de la regresión logística. 
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-cap: "Gráfica de la función logit. Notemos que esta función transforma probabilidades (valores entre 0 y 1) en valores reales." 
+# Definición de la función logit
+logit_function <- function(p) {
+  log(p / (1 - p))
+}
+
+# Ejemplo de uso de la función logit
+p_data_logit <- seq(0.01, 0.99, length.out = 100)
+z_data_logit <- logit_function(p_data_logit)
+logit_tbl <- tibble(
+  p = p_data_logit,
+  z = z_data_logit
+)
+
+logit_plot <- logit_tbl %>%
+  ggplot(aes(x = p, y = z)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = 0.7, y = 2,
+    label = TeX("$z = \\log\\left(\\frac{p}{1-p}\\right)$"),
+    parse = TRUE,
+    size = 4,
+    color = c_pal("C blue")
+  ) +
+  labs(
+    title = "La función logit",
+    x = TeX("$p$"),
+    y = TeX("$z$")
+  ) +
+  theme_krul()
+
+suppressWarnings(print(logit_plot))
+```
+
+## El clasificador logístico
+
+Ahora supongamos que tenemos una variable de respuesta $Y_{0}$ que puede tomar solamente dos valores. (Usualmente, estos valores son 0 y 1.) Supongamos además que la relación de esta variable con un vector de variables predictoras 
+$$
+X_{0} = \begin{bmatrix}
+X_{0\, 1} \\ 
+X_{0\, 2} \\ 
+\vdots \\
+X_{0\, p} 
+\end{bmatrix}
+$$
+está dada por la condición 
+$$
+Y_{0}|(X_{0} = x_{0}) \sim \text{Bernoulli}(p)
+$$ 
+donde $p = P(Y_{0} = 1 | X_{0} = x_{0})$. En el modelo de regresión logística, suponemos que el logit de $p$ depende linealmente de las variables predictoras, es decir,
+$$
+z = \log\left(\frac{p}{1-p}\right) = b_{0} + b_{1} x_{0\, 1} + b_{2} x_{0\, 2} + \cdots + b_{p} x_{0\, p}
+$$ 
+para algunos parámetros $b_{0}, b_{1}, \ldots, b_{p}$. Usando la función logística, podemos expresar $p$ en términos de las variables predictoras como 
+$$
+p = h(z) =  \frac{1}{1 + e^{-(b_{0} + b_{1} x_{0\, 1} + b_{2} x_{0\, 2} + \cdots + b_{p} x_{0\, p})}} 
+$$
+Notemos que el cociente 
+$$
+\frac{p}{1-p} = e^{b_{0} + b_{1} x_{0\, 1} + b_{2} x_{0\, 2} + \cdots + b_{p} x_{0\, p}} 
+$$ 
+conocido como la \emph{oportunidad} o \emph{momio} (también conocido como \emph{odds} en inglés) satisface la siguiente condición: por cada unidad que aumente la variable predictora $X_{0\, j}$ (manteniendo las demás variables constantes), la oportunidad se multiplica por un factor de $e^{b_{j}}$. Esta propiedad hace que la regresión logística sea especialmente útil para interpretar el impacto de cada variable predictora en la probabilidad del evento de interés.
+
+Para definir el \emph{clasificador logístico}, fijamos un umbral de probabilidad $\tau \in (0, 1)$. Entonces, asignamos una observación al grupo 1 si la probabilidad estimada $p$ es mayor o igual a $\tau$, y al grupo 0 en caso contrario. En la práctica, un valor comúnmente utilizado para $\tau$ es 0.5, lo que significa que asignamos una observación al grupo 1 si la probabilidad estimada de pertenecer a ese grupo es al menos del 50\%. Sin embargo, este umbral puede ajustarse según las necesidades específicas del análisis o las consecuencias de los errores de clasificación. Notemos además que en este caso, la frontera de decisión está dada por 
+$$ 
+\log \bigg(\frac{\tau}{1-\tau}\bigg) = 0 = b_{0} + b_{1} x_{0\, 1} + b_{2} x_{0\, 2} + \cdots + b_{p} x_{0\, p}
+$$
+
+Como ejemplo, consideremos el caso en el que tenemos dos variables predictoras ($p=2$) y los parámetros $b_{0} = 0$, $b_{1} = 4$ y $b_{2} = 4$. En este caso, la frontera de decisión para un umbral $\tau = 0.5$ está dada por la ecuación
+\begin{align*} 
+0 + 4 \cdot x_{0\, 1} + 4 \cdot x_{0\, 2} =  & 0 \\
+x_{0\, 2} = & - x_{0\, 1}
+\end{align*}
+Para visualizar esta frontera, podemos simular un conjunto de observaciones y clasificar cada punto con el modelo logístico. Usaremos $b_{0} = 0$, $b_{1} = b_{2} = 4$, $\tau = 0.5$ y generaremos 1,000 observaciones para $x_{1}$ y $x_{2}$ con distribución uniforme en $[-1, 1]$.
+```{r}
+#| fig-width: 7
+#| fig-height: 6
+#| fig-cap: "Muestra simulada con el clasificador logístico. Se usan 1,000 observaciones con $X_{0\\, 1}$ y $X_{0\\, 2}$ uniformes en $[-1, 1]$. La frontera de decisión $X_{0\\, 2} = -X_{0\\, 1}$ aparece en negro; y las regiones correspondientes aparecen sombreadas. Notemos que la clasificación no es perfecta, pero el número de errores decrece de manera exponencial a medida que nos alejamos de la frontera de decisión"
+
+set.seed(123)
+
+# Parámetros del modelo
+b0 <- 0
+b1 <- 4
+b2 <- 4
+tau <- 0.5
+
+# Muestra simulada
+sim_tbl <- tibble(
+  x1 = runif(1000, min = -1, max = 1),
+  x2 = runif(1000, min = -1, max = 1)
+) %>%
+  mutate(
+    z = b0 + b1 * x1 + b2 * x2,
+    p_hat = 1 / (1 + exp(-z)),
+    grupo = if_else(runif(n()) < p_hat, "Grupo 1", "Grupo 0")
+  )
+
+# Polígonos para sombrear regiones
+region_tbl <- tribble(
+  ~region,  ~x1, ~x2,
+  "Grupo 1", -1.5,  1.5,
+  "Grupo 1",  1.5, -1.5,
+  "Grupo 1",  1.5,  1.5,
+  "Grupo 0", -1.5, -1.5,
+  "Grupo 0",  1.5, -1.5,
+  "Grupo 0", -1.5,  1.5
+)
+
+ggplot() +
+  geom_polygon(
+    data = region_tbl,
+    aes(x = x1, y = x2, fill = region, group = region),
+    alpha = 0.5
+  ) +
+  geom_point(
+    data = sim_tbl,
+    aes(x = x1, y = x2, color = grupo),
+    alpha = 1,
+    size = 2
+  ) +
+  geom_abline(
+    intercept = 0,
+    slope = -1,
+    color = "black",
+    linewidth = 1
+  ) +
+  c_scale_color("C blue", "C green", name = "Grupo") +
+  c_scale_fill("C blue", "C green", name = "Región") +
+  coord_cartesian(xlim = c(-1, 1), ylim = c(-1, 1)) +
+  labs(
+    title = "Ejemplo del clasificador logístico",
+    x = TeX("$X_{0 \\, 1}$"),
+    y = TeX("$X_{0 \\, 2}$"),
+    fill = "Región",
+    color = "Observación"
+  ) +
+  theme_krul()
+```
+
+Notemos que la clasificación no es perfecta, sin embargo el número de errores decrece de manera exponencial a medida que nos alejamos de la frontera de decisión. Si calculamos la matriz de confusión para este clasificador logístico simulado, obtenemos:
+```{r}
+#| tbl-cap: "Matriz de confusión para el clasificador logístico simulado."
+#| echo: false
+
+confusion_tbl <- sim_tbl %>%
+  mutate(pred = if_else(p_hat >= tau, "Grupo 1", "Grupo 0")) %>%
+  count(grupo, pred, name = "n") %>%
+  pivot_wider(names_from = pred, values_from = n, values_fill = 0) %>%
+  rename(
+    `Verdadero \\textbackslash{} Predicción` = grupo
+  )
+
+knitr::kable(
+  confusion_tbl,
+  align = "ccc"
+)
+```
