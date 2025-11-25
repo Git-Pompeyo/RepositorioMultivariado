@@ -61,6 +61,7 @@ mean(pred == penguin_data$species)
 Corremos `stepclass()` con las tres estrategias y comparamos la fórmula elegida y la exactitud aparente (sobre el mismo conjunto; en práctica separaríamos entrenamiento/prueba).
 
 ```{r}
+library(MVN)
 
 step_fwd <- stepclass(
   species ~ .,
@@ -111,5 +112,11 @@ resultado <- tibble(
   exactitud = c(acc_fwd, acc_bwd, acc_bth)
 )
 
-resultado
+mardia_fwd <- mvn(
+data = penguin_data %>% dplyr::select(all_of(all.vars(form_fwd)[-1])),
+mvn_test = "mardia"
+)
+
+mardia_fwd
+
 ```
