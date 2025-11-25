@@ -682,6 +682,33 @@
       "Maintainer": "Georgi N. Boshnakov <georgi.boshnakov@manchester.ac.uk>",
       "Repository": "CRAN"
     },
+    "ResourceSelection": {
+      "Package": "ResourceSelection",
+      "Version": "0.3-6",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Resource Selection (Probability) Functions for Use-Availability Data",
+      "Date": "2023-06-27",
+      "Authors@R": "c( person(given = c(\"Subhash\", \"R.\"), family = \"Lele\", role = c(\"aut\")), person(given = c(\"Jonah\", \"L.\"), family = \"Keim\", role = c(\"aut\")), person(given = \"Peter\", family = \"Solymos\", email = \"psolymos@gmail.com\", comment = c(ORCID = \"0000-0001-7337-1740\"), role = c(\"aut\", \"cre\")))",
+      "Maintainer": "Peter Solymos <psolymos@gmail.com>",
+      "Description": "Resource Selection (Probability) Functions for use-availability wildlife data based on weighted distributions as described in Lele and Keim (2006) <doi:10.1890/0012-9658(2006)87%5B3021:WDAEOR%5D2.0.CO;2>, Lele (2009) <doi:10.2193/2007-535>, and Solymos & Lele (2016) <doi:10.1111/2041-210X.12432>.",
+      "Depends": [
+        "R (>= 2.13.0)"
+      ],
+      "Imports": [
+        "MASS",
+        "pbapply",
+        "Matrix"
+      ],
+      "URL": "https://github.com/psolymos/ResourceSelection",
+      "BugReports": "https://github.com/psolymos/ResourceSelection/issues",
+      "License": "GPL-2",
+      "LazyLoad": "yes",
+      "LazyData": "true",
+      "NeedsCompilation": "no",
+      "Author": "Subhash R. Lele [aut], Jonah L. Keim [aut], Peter Solymos [aut, cre] (<https://orcid.org/0000-0001-7337-1740>)",
+      "Repository": "CRAN"
+    },
     "S7": {
       "Package": "S7",
       "Version": "0.2.0",
@@ -4807,6 +4834,27 @@
       "NeedsCompilation": "no",
       "Repository": "CRAN"
     },
+    "mlbench": {
+      "Package": "mlbench",
+      "Version": "2.1-6",
+      "Source": "Repository",
+      "Title": "Machine Learning Benchmark Problems",
+      "Date": "2024-12-30",
+      "Authors@R": "c(person(\"Friedrich\", \"Leisch\", role = \"aut\", comment = c(ORCID = \"0000-0001-7278-1983\", \"maintainer up to 2024\")), person(\"Evgenia\", \"Dimitriadou\", role = \"aut\"), person(\"Kurt\", \"Hornik\", role = \"cre\", email = \"Kurt.Hornik@R-project.org\", comment = c(ORCID = \"0000-0003-4198-9911\")))",
+      "Description": "A collection of artificial and real-world machine learning benchmark problems, including, e.g., several data sets from the UCI repository.",
+      "Depends": [
+        "R (>= 2.10)"
+      ],
+      "License": "GPL-2",
+      "Suggests": [
+        "lattice"
+      ],
+      "ZipData": "No",
+      "NeedsCompilation": "yes",
+      "Author": "Friedrich Leisch [aut] (<https://orcid.org/0000-0001-7278-1983>, maintainer up to 2024), Evgenia Dimitriadou [aut], Kurt Hornik [cre] (<https://orcid.org/0000-0003-4198-9911>)",
+      "Maintainer": "Kurt Hornik <Kurt.Hornik@R-project.org>",
+      "Repository": "CRAN"
+    },
     "mnormt": {
       "Package": "mnormt",
       "Version": "2.1.1",
@@ -5192,6 +5240,34 @@
       "Config/Needs/website": "gifski",
       "NeedsCompilation": "no",
       "Author": "Thomas Lin Pedersen [cre, aut] (ORCID: <https://orcid.org/0000-0002-5147-4711>)",
+      "Repository": "CRAN"
+    },
+    "pbapply": {
+      "Package": "pbapply",
+      "Version": "1.7-4",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Adding Progress Bar to '*apply' Functions",
+      "Date": "2025-07-19",
+      "Authors@R": "c(person(given = \"Peter\", family = \"Solymos\", comment = c(ORCID = \"0000-0001-7337-1740\"), role = c(\"aut\", \"cre\"), email = \"psolymos@gmail.com\"), person(given = \"Zygmunt\", family = \"Zawadzki\", role = \"aut\", email = \"zygmunt@zstat.pl\"), person(given = \"Henrik\",  family = \"Bengtsson\",  role = \"ctb\", email = \"henrikb@braju.com\"), person(\"R Core Team\", role = c(\"cph\", \"ctb\")))",
+      "Maintainer": "Peter Solymos <psolymos@gmail.com>",
+      "Description": "A lightweight package that adds progress bar to vectorized R functions ('*apply'). The implementation can easily be added to functions where showing the progress is useful (e.g. bootstrap). The type and style of the progress bar (with percentages or remaining time) can be set through options. Supports several parallel processing backends including mirai and future.",
+      "Depends": [
+        "R (>= 3.2.0)"
+      ],
+      "Imports": [
+        "parallel"
+      ],
+      "Suggests": [
+        "shiny",
+        "future",
+        "future.apply"
+      ],
+      "License": "GPL (>= 2)",
+      "URL": "https://github.com/psolymos/pbapply, https://peter.solymos.org/pbapply/",
+      "BugReports": "https://github.com/psolymos/pbapply/issues",
+      "NeedsCompilation": "no",
+      "Author": "Peter Solymos [aut, cre] (ORCID: <https://orcid.org/0000-0001-7337-1740>), Zygmunt Zawadzki [aut], Henrik Bengtsson [ctb], R Core Team [cph, ctb]",
       "Repository": "CRAN"
     },
     "pbivnorm": {

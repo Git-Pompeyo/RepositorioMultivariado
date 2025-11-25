@@ -58,7 +58,7 @@ format:
 \pagenumbering{arabic}
 
 
-\part{Análisis de Regresión Lineal}
+\part{Regresión Lineal}
 
 {{< include _1_least_squares_fitting.qmd >}}
 {{< include _2_regression_intervals.qmd >}}
@@ -67,9 +67,10 @@ format:
 \part{Análisis Discriminante Lineal}
 
 {{< include _7_gaussian_discriminant_model.qmd >}}
-{{< include _8_gaussian_discriminant_model_fit_adecuacy.qmd >}}
+{{< include _8_gaussian_discriminant_model_fit_adequacy.qmd >}}
 {{< include _9_stepwise_lda.qmd >}}
 
 \part{Regresión Logística}
 
 {{< include _10_logistic_model.qmd >}}
+{{< include _11_logistic_model_fit_adequacy.qmd >}}

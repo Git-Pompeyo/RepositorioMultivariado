@@ -1,0 +1,48 @@
+# Ajuste y adecuación del modelo de regresión logística
+
+Recordemos que el modelo de regresión logística asume que la variable de respuesta $Y_{0}$ está relacionada con el vector de variables explicativas $X_{0} = (X_{0\, 1}, X_{0\, 2}, \ldots, X_{0\, p})$ a través de la siguiente distribución condicional:
+$$
+Y_{0} | (X_{0} = x_{0}) \sim \text{Bernoulli}(p_{0}),
+$$
+donde 
+$$
+\text{logit}(p_{0}) = b_{0} + b_{1} x_{0\, 1} + b_{2} x_{0\, 2} + \cdots + b_{p} x_{0\, p},
+$$
+para algunos parámetros $b_{0}, b_{1}, \ldots, b_{p}$. En este capítulo estudiaremos el problema de ajustar este modelo a un conjunto de datos y verificar su adecuación. Notemos que una vez que disponemos de un modelo ajustado y verificado, podemos utilizarlo para predecir la probabilidad de que $Y_{0} = 1$ dado un valor específico de $X_{0} = x_{0}$. A partir de esta información, podemos utilizar el clasificador de Bayes para asignar una clase a la observación $X_{0} = x_{0}$, lo cual es una de las aplicaciones principales de la regresión logística.
+
+## Ajuste del modelo de regresión logística
+
+Para el ajuste del modelo de regresión logística, utilizamos el método de máxima verosimilitud. Supongamos que disponemos de un conjunto de datos $\{(x_{i}, y_{i})\}_{i=1}^{n}$, donde $x_{i} = (x_{i\, 1}, x_{i\, 2}, \ldots, x_{i\, p})$ es el vector de variables explicativas para la $i$-ésima observación y $y_{i} \in \{0, 1\}$ es la variable de respuesta correspondiente. La función de verosimilitud para este conjunto de datos es: 
+$$ 
+L(b_{0}, b_{1}, \ldots, b_{p}) = \prod_{i=1}^{n} p_{i}^{y_{i}} (1 - p_{i})^{1 - y_{i}}, 
+$$ 
+donde 
+$$ 
+p_{i} =  \frac{e^{b_{0} + b{1} x_{i\, 1} + \cdots + b_{p} x_{i\, p}}}{1 + e^{b_{0} + b{1} x_{i\, 1} + \cdots + b_{p} x_{i\, p}}}. 
+$$ 
+Para encontrar los estimadores de máxima verosimilitud $\hat{b}_{0}, \hat{b}_{1}, \ldots, \hat{b}_{p}$, maximizamos la función de verosimilitud o, de manera equivalente, la log-verosimilitud: 
+$$ 
+\ell(b_{0}, b_{1}, \ldots, b_{p}) = \sum_{i=1}^{n} \left[ y_{i} \log(p_{i}) + (1 - y_{i}) \log(1 - p_{i}) \right]. 
+$$ 
+Notemos que si tomamos la derivada de la log-verosimilitud con respecto a cada uno de los parámetros y la igualamos a cero, obtenemos un sistema de ecuaciones no lineales que generalmente no tiene una solución analítica cerrada. Por lo tanto, es necesario utilizar métodos numéricos para encontrar los estimadores de máxima verosimilitud. El algoritmo numérico específico depende del paquete computacional que estemos utilizando. En R, por ejemplo, podemos utilizar la función \texttt{glm()} con el argumento \texttt{family = binomial} para ajustar un modelo de regresión logística utilizando el algoritmo de Newton-Raphson. En Python, podemos utilizar la clase \texttt{LogisticRegression} del paquete \texttt{scikit-learn}, que implementa el algoritmo de optimización basado en gradiente descendente. 
+
+## Adecuación del modelo de regresión logística 
+
+Una vez que hemos ajustado el modelo de regresión logística a nuestro conjunto de datos, es importante verificar la adecuación del modelo. Existen varias técnicas para evaluar la adecuación del modelo, entre las cuales destacan las siguientes: 
+
+### Prueba de razón de verosimilitudes 
+Una forma común de evaluar la adecuación del modelo es mediante la prueba de razón de verosimilitudes. Esta prueba compara el modelo ajustado con un modelo nulo que no incluye ninguna variable explicativa. La estadística de la prueba se define como: 
+$$ 
+G = -2 \left[ \ell(\text{modelo nulo}) - \ell(\text{modelo ajustado}) \right], 
+$$ 
+donde $\ell(\text{modelo nulo})$ es la log-verosimilitud del modelo nulo y $\ell(\text{modelo ajustado})$ es la log-verosimilitud del modelo ajustado. Bajo la hipótesis nula de que el modelo ajustado no mejora significativamente el ajuste en comparación con el modelo nulo, la estadística $G$ sigue una distribución chi-cuadrado con $p$ grados de libertad, donde $p$ es el número de variables explicativas en el modelo ajustado. Si el valor $p$ asociado a la estadística $G$ es menor que un nivel de significancia predefinido (por ejemplo, 0.05), rechazamos la hipótesis nula y concluimos que el modelo ajustado proporciona un mejor ajuste que el modelo nulo.
+
+### Análisis de residuos 
+
+Otra técnica para evaluar la adecuación del modelo es el análisis de residuos. En el contexto de la regresión logística, los residuos pueden definirse como la diferencia entre las observaciones reales y las probabilidades predichas por el modelo. Podemos analizar los residuos para detectar patrones sistemáticos que puedan indicar un mal ajuste del modelo. Por ejemplo, podemos graficar los residuos contra las probabilidades predichas o contra cada una de las variables explicativas para identificar posibles tendencias o heterocedasticidad. Además, podemos utilizar pruebas estadísticas, como la prueba de Hosmer-Lemeshow, para evaluar la adecuación del modelo basándonos en los residuos. 
+
+### Curvas ROC y AUC 
+
+Las curvas ROC (Receiver Operating Characteristic) y el área bajo la curva (AUC, Area Under the Curve) son herramientas útiles para evaluar el desempeño del modelo de regresión logística en términos de clasificación. La curva ROC representa la relación entre la tasa de verdaderos positivos (sensibilidad) y la tasa de falsos positivos (1 - especificidad) para diferentes umbrales de clasificación. El AUC proporciona una medida cuantitativa del desempeño del modelo, donde un valor de AUC cercano a 1 indica un buen desempeño, mientras que un valor cercano a 0.5 indica un desempeño similar al azar. Podemos utilizar estas métricas para comparar diferentes modelos de regresión logística y seleccionar el que mejor se ajuste a nuestros datos.
+
+
