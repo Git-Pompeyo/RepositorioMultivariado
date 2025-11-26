@@ -4,7 +4,9 @@ Recordemos que el modelo de regresión logística asume que la variable de respu
 Y_{0} | (X_{0} = x_{0}) \sim \text{Bernoulli}(p_{0}),
 $$ donde $$
 \text{logit}(p_{0}) = b_{0} + b_{1} x_{0\, 1} + b_{2} x_{0\, 2} + \cdots + b_{p} x_{0\, p}
-$$ para algunos parámetros $b_{0}, b_{1}, \ldots, b_{p}$. En estas notas mostraremos como podemos realizar el ajuste y verificar la adecuación de un modelo de regresión logística usando el conjunto de datos `PimaIndiansDiabetes` de la librería `mlbench`
+$$ para algunos parámetros $b_{0}, b_{1}, \ldots, b_{p}$.
+
+En estas notas mostraremos como podemos realizar el ajuste y verificar la adecuación de un modelo de regresión logística usando el conjunto de datos `PimaIndiansDiabetes` de la librería `mlbench`
 
 ## Ajuste del modelo
 
@@ -21,9 +23,6 @@ PID_logistic_model <- glm(
   data = PID_tbl,
   family = binomial
 )
-
-summary(model)
-
 
 summary(PID_logistic_model)
 ```
