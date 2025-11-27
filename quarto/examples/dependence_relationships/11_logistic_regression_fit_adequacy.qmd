@@ -13,10 +13,17 @@ En estas notas mostraremos como podemos realizar el ajuste y verificar la adecua
 Para ajustar el modelo utilizaremos la función `glm` (*generalized linear model*) con el argumento `family = binomial` como se muestra a continuación:
 
 ```{r}
+library(tidyverse)
+library(MASS)
+library(ResourceSelection)
+library(caret)
+library(pROC)
 library(mlbench)
+library(krulRutils)
 data(PimaIndiansDiabetes)
 
-PID_tbl <- PimaIndiansDiabetes
+PID_tbl <- PimaIndiansDiabetes %>% 
+  mutate(diabetes = if_else(diabetes=="pos", 1, 0))  # numeric response
 
 PID_logistic_model <- glm(
   diabetes ~ glucose + mass + age + pressure,
@@ -42,14 +49,65 @@ anova(PID_logistic_model, test = "Chisq")
 
 ### Bondad de ajuste: Prueba de Hosmer-Lemeshow
 
+Para esta prueba usamos la función `hoslem.test` para comparar los resultados obtenidos contra las probabilidades calculadas.
+
 ```{r}
-library(ResourceSelection)
 
-library(ResourceSelection)
+diabetes_data <- PID_tbl %>%
+  pull(diabetes)
 
-# Convert to numeric 0/1
-y_num <- ifelse(PID_tbl$diabetes == "pos", 1, 0)
+hoslem.test(diabetes_data, fitted(PID_logistic_model))
 
-hoslem.test(y_num, fitted(PID_logistic_model))
+```
+
+### Matriz de confusión
+
+```{r}
+
+PID_tbl <- PID_tbl %>%
+  mutate(
+    p_hat = fitted(PID_logistic_model),
+    pred = if_else(p_hat >= 0.5, 1, 0)
+  )
+
+diabetes_pred <- PID_tbl %>%
+  pull(pred)
+
+diabetes_prob <- PID_tbl %>%
+  pull(p_hat)
+
+confusionMatrix(
+  factor(diabetes_pred),
+  factor(diabetes_data),
+  positive = "1"
+)
+```
+
+### Curvas ROC y AUC
+
+```{r}
+roc_obj <- roc(diabetes_data, diabetes_prob)
+
+roc_tbl <- tibble(
+  fpr = 1 - roc_obj$specificities,     # false positive rate
+  sensitivity = roc_obj$sensitivities  # true positive rate
+)
+
+auc_value <- auc(roc_obj)
+
+ggplot(roc_tbl, aes(x = fpr, y = sensitivity)) +
+  geom_line(color = c_pal("C blue"), linewidth = 1.3) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype = "dashed", linewidth = 0.8, color = "black") +
+  annotate("text", x = 0.65, y = 0.1,
+           label = paste("AUC =", round(auc_value, 3)),
+           size = 5) +
+  labs(
+    title = "Curva ROC",
+    x = "Proporción de Falsos Positivos (1- Specificidad)",
+    y = "Proporción de Verdaderos Positivos (Sensitividad)"
+  ) +
+  theme_krul()
+auc(roc_obj)
 
 ```
