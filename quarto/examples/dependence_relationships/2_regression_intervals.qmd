@@ -404,6 +404,4 @@ sample_data_plot <- sample_data_tbl %>%
   theme_minimal()
 
 sample_data_plot
-
-
 ```
