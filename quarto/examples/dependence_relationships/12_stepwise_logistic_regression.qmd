@@ -132,14 +132,22 @@ ggplot(roc_step_tbl, aes(x = fpr, y = sensitivity)) +
     y = "Proporción de Verdaderos Positivos (Sensitividad)"
   ) +
   theme_krul()
-
 ```
 
 ```{r}
-library(mlbench)
-data("AutoMPG")
+library(tidyverse)
 
-AutoMPG |> dplyr::as_tibble()
-save_csv(here("data", "auto.csv"))
+url <- "https://github.com/Krul-dev/MA2003B_ESP/raw/trunk/data/auto-mpg.csv"
+
+auto_tbl <- read_csv(url)
+
+auto_tbl <- auto_tbl |>
+  mutate(
+    cylinders = as.factor(cylinders)
+  )
+
+
+auto_tbl$cylinders
+
 
 ```
