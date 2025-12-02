@@ -134,3 +134,12 @@ ggplot(roc_step_tbl, aes(x = fpr, y = sensitivity)) +
   theme_krul()
 
 ```
+
+```{r}
+library(mlbench)
+data("AutoMPG")
+
+AutoMPG |> dplyr::as_tibble()
+save_csv(here("data", "auto.csv"))
+
+```
