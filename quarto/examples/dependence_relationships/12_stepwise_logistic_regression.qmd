@@ -137,17 +137,11 @@ ggplot(roc_step_tbl, aes(x = fpr, y = sensitivity)) +
 ```{r}
 library(tidyverse)
 
-url <- "https://github.com/Krul-dev/MA2003B_ESP/raw/trunk/data/auto-mpg.csv"
+url <- "https://github.com/Krul-dev/MA2003B_ESP/raw/trunk/data/datos_lft.csv"
 
-auto_tbl <- read_csv(url)
+lft_tbl <- read_csv(url)
 
-auto_tbl <- auto_tbl |>
-  mutate(
-    cylinders = as.factor(cylinders)
-  )
-
-
-auto_tbl$cylinders
+lft_tbl
 
 
 ```
