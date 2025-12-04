@@ -2,13 +2,31 @@
 lang: es
 format:
    pdf:
-     documentclass: book
-     classoption: [openright,twoside]
+     documentclass: article
+     classoption: [twoside]
      fontsize: 11pt
-     include-in-header: _header.tex
      pdf-engine: pdflatex
      number-sections: true
+     include-in-header:
+       - "_header.tex"
+       - text: |
+           \fancypagestyle{multivariate_notes}{
+             \fancyhf{}
+             % Even pages (Left side)
+             \fancyhead[RE]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{Equipo 1. Análisis Multivariado}}
+             \fancyhead[LE]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
+             % Odd pages (Right side)
+             \fancyhead[RO]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
+             \fancyhead[LO]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{Etapa 1. Conociendo el negocio}}
+             % Footer
+             \rfoot{}
+             \cfoot{\thepage}
+             \lfoot{}
+             \setlength{\headsep}{10pt}
+           }
+           \pagestyle{multivariate_notes}
 ---
+
 \pagenumbering{gobble}
 
 \thispagestyle{empty}
@@ -18,21 +36,20 @@ format:
 
 \vspace{2cm}
 
-\LARGE \textbf{MA2003B Aplicación de Métodos Multivariados \\ en Ciencia de Datos} \par
+\LARGE \textbf{Grupo 1. Análisis Estadístico Multivariado} \par
 \vspace{1cm}
 
 
-\Large \textbf{Módulo 2: Relaciones de Dependencia} \par
+\Large \textbf{Etapa 1. Conociendo el negocio} \par
 
-\vspace{7cm}
+\vspace{2cm}
 
 
 \large 
 
 \begin{tabular}{rl}
-\textbf{Profesor:} & Raul Gomez \\
-\textbf{Correo:} & \url{rgomez@tec.mx} \\
-\textbf{Oficina:} & A4-123A \\
+ Raúl Gómez Muñoz & L0XXXXXXX \\
+ Blanca Ruiz Hernández & L0XXXXXXX \\
 \end{tabular}
 \par
 
@@ -58,19 +75,5 @@ format:
 \pagenumbering{arabic}
 
 
-\part{Regresión Lineal}
 
-{{< include _1_least_squares_fitting.qmd >}}
-{{< include _2_regression_intervals.qmd >}}
-{{< include _3_likelihood_significance.qmd >}}
-
-\part{Análisis Discriminante Lineal}
-
-{{< include _7_gaussian_discriminant_model.qmd >}}
-{{< include _8_gaussian_discriminant_model_fit_adequacy.qmd >}}
-{{< include _9_stepwise_lda.qmd >}}
-
-\part{Regresión Logística}
-
-{{< include _10_logistic_model.qmd >}}
-{{< include _11_logistic_model_fit_adequacy.qmd >}}
+{{< include _1_first_section.qmd >}}
