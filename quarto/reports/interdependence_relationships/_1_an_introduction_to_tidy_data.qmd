@@ -1,13 +1,13 @@
-# Introducción al Tidyverse 
+# Estructura y organización de datos 
 
-El Tidyverse es una colección de paquetes de R diseñados para la ciencia de datos. Proporciona una interfaz coherente y amigable para la manipulación, visualización y análisis de datos. Aunque se introdujo formalmente como ecosistema en 2016, muchos de estos paquetes fueron desarrollados por Hadley Wickham entre 2007 y 2014.
+Todo proyecto de ciencia de datos debe comenzar con la adquisición y organización de los datos requeridos. La forma en la que estos datos se estructuran y presentan puede tener un impacto significativo en la calidad del análisis que se desea desarrollar. En esta sección introduciremos los conceptos fundamentales del Tidyverse, un conjunto de herramientas en R que facilita la manipulación y visualización de nuestros datos siguiendo principios específicos de organización \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
 
 ## Datos ordenados
 
-La idea central detrás del diseño del Tidyverse es la definición de "datos ordenados" de Wickham \cite{wickham2014tidydata}.
+La idea central detrás del diseño del Tidyverse es la definición de "datos ordenados" \cite{wickham2014tidydata}:
 
 \begin{definition}
-\emph{Datos ordenados} es una forma de estructurar conjuntos de datos para facilitar su uso. En datos ordenados:
+\emph{Datos ordenados} es una forma de estructurar un conjunto de datos para facilitar su uso. En datos ordenados:
 
 \begin{enumerate}
   \item Cada variable forma una columna.
@@ -15,13 +15,13 @@ La idea central detrás del diseño del Tidyverse es la definición de "datos or
   \item Cada tipo de unidad observacional forma una tabla.
 \end{enumerate}
 
-Esta estructura facilita la manipulación, el análisis y la visualización de datos, ya que se alinea con la forma en que los datos se procesan típicamente en R. En esta sección describiremos los conceptos básicos del Tidyverse; para más información sobre su uso, el lector interesado puede consultar: \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
+Esta estructura facilita la manipulación, el análisis y la visualización de datos, ya que se alinea con la forma en que los datos se procesan típicamente en R. 
 
 \end{definition}
 
 ### Tibbles y pipes
 
-En el Tidyverse, los datos suelen representarse mediante un tipo especial de data frame llamado \emph{tibble}. Los tibbles son más amigables que los data frames tradicionales, pues ofrecen mejor impresión y comportamiento de subconjuntos. Además, están diseñados para trabajar de forma fluida con el operador pipe (`%>%`), que permite encadenar múltiples operaciones (conocidas como "verbos" en el contexto del Tidyverse) de manera clara y concisa. Para ilustrar estas ideas, en la siguiente sección realizaremos la limpieza del conjunto de datos de la OMS ("WHO"), para asegurar que el tibble asociado cumpla los principios de datos ordenados. Esto suele ser el primer paso del Análisis Exploratorio de Datos (EDA) y es crucial para garantizar que los datos estén en un formato adecuado para su análisis y visualización.
+En el Tidyverse, los datos suelen representarse mediante un tipo especial de data frame llamado \emph{tibble}. Los tibbles son más amigables que los data frames tradicionales, pues ofrecen una mejor impresión y manejo de subconjuntos de nuestros datos. Además, están diseñados para trabajar de forma fluida con el operador pipe (`|>`), que permite encadenar múltiples operaciones (conocidas como "verbos" en el contexto del Tidyverse) de manera clara y concisa. Para ilustrar estas ideas, en la siguiente sección realizaremos la limpieza del conjunto de datos de la OMS ("WHO"), para asegurar que el tibble asociado cumpla los principios de datos ordenados. Esto suele ser el primer paso del Análisis Exploratorio de Datos (EDA) y es crucial para garantizar que los datos estén en un formato adecuado para su análisis y visualización.
 
 ### Ejemplo: Ordenando el conjunto de datos de la OMS
 

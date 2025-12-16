@@ -11,7 +11,7 @@ format:
 ---
 \pagenumbering{gobble}
 
-\thispagestyle{empty}
+\pagestyle{empty}
 
 \begin{center}
 \includegraphics[height=3cm]{tecnologico-de-monterrey-blue}
@@ -44,23 +44,21 @@ format:
 
 \newpage
 
-\thispagestyle{empty}
 
 \mbox{}
 \vfill
 
 \newpage
 
-
-
 \tableofcontents
 
+
+\part{Introducción al análisis multivariado}
+
+\pagestyle{multivariate_notes}
 \pagenumbering{arabic}
 
-
-\part{Pruebas de Normalidad Univariada}
-
-{{< include _1_an_introduction_to_the_tidyverse.qmd >}}
+{{< include _1_an_introduction_to_tidy_data.qmd >}}
 {{< include _2_the_standardized_moments.qmd >}}
 {{< include _3_normality_testing.qmd >}}
 

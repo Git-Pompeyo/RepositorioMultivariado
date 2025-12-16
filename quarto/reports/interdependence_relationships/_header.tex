@@ -88,29 +88,52 @@
 
 
 % Define a custom style for all normal pages
+\makeatletter
+
+% Remember the current part header text
+\newcommand{\CurrentPartHeader}{}
+
+% Patch \part to store the title
+\let\OldPart\part
+\renewcommand{\part}[1]{%
+  \gdef\CurrentPartHeader{\thepart.~#1}%
+  \OldPart{#1}%
+}
+
+% Chapter -> leftmark (for odd pages)
+\renewcommand{\chaptermark}[1]{%
+  \markboth{\thechapter.~#1}{}%
+}
+
+% Stop sections/subsections from overwriting marks
+\renewcommand{\sectionmark}[1]{}
+\renewcommand{\subsectionmark}[1]{}
+
+\makeatother
+
 \fancypagestyle{multivariate_notes}{%
   \fancyhf{}
-  % Even pages (Left side)
-  \fancyhead[LO]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{MA2003B.M1}}
-  \fancyhead[RO]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
-  % Odd pages (Right side)
+
+  % EVEN pages (left-hand): PART title
   \fancyhead[LE]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
-  \fancyhead[RE]{\rule[0ex]{0pt}{0ex} \LARGE \textbf{MA2003B.M1}}
-  % Footer
-  \rfoot{}
-  \cfoot{\thepage}
-  \lfoot{}
+  \fancyhead[RE]{\rule[0ex]{0pt}{0ex}\LARGE\textbf{\CurrentPartHeader}}
+
+  % ODD pages (right-hand): CHAPTER title
+  \fancyhead[LO]{\rule[0ex]{0pt}{0ex}\LARGE\textbf{\leftmark}}
+  \fancyhead[RO]{\includegraphics[height=1cm]{tecnologico-de-monterrey-blue}}
+
+  \fancyfoot[C]{\thepage}
   \setlength{\headsep}{10pt}
 }
 
 % Redefine the 'plain' style (used by first page of chapters) to have no header
 \fancypagestyle{plain}{%
   \fancyhf{}
-  \cfoot{\thepage} % Keep page number centered in footer
+  \cfoot{\thepage}
   \renewcommand{\headrulewidth}{0pt}
 }
 
-% Apply your custom style to all normal pages
+% Apply custom style to all normal pages
 \pagestyle{multivariate_notes}
 
 
