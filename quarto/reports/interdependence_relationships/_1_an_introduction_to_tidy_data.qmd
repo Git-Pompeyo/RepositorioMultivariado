@@ -1,10 +1,10 @@
 # Estructura y organización de datos 
 
-Todo proyecto de ciencia de datos debe comenzar con la adquisición y organización de los datos requeridos. La forma en la que estos datos se estructuran y presentan puede tener un impacto significativo en la calidad del análisis que se desea desarrollar. En esta sección introduciremos los conceptos fundamentales del Tidyverse, un conjunto de herramientas en R que facilita la manipulación y visualización de nuestros datos siguiendo principios específicos de organización \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
+Todo proyecto de ciencia de datos debe comenzar con la adquisición y organización de los conjuntos de datos requeridos. La forma en la que esta información se estructura y organiza puede tener un impacto significativo en la calidad del análisis que se desea desarrollar. En esta sección introduciremos los conceptos fundamentales del Tidyverse, un conjunto de herramientas en R que facilita la manipulación y visualización de nuestros datos siguiendo principios específicos de estructura y organización \cite{wickham2017r4ds,  wickham2019purrr, wickham2019tidyverse}.
 
 ## Datos ordenados
 
-La idea central detrás del diseño del Tidyverse es la definición de "datos ordenados" \cite{wickham2014tidydata}:
+La idea central detrás del diseño del Tidyverse es la definición de datos ordenados \cite{wickham2014tidydata}:
 
 \begin{definition}
 \emph{Datos ordenados} es una forma de estructurar un conjunto de datos para facilitar su uso. En datos ordenados:
@@ -15,35 +15,41 @@ La idea central detrás del diseño del Tidyverse es la definición de "datos or
   \item Cada tipo de unidad observacional forma una tabla.
 \end{enumerate}
 
-Esta estructura facilita la manipulación, el análisis y la visualización de datos, ya que se alinea con la forma en que los datos se procesan típicamente en R. 
-
 \end{definition}
+
+Esta estructura facilita la manipulación, análisis y visualización de nuestra información, ya que se alinea con la forma en la que los datos se procesan típicamente en R.
 
 ### Tibbles y pipes
 
-En el Tidyverse, los datos suelen representarse mediante un tipo especial de data frame llamado \emph{tibble}. Los tibbles son más amigables que los data frames tradicionales, pues ofrecen una mejor impresión y manejo de subconjuntos de nuestros datos. Además, están diseñados para trabajar de forma fluida con el operador pipe (`|>`), que permite encadenar múltiples operaciones (conocidas como "verbos" en el contexto del Tidyverse) de manera clara y concisa. Para ilustrar estas ideas, en la siguiente sección realizaremos la limpieza del conjunto de datos de la OMS ("WHO"), para asegurar que el tibble asociado cumpla los principios de datos ordenados. Esto suele ser el primer paso del Análisis Exploratorio de Datos (EDA) y es crucial para garantizar que los datos estén en un formato adecuado para su análisis y visualización.
+En el Tidyverse, los datos suelen representarse mediante un tipo especial de data frame llamado \emph{tibble}. Los tibbles son más amigables que los data frames tradicionales, ya que ofrecen una mejor impresión y manejo de subconjuntos de datos. Además, están diseñados para trabajar de manera fluida con el operador pipe (ya sea `|>` o bien `%>%`), que permite encadenar múltiples operaciones (conocidas como "verbos" en el contexto del Tidyverse) de manera clara y concisa. Para ilustrar estas ideas, en la siguiente sección realizaremos la limpieza del conjunto de datos `who` de la OMS, lo que nos permitirá generar un tibble que contenga esta información y que cumpla con los principios de datos ordenados. Este suele ser el primer paso en el Análisis Exploratorio de Datos (EDA) y es crucial para garantizar que los datos estén en un formato adecuado para su análisis y visualización.
 
-### Ejemplo: Ordenando el conjunto de datos de la OMS
+### Ejemplo: Ordenando el conjunto de datos `who`
 
-Antes de comenzar, debemos cargar las librerías necesarias y el conjunto de datos de la OMS: 
+Antes de comenzar, debemos cargar las librerías necesarias y el conjunto de datos `who`: 
 ```{r}
 #| output: false
-library("tidyverse")
-library("here")
-library("cowplot")
-library("patchwork")
-library("krulRutils")
-library("ISLR2")
-library("magrittr")
+library(tidyverse)
+library(here)
+library(patchwork)
+library(krulRutils)
+library(ISLR2)
+library(magrittr)
+library(kableExtra)
 
 options(scipen = 999) # Desactivar notación científica
 data(who)
 ``` 
-Ahora podemos iniciar nuestro proceso de "ordenamiento". El principal problema de este conjunto es que contiene variables (como "new_sp_m014") que no son muy claras y que incluyen más de una pieza de información. Por ello necesitamos separar estas variables e introducir mejores nombres para ellas y sus valores asociados. 
+Ahora podemos iniciar nuestro proceso de ordenamiento. El problema principal de este conjunto es que contiene variables (como "new_sp_m014") que no son muy claras y que incluyen más de una unidad de información.
+```{r}
+who |>
+  glimpse()
+```
+
+Es por eso que necesitamos separar estas variables e introducir nombres más claros para ellas y para sus valores asociados. 
 ```{r}
 # Empezamos creando la variable "who_tidy"
 # que contiene el conjunto de datos de la OMS ya limpio
-who_tidy <- who %>%
+who_tidy <- who |>
   # Usamos pivot_longer para eliminar las variables que empiezan con "new"
   # y usarlas como valores en su lugar
   pivot_longer(
@@ -51,7 +57,7 @@ who_tidy <- who %>%
     names_to = "key",
     values_to = "cases",
     values_drop_na = TRUE
-  ) %>%
+  ) |>
   mutate(
     key = if_else(
       startsWith(key, "newrel"),
@@ -59,13 +65,13 @@ who_tidy <- who %>%
       key
     ),
     cases = as.integer(cases)
-  ) %>%
-  separate(key, into = c("new", "type", "sexage"), sep = "_") %>%
-  separate(sexage, into = c("sex", "age"), sep = 1) %>%
+  ) |>
+  separate(key, into = c("new", "type", "sexage"), sep = "_") |>
+  separate(sexage, into = c("sex", "age"), sep = 1) |>
   select(-new, -iso2, -iso3) %T>%
   # Finalmente, guardamos los datos ordenados en formato RDS y CSV
-  saveRDS(here("data", "who_tidy.rds")) %>%
-  write_csv(here("data", "who_tidy.csv")) %>%
+  saveRDS(here("data", "who_tidy.rds")) |>
+  write_csv(here("data", "who_tidy.csv")) |>
   glimpse()
 ```
 Ahora queremos convertir las columnas "type", "sex" y "age" en factores. Empezamos construyendo las siguientes tablas de correspondencia:
@@ -73,10 +79,10 @@ Ahora queremos convertir las columnas "type", "sex" y "age" en factores. Empezam
 who_type_lookup_tbl <- tibble(
   code = c("ep", "rel", "sn", "sp"),
   label = c(
-    "Tuberculosis extrapulmonar",
+    "TB extrapulmonar",
     "Caso de recaída",
-    "Tuberculosis pulmonar baciloscopía negativa",
-    "Tuberculosis pulmonar baciloscopía positiva"
+    "TB pulmonar baciloscopía negativa",
+    "TB pulmonar baciloscopía positiva"
   )
 )
 
@@ -106,46 +112,57 @@ who_age_lookup_tbl <- tibble(
   )
 )
 ```
-Ahora podemos añadir las columnas factor para las variables correspondientes en el conjunto de la OMS: 
+Utilizando estas tablas, podemos agregar ahora estas columnas a nuestro conjunto de datos: 
 ```{r}
-who_factor <- who_tidy %>%
+who_factor <- who_tidy |>
   convert_codes_to_factor(
     code_col = type,
     lookup_tbl = who_type_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-  ) %>%
+    new_factor_col_name = Tipo
+  ) |>
   convert_codes_to_factor(
     code_col = sex,
     lookup_tbl = who_sex_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-  ) %>%
+    new_factor_col_name = Sexo
+  ) |>
   convert_codes_to_factor(
     code_col = age,
     lookup_tbl = who_age_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-  ) %>%
+    new_factor_col_name = Edad
+  ) |>
   glimpse()
 ``` 
-Finalmente, queremos usar esta información para analizar el número de casos de tuberculosis por tipo y sexo. Empezamos generando el tibble de frecuencias correspondiente.
+Finalmente, queremos usar esta información para analizar el número de casos de tuberculosis por tipo y sexo. Empezamos generando el tibble de frecuencias correspondiente:
 ```{r}
-who_type_sex_tbl <- who_factor %>%
-  count(type_factor, sex_factor, wt = cases, name = "cases") %>%
-  print(n = Inf)
+#| label: tbl-desc
+#| tbl-cap: "Número de casos de tuberculosis por tipo y sexo"
+
+who_type_sex_tbl <- who_factor |>
+  count(Tipo, Sexo, wt = cases, name = "Casos")
+
+kable(
+  who_type_sex_tbl,
+  booktabs = TRUE,
+) |>
+  kable_styling(latex_options = "hold_position")
 ```
 
-## La "Gramática de los Gráficos" y ggplot2
+## La Gramática de los Gráficos
 
-El concepto de la "Gramática de los Gráficos" fue introducido por Leland Wilkinson en su libro de 1999 \emph{The Grammar of Graphics} \cite{wilkinson1999grammar}. Proporciona un marco para entender cómo crear visualizaciones de forma sistemática. Descompone el proceso de construir una gráfica en componentes como datos, estéticas, geometrías, estadísticas, coordenadas y temas. El paquete `ggplot2` \cite{wickham2016ggplot2} implementa esta gramática en R, permitiendo construir visualizaciones complejas por capas. Para más información sobre su historia y aplicaciones, consulte: \cite{cleveland1993elements, hyndman2021forecasting}.
+El concepto de la \emph{Gramática de los Gráficos} fue introducido por Leland Wilkinson en su libro "The Grammar of Graphics" \cite{wilkinson1999grammar}, y proporciona un marco para entender cómo crear visualizaciones de forma sistemática ya que descompone el proceso de construir una gráfica en componentes como datos, estéticas, geometrías, estadísticas, coordenadas y temas. El paquete `ggplot2` \cite{wickham2016ggplot2} implementa esta gramática en R, permitiendo construir visualizaciones complejas por capas. Para más información sobre su historia y aplicaciones, consulte: \cite{cleveland1993elements, hyndman2021forecasting}.
 
 ### Capas en ggplot2
 
 En \texttt{ggplot2}, las gráficas se construyen añadiendo múltiples \emph{capas} que definen los componentes de la visualización. Cada capa corresponde a un aspecto específico de la gráfica y, en conjunto, forman la composición completa. Estas capas incluyen:
 
 \begin{enumerate}
-\item \textbf{Datos:} El conjunto a visualizar (usualmente data frame o tibble). Es la fuente de información de la gráfica.
+\item \textbf{Datos:} El conjunto a visualizar (usualmente un data frame o tibble). Es la fuente de información de la gráfica.
 
 \item \textbf{Estéticas:} Mapeos que relacionan variables con propiedades visuales, por ejemplo:
     \begin{itemize}
@@ -188,14 +205,20 @@ La geometría controla \emph{cómo} se dibujan los datos.
   \item \textbf{Temas:} \texttt{theme()} controla la apariencia general (fuentes, fondo, rejillas).
 \end{enumerate}
 
-Cada capa puede combinarse y personalizarse para construir gráficas complejas y elegantes. Esta \emph{gramática por capas} invita a pensar la gráfica como una composición de componentes independientes en lugar de un objeto monolítico.
+Cada capa puede combinarse y personalizarse para construir gráficas complejas y elegantes. Esta \emph{gramática por capas} invita a pensar en la gráfica como una composición de componentes independientes en lugar de un objeto monolítico.
 
 ### Graficación con ggplot2
 
 Ilustraremos estos conceptos graficando el número de casos de tuberculosis por tipo y sexo, usando el tibble de frecuencias que creamos antes. 
 ```{r}
-who_type_sex_plot <- who_type_sex_tbl %>%
-  ggplot(aes(x = type_factor, y = cases, fill = sex_factor)) +
+#| fig-width: 12
+#| fig-height: 6
+#| fig-cap: "\\small Esta gráfica muestra un análisis comparativo del número de casos de tuberculosis por tipo y sexo. Como se observa, el número de casos es consistentemente mayor en la población masculina en todos los tipos de tuberculosis."
+
+# Generamos la gráfica usando ggplot2
+# Cada capa corresponde a una componente de la gramática de los gráficos
+who_type_sex_plot <- who_type_sex_tbl |>
+  ggplot(aes(x = Tipo, y = Casos, fill = Sexo)) +
   geom_col(position = "dodge") +
   c_scale_fill("C rose", "C blue") +
   labs(
@@ -205,28 +228,19 @@ who_type_sex_plot <- who_type_sex_tbl %>%
     fill = "Sexo"
   ) +
   theme_krul()
-```
-Ahora podemos guardar y graficar:
-```{r}
-#| fig-width: 12
-#| fig-height: 6
-#| fig-cap: "\\small Esta gráfica muestra un análisis comparativo del número de casos de tuberculosis por tipo y sexo. Como se observa, el número de casos es consistentemente mayor en la población masculina en todos los tipos de tuberculosis. "
-ggsave(
-  filename = here("images", "who_plot.png"),
-  plot = who_type_sex_plot,
-  width = 12,
-  height = 6,
-  dpi = 300
-)
+
+# Visualizamos la gráfica
 who_type_sex_plot
 ```
 
 ## Actividad: Limpieza de datos 
 
 \begin{enumerate}
-\item En la sección anterior se mostró cómo usar el operador \texttt{\%>\%} para encadenar múltiples operaciones en el Tidyverse. En este ejercicio, muestre el resultado de todos los pasos intermedios en el proceso de ordenamiento del conjunto de la OMS, usando el operador pipe.
+\item En la sección anterior se mostró cómo usar el operador \texttt{|>} para encadenar múltiples operaciones en el Tidyverse. En este ejercicio, muestre el resultado de todos los pasos intermedios en el proceso de ordenamiento del conjunto de datos `who` usando el operador pipe.
 
-\item El problema con el conjunto \emph{Billboard}, según los principios de "datos ordenados", es que las semanas en que una canción apareció en la lista están representadas como columnas, lo que dificulta analizar los datos. Utilizando las técnicas vistas hasta ahora, ordene el conjunto para analizar la evolución del ranking de la canción "Who Let The Dogs Out" de "Baha Men" en el Billboard Hot 100. La visualización final debe lucir como la que se muestra abajo.
+\item El problema con el conjunto \texttt{relig\_income}, es que los distintos niveles de ingreso están representados como columnas, lo que dificulta analizar los datos. Utilizando las técnicas vistas hasta ahora, ordene el conjunto para analizar la distribución del nivel de ingreso entre los distintos grupos religiosos en Estados Unidos, y genere una gráfica de barras que muestre esta información. 
+
+\item El problema con el conjunto \texttt{Billboard},  es que las semanas en que una canción apareció en la lista están representadas como columnas, lo que dificulta analizar los datos. Utilizando las técnicas vistas hasta ahora, ordene el conjunto para analizar la evolución del ranking de la canción ``Who Let The Dogs Out'' de ``Baha Men'' en el Billboard Hot 100. La visualización final debe lucir como la que se muestra abajo.
 
 
 \begin{figure}[h]
@@ -236,7 +250,7 @@ who_type_sex_plot
 \end{figure}
 \end{enumerate}
 
-
+\clearpage
 
 \begin{thebibliography}{99}
 
