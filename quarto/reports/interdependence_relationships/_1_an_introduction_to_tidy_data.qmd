@@ -30,9 +30,7 @@ Antes de comenzar, debemos cargar las librerías necesarias y el conjunto de dat
 #| output: false
 library(tidyverse)
 library(here)
-library(patchwork)
 library(krulRutils)
-library(ISLR2)
 library(magrittr)
 library(kableExtra)
 
@@ -114,6 +112,7 @@ who_age_lookup_tbl <- tibble(
 ```
 Utilizando estas tablas, podemos agregar ahora estas columnas a nuestro conjunto de datos: 
 ```{r}
+# Agregamos las columnas de factores como información adicional
 who_factor <- who_tidy |>
   convert_codes_to_factor(
     code_col = type,
@@ -166,7 +165,7 @@ En \texttt{ggplot2}, las gráficas se construyen añadiendo múltiples \emph{cap
 
 \item \textbf{Estéticas:} Mapeos que relacionan variables con propiedades visuales, por ejemplo:
     \begin{itemize}
-      \item Posición en los ejes x e y.
+      \item Posición en los ejes $x$ e $y$.
       \item Color, relleno.
       \item Tamaño, forma.
       \item Transparencia.
@@ -236,7 +235,7 @@ who_type_sex_plot
 ## Actividad: Limpieza de datos 
 
 \begin{enumerate}
-\item En la sección anterior se mostró cómo usar el operador \texttt{|>} para encadenar múltiples operaciones en el Tidyverse. En este ejercicio, muestre el resultado de todos los pasos intermedios en el proceso de ordenamiento del conjunto de datos `who` usando el operador pipe.
+\item En la sección anterior se mostró cómo usar el operador \texttt{|>} para encadenar múltiples operaciones en el Tidyverse. En este ejercicio, muestre el resultado de todos los pasos intermedios en el proceso de ordenamiento del conjunto de datos \texttt{who} usando el operador pipe.
 
 \item El problema con el conjunto \texttt{relig\_income}, es que los distintos niveles de ingreso están representados como columnas, lo que dificulta analizar los datos. Utilizando las técnicas vistas hasta ahora, ordene el conjunto para analizar la distribución del nivel de ingreso entre los distintos grupos religiosos en Estados Unidos, y genere una gráfica de barras que muestre esta información. 
 

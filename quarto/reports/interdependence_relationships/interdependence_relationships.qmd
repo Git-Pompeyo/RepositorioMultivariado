@@ -42,13 +42,7 @@ format:
 
 \end{center}
 
-\newpage
-
-
-\mbox{}
-\vfill
-
-\newpage
+\cleardoublepage
 
 \tableofcontents
 
