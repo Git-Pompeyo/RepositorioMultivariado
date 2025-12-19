@@ -14,38 +14,45 @@ format:
 \pagestyle{empty}
 
 \begin{center}
-\includegraphics[height=3cm]{tecnologico-de-monterrey-blue}
+\vspace*{-3cm}
+\includegraphics[height=4.2cm]{tecnologico-de-monterrey-blue}
+\vspace*{1cm}
 
-\vspace{2cm}
-
-\LARGE \textbf{MA2003B Aplicación de Métodos Multivariados \\ en Ciencia de Datos} \par
-\vspace{1cm}
-
-
-\Large \textbf{Módulo 1: Relaciones de Interdependencia} \par
-
-\vspace{7cm}
-
-
-\large 
-
-\begin{tabular}{rl}
-\textbf{Profesor:} & Raul Gomez \\
-\textbf{Correo:} & \url{rgomez@tec.mx} \\
-\textbf{Oficina:} & A4-123A \\
-\end{tabular}
-\par
-
-\vfill
-
-\large \today\par
-
+\noindent
+\hspace*{-\hoffset}\hspace*{-1in}%
+\color{tecblue}{\rule{\paperwidth}{4pt}}
 \end{center}
 
+\vspace{1cm}
+
+\textbf{\Huge Aplicación de Métodos Multivariados \\ en Ciencia de Datos} \par
+
+
+\vspace{1.5cm}
+
+\begin{center}
+\textbf{\LARGE Módulo 1: Relaciones de Interdependencia} \par
+\end{center}
+
+\vspace{4cm}
+
+
+ 
+
+\vfill
+\begin{flushright}
+\textbf{\large Raúl Gómez Muñoz \\
+Blanca Rosa Ruiz Hernández}
+\end{flushright}
+
+
+
+
+
+  
 \cleardoublepage
 
 \tableofcontents
-
 
 ```{r}
 #| echo: false
@@ -76,10 +83,11 @@ format:
 # {{< include _10_non_hierarchical_clustering.qmd >}}
 ```
 
+
 \part{Introducción al análisis multivariado}
 
 \pagestyle{multivariate_notes}
 \pagenumbering{arabic}
 
+{{< include _1_an_introduction_to_tidy_data.qmd >}}
 {{< include _2_the_standardized_moments.qmd >}}
-

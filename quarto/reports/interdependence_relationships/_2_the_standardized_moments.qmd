@@ -65,13 +65,13 @@ En particular, la asimetría siempre es positiva y tiende a cero conforme $\alph
 
 Mostraremos ahora cómo graficar la PDF de la distribución Gamma para $\alpha = 2$ y $\beta = 1$, destacando su media y su mediana. Notemos que para estos parámetros tenemos que
 \begin{align*}
-\text{media} &= \mu = \alpha/\beta = 2 \\
+\text{media} &= \alpha/\beta = 2 \\
 \text{mediana} &\approx `{r} qgamma(0.5, shape = 2, rate = 1)`
 \end{align*}
-En particular, la media es mayor que la mediana, lo cual es consistente con la asimetría positiva de la distribución.
+En particular, la media es mayor que la mediana, lo cual es común en distribuciones con asimetría positiva.
 
 ```{r}
-#| fig-cap: "Función de densidad de la distribución Gamma con parámetros $\\alpha = 2$ y $\\beta = 1$. Notemos que para estos parámetros la media es mayor que la mediana, lo cual es consistente con la asimetría positiva de la distribución."
+#| fig-cap: "Función de densidad de la distribución Gamma con parámetros $\\alpha = 2$ y $\\beta = 1$. Notemos que para estos parámetros la media es mayor que la mediana, lo cual es común en distribuciones con asimetría positiva."
 #| fig-width: 12
 #| fig-height: 6
 
