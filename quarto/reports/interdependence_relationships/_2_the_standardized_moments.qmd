@@ -1,29 +1,29 @@
-# Los momentos estandarizados
+# Evaluación de normalidad univariada
 
-Como es bien sabido, cualquier distribución normal queda determinada por su media y desviación estándar. Sin embargo, muchos conjuntos de datos reales no siguen una distribución normal. En este capítulo exploraremos otras distribuciones y mostraremos cómo los conceptos de asimetría (skewness) y curtosis ayudan a entender su forma. También introduciremos los gráficos QQ, herramientas útiles para comparar la distribución de un conjunto de datos con una distribución teórica (usualmente la normal). Antes de comenzar, carguemos las librerías necesarias y fijemos algunas opciones. 
+En muchos métodos estadísticos univariados se asume que los datos siguen una distribución normal. Sin embargo, en la práctica, no todos nuestros conjuntos de datos satisfacen esta suposición. En estos casos no se justifica el uso de estos métodos y su uso indiscriminado puede llevar a conclusiones erróneas, que nos podrían llevar a tomar malas decisiones bajo la ilusión de un respaldo estadístico que no existe. Es por eso que resulta fundamental contar con herramientas que nos permitan evaluar la normalidad de nuestros datos antes de aplicar cualquier método estadístico que dependa de esta suposición.
+
+En este capítulo, exploraremos algunas de estas herramientas, incluyendo las medidas de asimetría y curtosis, los gráficos QQ y algunas pruebas estadísticas para evaluar la normalidad. En el siguiente capítulo, describiremos ciertas transformaciones que podemos aplicar a nuestros datos para hacerlos más cercanos a una distribución normal, en caso de que no lo sean. Pero antes de comenzar, cargaremos las librerías necesarias y definiremos algunas opciones globales para nuestro análisis.
+
 
 ```{r}
 #| output: false
-library(tidyverse) # for data manipulation and visualization
-library(broom) # for tidying data
-library(here) # for file paths
-library(patchwork) # for combining ggplots
-library(krulRutils) # for custom package functions
-library(magrittr) # for the pipe operator
-library(e1071) # for skewness and kurtosis functions
-library(car) # for robust scaling functions
-library(ggforce) # for ggplot2 extensions
-library(mvtnorm) # for multivariate normal distribution
-library(MVN) # for multivariate normality tests
-library(ellipse) # for generating covariance ellipses
-library(ggrepel) # for better text annotations in ggplot2
+#| message: false
 
-
+library(tidyverse)
+library(patchwork)
+library(krulRutils)
+library(e1071)
+library(latex2exp)
+library(extraDistr)
 
 options(scipen = 999)
 ```
 
-## Asimetría 
+## Los momentos estandarizados
+
+Como es bien sabido, cualquier distribución normal queda completamente determinada por su media y su varianza. Se sigue que todos sus momentos estandarizados de orden superior quedan fijos y se pueden utilizar para comparar otras distribuciones contra la normal. En particular, el tercer y cuarto momentos estandarizados, conocidos como asimetría y curtosis respectivamente, son de gran utilidad para describir la forma de una distribución.
+
+### Asimetría 
 
 \begin{definition}
 La \emph{asimetría} de una variable aleatoria $X$ se define como el tercer momento estandarizado, dado por
@@ -33,11 +33,12 @@ $$
 donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
 
-La asimetría mide la falta de simetría de una distribución. Una distribución es \emph{positivamente asimétrica} (cola a la derecha) si posee una cola más larga a la derecha, y \emph{negativamente asimétrica} (cola a la izquierda) si la cola más larga está a la izquierda. Una distribución perfectamente simétrica tiene asimetría cero. Para ilustrar estas ideas, introduciremos la distribución Gamma.
+La asimetría, como su nombre lo indica, mide la falta de simetría de una distribución. Una distribución es \emph{positivamente asimétrica} (\emph{sesgo a la derecha}) si posee una cola más larga a la derecha, y \emph{negativamente asimétrica} (\emph{sesgo a la izquierda}) si la cola más larga está a la izquierda. Una distribución perfectamente simétrica tiene asimetría cero.
+
+Para ilustrar estas ideas, introduciremos la distribución Gamma.
 
 \begin{definition}
 Decimos que una variable aleatoria continua $X$ sigue una \emph{distribución Gamma} con parámetro de forma $\alpha > 0$ y parámetro de tasa $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por
-
 \begin{equation} \label{eq:gamma_pdf}
 f_X(x; \alpha, \beta) = 
 \begin{cases}
@@ -49,50 +50,53 @@ donde $\Gamma(\alpha)$ denota la función Gamma, definida como
 $$
 \Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
 $$
+En este caso escribimos $X \sim \text{Gamma}(\alpha, \beta)$.
 \end{definition}
 
-Entre otras aplicaciones, la distribución Gamma se usa frecuentemente para modelar el número total de reclamaciones de seguros en un periodo dado.
+\begin{observation}
+La distribución Gamma se usa frecuentemente en procesos de Poisson para modelar tiempos de espera hasta la ocurrencia de ciertos eventos. Por ejemplo, puede modelar el tiempo que pasa hasta que una compañía de seguros reciba un cierto número de reclamaciones.
+\end{observation}
 
-\begin{remark}
-La asimetría de una distribución Gamma está dada por
+Es un resultado conocido que la asimetría de una distribución Gamma está dada por
 $$
 \gamma_1 = \frac{2}{\sqrt{\alpha}}.
 $$
-Esto implica que la asimetría es siempre positiva y tiende a cero conforme $\alpha$ aumenta; es decir, la distribución se vuelve más simétrica al crecer $\alpha$.
-\end{remark}
+En particular, la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme aumenta el valor de $\alpha$. 
 
-Mostraremos cómo graficar la PDF de la distribución Gamma para $\alpha = 2$ y $\beta = 1$, destacando la media y la mediana.
+Mostraremos ahora cómo graficar la PDF de la distribución Gamma para $\alpha = 2$ y $\beta = 1$, destacando su media y su mediana. Notemos que para estos parámetros tenemos que
+\begin{align*}
+\text{media} &= \mu = \alpha/\beta = 2 \\
+\text{mediana} &\approx `{r} qgamma(0.5, shape = 2, rate = 1)`
+\end{align*}
+En particular, la media es mayor que la mediana, lo cual es consistente con la asimetría positiva de la distribución.
 
 ```{r}
-#| fig-cap: "Función de densidad (PDF) de la distribución gamma con media y mediana destacadas."
-#| fig-width: 8
-#| fig-height: 5
+#| fig-cap: "Función de densidad de la distribución Gamma con parámetros $\\alpha = 2$ y $\\beta = 1$. Notemos que para estos parámetros la media es mayor que la mediana, lo cual es consistente con la asimetría positiva de la distribución."
+#| fig-width: 12
+#| fig-height: 6
 
-# Parameters
-alpha <- 2
-beta <- 1
+# Asignamos los parámetros
+alpha <- 2 # forma
+beta <- 1  # tasa
 
-# Create sequence of x values
-x_data <- seq(0, 10, length.out = 200)
+# Creamos una secuencia de valores para X
+x_data <- seq(0, 8, length.out = 200)
 
-# Calculate density values
+# Calculamos la PDF de la distribución Gamma
 gamma_distribution_tbl <- tibble(
   x_data = x_data,
-  density = dgamma(x_data, shape = alpha, rate = beta)
+  density_data = dgamma(x_data, shape = alpha, rate = beta)
 )
 
-# Calculate mean and median
+# Calculamos la media y la mediana
 gamma_mean <- alpha / beta
 gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
 gamma_sd <- sqrt(alpha) / beta
 
-# Plot
-gamma_distribution_plot <- gamma_distribution_tbl %>%
-  ggplot(aes(x = x_data, y = density)) +
-  geom_line(
-    color = c_palette["C blue"],
-    linewidth = 1
-  ) +
+# Generamos la gráfica
+gamma_distribution_plot <- gamma_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
   geom_vline(
     xintercept = gamma_mean,
     color = c_palette["C red"],
@@ -102,7 +106,7 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
   geom_vline(
     xintercept = gamma_median,
     color = c_palette["C green"],
-    linetype = "dotted",
+    linetype = "dashed",
     linewidth = 1
   ) +
   annotate(
@@ -121,12 +125,9 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
     color = c_palette["C green"],
     hjust = 1.1
   ) +
-  coord_cartesian(ylim = c(0, 0.6)) +
   labs(
-    title = paste(
-      "PDF de la distribución Gamma (shape =", alpha, ", rate =", beta, ")"
-    ),
-    x = "X",
+    title = "Función de densidad de la distribución Gamma(2,1)",
+    x = TeX("$X$"),
     y = "Densidad"
   ) +
   theme_krul()
@@ -134,7 +135,156 @@ gamma_distribution_plot <- gamma_distribution_tbl %>%
 gamma_distribution_plot
 ```
 
-## Curtosis 
+Finalmente, usaremos la distribución Gamma para generar una gráfica comparativa de una distribución con sesgo a la izquierda, una simétrica y una con sesgo a la derecha.
+```{r}
+#| fig-cap: "Gráfica comparativa de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría afecta la forma de la distribución y la relación entre la media y la mediana."
+#| fig-width: 12
+#| fig-height: 3.5
+
+# Calculamos la PDF de la distribución con sesgo negativo
+left_skew_distribution_tbl <- tibble(
+  x_data = -x_data,
+  density_data = dgamma(-x_data, shape = alpha, rate = beta)
+)
+
+# Calculamos la PDF de la distribución simétrica
+symmetric_distribution_tbl <- tibble(
+  x_data = x_data - 4,
+  density_data = dnorm(x_data)
+)
+
+# Calculamos la PDF de la distribución con sesgo positivo
+right_skew_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgamma(x_data, shape = alpha, rate = beta)
+)
+
+# Generamos la gráfica de la distribución con sesgo negativo
+left_skew_distribution_plot <- left_skew_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
+  geom_vline(
+    xintercept = -gamma_mean,
+    color = c_palette["C red"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = -gamma_median,
+    color = c_palette["C green"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = -gamma_mean,
+    y = 0.5,
+    label = "Media",
+    color = c_palette["C red"],
+    hjust = 1.1
+  ) +
+  annotate(
+    "text",
+    x = -gamma_median,
+    y = 0.5,
+    label = "Mediana",
+    color = c_palette["C green"],
+    hjust = -0.1
+  ) +
+  labs(
+    title = "Sesgo a la izquierda",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución simétrica
+symmetric_distribution_plot <- symmetric_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
+  geom_vline(
+    xintercept = 0,
+    color = c_palette["C red"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 0,
+    color = c_palette["C green"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = 0,
+    y = 0.5,
+    label = "Media y Mediana",
+    color = c_palette["C red"],
+    hjust = -0.1
+  ) +
+  labs(
+    title = "Simétrica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución con sesgo positivo
+right_skew_distribution_plot <- right_skew_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
+  geom_vline(
+    xintercept = gamma_mean,
+    color = c_palette["C red"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_median,
+    color = c_palette["C green"],
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = gamma_mean,
+    y = 0.5,
+    label = "Media",
+    color = c_palette["C red"],
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = gamma_median,
+    y = 0.5,
+    label = "Mediana",
+    color = c_palette["C green"],
+    hjust = 1.1
+  ) +
+  labs(
+    title = "Sesgo a la derecha",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+skew_comparison_plot <- left_skew_distribution_plot +
+  symmetric_distribution_plot +
+  right_skew_distribution_plot +
+  plot_annotation(
+    title = "Comparación de distribuciones con distintos niveles de asimetría",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+skew_comparison_plot
+```
+
+### Curtosis 
 
 \begin{definition}
 La \emph{curtosis} de una variable aleatoria $X$ se define como el cuarto momento estandarizado, dado por
@@ -143,7 +293,7 @@ $$
 $$
 donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
-La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (\emph{leptocúrtica}) tiene colas más pesadas y un pico más agudo que la normal; con baja curtosis (\emph{platicúrtica}) tiene colas más ligeras y un pico más plano. La curtosis de la normal es 3; por ello suele calcularse la \emph{curtosis en exceso} dada por:
+La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (\emph{leptocúrtica}) tiene colas más pesadas y un pico más agudo que la normal. En cambio, una distribución con baja curtosis (\emph{platicúrtica}) tiene colas más ligeras y un pico más plano. La curtosis de la normal es 3, por lo cual es común calcular el \emph{exceso de curtosis} de una distribución la cual está dada por:
 $$
 \gamma_2 = \beta_2 - 3.
 $$

@@ -34,7 +34,7 @@ library(krulRutils)
 library(magrittr)
 library(kableExtra)
 
-options(scipen = 999) # Desactivar notación científica
+options(scipen = 999)
 data(who)
 ``` 
 Ahora podemos iniciar nuestro proceso de ordenamiento. El problema principal de este conjunto es que contiene variables (como "new_sp_m014") que no son muy claras y que incluyen más de una unidad de información.
