@@ -14,7 +14,7 @@ library(patchwork)
 library(krulRutils)
 library(e1071)
 library(latex2exp)
-library(extraDistr)
+library(greybox)
 
 options(scipen = 999)
 ```
@@ -47,9 +47,9 @@ f_X(x; \alpha, \beta) =
 \end{cases}
 \end{equation}
 donde $\Gamma(\alpha)$ denota la función Gamma, definida como
-$$
+\begin{equation} \label{eq:gamma_function}
 \Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
-$$
+\end{equation}
 En este caso escribimos $X \sim \text{Gamma}(\alpha, \beta)$.
 \end{definition}
 
@@ -80,7 +80,7 @@ alpha <- 2 # forma
 beta <- 1  # tasa
 
 # Creamos una secuencia de valores para X
-x_data <- seq(0, 8, length.out = 200)
+x_data <- seq(0, 8, length.out = 500)
 
 # Calculamos la PDF de la distribución Gamma
 gamma_distribution_tbl <- tibble(
@@ -293,62 +293,104 @@ $$
 $$
 donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 \end{definition}
-La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (\emph{leptocúrtica}) tiene colas más pesadas y un pico más agudo que la normal. En cambio, una distribución con baja curtosis (\emph{platicúrtica}) tiene colas más ligeras y un pico más plano. La curtosis de la normal es 3, por lo cual es común calcular el \emph{exceso de curtosis} de una distribución la cual está dada por:
+La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (\emph{leptocúrtica}) suele tener colas más pesadas y un pico más agudo que la normal. En cambio, una distribución con baja curtosis (\emph{platicúrtica}) suele tener colas más ligeras y un pico más plano. La curtosis de la normal es 3, por lo cual es común calcular el \emph{exceso de curtosis} de una distribución la cual está dada por:
 $$
 \gamma_2 = \beta_2 - 3.
 $$
-Para ilustrar, introducimos la distribución de Laplace.
-\begin{definition}
-Decimos que una variable aleatoria continua $X$ sigue una \emph{distribución de Laplace} con parámetro de localización $\mu \in \mathbb{R}$ y de escala $b > 0$, si su PDF está dada por
-\begin{equation} \label{eq:laplace_pdf}
-f_X(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right), \quad x \in \mathbb{R}.
+Para ilustrar estas ideas, introduciremos la distribución normal generalizada, también conocida como la distribución de Subbotin.
+
+\begin{definition} Decimos que una variable aleatoria $X$ sigue una \emph{distribución normal generalizada} con parámetros de localización $\mu \in \mathbb{R}$, escala $\alpha > 0$ y forma $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por
+\begin{equation} \label{eq:generalized_normal_pdf}
+f_X(x; \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma(1/\beta)} e^{-\left( \frac{|x - \mu|}{\alpha} \right)^\beta}, \quad x \in \mathbb{R},
 \end{equation}
+donde $\Gamma$ nuevamente denota a la función Gamma, que definimos en \eqref{eq:gamma_function}. En este caso escribimos $X \sim \text{NormalGeneralizada}(\mu, \alpha, \beta)$.
 \end{definition}
 
-Entre otras aplicaciones, la distribución de Laplace se usa en procesamiento de imágenes y visión por computadora, particularmente para modelar ruido.
+Los momentos de la distribución normal generalizada están dados por:
+\begin{align*}
+\text{media} & = \mu, \\
+\text{varianza} & = \alpha^2 \frac{\Gamma(3/\beta)}{\Gamma(1/\beta)}, \\
+\text{asimetría} & = 0, \\
+\text{curtosis excesiva} & = \frac{\Gamma(5/\beta) \Gamma(1/\beta)}{\Gamma(3/\beta)^2} - 3. 
+\end{align*}
+Notemos que la asimetría es cero para cualquier valor de $\beta$, lo cual indica que la distribución siempre es simétrica. En cuanto a la curtosis, observamos que:
+\begin{itemize}
+\item Si $0 < \beta < 2$, la curtosis excesiva es positiva, indicando colas más pesadas que la normal (distribución leptocúrtica). 
+\item Si $\beta = 2$, la curtosis excesiva es cero, coincidiendo con la normal.
+\item Si $\beta > 2$, la curtosis excesiva es negativa, indicando colas más ligeras que la normal (distribución platicúrtica). 
+\end{itemize}
 
-\begin{remark} La curtosis en exceso de una distribución de Laplace es
-$$
-\gamma_2 = 3.
-$$
-Esto significa que la distribución de Laplace tiene colas más pesadas que la normal.
-\end{remark}
+\begin{observation} Notemos que para $\beta = 1$ la distribución normal generalizada coincide con la distribución de Laplace cuya PDF está dada por 
+\begin{equation} \label{eq:laplace_pdf}
+f_X(x; \mu, b) = \frac{1}{2b} e^{-\frac{|x - \mu|}{b}}, \quad x \in \mathbb{R}, 
+\end{equation}
+donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media  $\mu$ y varianza $2\alpha^2$. Finalemente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
+\end{observation}
 
-Mostramos ahora cómo graficar la PDF de la distribución de Laplace con media cero y varianza uno.
-
+Mostraremos ahora la gráfica de la PDF de la distribución normal generalizada para $\mu = 0$, $\alpha = 1$ y distintos valores de $\beta$, destacando sus colas y la forma del pico central.
 ```{r}
-#| fig-cap: "PDF de la distribución de Laplace con media cero y varianza uno."
-#| fig-width: 8
-#| fig-height: 5
+#| fig-cap: "Funciones de densidad de la distribución normal generalizada para $\\mu = 0$, $\\alpha = 1$ y distintos valores de $\\beta$. Notemos cómo cambia la forma de la distribución conforme varía el parámetro de forma $\\beta$, afectando el grosor de las colas y la forma del pico central."
+#| fig-width: 12
+#| fig-height: 6
 
-# Parameters
-mu <- 0 # mean (location)
-b <- 1 / sqrt(2) # scale
+# Creamos una secuencia de valores para X
+x_data <- seq(-3.5, 3.5, length.out = 500)
 
-# Sequence of x values covering enough range to see tails
-x_data <- seq(-5, 5, length.out = 300)
+# Seleccionamos los valores de beta a graficar
+beta_values <- c(0.5, 1, 1.5, 2, 3, 8)
 
-# Laplace PDF function
-dlaplace <- function(x, mu, b) {
-  1 / (2 * b) * exp(-abs(x - mu) / b)
-}
-
-# Create data frame with PDF values
-laplace_distribution_tbl <- tibble(
+# Calculamos las densidades para cada valor de beta
+dgnorm_distribution_family_tbl <- expand_grid(
   x_data = x_data,
-  density = dlaplace(x_data, mu, b)
-)
+  beta = beta_values
+) |>
+  mutate(
+    density_data = dgnorm(
+      x_data,
+      mu = 0,
+      scale = 1,
+      shape = beta
+    ),
+    beta = factor(beta)
+  )
 
-# Plot PDF
-laplace_distribution_tbl %>%
-  ggplot(aes(x = x_data, y = density)) +
-  geom_line(color = c_palette["C blue"], linewidth = 1) +
+# Generamos la gráfica
+dgnorm_distribution_family_plot <- ggplot(
+  dgnorm_distribution_family_tbl,
+  aes(
+    x = x_data,
+    y = density_data,
+    color = beta
+  )
+) +
+  geom_line(linewidth = 1) +
+  scale_color_manual(
+    values = unname(c_pal(
+      "C red",
+      "C yellow",
+      "C orange",
+      "C green",
+      "C blue",
+      "C magenta"
+    )),
+    labels = c(
+      TeX("$\\beta$ = 0.5 (Colas muy pesadas)"),
+      TeX("$\\beta$ = 1 (Laplace)"),
+      TeX("$\\beta$ = 1.5 (Colas pesadas)"),
+      TeX("$\\beta$ = 2 (Normal)"),
+      TeX("$\\beta$ = 3 (Colas ligeras)"),
+      TeX("$\\beta$ = 8 (Colas muy ligeras)")
+    )
+  ) +
   labs(
-    title = "PDF de la distribución de Laplace (media = 0, var = 1)",
-    x = "x",
-    y = "Densidad"
+    title = "Distribucion normal generalizada para distintos valores de beta",
+    x = TeX("$X$"),
+    y = "Densidad",
+    color = "Parámetro de forma"
   ) +
   theme_krul()
+
+dgnorm_distribution_family_plot
 ```
 
 ## Gráficos QQ
@@ -389,6 +431,8 @@ set.seed(123) # for reproducibility
 
 # Sample size
 n <- 300
+mu <- 0
+b <- 1
 # Generate random samples from the Gamma distribution
 gamma_sample <- rgamma(n, shape = alpha, rate = beta)
 

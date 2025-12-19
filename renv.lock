@@ -2578,43 +2578,6 @@
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "CRAN"
     },
-    "extraDistr": {
-      "Package": "extraDistr",
-      "Version": "1.10.0",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Additional Univariate and Multivariate Distributions",
-      "Date": "2023-12-30",
-      "Author": "Tymoteusz Wolodzko",
-      "Maintainer": "Tymoteusz Wolodzko <twolodzko+extraDistr@gmail.com>",
-      "Description": "Density, distribution function, quantile function and random generation for a number of univariate and multivariate distributions. This package implements the following distributions: Bernoulli, beta-binomial, beta-negative binomial, beta prime, Bhattacharjee, Birnbaum-Saunders, bivariate normal, bivariate Poisson, categorical, Dirichlet, Dirichlet-multinomial, discrete gamma, discrete Laplace, discrete normal, discrete uniform, discrete Weibull, Frechet, gamma-Poisson, generalized extreme value, Gompertz, generalized Pareto, Gumbel, half-Cauchy, half-normal, half-t, Huber density, inverse chi-squared, inverse-gamma, Kumaraswamy, Laplace, location-scale t, logarithmic, Lomax, multivariate hypergeometric, multinomial, negative hypergeometric, non-standard beta, normal mixture, Poisson mixture, Pareto, power, reparametrized beta, Rayleigh, shifted Gompertz, Skellam, slash, triangular, truncated binomial, truncated normal, truncated Poisson, Tukey lambda, Wald, zero-inflated binomial, zero-inflated negative binomial, zero-inflated Poisson.",
-      "License": "GPL-2",
-      "URL": "https://github.com/twolodzko/extraDistr",
-      "BugReports": "https://github.com/twolodzko/extraDistr/issues",
-      "Encoding": "UTF-8",
-      "Depends": [
-        "R (>= 3.1.0)"
-      ],
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "Imports": [
-        "Rcpp"
-      ],
-      "Suggests": [
-        "testthat",
-        "LaplacesDemon",
-        "VGAM",
-        "evd",
-        "skellam",
-        "triangle",
-        "actuar"
-      ],
-      "SystemRequirements": "C++",
-      "RoxygenNote": "7.2.3",
-      "NeedsCompilation": "yes",
-      "Repository": "CRAN"
-    },
     "farver": {
       "Package": "farver",
       "Version": "2.1.2",
@@ -3613,6 +3576,59 @@
       "RoxygenNote": "7.3.2",
       "NeedsCompilation": "yes",
       "Author": "Mark van der Loo [aut, cre], David Turner [ctb]",
+      "Repository": "CRAN"
+    },
+    "greybox": {
+      "Package": "greybox",
+      "Version": "2.0.6",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Toolbox for Model Building and Forecasting",
+      "Date": "2025-09-03",
+      "Authors@R": "c(person(\"Ivan\", \"Svetunkov\", email = \"ivan@svetunkov.com\", role = c(\"aut\", \"cre\"), comment=\"Senior Lecturer at Centre for Marketing Analytics and Forecasting, Lancaster University, UK\"), person(\"Yves R.\", \"Sagaert\", role = c(\"ctb\"), comment=\"Visiting Research at Centre for Marketing Analytics and Forecasting, Lancaster University, UK\"))",
+      "URL": "https://github.com/config-i1/greybox",
+      "BugReports": "https://github.com/config-i1/greybox/issues",
+      "Language": "en-GB",
+      "Description": "Implements functions and instruments for regression model building and its application to forecasting. The main scope of the package is in variables selection and models specification for cases of time series data. This includes promotional modelling, selection between different dynamic regressions with non-standard distributions of errors, selection based on cross validation, solutions to the fat regression model problem and more. Models developed in the package are tailored specifically for forecasting purposes. So as a results there are several methods that allow producing forecasts from these models and visualising them.",
+      "License": "LGPL-2.1",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ],
+      "Imports": [
+        "stats",
+        "generics (>= 0.1.2)",
+        "graphics",
+        "utils",
+        "pracma",
+        "nloptr",
+        "statmod",
+        "zoo",
+        "texreg",
+        "xtable",
+        "methods"
+      ],
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Suggests": [
+        "smooth (>= 3.1.0)",
+        "doMC",
+        "doParallel",
+        "foreach",
+        "testthat",
+        "rmarkdown",
+        "knitr"
+      ],
+      "Enhances": [
+        "vars",
+        "forecast"
+      ],
+      "RoxygenNote": "7.3.2",
+      "VignetteBuilder": "knitr",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "yes",
+      "Author": "Ivan Svetunkov [aut, cre] (Senior Lecturer at Centre for Marketing Analytics and Forecasting, Lancaster University, UK), Yves R. Sagaert [ctb] (Visiting Research at Centre for Marketing Analytics and Forecasting, Lancaster University, UK)",
+      "Maintainer": "Ivan Svetunkov <ivan@svetunkov.com>",
       "Repository": "CRAN"
     },
     "gridExtra": {
@@ -6122,6 +6138,36 @@
       "Author": "Angus Johnson [aut] (C++ original, http://www.angusj.com/delphi/clipper.php), Adrian Baddeley [aut, trl, cre], Kurt Hornik [ctb], Brian D. Ripley [ctb], Elliott Sales de Andrade [ctb], Paul Murrell [ctb], Ege Rubak [ctb], Mark Padgham [ctb]",
       "Repository": "CRAN"
     },
+    "pracma": {
+      "Package": "pracma",
+      "Version": "2.4.6",
+      "Source": "Repository",
+      "Type": "Package",
+      "Date": "2025-10-20",
+      "Title": "Practical Numerical Math Functions",
+      "Authors@R": "person(\"Hans W.\", \"Borchers\",  email=\"hwborchers@googlemail.com\",  role=c(\"aut\", \"cre\"))",
+      "Depends": [
+        "R (>= 3.1.0)"
+      ],
+      "Imports": [
+        "graphics",
+        "grDevices",
+        "stats",
+        "utils"
+      ],
+      "Suggests": [
+        "NlcOptim",
+        "quadprog"
+      ],
+      "Description": "Provides a large number of functions from numerical analysis and linear algebra, numerical optimization, differential equations, time series, plus some well-known special mathematical functions. Uses 'MATLAB' function names where appropriate to simplify porting.",
+      "License": "GPL (>= 3)",
+      "ByteCompile": "true",
+      "LazyData": "yes",
+      "NeedsCompilation": "no",
+      "Author": "Hans W. Borchers [aut, cre]",
+      "Maintainer": "Hans W. Borchers <hwborchers@googlemail.com>",
+      "Repository": "CRAN"
+    },
     "prettyunits": {
       "Package": "prettyunits",
       "Version": "1.2.0",
@@ -7692,6 +7738,31 @@
       "Maintainer": "Emil Hvitfeldt <emil.hvitfeldt@posit.co>",
       "Repository": "CRAN"
     },
+    "statmod": {
+      "Package": "statmod",
+      "Version": "1.5.1",
+      "Source": "Repository",
+      "Date": "2025-10-08",
+      "Title": "Statistical Modeling",
+      "Authors@R": "c(person(given = \"Gordon\", family = \"Smyth\", role = c(\"cre\", \"aut\"), email = \"smyth@wehi.edu.au\"), person(given = \"Lizhong\", family = \"Chen\", role = \"aut\"), person(given = \"Yifang\", family = \"Hu\", role = \"ctb\"), person(given = \"Peter\", family = \"Dunn\", role = \"ctb\"), person(given = \"Belinda\", family = \"Phipson\", role = \"ctb\"), person(given = \"Yunshun\", family = \"Chen\", role = \"ctb\"))",
+      "Maintainer": "Gordon Smyth <smyth@wehi.edu.au>",
+      "Depends": [
+        "R (>= 3.0.0)"
+      ],
+      "Imports": [
+        "stats",
+        "graphics"
+      ],
+      "Suggests": [
+        "MASS",
+        "tweedie"
+      ],
+      "Description": "A collection of algorithms and functions to aid statistical modeling. Includes limiting dilution analysis (aka ELDA), growth curve comparisons, mixed linear models, heteroscedastic regression, inverse-Gaussian probability calculations, Gauss quadrature and a secure convergence algorithm for nonlinear models. Also includes advanced generalized linear model functions including Tweedie and Digamma distributional families, secure convergence and exact distributional calculations for unit deviances.",
+      "License": "GPL-2 | GPL-3",
+      "NeedsCompilation": "yes",
+      "Author": "Gordon Smyth [cre, aut], Lizhong Chen [aut], Yifang Hu [ctb], Peter Dunn [ctb], Belinda Phipson [ctb], Yunshun Chen [ctb]",
+      "Repository": "CRAN"
+    },
     "stringi": {
       "Package": "stringi",
       "Version": "1.8.7",
@@ -7962,6 +8033,101 @@
       "NeedsCompilation": "yes",
       "Author": "Thomas Lin Pedersen [aut, cre] (ORCID: <https://orcid.org/0000-0002-5147-4711>), Jeroen Ooms [aut] (ORCID: <https://orcid.org/0000-0002-4035-0289>), Devon Govett [aut] (Author of font-manager), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Thomas Lin Pedersen <thomas.pedersen@posit.co>",
+      "Repository": "CRAN"
+    },
+    "texreg": {
+      "Package": "texreg",
+      "Version": "1.39.4",
+      "Source": "Repository",
+      "Date": "2024-07-23",
+      "Title": "Conversion of R Regression Output to LaTeX or HTML Tables",
+      "Authors@R": "c(person(given = \"Philip\", family = \"Leifeld\", email = \"philip.leifeld@manchester.ac.uk\", role = c(\"aut\", \"cre\")), person(given = \"Claudia\", family = \"Zucca\", email = \"c.zucca@jads.nl\", role = \"ctb\"))",
+      "Description": "Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented. Details can be found in Leifeld (2013), JStatSoft <doi:10.18637/jss.v055.i08>.)",
+      "URL": "https://github.com/leifeld/texreg/",
+      "BugReports": "https://github.com/leifeld/texreg/issues/",
+      "Suggests": [
+        "broom (>= 0.4.2)",
+        "coda (>= 0.19.2)",
+        "ggplot2 (>= 3.1.0)",
+        "huxtable (>= 4.2.0)",
+        "knitr (>= 1.22)",
+        "rmarkdown (>= 1.12.3)",
+        "sandwich (>= 2.3-1)",
+        "systemfit (>= 1.1-0)",
+        "testthat (>= 2.0.0)",
+        "lmtest (>= 0.9-34)"
+      ],
+      "Depends": [
+        "R (>= 3.5)"
+      ],
+      "Imports": [
+        "methods",
+        "stats",
+        "httr"
+      ],
+      "Enhances": [
+        "AER",
+        "alpaca",
+        "betareg",
+        "Bergm",
+        "bife",
+        "biglm",
+        "brglm",
+        "brms (>= 2.8.8)",
+        "btergm (>= 1.10.10)",
+        "dynlm",
+        "eha (>= 2.9.0)",
+        "ergm (>= 4.1.2)",
+        "feisr (>= 1.0.1)",
+        "fGarch",
+        "fixest (>= 0.10.5)",
+        "forecast",
+        "gamlss",
+        "gamlss.inf",
+        "gee",
+        "glmmTMB",
+        "gmm",
+        "gnm",
+        "h2o",
+        "latentnet",
+        "lfe",
+        "lme4 (>= 1.1.34)",
+        "logitr (>= 0.8.0)",
+        "lqmm",
+        "maxLik (>= 1.4.8)",
+        "metaSEM (>= 1.2.5.1)",
+        "mfx",
+        "mhurdle",
+        "miceadds",
+        "mlogit",
+        "MuMIn",
+        "nlme",
+        "nnet",
+        "oglmx",
+        "ordinal",
+        "pglm",
+        "plm (>= 2.4.1)",
+        "relevent",
+        "remify (>= 3.2.6)",
+        "remstats (>= 3.2.2)",
+        "remstimate (>= 2.3.11)",
+        "rms",
+        "robust",
+        "simex",
+        "spatialreg (>= 1.2.1)",
+        "spdep (>= 1.2.2)",
+        "speedglm",
+        "survival",
+        "truncreg (>= 0.2.5)",
+        "VGAM"
+      ],
+      "SystemRequirements": "pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette",
+      "License": "GPL-3",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.1",
+      "NeedsCompilation": "no",
+      "Author": "Philip Leifeld [aut, cre], Claudia Zucca [ctb]",
+      "Maintainer": "Philip Leifeld <philip.leifeld@manchester.ac.uk>",
       "Repository": "CRAN"
     },
     "textshaping": {
