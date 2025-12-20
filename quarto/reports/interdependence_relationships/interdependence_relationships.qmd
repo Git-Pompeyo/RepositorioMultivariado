@@ -89,5 +89,4 @@ Blanca Rosa Ruiz Hernández}
 \pagestyle{multivariate_notes}
 \pagenumbering{arabic}
 
-{{< include _1_an_introduction_to_tidy_data.qmd >}}
 {{< include _2_the_standardized_moments.qmd >}}
