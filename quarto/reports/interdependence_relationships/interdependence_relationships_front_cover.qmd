@@ -5,26 +5,42 @@ format:
      documentclass: book
      classoption: [openright,twoside]
      fontsize: 11pt
+     include-in-header: _header.tex
      pdf-engine: pdflatex
      number-sections: true
-     include-in-header: _header.tex
 ---
 \pagenumbering{gobble}
 
 \pagestyle{empty}
 
-\begin{center}
-\vspace*{-3.8cm}
-\hspace*{-1.3cm}
-\includegraphics[height=5cm]{tecnologico-de-monterrey-blue}
-\vspace*{0.5cm}
+\begin{titlepage}
 
-\noindent
-\hspace*{-\hoffset}\hspace*{-1in}%
-\color{tecblue}{\rule{\paperwidth}{4pt}}
-\end{center}
+\pagecolor{tecblue!90!black}
+\color{white}
 
-\vspace{1.5cm}
+
+
+
+\begin{tikzpicture}[remember picture, overlay]
+\node[
+  fill=white,
+  anchor=north west,
+  inner sep=12pt,
+  minimum width=\paperwidth,
+  minimum height=8cm
+] at (current page.north west) {
+  \centering
+  \includegraphics[height=5cm]{tecnologico-de-monterrey-blue}
+};
+\end{tikzpicture}
+
+
+
+\vspace*{1cm}
+
+
+
+\vspace{4cm}
 
 \textbf{\Huge Aplicación de Métodos Multivariados \\ en Ciencia de Datos} \par
 
@@ -46,12 +62,13 @@ format:
 Blanca Rosa Ruiz Hernández}
 \end{flushright}
 
+\end{titlepage}
 
+\nopagecolor
 
-
-
-  
 \cleardoublepage
+
+
 
 \tableofcontents
 
@@ -90,4 +107,4 @@ Blanca Rosa Ruiz Hernández}
 \pagestyle{multivariate_notes}
 \pagenumbering{arabic}
 
-{{< include _2_the_standardized_moments.qmd >}}
+{{< include _1_an_introduction_to_tidy_data.qmd >}}

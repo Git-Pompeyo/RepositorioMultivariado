@@ -22,6 +22,8 @@ Existen varias pruebas estadísticas para evaluar si un conjunto sigue una norma
 Aplicaremos estas pruebas a la muestra Gamma creada en el capítulo anterior:
 ```{r}
 #| output: false
+library(car)
+
 normality_tests_lookup_tbl <- tibble(
   code = c("shapiro", "ks", "ad", "jb"),
   label = c(

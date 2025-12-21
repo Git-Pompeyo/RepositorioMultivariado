@@ -2,7 +2,7 @@
 
 En muchos métodos estadísticos univariados se asume que los datos siguen una distribución normal. Sin embargo, en la práctica, no todos nuestros conjuntos de datos satisfacen esta suposición. En estos casos no se justifica el uso de estos métodos y su uso indiscriminado puede llevar a conclusiones erróneas, que nos podrían llevar a tomar malas decisiones bajo la ilusión de un respaldo estadístico que no existe. Es por eso que resulta fundamental contar con herramientas que nos permitan evaluar la normalidad de nuestros datos antes de aplicar cualquier método estadístico que dependa de esta suposición.
 
-En este capítulo, exploraremos algunas de estas herramientas, incluyendo las medidas de asimetría y curtosis, los gráficos QQ y algunas pruebas estadísticas para evaluar la normalidad. En el siguiente capítulo, describiremos ciertas transformaciones que podemos aplicar a nuestros datos para hacerlos más cercanos a una distribución normal, en caso de que no lo sean. Pero antes de comenzar, cargaremos las librerías necesarias y definiremos algunas opciones globales para nuestro análisis.
+En este capítulo exploraremos algunas de estas herramientas, incluyendo las medidas de asimetría y curtosis, los gráficos QQ y algunas pruebas estadísticas para evaluar la normalidad. En el siguiente capítulo, describiremos ciertas transformaciones que podemos aplicar a nuestros datos para hacerlos más cercanos a una distribución normal, en caso de que no lo sean. Pero antes de comenzar, cargaremos las librerías necesarias y definiremos algunas opciones globales para nuestro análisis.
 
 
 ```{r}
@@ -15,6 +15,7 @@ library(krulRutils)
 library(e1071)
 library(latex2exp)
 library(greybox)
+library(kableExtra)
 
 options(scipen = 999)
 ```
@@ -57,16 +58,43 @@ En este caso escribimos $X \sim \text{Gamma}(\alpha, \beta)$.
 La distribución Gamma se usa frecuentemente en procesos de Poisson para modelar tiempos de espera hasta la ocurrencia de ciertos eventos. Por ejemplo, puede modelar el tiempo que pasa hasta que una compañía de seguros reciba un cierto número de reclamaciones.
 \end{observation}
 
-Es un resultado conocido que la asimetría de una distribución Gamma está dada por
-$$
-\gamma_1 = \frac{2}{\sqrt{\alpha}}.
-$$
-En particular, la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme aumenta el valor de $\alpha$. 
+La siguiente tabla resume las características poblacionales más importantes de la distribución Gamma:
+
+```{r}
+#| tbl-cap: "Características poblacionales de la distribución Gamma con parámetros $\\alpha$ y $\\beta$."
+#| label: tbl-gamma-characteristics
+
+# Creamos la tabla de características
+gamma_tbl <- tibble(
+  `Característica` = c(
+    "Media",
+    "Varianza",
+    "Asimetría"
+  ),
+  `Valor` = c(
+    "$\\alpha/\\beta$",
+    "$\\alpha/\\beta^2$",
+    "$2/\\sqrt{\\alpha}$"
+  )
+)
+
+# Formatear y mostrar la tabla
+kable(
+  gamma_tbl,
+  booktabs = TRUE,
+  escape = FALSE,
+)
+```
+Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme aumenta el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana en una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
+
+\begin{observation} Más adelante definiremos la \emph{curtosis excesiva} de una variable aleatoria, pero por el momento mencionaremos que la curtosis excesiva de la distribución Gamma está dada por $6/\alpha$. Notemos que, al igual que la asimetría, la curtosis excesiva es siempre positiva y tiende a cero conforme $\alpha$ aumenta, indicando que la distribución se vuelve más parecida a la normal conforme aumenta $\alpha$.
+\end{observation}
 
 Mostraremos ahora cómo graficar la PDF de la distribución Gamma para $\alpha = 2$ y $\beta = 1$, destacando su media y su mediana. Notemos que para estos parámetros tenemos que
 \begin{align*}
 \text{media} &= \alpha/\beta = 2 \\
-\text{mediana} &\approx `{r} qgamma(0.5, shape = 2, rate = 1)`
+\text{mediana} &\approx `{r} qgamma(0.5, shape = 2, rate = 1)` \\
+\text{asimetría} &= 2/\sqrt{\alpha} = \sqrt{2} \approx `{r} 2/sqrt(2)`
 \end{align*}
 En particular, la media es mayor que la mediana, lo cual es común en distribuciones con asimetría positiva.
 
@@ -88,7 +116,7 @@ gamma_distribution_tbl <- tibble(
   density_data = dgamma(x_data, shape = alpha, rate = beta)
 )
 
-# Calculamos la media y la mediana
+# Calculamos la media, la mediana y la desviación estándar
 gamma_mean <- alpha / beta
 gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
 gamma_sd <- sqrt(alpha) / beta
@@ -316,7 +344,7 @@ Los momentos de la distribución normal generalizada están dados por:
 Notemos que la asimetría es cero para cualquier valor de $\beta$, lo cual indica que la distribución siempre es simétrica. En cuanto a la curtosis, observamos que:
 \begin{itemize}
 \item Si $0 < \beta < 2$, la curtosis excesiva es positiva, indicando colas más pesadas que la normal (distribución leptocúrtica). 
-\item Si $\beta = 2$, la curtosis excesiva es cero, coincidiendo con la normal.
+\item Si $\beta = 2$, la curtosis excesiva es cero, coincidiendo con la normal (distribución mesocúrtica).
 \item Si $\beta > 2$, la curtosis excesiva es negativa, indicando colas más ligeras que la normal (distribución platicúrtica). 
 \end{itemize}
 
@@ -392,6 +420,319 @@ dgnorm_distribution_family_plot <- ggplot(
 
 dgnorm_distribution_family_plot
 ```
+
+Finalmente, utilizaremos la distribución normal generalizada, con parámetros $\mu = 0$, $\alpha = 1$ y $\beta = 1, 2, 3,$ para generar una gráfica comparativa de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de distribuciones leptocúrtica, mesocúrtica y platicúrtica. Notemos cómo la curtosis afecta la forma de la distribución, especialmente en las colas y el pico central."
+#| fig-width: 12
+#| fig-height: 3.5
+
+x_data <- seq(-2, 2, length.out = 500)
+
+# Calculamos la PDF de la distribución leptocúrtica
+leptokurtic_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 1)
+)
+
+# Calculamos la PDF de la distribución mesocúrtica
+mesokurtic_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 2)
+)
+
+# Calculamos la PDF de la distribución platicúrtica
+platykurtic_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 3)
+)
+
+# Generamos la gráfica de la distribución leptocúrtica
+leptokurtic_distribution_plot <- leptokurtic_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
+  labs(
+    title = "Leptocúrtica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución mesocúrtica
+mesokurtic_distribution_plot <- mesokurtic_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
+  labs(
+    title = "Mesocúrtica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución platicúrtica
+platykurtic_distribution_plot <- platykurtic_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(color = c_palette["C blue"], linewidth = 1) +
+  labs(
+    title = "Platicúrtica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+kurtosis_comparison_plot <- leptokurtic_distribution_plot +
+  mesokurtic_distribution_plot +
+  platykurtic_distribution_plot +
+  plot_annotation(
+    title = "Comparación de distribuciones con distintos niveles de curtosis",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+kurtosis_comparison_plot
+```
+
+
+### Asimetría y curtosis muestrales 
+
+Hasta ahora hemos definido la asimetría y curtosis para variables aleatorias. Sin embargo, en la práctica trabajamos con muestras y no con poblaciones completas, por lo que necesitamos definir la asimetría y curtosis \emph{muestrales}. Empecemos por recordar que, dado un \emph{vector muestral}
+$$
+X = \begin{bmatrix}
+X_1 \\
+X_2 \\
+\vdots \\ 
+X_n
+\end{bmatrix},
+$$
+definimos su \emph{media muestral} como 
+$$
+\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.
+$$
+Para la varianza muestral, tenemos dos versiones, la \emph{varianza muestral sesgada}
+$$
+\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,
+$$
+y la \emph{varianza muestral insesgada} 
+$$
+S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.
+$$
+En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la asimetría muestral, definiremos primero el tercer momento muestral. Igual que con la varianza muestral, existen dos versiones del tercer momento muestral: el \emph{tercer momento muestral sesgado}
+$$
+\widetilde{M}_3 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3,
+$$
+y el \emph{tercer momento muestral insesgado}
+$$
+M_3 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3. 
+$$
+A partir de estas definiciones, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la \emph{asimetría muestral de tipo 1}
+$$
+\widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}},
+$$
+y la \emph{asimetría muestral de tipo 2} 
+$$
+G_{1} = \frac{M_3}{S^3} = \frac{\frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}}. 
+$$
+Aunque menos común, también podemos definir la \emph{asimetría muestral de tipo 3} como
+$$
+G_{1}^{*} = \frac{\widetilde{M}_3}{S^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}}.
+$$
+\begin{observation} 
+Es importante destacar que no existe un estimador insesgado de la asimetría poblacional. Sin embargo, todas estas versiones de la asimetría muestral son consistentes, es decir, convergen en probabilidad a la asimetría poblacional conforme el tamaño muestral $n$ tiende a infinito. En particular, para muestras grandes, las tres versiones de la asimetría muestral son aproximadamente iguales.
+\end{observation}
+
+En R, podemos calcular las tres versiones de la asimetría muestral utilizando la función `skewness()` del paquete `e1071`, especificando el argumento `type` como 1, 2 o 3 según la versión que deseemos calcular. El paquete `moments` también ofrece una función similar llamada `skewness()`, pero esta solo calcula la asimetría muestral de tipo 1. 
+
+Mostraremos ahora un ejemplo de una muestra que viene de una distribución con sesgo a la izquierda, una simétrica y una con sesgo a la derecha. 
+```{r}
+#| fig-cap: "Gráfica comparativa de muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría nos indica de la existencia de valores atípicos en las colas de la distribución en la dirección del sesgo."
+#| fig-width: 12
+#| fig-height: 3.5
+
+# Para asegurar la reproducibilidad de los resultados
+set.seed(123)
+
+# Parámetros para generar las muestras
+n <- 30000     # tamaño de la muestra
+alpha <- 2   # forma
+beta <- 1    # tasa
+
+# Generamos las muestras
+left_skew_sample <- -rgamma(n, shape = alpha, rate = beta)
+symmetric_sample <- rnorm(n)
+right_skew_sample <- rgamma(n, shape = alpha, rate = beta)
+
+
+# Generamos las gráficas de las muestras
+# y las presentamos en un solo gráfico
+# como hicimos antes
+left_skew_sample_tbl <- tibble(
+  sample = left_skew_sample
+)
+
+symmetric_sample_tbl <- tibble(
+  sample = symmetric_sample
+)
+
+right_skew_sample_tbl <- tibble(
+  sample = right_skew_sample
+)
+
+left_skew_sample_plot <- left_skew_sample_tbl %>%
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Sesgo a la izquierda",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+symmetric_sample_plot <- symmetric_sample_tbl %>%
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_palette["C blue"],
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Simétrica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+right_skew_sample_plot <- right_skew_sample_tbl %>%
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_palette["C blue"],
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Sesgo a la derecha",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+skew_sample_comparison_plot <- left_skew_sample_plot +
+  symmetric_sample_plot +
+  right_skew_sample_plot +
+  plot_annotation(
+    title = "Comparación de muestras con distintos niveles de asimetría",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+skew_sample_comparison_plot
+```
+Constuiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de asimetría muestral para cada una de las muestras generadas anteriormente. 
+```{r}
+#| label: tbl-sample-skewness
+#| tbl-cap: "Tabla de media, mediana y asimetría muestral para las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos."
+
+# Calcular media, mediana
+# y los tre tipos de asimetría muestral para cada muestra
+skew_sample_summary_tbl <- tibble(
+  Estadística = c(
+    "Media",
+    "Mediana",
+    "Asimetría Tipo 1",
+    "Asimetría Tipo 2",
+    "Asimetría Tipo 3"
+  ),
+  `Sesgo a la izquierda` = c(
+    mean(left_skew_sample),
+    median(left_skew_sample),
+    skewness(left_skew_sample, type = 1),
+    skewness(left_skew_sample, type = 2),
+    skewness(left_skew_sample, type = 3)
+  ),
+  `Simétrica` = c(
+    mean(symmetric_sample),
+    median(symmetric_sample),
+    skewness(symmetric_sample, type = 1),
+    skewness(symmetric_sample, type = 2),
+    skewness(symmetric_sample, type = 3)
+  ),
+  `Sesgo a la derecha` = c(
+    mean(right_skew_sample),
+    median(right_skew_sample),
+    skewness(right_skew_sample, type = 1),
+    skewness(right_skew_sample, type = 2),
+    skewness(right_skew_sample, type = 3)
+  )
+)
+
+# Formatear y mostrar la tabla
+# Redondeando a 4 decimales
+kable(
+  skew_sample_summary_tbl,
+  booktabs = TRUE,
+  digits = 4,
+) |>
+  kable_styling(latex_options = "hold_position")
+``` 
+Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores de obetnidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
+```{r}
+#| label: tbl-population-values
+#| tbl-cap: "Tabla de valores poblacionales conocidos para la media, mediana y asimetría de las  distribuciones consideradas con sesgo a la izquierda, simétrica y con sesgo a la derecha."
+
+# Valores poblacionales conocidos
+population_values_tbl <- tibble(
+  `Caraterística` = c(
+    "Media",
+    "Mediana",
+    "Asimetría"
+  ),
+  `Sesgo a la izquierda` = c(
+    -alpha / beta,
+    -qgamma(0.5, shape = alpha, rate = beta),
+    -2 / sqrt(alpha)
+  ),
+  `Simétrica` = c(
+    0,
+    0,
+    0
+  ),
+  `Sesgo a la derecha` = c(
+    alpha / beta,
+    qgamma(0.5, shape = alpha, rate = beta),
+    2 / sqrt(alpha)
+  )
+)
+
+# Formatear y mostrar la tabla
+kable(
+  population_values_tbl,
+  booktabs = TRUE,
+  digits = 4,
+) |>
+  kable_styling(latex_options = "hold_position")
+```
+
+\begin{observation} Comparando estas tablas, notamos lo siguiente: 
+\begin{itemize} 
+\item Los valores de los distintos tipos de asimetría muestral sin ligeramente diferentes entre sí, pero todos indican correctamente la dirección del sesgo de la distribución de la cual se extrajo la muestra. En particular, cuando el tamaño de la muestra es lo suficientemente grande, los tres tipos de asimetría muestral proporcionan esencialmente la misma información.
+\item Los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta. Esto ilustra la propiedad de consistencia de estos estimadores, pero también ilustra la diferencia entre los valores de los estadísticos de una muestra (que suelen cambiar de una muestra a otra) y los parámetros poblacionales (que son fijos).
+\end{itemize} 
+\end{observation}
 
 ## Gráficos QQ
 Los gráficos QQ (quantile–quantile) son herramientas para comparar la distribución de un conjunto de datos con una distribución teórica (por ejemplo, la normal). Son especialmente útiles para evaluar la normalidad.
@@ -557,51 +898,6 @@ laplace_plot <- laplace_qq_plot + laplace_histogram +
 laplace_plot
 ```
 
-## Asimetría y curtosis muestrales 
-
-Hasta ahora hemos definido asimetría y curtosis para variables aleatorias. Sin embargo, en la práctica trabajamos con muestras y no con poblaciones completas. Por ello, necesitamos definir la asimetría y la curtosis \emph{muestrales}.
-
-\begin{definition}
-Sean $x_1, x_2, \dots, x_n$ una muestra de tamaño $n$. 
-La \emph{media muestral} $\bar{x}$ y la \emph{varianza muestral} $s^{2}$ están dadas por
-\[
-\bar{x} = \frac{1}{n} \sum_{i=1}^n x_i,
-\qquad
-s^{2} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2.
-\]
-La \emph{asimetría muestral} $g_1$ está dada por
-\[
-g_1 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^3.
-\]
-La \emph{curtosis en exceso muestral} $g_2$ 
-está dada por
-$$
-g_2 = \frac{n(n+1)}{(n-1)(n-2)(n-3)}
-\sum_{i=1}^n \left( \frac{x_i - \bar{x}}{s} \right)^4
-- \frac{3(n-1)^2}{(n-2)(n-3)}.
-$$
-\end{definition}
-
-Como ejemplo, calcularemos la asimetría y la curtosis en exceso muestrales de las muestras de Gamma y Laplace generadas antes. Para la muestra Gamma tenemos:
-```{r}
-# Compute sample skewness and excess kurtosis for Gamma distribution
-gamma_sample_tbl %>%
-  summarise(
-    sample_skewness = skewness(sample, type = 2),
-    sample_excess_kurtosis = kurtosis(sample, type = 2)
-  ) %>%
-  glimpse()
-```
-Para la muestra de Laplace tenemos:
-```{r}
-# Compute sample skewness and excess kurtosis for Laplace distribution
-laplace_sample_tbl %>%
-  summarise(
-    sample_skewness = skewness(sample, type = 2),
-    sample_excess_kurtosis = kurtosis(sample, type = 2)
-  ) %>%
-  glimpse()
-```
 
 ## Escalamiento y estandarización 
 
