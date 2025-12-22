@@ -58,53 +58,38 @@ En este caso escribimos $X \sim \text{Gamma}(\alpha, \beta)$.
 La distribución Gamma se usa frecuentemente en procesos de Poisson para modelar tiempos de espera hasta la ocurrencia de ciertos eventos. Por ejemplo, puede modelar el tiempo que pasa hasta que una compañía de seguros reciba un cierto número de reclamaciones.
 \end{observation}
 
-La siguiente tabla resume las características poblacionales más importantes de la distribución Gamma:
+La siguiente tabla resume las características poblacionales más relevantes de la distribución Gamma:
 
 ```{r}
 #| tbl-cap: "Características poblacionales de la distribución Gamma con parámetros $\\alpha$ y $\\beta$."
 #| label: tbl-gamma-characteristics
 
-# Creamos la tabla de características
+# Crear la tabla de características de la distribución Gamma
 gamma_tbl <- tibble(
-  `Característica` = c(
-    "Media",
-    "Varianza",
-    "Asimetría"
-  ),
-  `Valor` = c(
-    "$\\alpha/\\beta$",
-    "$\\alpha/\\beta^2$",
-    "$2/\\sqrt{\\alpha}$"
-  )
+  `Característica` = c("Media", "Varianza", "Asimetría"),
+  `Valor` = c("$\\alpha/\\beta$", "$\\alpha/\\beta^2$", "$2/\\sqrt{\\alpha}$")
 )
 
 # Formatear y mostrar la tabla
-kable(
-  gamma_tbl,
-  booktabs = TRUE,
-  escape = FALSE,
-)
+kable(gamma_tbl, booktabs = TRUE, escape = FALSE)
 ```
-Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme aumenta el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana en una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
+Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme va aumentando el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana en una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
 
 \begin{observation} Más adelante definiremos la \emph{curtosis excesiva} de una variable aleatoria, pero por el momento mencionaremos que la curtosis excesiva de la distribución Gamma está dada por $6/\alpha$. Notemos que, al igual que la asimetría, la curtosis excesiva es siempre positiva y tiende a cero conforme $\alpha$ aumenta, indicando que la distribución se vuelve más parecida a la normal conforme aumenta $\alpha$.
 \end{observation}
 
 Mostraremos ahora cómo graficar la PDF de una familia de distribuciones Gamma con $\beta = 1$ y distintos valores de $\alpha$. 
 ```{r}
-#| fig-cap: "Funciones de densidad de una familia de distribuciones Gamma con $\\beta = 1$ y distintos valores de $\\alpha$. Notemos cómo la forma de la distribución cambia conforme varía el parámetro de forma $\\alpha$, afectando la asimetría de la distribución. En particular, a medida que $\\alpha$ aumenta, la distribución se vuelve más simétrica y la asimetría disminuye."
+#| fig-cap: "Funciones de densidad de una familia de distribuciones Gamma con $\\beta = 1$ y distintos valores de $\\alpha$. Notemos cómo la forma de la distribución cambia conforme varía el parámetro de forma $\\alpha$, afectando la asimetría de la distribución. En particular, a medida que $\\alpha$ aumenta, la distribución se vuelve más simétrica y el valor de la asimetría disminuye."
 #| fig-width: 12
 #| fig-height: 6
 
 # Asignamos los parámetros
-alpha <- 2 # forma
+alpha_values <- c(1.5, 2, 3, 4, 6, 8)
 beta <- 1  # tasa
 
 # Creamos una secuencia de valores para X
 x_data <- seq(0, 15, length.out = 500)
-
-# Definimos valores de alpha para la familia
-alpha_values <- c(1.5, 2, 3, 4, 6, 8)
 
 # Calculamos la PDF de la familia de distribuciones Gamma
 gamma_distribution_family_tbl <- expand_grid(
@@ -116,43 +101,20 @@ gamma_distribution_family_tbl <- expand_grid(
     alpha = factor(alpha)
   )
 
-# Calculamos la PDF de la distribución Gamma para alpha = 2
-gamma_distribution_tbl <- tibble(
-  x_data = x_data,
-  density_data = dgamma(x_data, shape = alpha, rate = beta)
-)
-
-# Calculamos la media, la mediana y la desviación estándar
-gamma_mean <- alpha / beta
-gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
-gamma_sd <- sqrt(alpha) / beta
-
 # Generamos la gráfica de la familia
-gamma_distribution_plot <- ggplot(
-  gamma_distribution_family_tbl,
-  aes(
-    x = x_data,
-    y = density_data,
-    color = alpha
-  )
-) +
+gamma_distribution_plot <- gamma_distribution_family_tbl |>
+  ggplot(aes(x = x_data, y = density_data, color = alpha)) +
   geom_line(linewidth = 1) +
   scale_color_manual(
     values = unname(c_pal(
-      "C red",
-      "C yellow",
-      "C orange",
-      "C green",
-      "C blue",
-      "C magenta"
+      "C red", "C yellow",
+      "C orange", "C green",
+      "C blue", "C magenta"
     )),
     labels = c(
-      TeX("$\\alpha$ = 1.5"),
-      TeX("$\\alpha$ = 2"),
-      TeX("$\\alpha$ = 3"),
-      TeX("$\\alpha$ = 4"),
-      TeX("$\\alpha$ = 6"),
-      TeX("$\\alpha$ = 8")
+      TeX("$\\alpha$ = 1.5"), TeX("$\\alpha$ = 2"),
+      TeX("$\\alpha$ = 3"), TeX("$\\alpha$ = 4"),
+      TeX("$\\alpha$ = 6"), TeX("$\\alpha$ = 8")
     )
   ) +
   labs(
@@ -172,6 +134,15 @@ Finalmente, usaremos la distribución Gamma para generar una gráfica comparativ
 #| fig-cap: "Gráfica comparativa de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría afecta la forma de la distribución y la relación entre la media y la mediana."
 #| fig-width: 12
 #| fig-height: 3.5
+
+# Asignamos los parámetros
+alpha <- 2 # forma
+beta <- 1  # tasa
+
+# Calculamos la media, la mediana y la desviación estándar
+gamma_mean <- alpha / beta
+gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_sd <- sqrt(alpha) / beta
 
 # Creamos una secuencia de valores para X
 x_data <- seq(0, 8, length.out = 500)
@@ -343,25 +314,42 @@ f_X(x; \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma(1/\beta)} e^{-\left( \
 donde $\Gamma$ nuevamente denota a la función Gamma, que definimos en \eqref{eq:gamma_function}. En este caso escribimos $X \sim \text{NormalGeneralizada}(\mu, \alpha, \beta)$.
 \end{definition}
 
-Los momentos de la distribución normal generalizada están dados por:
-\begin{align*}
-\text{media} & = \mu, \\
-\text{varianza} & = \alpha^2 \frac{\Gamma(3/\beta)}{\Gamma(1/\beta)}, \\
-\text{asimetría} & = 0, \\
-\text{curtosis excesiva} & = \frac{\Gamma(5/\beta) \Gamma(1/\beta)}{\Gamma(3/\beta)^2} - 3. 
-\end{align*}
-Notemos que la asimetría es cero para cualquier valor de $\beta$, lo cual indica que la distribución siempre es simétrica. En cuanto a la curtosis, observamos que:
-\begin{itemize}
-\item Si $0 < \beta < 2$, la curtosis excesiva es positiva, indicando colas más pesadas que la normal (distribución leptocúrtica). 
-\item Si $\beta = 2$, la curtosis excesiva es cero, coincidiendo con la normal (distribución mesocúrtica).
-\item Si $\beta > 2$, la curtosis excesiva es negativa, indicando colas más ligeras que la normal (distribución platicúrtica). 
-\end{itemize}
+Las características poblacionales más relevantes de la distribución normal generalizada se muestran en la siguiente tabla:
+
+```{r}
+#| tbl-cap: "Características de la distribución normal generalizada con parámetros $\\mu$, $\\alpha$ y $\\beta$."
+#| label: tbl-generalized-normal-characteristics
+
+# Crear la tabla de características de la distribución Gamma
+generalized_normal_tbl <- tibble(
+  `Característica` = c(
+    "Media",
+    "Varianza",
+    "Asimetría",
+    "Curtosis excesiva"
+  ),
+  `Valor` = c(
+    "$\\mu$",
+    "$\\alpha^{2} \\frac{\\Gamma(3/\\beta)}{\\Gamma(1/\\beta)}$",
+    "0",
+    "$\\frac{\\Gamma(5/\\beta) \\Gamma(1/\\beta)}{\\Gamma(3/2)^{2}} - 3$"
+  )
+)
+
+# Formatear y mostrar la tabla
+kable(
+  generalized_normal_tbl,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+)
+```
 
 \begin{observation} Notemos que para $\beta = 1$ la distribución normal generalizada coincide con la distribución de Laplace cuya PDF está dada por 
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} e^{-\frac{|x - \mu|}{b}}, \quad x \in \mathbb{R}, 
 \end{equation}
-donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media  $\mu$ y varianza $2\alpha^2$. Finalemente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
+donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media  $\mu$ y varianza $\alpha^{2}/2$. Finalemente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
 \end{observation}
 
 Mostraremos ahora la gráfica de la PDF de la distribución normal generalizada para $\mu = 0$, $\alpha = 1$ y distintos valores de $\beta$, destacando sus colas y la forma del pico central.
@@ -961,6 +949,14 @@ Con esta información, generamos la gráfica de la versión estandarizada de la 
 #| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
 #| fig-width: 8
 #| fig-height: 5
+
+
+
+# Calculamos la PDF de la distribución Gamma para alpha = 2
+gamma_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgamma(x_data, shape = alpha, rate = beta)
+)
 
 
 # Calculate density values
