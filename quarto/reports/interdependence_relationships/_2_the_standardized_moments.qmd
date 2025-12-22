@@ -2,7 +2,7 @@
 
 En muchos métodos estadísticos univariados se asume que los datos siguen una distribución normal. Sin embargo, en la práctica, no todos nuestros conjuntos de datos satisfacen esta suposición. En estos casos no se justifica el uso de estos métodos y su uso indiscriminado puede llevar a conclusiones erróneas, que nos podrían llevar a tomar malas decisiones bajo la ilusión de un respaldo estadístico que no existe. Es por eso que resulta fundamental contar con herramientas que nos permitan evaluar la normalidad de nuestros datos antes de aplicar cualquier método estadístico que dependa de esta suposición.
 
-En este capítulo exploraremos algunas de estas herramientas, incluyendo las medidas de asimetría y curtosis, los gráficos QQ y algunas pruebas estadísticas para evaluar la normalidad. En el siguiente capítulo, describiremos ciertas transformaciones que podemos aplicar a nuestros datos para hacerlos más cercanos a una distribución normal, en caso de que no lo sean. Pero antes de comenzar, cargaremos las librerías necesarias y definiremos algunas opciones globales para nuestro análisis.
+En este capítulo exploraremos algunas de estas herramientas, incluyendo las medidas de asimetría y curtosis, los gráficos QQ y algunas pruebas estadísticas para evaluar la normalidad. En el siguiente capítulo describiremos ciertas transformaciones que podemos aplicar a nuestros datos para hacerlos más cercanos a una distribución normal, en caso de que no lo sean. Pero antes de comenzar, cargaremos las librerías necesarias y definiremos algunas opciones globales para nuestro análisis.
 
 
 ```{r}
@@ -89,6 +89,7 @@ Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ 
 \end{observation}
 
 Mostraremos ahora cómo graficar la PDF de una familia de distribuciones Gamma con $\beta = 1$ y distintos valores de $\alpha$. 
+
 ```{r}
 #| fig-cap: "Funciones de densidad de una familia de distribuciones Gamma con $\\beta = 1$ y distintos valores de $\\alpha$. Notemos cómo la forma de la distribución cambia conforme varía el parámetro de forma $\\alpha$, afectando la asimetría de la distribución. En particular, a medida que $\\alpha$ aumenta, la distribución se vuelve más simétrica y el valor de la asimetría disminuye."
 #| fig-width: 12
@@ -527,7 +528,7 @@ y la \emph{varianza muestral insesgada}
 $$
 S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.
 $$
-En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la asimetría muestral, definiremos primero el tercer momento muestral. Igual que con la varianza muestral, existen dos versiones del tercer momento muestral: el \emph{tercer momento muestral sesgado}
+En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la asimetría muestral, definiremos primero el tercer momento muestral. Igual que con la varianza muestral, existen dos versiones de esta: el \emph{tercer momento muestral sesgado}
 $$
 \widetilde{M}_3 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3,
 $$
@@ -535,7 +536,7 @@ y el \emph{tercer momento muestral insesgado}
 $$
 M_3 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3. 
 $$
-A partir de estas definiciones, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la \emph{asimetría muestral de tipo 1}
+A partir de aquí, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la \emph{asimetría muestral de tipo 1}
 $$
 \widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}},
 $$
@@ -551,11 +552,11 @@ $$
 Es importante destacar que no existe un estimador insesgado de la asimetría poblacional. Sin embargo, todas estas versiones de la asimetría muestral son consistentes, es decir, convergen en probabilidad a la asimetría poblacional conforme el tamaño muestral $n$ tiende a infinito. En particular, para muestras grandes, las tres versiones de la asimetría muestral son aproximadamente iguales.
 \end{observation}
 
-En R, podemos calcular las tres versiones de la asimetría muestral utilizando la función `skewness()` del paquete `e1071`, especificando el argumento `type` como 1, 2 o 3 según la versión que deseemos calcular. El paquete `moments` también ofrece una función similar llamada `skewness()`, pero esta solo calcula la asimetría muestral de tipo 1. 
+En R, podemos calcular las tres versiones de la asimetría muestral utilizando la función `skewness()`, del paquete `e1071`, especificando el argumento `type` como 1, 2 o 3 según la versión que deseemos calcular. El paquete `moments` también ofrece una función similar llamada `skewness()`, pero esta solo calcula la asimetría muestral de tipo 1. 
 
 Mostraremos ahora un ejemplo de una muestra que viene de una distribución con sesgo a la izquierda, una simétrica y una con sesgo a la derecha. 
 ```{r}
-#| fig-cap: "Gráfica comparativa de muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría nos indica de la existencia de valores atípicos en las colas de la distribución en la dirección del sesgo."
+#| fig-cap: "Gráfica comparativa de muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría nos alerta de la existencia de valores atípicos en las colas de la muestra en la dirección del sesgo."
 #| fig-width: 12
 #| fig-height: 3.5
 
@@ -694,10 +695,9 @@ kable(
   skew_sample_summary_tbl,
   booktabs = TRUE,
   digits = 4,
-) |>
-  kable_styling(latex_options = "hold_position")
+)
 ``` 
-Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores de obetnidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
+Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores obtenidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
 ```{r}
 #| label: tbl-population-values
 #| tbl-cap: "Tabla de valores poblacionales conocidos para la media, mediana y asimetría de las  distribuciones consideradas con sesgo a la izquierda, simétrica y con sesgo a la derecha."
@@ -727,12 +727,12 @@ population_values_tbl <- tibble(
 )
 
 # Formatear y mostrar la tabla
+# Redondeando a 4 decimales
 kable(
   population_values_tbl,
   booktabs = TRUE,
   digits = 4,
-) |>
-  kable_styling(latex_options = "hold_position")
+)
 ```
 
 \begin{observation} Comparando estas tablas, notamos lo siguiente: 
