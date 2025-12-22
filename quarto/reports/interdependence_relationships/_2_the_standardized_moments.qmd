@@ -90,16 +90,9 @@ Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ 
 \begin{observation} Más adelante definiremos la \emph{curtosis excesiva} de una variable aleatoria, pero por el momento mencionaremos que la curtosis excesiva de la distribución Gamma está dada por $6/\alpha$. Notemos que, al igual que la asimetría, la curtosis excesiva es siempre positiva y tiende a cero conforme $\alpha$ aumenta, indicando que la distribución se vuelve más parecida a la normal conforme aumenta $\alpha$.
 \end{observation}
 
-Mostraremos ahora cómo graficar la PDF de la distribución Gamma para $\alpha = 2$ y $\beta = 1$, destacando su media y su mediana. Notemos que para estos parámetros tenemos que
-\begin{align*}
-\text{media} &= \alpha/\beta = 2 \\
-\text{mediana} &\approx `{r} qgamma(0.5, shape = 2, rate = 1)` \\
-\text{asimetría} &= 2/\sqrt{\alpha} = \sqrt{2} \approx `{r} 2/sqrt(2)`
-\end{align*}
-En particular, la media es mayor que la mediana, lo cual es común en distribuciones con asimetría positiva.
-
+Mostraremos ahora cómo graficar la PDF de una familia de distribuciones Gamma con $\beta = 1$ y distintos valores de $\alpha$. 
 ```{r}
-#| fig-cap: "Función de densidad de la distribución Gamma con parámetros $\\alpha = 2$ y $\\beta = 1$. Notemos que para estos parámetros la media es mayor que la mediana, lo cual es común en distribuciones con asimetría positiva."
+#| fig-cap: "Funciones de densidad de una familia de distribuciones Gamma con $\\beta = 1$ y distintos valores de $\\alpha$. Notemos cómo la forma de la distribución cambia conforme varía el parámetro de forma $\\alpha$, afectando la asimetría de la distribución. En particular, a medida que $\\alpha$ aumenta, la distribución se vuelve más simétrica y la asimetría disminuye."
 #| fig-width: 12
 #| fig-height: 6
 
@@ -108,9 +101,22 @@ alpha <- 2 # forma
 beta <- 1  # tasa
 
 # Creamos una secuencia de valores para X
-x_data <- seq(0, 8, length.out = 500)
+x_data <- seq(0, 15, length.out = 500)
 
-# Calculamos la PDF de la distribución Gamma
+# Definimos valores de alpha para la familia
+alpha_values <- c(1.5, 2, 3, 4, 6, 8)
+
+# Calculamos la PDF de la familia de distribuciones Gamma
+gamma_distribution_family_tbl <- expand_grid(
+  x_data = x_data,
+  alpha = alpha_values
+) |>
+  mutate(
+    density_data = dgamma(x_data, shape = alpha, rate = beta),
+    alpha = factor(alpha)
+  )
+
+# Calculamos la PDF de la distribución Gamma para alpha = 2
 gamma_distribution_tbl <- tibble(
   x_data = x_data,
   density_data = dgamma(x_data, shape = alpha, rate = beta)
@@ -121,45 +127,43 @@ gamma_mean <- alpha / beta
 gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
 gamma_sd <- sqrt(alpha) / beta
 
-# Generamos la gráfica
-gamma_distribution_plot <- gamma_distribution_tbl |>
-  ggplot(aes(x = x_data, y = density_data)) +
-  geom_line(color = c_palette["C blue"], linewidth = 1) +
-  geom_vline(
-    xintercept = gamma_mean,
-    color = c_palette["C red"],
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  geom_vline(
-    xintercept = gamma_median,
-    color = c_palette["C green"],
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  annotate(
-    "text",
-    x = gamma_mean,
-    y = 0.5,
-    label = "Media",
-    color = c_palette["C red"],
-    hjust = -0.1
-  ) +
-  annotate(
-    "text",
-    x = gamma_median,
-    y = 0.5,
-    label = "Mediana",
-    color = c_palette["C green"],
-    hjust = 1.1
+# Generamos la gráfica de la familia
+gamma_distribution_plot <- ggplot(
+  gamma_distribution_family_tbl,
+  aes(
+    x = x_data,
+    y = density_data,
+    color = alpha
+  )
+) +
+  geom_line(linewidth = 1) +
+  scale_color_manual(
+    values = unname(c_pal(
+      "C red",
+      "C yellow",
+      "C orange",
+      "C green",
+      "C blue",
+      "C magenta"
+    )),
+    labels = c(
+      TeX("$\\alpha$ = 1.5"),
+      TeX("$\\alpha$ = 2"),
+      TeX("$\\alpha$ = 3"),
+      TeX("$\\alpha$ = 4"),
+      TeX("$\\alpha$ = 6"),
+      TeX("$\\alpha$ = 8")
+    )
   ) +
   labs(
-    title = "Función de densidad de la distribución Gamma(2,1)",
+    title = "Familia de distribuciones Gamma con beta = 1",
     x = TeX("$X$"),
-    y = "Densidad"
+    y = "Densidad",
+    color = "Parámetro de forma"
   ) +
   theme_krul()
 
+# Mostramos la gráfica
 gamma_distribution_plot
 ```
 
@@ -168,6 +172,9 @@ Finalmente, usaremos la distribución Gamma para generar una gráfica comparativ
 #| fig-cap: "Gráfica comparativa de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría afecta la forma de la distribución y la relación entre la media y la mediana."
 #| fig-width: 12
 #| fig-height: 3.5
+
+# Creamos una secuencia de valores para X
+x_data <- seq(0, 8, length.out = 500)
 
 # Calculamos la PDF de la distribución con sesgo negativo
 left_skew_distribution_tbl <- tibble(
@@ -296,6 +303,7 @@ right_skew_distribution_plot <- right_skew_distribution_tbl |>
   ) +
   theme_krul()
 
+# Combinamos las gráficas
 skew_comparison_plot <- left_skew_distribution_plot +
   symmetric_distribution_plot +
   right_skew_distribution_plot +
@@ -309,6 +317,7 @@ skew_comparison_plot <- left_skew_distribution_plot +
     )
   )
 
+# Mostramos la gráfica
 skew_comparison_plot
 ```
 
@@ -418,6 +427,7 @@ dgnorm_distribution_family_plot <- ggplot(
   ) +
   theme_krul()
 
+# Mostramos la gráfica
 dgnorm_distribution_family_plot
 ```
 
