@@ -16,8 +16,8 @@ library(e1071)
 library(latex2exp)
 library(greybox)
 library(kableExtra)
-
-options(scipen = 999)
+library(car)
+# options(scipen = 999)
 ```
 
 ## Los momentos estandarizados
@@ -696,6 +696,7 @@ kable(
   skew_sample_summary_tbl,
   booktabs = TRUE,
   digits = 4,
+  align = c("l", "c", "c", "c")
 )
 ``` 
 Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores obtenidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
@@ -732,12 +733,13 @@ kable(
   population_values_tbl,
   booktabs = TRUE,
   digits = 4,
+  align = c("l", "c", "c", "c")
 )
 ```
 
 \begin{observation} Comparando estas tablas, notamos lo siguiente: 
 \begin{itemize} 
-\item Los valores de los distintos tipos de asimetría muestral son ligeramente diferentes entre sí, pero todos indican correctamente la dirección del sesgo de la distribución de la cual se extrajo la muestra. En particular, cuando el tamaño de la muestra es lo suficientemente grande, los tres tipos de asimetría muestral proporcionan esencialmente la misma información.
+\item Los valores de los distintos tipos de asimetría muestral son ligeramente distintos entre sí, pero todos indican correctamente la dirección del sesgo de la muestra. En particular, para muestras lo suficientemente grandes, todos proporcionan esencialmente la misma información.
 \item Los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta. Esto ilustra la propiedad de consistencia de estos estimadores, pero también ilustra la diferencia entre los valores de los estadísticos de una muestra (que suelen cambiar de una muestra a otra) y los parámetros poblacionales (que son fijos).
 \end{itemize} 
 \end{observation}
@@ -921,12 +923,12 @@ kurtosis_sample_summary_tbl <- tibble(
   )
 )
 
-# Formatear y mostrar la tabla
-# Redondeando a 4 decimales
+# Formatear y mostrar la tabla redondeando a 4 decimales
 kable(
   kurtosis_sample_summary_tbl,
   booktabs = TRUE,
   digits = 4,
+  align = c("l", "c", "c", "c")
 )
 ```
 Ahora, como sabemos que estas muestras vienen de distribuciones con media, varianza y curtosis conocida, podemos comparar los valores obtenidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
@@ -961,464 +963,302 @@ population_kurtosis_values_tbl <- tibble(
   )
 )
 
-# Formatear y mostrar la tabla
-# Redondeando a 4 decimales
+# Formatear y mostrar la tabla redondeando a 4 decimales
 kable(
   population_kurtosis_values_tbl,
   booktabs = TRUE,
   digits = 4,
+  align = c("l", "c", "c", "c")
 )
 ```
 
 Nuevamente notamos que los valores de los distintos tipos de curtosis muestral son ligeramente diferentes entre sí, pero todos indican correctamente el nivel de curtosis de la distribución de la cual se extrajo la muestra. Además, los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta, ilustrando que estos estimadores son, efectivamente, consistentes.
 
 ## Gráficos QQ
-Los gráficos QQ (quantile–quantile) son herramientas para comparar la distribución de un conjunto de datos con una distribución teórica (por ejemplo, la normal). Son especialmente útiles para evaluar la normalidad.
+Los gráficos QQ (quantile–quantile) son una herramienta que nos permite comparar la distribución de un conjunto de datos dado contra una distribución teórica. Cuando tomamos esta distribución teórica como la normal estándar, estos gráficos nos permiten evaluar de manera visual la normalidad de nuestros datos.
 
-Para construir un gráfico QQ, siga estos pasos:
+Para construir un gráfico QQ, debemos seguir los siguientes pasos:
 \begin{enumerate}
-    \item \textbf{Ordene los datos muestrales:}  
-    Coloque los datos en orden creciente:  
-    \[
-    x_{(1)} \leq x_{(2)} \leq \cdots \leq x_{(n)}.
-    \]
-    
-    \item \textbf{Calcule posiciones de trazado (cuantiles empíricos):}  
-    Para cada valor ordenado \( x_{(i)} \), calcule la probabilidad correspondiente  
-    \[
-    p_i = \frac{2i - 1}{2n}, \quad i = 1, 2, \ldots, n.
-    \]
-    
-    \item \textbf{Obtenga los cuantiles teóricos de la normal:}  
-    A partir de la función cuantil (inversa de la CDF) de la normal estándar:  
-    \[
-    q_i = \Phi^{-1}(p_i),
-    \]
-    donde \( \Phi^{-1} \) es la función cuantil de la normal estándar.  
-        
-    \item \textbf{Trace los puntos:}  
-    Grafique los pares \( (q_i, x_{(i)}) \) con \( q_i \) en el eje x y \( x_{(i)} \) en el eje y.
-    
-    \item \textbf{Agregue una línea de referencia:}  
-    Trazar, por ejemplo, una recta por el primer y tercer cuartil ayuda a evaluar la normalidad. \end{enumerate}
-
-Mientras más cerca caigan los puntos de esa recta, más se parece la muestra a la distribución normal especificada.
-
-Para ilustrar estas ideas, generaremos muestras de las distribuciones Gamma y Laplace y construiremos sus gráficos QQ e histogramas. Primero, generamos las muestras:
-```{r}
-set.seed(123) # for reproducibility
-
-# Sample size
-n <- 300
-mu <- 0
-b <- 1
-# Generate random samples from the Gamma distribution
-gamma_sample <- rgamma(n, shape = alpha, rate = beta)
-
-gamma_sample_tbl <- tibble(
-  sample = gamma_sample
-)
-
-# Generate uniform random numbers in (0,1)
-u <- runif(n)
-
-# Apply inverse CDF of Laplace
-laplace_sample <- ifelse(u < 0.5,
-  mu + b * log(2 * u),
-  mu - b * log(2 * (1 - u))
-)
-
-laplace_sample_tbl <- tibble(
-  sample = laplace_sample
-)
-```
-
-Ahora construiremos los correspondientes gráficos QQ e histogramas. Empezamos con las muestras de la distribución Gamma:
-```{r}
-#| fig-cap: "Gráfico QQ e histograma de las muestras de la distribución Gamma."
-#| fig-width: 10
-#| fig-height: 5
-gamma_qq_plot <- gamma_sample_tbl %>%
-  ggplot(aes(sample = sample)) +
-  geom_qq(
-    color = c_pal("C red"),
-    size = 0.3
-  ) +
-  geom_qq_line(
-    color = c_pal("C blue"),
-    linewidth = 0.5
-  ) +
-  labs(
-    title = "Gráfico QQ",
-    x = "Cuantiles teóricos",
-    y = "Cuantiles muestrales"
-  ) +
-  theme_krul()
-
-gamma_histogram <- gamma_sample_tbl %>%
-  ggplot(aes(x = sample)) +
-  geom_histogram(
-    bins = 30,
-    fill = c_pal("C blue"),
-    color = "black",
-    alpha = 0.7
-  ) +
-  labs(
-    title = "Histograma",
-    x = "Valores muestrales",
-    y = "Densidad"
-  ) +
-  theme_krul()
-
-gamma_plot <- gamma_qq_plot + gamma_histogram +
-  plot_layout(ncol = 2) +
-  plot_annotation(
-    title = "Distribución Gamma: gráfico QQ e histograma",
-    theme = theme(
-      plot.title = element_text(
-        size = 24,
-        face = "bold"
-      )
-    )
-  )
-
-gamma_plot
-```
-
-Construimos ahora el gráfico QQ y el histograma para las muestras de Laplace:
-```{r}
-#| fig-cap: "Gráfico QQ e histograma de las muestras de la distribución de Laplace."
-#| fig-width: 10
-#| fig-height: 5
-
-laplace_qq_plot <- laplace_sample_tbl %>%
-  ggplot(aes(sample = sample)) +
-  geom_qq(
-    color = c_pal("C red"),
-    size = 0.3
-  ) +
-  geom_qq_line(
-    color = c_pal("C blue"),
-    linewidth = 0.5
-  ) +
-  labs(
-    title = "Gráfico QQ",
-    x = "Cuantiles teóricos",
-    y = "Cuantiles muestrales"
-  ) +
-  theme_krul()
-
-laplace_histogram <- laplace_sample_tbl %>%
-  ggplot(aes(x = sample)) +
-  geom_histogram(
-    bins = 30,
-    fill = c_pal("C blue"),
-    color = "black",
-    alpha = 0.7
-  ) +
-  labs(
-    title = "Histograma",
-    x = "Valores muestrales",
-    y = "Densidad"
-  ) +
-  theme_krul()
-laplace_plot <- laplace_qq_plot + laplace_histogram +
-  plot_layout(ncol = 2) +
-  plot_annotation(
-    title = "Distribución de Laplace: gráfico QQ e histograma",
-    theme = theme(
-      plot.title = element_text(
-        size = 24,
-        face = "bold"
-      )
-    )
-  )
-laplace_plot
-```
-
-
-## Escalamiento y estandarización 
-
-En muchas situaciones, las unidades con que medimos distintas variables no son comparables (p.ej., estatura en cm y peso en kg). En esos casos conviene \emph{escalar} las variables para hacerlas comparables. En esta sección discutimos los métodos más comunes para escalar y estandarizar variables y muestras.
-
-### Escalamiento de variables aleatorias
-
-\begin{definition} 
-Una \emph{transformación afín} de una variable aleatoria $X$ es de la forma 
+\item \textbf{Ordenar los datos muestrales.} Coloque los datos en orden creciente:  
 $$
-Y = aX + b
+X_{(1)} \leq X_{(2)} \leq \cdots \leq X_{(n)}.
 $$
-donde $a$ y $b$ son constantes.
-\end{definition}
-
-\begin{remark}
-En estadística, a menudo se habla de \emph{escalamiento} (aunque incluya traslación) para referirse a transformaciones afines.
-\end{remark}
-
-Suponga que $X$ tiene media $\mu$ y desviación estándar $\sigma$. Entonces la variable
-$$ 
-Y = aX + b 
+\item \textbf{Calcular las probabilidades a considerar.} Para cada valor ordenado $X_{(i)}$, calcule la probabilidad correspondiente  
 $$
-tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, la variable
+P_i = \frac{2i - 1}{2n}, \quad i = 1, 2, \ldots, n.
 $$
-Z = \frac{X - \mu}{\sigma}
+\item \textbf{Obtener los cuantiles teóricos de la normal.} Usando la función cuantil de la normal estándar, podemos obtener los cuantiles teóricos correspondientes a las probabilidades calculadas en el paso anterior:
 $$
-tendrá media $0$ y desviación estándar $1$. Esta transformación se llama \emph{estandarización}, y $Z$ es la versión \emph{estandarizada} de $X$ (también llamada \emph{puntaje z}).
-
-\begin{remark}
-Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en normal.
-\end{remark}
-
-\begin{observation}
-Por definición, 
+Q_i = \Phi^{-1}(P_i),
 $$
-\gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
-$$
-y
-$$
-\gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
-$$
-\end{observation}
-
-Como ejemplo, consideremos de nuevo la distribución Gamma. En este caso
-$$
-\mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
-$$
-Con esta información, generamos la gráfica de la versión estandarizada de la Gamma y la comparamos con la original.
-```{r}
-#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
-#| fig-width: 8
-#| fig-height: 5
-
-
-
-# Calculamos la PDF de la distribución Gamma para alpha = 2
-gamma_distribution_tbl <- tibble(
-  x_data = x_data,
-  density_data = dgamma(x_data, shape = alpha, rate = beta)
-)
-
-
-# Calculate density values
-z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
-  mutate(
-    z_data = (x_data - gamma_mean) / gamma_sd,
-    z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
-  ) %>%
-  select(z_data, z_density)
-
-# Calculate mean and median
-z_gamma_mean <- 0
-z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
-
-# Plot
-z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
-  ggplot(aes(x = z_data, y = z_density)) +
-  geom_line(
-    color = c_pal("C blue"),
-    linewidth = 1
-  ) +
-  geom_vline(
-    xintercept = z_gamma_mean,
-    color = c_pal("C red"),
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  geom_vline(
-    xintercept = z_gamma_median,
-    color = c_pal("C green"),
-    linetype = "dotted",
-    linewidth = 1
-  ) +
-  annotate(
-    "text",
-    x = z_gamma_mean,
-    y = 0.55,
-    label = "Media",
-    color = c_pal("C red"),
-    hjust = -0.1
-  ) +
-  annotate(
-    "text",
-    x = z_gamma_median,
-    y = 0.55,
-    label = "Mediana",
-    color = c_pal("C green"),
-    hjust = 1.1
-  ) +
-  coord_cartesian(ylim = c(0, 0.6)) +
-  labs(
-    title = paste(
-      "Estandarizada"
-    ),
-    x = "X",
-    y = "Densidad"
-  ) +
-  theme_krul()
-
-gamma_distribution_plot <- gamma_distribution_plot +
-  labs(
-    title = "Original"
-  )
-
-combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
-  plot_layout(ncol = 2) +
-  plot_annotation(
-    title = "Distribución Gamma: original y estandarizada",
-    theme = theme(
-      plot.title = element_text(
-        size = 24,
-        face = "bold"
-      )
-    )
-  )
-
-combined_gamma_plot
-```
-
-
-### Escalamiento de muestras
-
-Para una muestra dada, no siempre se conoce la distribución subyacente; en particular, pueden desconocerse la media y la desviación poblacionales. Aun así, podemos escalar los datos; hay varios métodos comunes:
-
-\begin{enumerate}
-    \item \emph{Estandarización}: Usa la media y desviación muestrales. La muestra estandarizada es
-    $$
-    T = \frac{X - \bar{X}}{S},
-    $$
-    donde $\bar{X}$ es la media muestral y $S$ la desviación muestral. 
-    
-    \item \emph{Escalamiento Min–Max}: Escala a un rango fijo, usualmente [0,1]. La muestra escalada es
-    $$
-    T = \frac{X - \min(X)}{\max(X) - \min(X)},
-    $$
-    donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra. Es muy sensible a atípicos al usar extremos.
-    
-    \item \emph{Escalamiento robusto}: Usa la mediana y el rango intercuartil (IQR). La muestra escalada es
-    $$
-    T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
-    $$
-    donde $\text{IQR}(X) = Q_3 - Q_1$. Es más robusto a atípicos que Min–Max.
-
-    \item \emph{Normalización}: Divide cada dato por la norma del vector. La muestra normalizada es
-    $$
-    T = \frac{X}{\|X\|},
-    $$
-    donde $\|X\|$ es la norma. Se usa con menor frecuencia que los anteriores.
+donde $\Phi^{-1}$ es la función cuantil de la normal estándar.  
+\item \textbf{Generar el gráfico.} Una vez obtenidos estos valores, debemos graficar los pares $(Q_i, X_{(i)})$ para $i = 1, 2, \ldots, n$, en un mismo plano cartesiano. También es común agregar una recta de referencia que pase por el primer y tercer cuartil de los datos muestrales. 
 \end{enumerate}
 
-\begin{remark} 
-Como se mencionó, escalar no vuelve normal una distribución no normal. En particular, la asimetría y la curtosis en exceso muestrales no cambian.
-\end{remark}
+En general, entre más cerca se encuentren los puntos del gráfico QQ a la recta de referencia, más evidencia tendremos de que los datos muestrales provienen de una distribución normal. Por el contrario, si los puntos se alejan significativamente de esta recta, tendremos evidencia en contra de la normalidad de nuestros datos.
 
-Como ejemplo, consideraremos los distintos métodos de escalado aplicados a la muestra de la distribución Gamma que generamos anteriormente.  
+Para ilustrar estas ideas, consideraremos los histogramas y los gráficos QQ de las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos en la sección anterior.
+
 ```{r}
-#| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a la muestra Gamma. Note que los QQ-plots son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma."
+#| fig-cap: "Gráfica comparativa de histogramas y gráficos QQ de muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos cómo los gráficos QQ nos permiten evaluar visualmente la normalidad de las muestras, mostrando desviaciones significativas de la línea de referencia en las muestras sesgadas."
 #| fig-width: 12
-#| fig-height: 14
+#| fig-height: 7
 
-scale_lookup_tbl <- tibble(
-  code = c(
-    "sample",
-    "sample_standard",
-    "sample_min_max",
-    "sample_robust",
-    "sample_normal"
-  ),
-  label = c(
-    "Original Sample",
-    "Estandarizada",
-    "Min-Max Scaled",
-    "Robust Scaled",
-    "Normalized"
+# Generamos el gráfico QQ para la muestra con sesgo a la izquierda
+left_skew_qq_plot <- left_skew_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra simétrica
+symmetric_qq_plot <- symmetric_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra con sesgo a la derecha
+right_skew_qq_plot <- right_skew_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Combinamos los gráficos QQ
+skew_sample_qq_comparison_plot <- left_skew_qq_plot +
+  symmetric_qq_plot +
+  right_skew_qq_plot
+
+# Combinamos los gráficos QQ con los histogramas
+skew_hist_qq_comparison_plot <- skew_sample_comparison_plot /
+  skew_sample_qq_comparison_plot +
+  plot_annotation(
+    title = paste0(
+      "Comparación de histogramas y gráficos QQ\n",
+      "de muestras con distintos niveles de asimetría"
+    ),
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
   )
+
+# Mostramos la gráfica
+skew_hist_qq_comparison_plot
+```
+
+Consideraremos también los histogramas y los gráficos QQ de las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos en la sección anterior.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de histogramas y gráficos QQ de muestras leptocúrtica, mesocúrtica y platicúrtica. Observemos cómo los gráficos QQ reflejan las diferencias en la curtosis de las muestras, con desviaciones notables de la línea de referencia en las muestras leptocúrtica y platicúrtica."
+#| fig-width: 12
+#| fig-height: 7
+
+# Generamos el gráfico QQ para la muestra leptocúrtica
+leptokurtic_qq_plot <- leptokurtic_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra mesocúrtica
+mesokurtic_qq_plot <- mesokurtic_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra platicúrtica
+platykurtic_qq_plot <- platykurtic_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Combinamos los gráficos QQ
+kurtosis_sample_qq_comparison_plot <- leptokurtic_qq_plot +
+  mesokurtic_qq_plot +
+  platykurtic_qq_plot
+
+# Combinamos los gráficos QQ con los histogramas
+kurtosis_hist_qq_comparison_plot <- kurtosis_sample_comparison_plot /
+  kurtosis_sample_qq_comparison_plot +
+  plot_annotation(
+    title = paste0(
+      "Comparación de histogramas y gráficos QQ\n",
+      "de muestras con distintos niveles de curtosis"
+    ),
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Mostramos la gráfica
+kurtosis_hist_qq_comparison_plot
+```
+
+## Pruebas de normalidad
+
+Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas y que nos permitan determinar de una manera más precisa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
+
+\begin{enumerate}
+\item \textbf{Shapiro–Wilk.} Evalúa que tan bien los datos ordenados de la muestra se ajustan a los cuantiles esperados de una distribución normal. Es muy usada para muestras pequeñas (menores a 50) pero puede ser demasiado sensible en muestras grandes.
+
+\item \textbf{Kolmogorov–Smirnov.} Compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas; sensible a parámetros de escala y localización.
+
+\item \textbf{Anderson–Darling.} Similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada.
+
+\item \textbf{Jarque–Bera.} Basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos.
+\end{enumerate}
+
+Aplicamos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.
+
+```{r}
+#| message: false
+normality_tests_lookup_tbl <- tibble(
+  code = c("shapiro", "ks", "ad", "jb"),
+  label = c(
+    "Shapiro-Wilk",
+    "Kolmogorov-Smirnov",
+    "Anderson-Darling",
+    "Jarque-Bera"
+  ),
 )
 
-scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
-  mutate(
-    sample_standard = standard_scale(sample),
-    sample_min_max = min_max_scale(sample),
-    sample_robust = robust_scale(sample),
-    sample_normal = normal_scale(sample)
-  ) %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = "scaling_method",
-    values_to = "sample_scaled"
-  ) %>%
+skew_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = left_skew_sample_tbl,
+    value_col = sample,
+    sample_name = "Sesgo a la izquierda"
+  ),
+  compute_normality_pvalues(
+    data = symmetric_sample_tbl,
+    value_col = sample,
+    sample_name = "Simétrica"
+  ),
+  compute_normality_pvalues(
+    data = right_skew_sample_tbl,
+    value_col = sample,
+    sample_name = "Sesgo a la derecha"
+  )
+) |>
+  reduce(full_join, by = "test") |>
   convert_codes_to_factor(
-    code_col = scaling_method,
-    lookup_tbl = scale_lookup_tbl,
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
     lookup_code_col = code,
     lookup_label_col = label,
-    new_factor_col_name = scaling_method_factor
-  )
+    new_factor_col_name = Prueba
+  ) |>
+  select(Prueba, everything(), -test)
 
-scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
-  ggplot(aes(sample = sample_scaled)) +
-  facet_wrap(
-    ~scaling_method_factor,
-    nrow = 5,
-    scales = "free"
-  ) +
-  geom_qq(
-    color = c_pal("C red"),
-    size = 0.3
-  ) +
-  geom_qq_line(
-    color = c_pal("C blue"),
-    linewidth = 0.5
-  ) +
-  labs(
-    title = "Gráficos QQ",
-    x = "Cuantiles teóricos",
-    y = "Cuantiles muestrales"
-  ) +
-  theme_krul()
-
-scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
-  ggplot(aes(x = sample_scaled)) +
-  facet_wrap(
-    ~scaling_method_factor,
-    nrow = 5,
-    scales = "free"
-  ) +
-  geom_histogram(
-    bins = 30,
-    fill = c_pal("C blue"),
-    color = "black",
-    alpha = 0.7
-  ) +
-  labs(
-    title = "Histogramas",
-    x = "Valores muestrales",
-    y = "Densidad"
-  ) +
-  theme_krul()
-
-scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
-  plot_layout(ncol = 2) +
-  plot_annotation(
-    title = "Comparación de métodos de escalamiento aplicados a la muestra Gamma",
-    theme = theme(
-      plot.title = element_text(
-        size = 24,
-        face = "bold"
-      )
-    )
-  )
-
-scaled_gamma_plot
+kable(
+  skew_normality_results_tbl,
+  format = "latex",
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(skew_normality_results_tbl) - 1))
+) |>
+  kable_styling(latex_options = "hold_position")
 ```
 
-## Actividad: Visualizando la no normalidad de muestras
+Cabe mencionar que todas estas pruebas suelen rechazar la hipótesis de normalidad para muestras muy grandes, incluso si la desviación de la normalidad es mínima. Por lo tanto, es importante complementar los resultados de estas pruebas con gráficos QQ y análisis adicionales para tomar decisiones informadas sobre la normalidad de los datos.
 
-Para cada una de las siguientes distribuciones, construya una muestra de tamaño 300 y calcule la asimetría y curtosis muestrales. Después, construya y compare sus gráficos QQ e histogramas.
+Ahora hacemos lo mismo para las muestras leptocúrtica, mesocúrtica y platicúrtica. 
+```{r}
+#| message: false
 
-\begin{enumerate}
-    \item Distribución exponencial con tasa $\lambda = 1$.
-    \item Distribución uniforme en $[0, 1]$.
-    \item Distribución beta con $\alpha = 2$ y $\beta = 5$.
-    \item Distribución de Cauchy con localización $x_0 = 0$ y escala $\gamma = 1$.
-    \item Distribución $\chi^{2}_{k}$ con $k = 3$ grados de libertad.
-\end{enumerate}
+kurtosis_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = leptokurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Leptocúrtica"
+  ),
+  compute_normality_pvalues(
+    data = mesokurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Mesocúrtica"
+  ),
+  compute_normality_pvalues(
+    data = platykurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Platicúrtica"
+  )
+) |>
+  reduce(full_join, by = "test") |>
+  convert_codes_to_factor(
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = Prueba
+  ) |>
+  select(Prueba, everything(), -test)
+
+kable(
+  kurtosis_normality_results_tbl,
+  format = "latex",
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(kurtosis_normality_results_tbl) - 1))
+) |>
+  kable_styling(latex_options = "hold_position")
+```
+
+Nuevamente notamos que todas estas pruebas son muy sensibles a desviaciones de la normalidad para muestras grandes. En general, es difícil esperar que una muestra obtenida a partir de datos reales siga exactamente una distribución normal, por lo que hay que ser cautelosos al interpretar los resultados de estas pruebas y considerar el contexto del análisis estadístico que se esté realizando.

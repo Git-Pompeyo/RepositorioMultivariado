@@ -1,67 +1,4 @@
-# Pruebas de normalidad
-
-Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad, pueden ser subjetivos e imprecisos. Por ello, es necesario contar con pruebas estadísticas más objetivas y precisas para determinar si los datos siguen una distribución normal. En este capítulo exploraremos pruebas de normalidad comunes y algunas transformaciones para acercar los datos a la normalidad.
-
-## Pruebas de normalidad 
-
-Existen varias pruebas estadísticas para evaluar si un conjunto sigue una normal. Algunas de las más usadas son:
-
-
-
-
-\begin{enumerate}
-\item \emph{Shapiro–Wilk}: basada en la correlación entre los datos y puntajes normales. Es potente para muestras pequeñas (menores a 50) y muy usada; puede ser demasiado sensible en muestras grandes.
-
-\item \emph{Kolmogorov–Smirnov}: compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas; sensible a parámetros de escala y localización.
-
-\item \emph{Anderson–Darling}: similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada.
-
-\item \emph{Jarque–Bera}: basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos.
-\end{enumerate}
-
-Aplicaremos estas pruebas a la muestra Gamma creada en el capítulo anterior:
-```{r}
-#| output: false
-library(car)
-
-normality_tests_lookup_tbl <- tibble(
-  code = c("shapiro", "ks", "ad", "jb"),
-  label = c(
-    "Shapiro-Wilk",
-    "Kolmogorov-Smirnov",
-    "Anderson-Darling",
-    "Jarque-Bera"
-  ),
-)
-
-normality_test_gamma_sample_tbl <- gamma_sample_tbl %>%
-  summarise(
-    shapiro = tidy_shapiro_test(data = ., value_col = sample)$p_value,
-    ks = tidy_ks_test(data = ., value_col = sample)$p_value,
-    ad = tidy_ad_test(data = ., value_col = sample)$p_value,
-    jb = tidy_jb_test(data = ., value_col = sample)$p_value
-  ) %>%
-  pivot_longer(
-    everything(),
-    names_to = "test",
-    values_to = "p_value"
-  ) %>%
-  convert_codes_to_factor(
-    code_col = test,
-    lookup_tbl = normality_tests_lookup_tbl,
-    lookup_code_col = code,
-    lookup_label_col = label,
-    new_factor_col_name = test_factor
-  ) %>%
-  select(test_factor, p_value)
-```
-Los resultados de las pruebas de normalidad son los siguientes: 
-```{r}
-normality_test_gamma_sample_tbl
-```
-Como era de esperarse (la Gamma no es normal), ninguna prueba resulta satisfactoria.
-
-## Transformaciones 
+# Transformaciones 
 Para acercar los datos a la normalidad, pueden aplicarse transformaciones. Algunas comunes son:
 \begin{enumerate}
 \item \emph{Transformación de Box–Cox}: familia de transformaciones potenciadas aplicables sólo a datos positivos. Está dada por:
@@ -86,6 +23,30 @@ donde $\lambda$ es un parámetro.
 \end{enumerate}
 
 Aplicaremos la transformación de Box–Cox a la muestra Gamma con $\lambda = 0$, $0.25$, $0.5$, $0.75$ y $1$:
+
+```{r}
+set.seed(123) # for reproducibility
+# Sample size
+n <- 300
+b <- 1 / sqrt(2)
+
+
+# Generate random samples from the Gamma distribution
+gamma_sample <- rgamma(n, shape = alpha, rate = beta)
+gamma_sample_tbl <- tibble(
+sample = gamma_sample
+)
+# Generate uniform random numbers in (0,1)
+u <- runif(n)
+# Apply inverse CDF of Laplace
+laplace_sample <- ifelse(u < 0.5,
+mu + b * log(2 * u),
+mu - b * log(2 * (1 - u))
+)
+laplace_sample_tbl <- tibble(
+sample = laplace_sample
+)
+```
 
 ```{r}
 #| fig-cap: "Comparación de distintas transformaciones de Box–Cox aplicadas a la muestra Gamma, con parámetro lambda = 0, 0.25, 0.5, 0.75 y 1."
@@ -300,3 +261,289 @@ optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
 
 optimal_gamma_plot
 ```
+
+## Escalamiento y estandarización 
+
+En muchas situaciones, las unidades con que medimos distintas variables no son comparables (p.ej., estatura en cm y peso en kg). En esos casos conviene \emph{escalar} las variables para hacerlas comparables. En esta sección discutimos los métodos más comunes para escalar y estandarizar variables y muestras.
+
+### Escalamiento de variables aleatorias
+
+\begin{definition} 
+Una \emph{transformación afín} de una variable aleatoria $X$ es de la forma 
+$$
+Y = aX + b
+$$
+donde $a$ y $b$ son constantes.
+\end{definition}
+
+\begin{remark}
+En estadística, a menudo se habla de \emph{escalamiento} (aunque incluya traslación) para referirse a transformaciones afines.
+\end{remark}
+
+Suponga que $X$ tiene media $\mu$ y desviación estándar $\sigma$. Entonces la variable
+$$ 
+Y = aX + b 
+$$
+tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, la variable
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+tendrá media $0$ y desviación estándar $1$. Esta transformación se llama \emph{estandarización}, y $Z$ es la versión \emph{estandarizada} de $X$ (también llamada \emph{puntaje z}).
+
+\begin{remark}
+Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en normal.
+\end{remark}
+
+\begin{observation}
+Por definición, 
+$$
+\gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
+$$
+y
+$$
+\gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
+$$
+\end{observation}
+
+Como ejemplo, consideremos de nuevo la distribución Gamma. En este caso
+$$
+\mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
+$$
+Con esta información, generamos la gráfica de la versión estandarizada de la Gamma y la comparamos con la original.
+```{r}
+#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
+#| fig-width: 8
+#| fig-height: 5
+
+
+
+# Calculamos la PDF de la distribución Gamma para alpha = 2
+gamma_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgamma(x_data, shape = alpha, rate = beta)
+)
+
+
+# Calculate density values
+z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
+  mutate(
+    z_data = (x_data - gamma_mean) / gamma_sd,
+    z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
+  ) %>%
+  select(z_data, z_density)
+
+# Calculate mean and median
+z_gamma_mean <- 0
+z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
+
+# Plot
+z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
+  ggplot(aes(x = z_data, y = z_density)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_mean,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_median,
+    color = c_pal("C green"),
+    linetype = "dotted",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_mean,
+    y = 0.55,
+    label = "Media",
+    color = c_pal("C red"),
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_median,
+    y = 0.55,
+    label = "Mediana",
+    color = c_pal("C green"),
+    hjust = 1.1
+  ) +
+  coord_cartesian(ylim = c(0, 0.6)) +
+  labs(
+    title = paste(
+      "Estandarizada"
+    ),
+    x = "X",
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+gamma_distribution_plot <- gamma_distribution_plot +
+  labs(
+    title = "Original"
+  )
+
+combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Distribución Gamma: original y estandarizada",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+combined_gamma_plot
+```
+
+
+### Escalamiento de muestras
+
+Para una muestra dada, no siempre se conoce la distribución subyacente; en particular, pueden desconocerse la media y la desviación poblacionales. Aun así, podemos escalar los datos; hay varios métodos comunes:
+
+\begin{enumerate}
+    \item \emph{Estandarización}: Usa la media y desviación muestrales. La muestra estandarizada es
+    $$
+    T = \frac{X - \bar{X}}{S},
+    $$
+    donde $\bar{X}$ es la media muestral y $S$ la desviación muestral. 
+    
+    \item \emph{Escalamiento Min–Max}: Escala a un rango fijo, usualmente [0,1]. La muestra escalada es
+    $$
+    T = \frac{X - \min(X)}{\max(X) - \min(X)},
+    $$
+    donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra. Es muy sensible a atípicos al usar extremos.
+    
+    \item \emph{Escalamiento robusto}: Usa la mediana y el rango intercuartil (IQR). La muestra escalada es
+    $$
+    T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
+    $$
+    donde $\text{IQR}(X) = Q_3 - Q_1$. Es más robusto a atípicos que Min–Max.
+
+    \item \emph{Normalización}: Divide cada dato por la norma del vector. La muestra normalizada es
+    $$
+    T = \frac{X}{\|X\|},
+    $$
+    donde $\|X\|$ es la norma. Se usa con menor frecuencia que los anteriores.
+\end{enumerate}
+
+\begin{remark} 
+Como se mencionó, escalar no vuelve normal una distribución no normal. En particular, la asimetría y la curtosis en exceso muestrales no cambian.
+\end{remark}
+
+Como ejemplo, consideraremos los distintos métodos de escalado aplicados a la muestra de la distribución Gamma que generamos anteriormente.  
+```{r}
+#| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a la muestra Gamma. Note que los QQ-plots son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma."
+#| fig-width: 12
+#| fig-height: 14
+
+scale_lookup_tbl <- tibble(
+  code = c(
+    "sample",
+    "sample_standard",
+    "sample_min_max",
+    "sample_robust",
+    "sample_normal"
+  ),
+  label = c(
+    "Original Sample",
+    "Estandarizada",
+    "Min-Max Scaled",
+    "Robust Scaled",
+    "Normalized"
+  )
+)
+
+scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
+  mutate(
+    sample_standard = standard_scale(sample),
+    sample_min_max = min_max_scale(sample),
+    sample_robust = robust_scale(sample),
+    sample_normal = normal_scale(sample)
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "scaling_method",
+    values_to = "sample_scaled"
+  ) %>%
+  convert_codes_to_factor(
+    code_col = scaling_method,
+    lookup_tbl = scale_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = scaling_method_factor
+  )
+
+scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
+  ggplot(aes(sample = sample_scaled)) +
+  facet_wrap(
+    ~scaling_method_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_qq(
+    color = c_pal("C red"),
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_pal("C blue"),
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "Gráficos QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
+  ggplot(aes(x = sample_scaled)) +
+  facet_wrap(
+    ~scaling_method_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histogramas",
+    x = "Valores muestrales",
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Comparación de métodos de escalamiento aplicados a la muestra Gamma",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+scaled_gamma_plot
+```
+
+## Actividad: Visualizando la no normalidad de muestras
+
+Para cada una de las siguientes distribuciones, construya una muestra de tamaño 300 y calcule la asimetría y curtosis muestrales. Después, construya y compare sus gráficos QQ e histogramas.
+
+\begin{enumerate}
+    \item Distribución exponencial con tasa $\lambda = 1$.
+    \item Distribución uniforme en $[0, 1]$.
+    \item Distribución beta con $\alpha = 2$ y $\beta = 5$.
+    \item Distribución de Cauchy con localización $x_0 = 0$ y escala $\gamma = 1$.
+    \item Distribución $\chi^{2}_{k}$ con $k = 3$ grados de libertad.
+\end{enumerate}

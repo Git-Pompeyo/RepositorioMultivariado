@@ -90,4 +90,22 @@ Blanca Rosa Ruiz Hernández}
 \pagestyle{multivariate_notes}
 \pagenumbering{arabic}
 
+{{< include _1_an_introduction_to_tidy_data.qmd >}}
 {{< include _2_the_standardized_moments.qmd >}}
+{{< include _3_normality_testing.qmd >}}
+
+\part{Análisis de Componentes Principales}
+
+{{< include _4_introduction_to_multivariate_analysis.qmd >}}
+{{< include _5_normal_multivariate_distribution.qmd >}}
+{{< include _6_principal_component_analysis.qmd >}}
+
+\part{Análisis Factorial}
+
+{{< include _7_factor_analysis_theoretical_models.qmd >}}
+{{< include _8_factor_analysis_practical_methods.qmd >}}
+
+\part{Análisis de Conglomerados}
+
+{{< include _9_hierarchical_clustering.qmd >}}
+{{< include _10_non_hierarchical_clustering.qmd >}}

@@ -1111,3 +1111,85 @@ tidy_jb_test <- function(
       method = method
     )
 }
+
+
+
+#' Compute p-values from multiple normality tests for a sample
+#'
+#' Applies several standard normality tests (Shapiro–Wilk,
+#' Kolmogorov–Smirnov, Anderson–Darling, and Jarque–Bera) to a numeric
+#' sample contained in a data frame, and returns the resulting p-values
+#' in long (tidy) format.
+#'
+#' @param tbl A data frame or tibble containing the sample data.
+#'
+#' @param value_col A numeric column in \code{tbl} containing the values
+#'   to be tested for normality. This argument uses tidy evaluation and
+#'   must be supplied unquoted.
+#'
+#' @param sample_name A character string giving the name of the output
+#'   column that will store the p-values (e.g. \code{"Gamma"},
+#'   \code{"Normal"}, \code{"Lognormal"}).
+#'
+#' @return A tibble with two columns:
+#' \describe{
+#'   \item{test}{A character vector identifying the normality test
+#'   (\code{"shapiro"}, \code{"ks"}, \code{"ad"}, \code{"jb"}).}
+#'   \item{<sample_name>}{A numeric column containing the corresponding
+#'   p-values for each test.}
+#' }
+#'
+#' @details
+#' The following tests are applied:
+#' \itemize{
+#'   \item Shapiro–Wilk test
+#'   \item Kolmogorov–Smirnov test
+#'   \item Anderson–Darling test
+#'   \item Jarque–Bera test
+#' }
+#'
+#' The function returns results in long format to facilitate reshaping
+#' (e.g. via \code{pivot_wider()}) when comparing multiple samples.
+#'
+#' @examples
+#' \dontrun{
+#' compute_normality_pvalues(
+#'   gamma_sample_tbl,
+#'   sample,
+#'   "Gamma"
+#' )
+#' }
+#'
+#' @seealso
+#' \code{\link{tidy_shapiro_test}},
+#' \code{\link{tidy_ks_test}},
+#' \code{\link{tidy_ad_test}},
+#' \code{\link{tidy_jb_test}}
+#'
+#' @export
+compute_normality_pvalues <- function(data, value_col, sample_name) {
+
+  # each function must return a list/data object with $p_value
+  tests <- list(
+    shapiro = tidy_shapiro_test,
+    ks      = tidy_ks_test,
+    ad      = tidy_ad_test,
+    jb      = tidy_jb_test
+  )
+
+  # extract the one-column tibble for testing
+  one_col_tbl <- dplyr::select(data, {{ value_col }})
+
+
+  # compute p-values for each test
+  pvals <- purrr::imap_dbl(
+    tests,
+    ~ .x(data = one_col_tbl, value_col = {{ value_col }})$p_value
+  )
+
+  # return as tidy tibble
+  tibble::tibble(
+    test = names(pvals),
+    !!sample_name := unname(pvals)
+  )
+}
