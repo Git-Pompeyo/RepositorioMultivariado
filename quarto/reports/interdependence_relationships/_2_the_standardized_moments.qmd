@@ -552,7 +552,7 @@ $$
 Es importante destacar que no existe un estimador insesgado de la asimetría poblacional. Sin embargo, todas estas versiones de la asimetría muestral son consistentes, es decir, convergen en probabilidad a la asimetría poblacional conforme el tamaño muestral $n$ tiende a infinito. En particular, para muestras grandes, las tres versiones de la asimetría muestral son aproximadamente iguales.
 \end{observation}
 
-En R, podemos calcular las tres versiones de la asimetría muestral utilizando la función `skewness()`, del paquete `e1071`, especificando el argumento `type` como 1, 2 o 3 según la versión que deseemos calcular. El paquete `moments` también ofrece una función similar llamada `skewness()`, pero esta solo calcula la asimetría muestral de tipo 1. 
+En R, podemos calcular las tres versiones de la asimetría muestral utilizando la función `skewness()`, del paquete `e1071`, especificando el argumento `type` como 1, 2 o 3 según la versión que deseemos calcular. (Con la opción `type = 3`, especificada como default.) El paquete `moments` también ofrece una función similar llamada `skewness()`, pero esta solo calcula la asimetría muestral de tipo 1. 
 
 Mostraremos ahora un ejemplo de una muestra que viene de una distribución con sesgo a la izquierda, una simétrica y una con sesgo a la derecha. 
 ```{r}
@@ -589,7 +589,7 @@ right_skew_sample_tbl <- tibble(
   sample = right_skew_sample
 )
 
-# Generamos las gráfica de la muestra con sesgo a la izquierda
+# Generamos la gráfica de la muestra con sesgo a la izquierda
 left_skew_sample_plot <- left_skew_sample_tbl |>
   ggplot(aes(x = sample)) +
   geom_histogram(
@@ -605,7 +605,7 @@ left_skew_sample_plot <- left_skew_sample_tbl |>
   ) +
   theme_krul()
 
-# Generamos las gráfica de la muestra simétrica
+# Generamos la gráfica de la muestra simétrica
 symmetric_sample_plot <- symmetric_sample_tbl |>
   ggplot(aes(x = sample)) +
   geom_histogram(
@@ -621,7 +621,7 @@ symmetric_sample_plot <- symmetric_sample_tbl |>
   ) +
   theme_krul()
 
-# Generamos las gráfica de la muestra con sesgo a la derecha
+# Generamos la gráfica de la muestra con sesgo a la derecha
 right_skew_sample_plot <- right_skew_sample_tbl |>
   ggplot(aes(x = sample)) +
   geom_histogram(
@@ -697,7 +697,7 @@ kable(
   digits = 4,
 )
 ``` 
-Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores obtenidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
+Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores obteni dos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
 ```{r}
 #| label: tbl-population-values
 #| tbl-cap: "Tabla de valores poblacionales conocidos para la media, mediana y asimetría de las  distribuciones consideradas con sesgo a la izquierda, simétrica y con sesgo a la derecha."
@@ -746,18 +746,203 @@ Para definir la curtosis muestral, empezaremos por definir el \emph{cuarto momen
 $$
 \widetilde{M}_4 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4. 
 $$ 
-El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular dos tipos de curtosis a partir de esta definición: la \emph{curtosis muestral de tipo 1} 
+El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular tres tipos de curtosis a partir de esta definición: la \emph{curtosis muestral de tipo 1} 
 $$
-\widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3,
+\widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = n \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3,
 $$ 
-y la \emph{curtosis muestral de tipo 2} 
-$$
-G_{2} = \frac{n(n+1)}{(n-1)(n-2)(n-3)} \sum_{i=1}^n \left( \frac{X_i - \bar{X}}{S} \right)^4 - \frac{3(n-1)^2}{(n-2)(n-3)}. 
-$$ 
-Notemos que ambas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero ambas versiones de la curtosis muestral son consistentes.
+la \emph{curtosis muestral de tipo 2} 
+\begin{align*}
+G_{2} = & \frac{(n-1)(n+1)}{(n-2)(n-3)} \, \bigg[\widetilde{G}_{2} + \frac{6}{n+1} \bigg] = \frac{n-1}{(n-2)(n-3)} \, \bigg[ (n+1) \widetilde{G}_{2} + 6 \bigg] \\ 
+  = & \frac{(n-1)n(n+1)}{(n-2)(n-3)} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - \frac{3(n-1)^2}{(n-2)(n-3)},
+\end{align*}
+y la \emph{curtosis muestral de tipo 3} (que es la opción por default de la función `kurtosis()` del paquete `e1071`)
+\begin{align*}
+G_{2}^{*} = & \frac{\widetilde{M}_4}{S^4} - 3 = \bigg(1 -\frac{1}{n} \bigg)^{2} \, (\widetilde{G}_{2} + 3) - 3 \\
+= & \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = \frac{(n-1)^2}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3. 
+\end{align*}
 
+Notemos que todas estas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero todas estas versiones de la curtosis muestral son consistentes.
 
+Mostraremos ahora un ejemplo de una muestra que viene de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
 
+```{r}
+#| fig-cap: "Gráfica comparativa de muestras leptocúrtica, mesocúrtica y platicúrtica. Notemos como la curtosis afecta la forma de la distribución, especialmente en las colas y el pico central."
+#| fig-width: 12
+#| fig-height: 3.5
+# Para asegurar la reproducibilidad de los resultados
+set.seed(123)
+# Parámetros para generar las muestras
+n <- 300       # tamaño de la muestra
+
+# Generamos las muestras
+leptokurtic_sample <- rgnorm(n, mu = 0, scale = 1, shape = 1)
+mesokurtic_sample <- rgnorm(n, mu = 0, scale = 1, shape = 2)
+platykurtic_sample <- rgnorm(n, mu = 0, scale = 1, shape = 3)
+
+# Generamos un tibble para la muestra leptocúrtica
+leptokurtic_sample_tbl <- tibble(
+  sample = leptokurtic_sample
+)
+
+# Generamos un tibble para la muestra mesocúrtica
+mesokurtic_sample_tbl <- tibble(
+  sample = mesokurtic_sample
+)
+
+# Generamos un tibble para la muestra platicúrtica
+platykurtic_sample_tbl <- tibble(
+  sample = platykurtic_sample
+)
+
+# Generamos la gráfica de la muestra leptocúrtica
+leptokurtic_sample_plot <- leptokurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Leptocúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra mesocúrtica
+mesokurtic_sample_plot <- mesokurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Mesocúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra platicúrtica
+platykurtic_sample_plot <- platykurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Platicúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+kurtosis_sample_comparison_plot <- leptokurtic_sample_plot +
+  mesokurtic_sample_plot +
+  platykurtic_sample_plot +
+  plot_annotation(
+    title = "Comparación de muestras con distintos niveles de curtosis",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Mostramos la gráfica
+kurtosis_sample_comparison_plot
+```
+
+Constuiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de curtosis muestral para cada una de las muestras generadas anteriormente.
+```{r}
+#| label: tbl-sample-kurtosis
+#| tbl-cap: "Tabla de media, varianza y curtosis muestral para las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."
+
+# Calcular media, varianza
+# y los tres tipos de curtosis muestral para cada muestra
+kurtosis_sample_summary_tbl <- tibble(
+  Estadística = c(
+    "Media",
+    "Varianza",
+    "Curtosis Tipo 1",
+    "Curtosis Tipo 2",
+    "Curtosis Tipo 3"
+  ),
+  `Leptocúrtica` = c(
+    mean(leptokurtic_sample),
+    var(leptokurtic_sample),
+    kurtosis(leptokurtic_sample, type = 1),
+    kurtosis(leptokurtic_sample, type = 2),
+    kurtosis(leptokurtic_sample, type = 3)
+  ),
+  `Mesocúrtica` = c(
+    mean(mesokurtic_sample),
+    var(mesokurtic_sample),
+    kurtosis(mesokurtic_sample, type = 1),
+    kurtosis(mesokurtic_sample, type = 2),
+    kurtosis(mesokurtic_sample, type = 3)
+  ),
+  `Platicúrtica` = c(
+    mean(platykurtic_sample),
+    var(platykurtic_sample),
+    kurtosis(platykurtic_sample, type = 1),
+    kurtosis(platykurtic_sample, type = 2),
+    kurtosis(platykurtic_sample, type = 3)
+  )
+)
+
+# Formatear y mostrar la tabla
+# Redondeando a 4 decimales
+kable(
+  kurtosis_sample_summary_tbl,
+  booktabs = TRUE,
+  digits = 4,
+)
+```
+Ahora, como sabemos que estas muestras vienen de distribuciones con media, varianza y curtosis conocida, podemos comparar los valores obtenidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
+
+```{r}
+#| label: tbl-population-kurtosis-values
+#| tbl-cap: "Tabla de valores poblacionales conocidos para la media, varianza y curtosis de las distribuciones leptocúrtica, mesocúrtica y platicúrtica consideradas."
+# Valores poblacionales conocidos
+population_kurtosis_values_tbl <- tibble(
+  `Caraterística` = c(
+    "Media",
+    "Varianza",
+    "Curtosis"
+  ),
+  `Leptocúrtica` = c(
+    0,
+    2,
+    3
+  ),
+  `Mesocúrtica` = c(
+    0,
+    1,
+    0
+  ),
+  `Platicúrtica` = c(
+    0,
+    1.5,
+    -0.6
+  )
+)
+# Formatear y mostrar la tabla
+# Redondeando a 4 decimales
+kable(
+  population_kurtosis_values_tbl,
+  booktabs = TRUE,
+  digits = 4,
+)
+```
+\begin{observation} Comparando estas tablas, notamos lo siguiente:
+\begin{itemize}
+\item Los valores de los distintos tipos de curtosis muestral son ligeramente diferentes entre sí, pero todos indican correctamente el nivel de curtosis de la distribución de la cual se extrajo la muestra. En particular, cuando el tamaño de la muestra es lo suficientemente grande, los tres tipos de curtosis muestral proporcionan esencialmente la misma información.
+\item Los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta. Esto ilustra la propiedad de consistencia de estos estimadores, pero también ilustra la diferencia entre los valores de los estadísticos de una muestra (que suelen cambiar de una muestra a otra) y los parámetros poblacionales (que son fijos). 
+\end{itemize}
+\end{observation}
 
 ## Gráficos QQ
 Los gráficos QQ (quantile–quantile) son herramientas para comparar la distribución de un conjunto de datos con una distribución teórica (por ejemplo, la normal). Son especialmente útiles para evaluar la normalidad.
