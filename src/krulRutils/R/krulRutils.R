@@ -1169,6 +1169,18 @@ tidy_jb_test <- function(
 #' @export
 compute_normality_pvalues <- function(data, value_col, sample_name) {
 
+  # Generate the lookup table for test labels
+  normality_tests_lookup_tbl <- tibble(
+    code = c("shapiro", "ks", "ad", "jb"),
+    label = c(
+      "Shapiro-Wilk",
+      "Kolmogorov-Smirnov",
+      "Anderson-Darling",
+      "Jarque-Bera"
+    ),
+  )
+
+
   # each function must return a list/data object with $p_value
   tests <- list(
     shapiro = tidy_shapiro_test,
@@ -1191,5 +1203,12 @@ compute_normality_pvalues <- function(data, value_col, sample_name) {
   tibble::tibble(
     test = names(pvals),
     !!sample_name := unname(pvals)
-  )
+  ) |> convert_codes_to_factor(
+    code_col = test,
+    lookup_tbl = normality_tests_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = Prueba
+  ) |>
+    select(Prueba, everything(), -test)
 }

@@ -17,7 +17,7 @@ library(latex2exp)
 library(greybox)
 library(kableExtra)
 library(car)
-# options(scipen = 999)
+options(scipen = 999)
 ```
 
 ## Los momentos estandarizados
@@ -410,7 +410,7 @@ dgnorm_distribution_family_plot <- dgnorm_distribution_family_tbl |>
     )
   ) +
   labs(
-    title = "Distribucion normal generalizada para distintos valores de beta",
+    title = "Distribución normal generalizada para distintos valores de beta",
     x = TeX("$X$"),
     y = "Densidad",
     color = "Parámetro de forma"
@@ -1170,17 +1170,12 @@ Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad
 Aplicamos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.
 
 ```{r}
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos."
+#| label: tbl-skewness-normality
+#| tbl-pos: H
 #| message: false
-normality_tests_lookup_tbl <- tibble(
-  code = c("shapiro", "ks", "ad", "jb"),
-  label = c(
-    "Shapiro-Wilk",
-    "Kolmogorov-Smirnov",
-    "Anderson-Darling",
-    "Jarque-Bera"
-  ),
-)
 
+# Generamos la tabla de resultados de las pruebas de normalidad
 skew_normality_results_tbl <- list(
   compute_normality_pvalues(
     data = left_skew_sample_tbl,
@@ -1198,16 +1193,9 @@ skew_normality_results_tbl <- list(
     sample_name = "Sesgo a la derecha"
   )
 ) |>
-  reduce(full_join, by = "test") |>
-  convert_codes_to_factor(
-    code_col = test,
-    lookup_tbl = normality_tests_lookup_tbl,
-    lookup_code_col = code,
-    lookup_label_col = label,
-    new_factor_col_name = Prueba
-  ) |>
-  select(Prueba, everything(), -test)
+  reduce(full_join, by = "Prueba")
 
+# Formatear y mostrar la tabla redondeando a 4 decimales
 kable(
   skew_normality_results_tbl,
   format = "latex",
@@ -1222,8 +1210,11 @@ Cabe mencionar que todas estas pruebas suelen rechazar la hipótesis de normalid
 
 Ahora hacemos lo mismo para las muestras leptocúrtica, mesocúrtica y platicúrtica. 
 ```{r}
-#| message: false
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."
+#| label: tbl-kurtosis-normality
+#| tbl-pos: H
 
+# Generamos la tabla de resultados de las pruebas de normalidad
 kurtosis_normality_results_tbl <- list(
   compute_normality_pvalues(
     data = leptokurtic_sample_tbl,
@@ -1241,16 +1232,9 @@ kurtosis_normality_results_tbl <- list(
     sample_name = "Platicúrtica"
   )
 ) |>
-  reduce(full_join, by = "test") |>
-  convert_codes_to_factor(
-    code_col = test,
-    lookup_tbl = normality_tests_lookup_tbl,
-    lookup_code_col = code,
-    lookup_label_col = label,
-    new_factor_col_name = Prueba
-  ) |>
-  select(Prueba, everything(), -test)
+  reduce(full_join, by = "Prueba")
 
+# Formatear y mostrar la tabla redondeando a 4 decimales
 kable(
   kurtosis_normality_results_tbl,
   format = "latex",

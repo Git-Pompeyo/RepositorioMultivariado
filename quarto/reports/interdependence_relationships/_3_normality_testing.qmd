@@ -189,26 +189,12 @@ optimal_gamma_sample_tbl <- gamma_sample_tbl %>%
     transformed_sample = bcPower(sample, lambda = optimal_lambda)
   )
 
-optimal_gamma_sample_tbl %>%
-  summarise(
-    shapiro = tidy_shapiro_test(data = ., value_col = transformed_sample)$p_value,
-    ks = tidy_ks_test(data = ., value_col = transformed_sample)$p_value,
-    ad = tidy_ad_test(data = ., value_col = transformed_sample)$p_value,
-    jb = tidy_jb_test(data = ., value_col = transformed_sample)$p_value
-  ) %>%
-  pivot_longer(
-    everything(),
-    names_to = "test",
-    values_to = "p_value"
-  ) %>%
-  convert_codes_to_factor(
-    code_col = test,
-    lookup_tbl = normality_tests_lookup_tbl,
-    lookup_code_col = code,
-    lookup_label_col = label,
-    new_factor_col_name = test_factor
-  ) %>%
-  select(test_factor, p_value)
+
+compute_normality_pvalues(
+  data = optimal_gamma_sample_tbl,
+  value_col = transformed_sample,
+  sample_name = "p-value"
+)
 ```
 Como se observa, la transformación de Box–Cox con el valor óptimo de $\lambda$ mejora significativamente la normalidad de los datos, pues todas las pruebas arrojan valores $p$ altos. A continuación se presentan el gráfico QQ y el histograma de los datos transformados:
 ```{r}
