@@ -538,15 +538,15 @@ M_3 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3.
 $$
 A partir de aquí, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la \emph{asimetría muestral de tipo 1}
 $$
-\widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}},
+\widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \sqrt{n} \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}},
 $$
 y la \emph{asimetría muestral de tipo 2} 
 $$
-G_{1} = \frac{M_3}{S^3} = \frac{\frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}}. 
+G_{1} = \frac{M_3}{S^3} = \frac{\frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{n\sqrt{n-1}}{n-2} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \frac{\sqrt{n(n-1)}}{n-2} \widetilde{G}_1.
 $$
 Aunque menos común, también podemos definir la \emph{asimetría muestral de tipo 3} como
 $$
-G_{1}^{*} = \frac{\widetilde{M}_3}{S^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}}.
+G_{1}^{*} = \frac{\widetilde{M}_3}{S^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{(n-1)^{3/2}}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \bigg(1 - \frac{1}{n} \bigg)^{3/2} \widetilde{G}_1.
 $$
 \begin{observation} 
 Es importante destacar que no existe un estimador insesgado de la asimetría poblacional. Sin embargo, todas estas versiones de la asimetría muestral son consistentes, es decir, convergen en probabilidad a la asimetría poblacional conforme el tamaño muestral $n$ tiende a infinito. En particular, para muestras grandes, las tres versiones de la asimetría muestral son aproximadamente iguales.
@@ -741,6 +741,23 @@ kable(
 \item Los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta. Esto ilustra la propiedad de consistencia de estos estimadores, pero también ilustra la diferencia entre los valores de los estadísticos de una muestra (que suelen cambiar de una muestra a otra) y los parámetros poblacionales (que son fijos).
 \end{itemize} 
 \end{observation}
+
+Para definir la curtosis muestral, empezaremos por definir el \emph{cuarto momento muestral sesgado} como 
+$$
+\widetilde{M}_4 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4. 
+$$ 
+El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular dos tipos de curtosis a partir de esta definición: la \emph{curtosis muestral de tipo 1} 
+$$
+\widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3,
+$$ 
+y la \emph{curtosis muestral de tipo 2} 
+$$
+G_{2} = \frac{n(n+1)}{(n-1)(n-2)(n-3)} \sum_{i=1}^n \left( \frac{X_i - \bar{X}}{S} \right)^4 - \frac{3(n-1)^2}{(n-2)(n-3)}. 
+$$ 
+Notemos que ambas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero ambas versiones de la curtosis muestral son consistentes.
+
+
+
 
 ## Gráficos QQ
 Los gráficos QQ (quantile–quantile) son herramientas para comparar la distribución de un conjunto de datos con una distribución teórica (por ejemplo, la normal). Son especialmente útiles para evaluar la normalidad.

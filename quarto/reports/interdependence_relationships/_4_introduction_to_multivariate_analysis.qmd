@@ -151,6 +151,11 @@ La dispersión asociada se muestra a continuación:
 #| fig-cap: "Diagrama de dispersión de los datos de muestra. Nótese la alta correlación entre las variables X e Y."
 #| fig-width:  5
 #| fig-height: 5
+
+library(ggforce)
+library(mvtnorm)
+library(ellipse)
+
 sample_data_plot <- sample_data_tbl %>%
   ggplot(aes(x = x_data, y = y_data)) +
   geom_point(
