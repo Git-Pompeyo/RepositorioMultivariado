@@ -1,6 +1,6 @@
 # Evaluación de normalidad univariada
 
-En muchos métodos estadísticos univariados se asume que los datos siguen una distribución normal. Sin embargo, en la práctica, no todos nuestros conjuntos de datos satisfacen esta suposición. En estos casos no se justifica el uso de estos métodos y su uso indiscriminado puede llevar a conclusiones erróneas, que nos podrían llevar a tomar malas decisiones bajo la ilusión de un respaldo estadístico que no existe. Es por eso que resulta fundamental contar con herramientas que nos permitan evaluar la normalidad de nuestros datos antes de aplicar cualquier método estadístico que dependa de esta suposición.
+En muchos métodos estadísticos univariados se asume que los datos siguen una distribución normal. Sin embargo, en la práctica, no todos nuestros conjuntos de datos satisfacen esta suposición. En estos casos no se justifica el uso de estos métodos y su uso indiscriminado puede llevar a conclusiones erróneas, que nos podrían llevar a tomar decisiones equivocadas bajo la ilusión de un respaldo estadístico que no existe. Es por eso que resulta fundamental contar con herramientas que nos permitan evaluar la normalidad de nuestros datos antes de aplicar cualquier método estadístico que dependa de esta suposición.
 
 En este capítulo exploraremos algunas de estas herramientas, incluyendo las medidas de asimetría y curtosis, los gráficos QQ y algunas pruebas estadísticas para evaluar la normalidad. En el siguiente capítulo describiremos ciertas transformaciones que podemos aplicar a nuestros datos para hacerlos más cercanos a una distribución normal, en caso de que no lo sean. Pero antes de comenzar, cargaremos las librerías necesarias y definiremos algunas opciones globales para nuestro análisis.
 
@@ -83,9 +83,9 @@ kable(
 )
 ```
 
-Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme va aumentando el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana en una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
+Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme va aumentando el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana de una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
 
-\begin{observation} Más adelante definiremos la \emph{curtosis excesiva} de una variable aleatoria, pero por el momento mencionaremos que la curtosis excesiva de la distribución Gamma está dada por $6/\alpha$. Notemos que, al igual que la asimetría, la curtosis excesiva es siempre positiva y tiende a cero conforme $\alpha$ aumenta, indicando que la distribución se vuelve más parecida a la normal conforme aumenta $\alpha$.
+\begin{observation} Más adelante definiremos la \emph{curtosis excesiva} de una variable aleatoria, pero por el momento mencionaremos que la curtosis excesiva de la distribución Gamma está dada por $6/\alpha$. Notemos que, al igual que la asimetría, la curtosis excesiva es siempre positiva y tiende a cero conforme $\alpha$ aumenta, indicando que la distribución se vuelve más parecida a la normal conforme aumenta el valor de este parámetro.
 \end{observation}
 
 Mostraremos ahora cómo graficar la PDF de una familia de distribuciones Gamma con $\beta = 1$ y distintos valores de $\alpha$. 
@@ -563,8 +563,10 @@ Mostraremos ahora un ejemplo de una muestra que viene de una distribución con s
 # Para asegurar la reproducibilidad de los resultados
 set.seed(123)
 
-# Parámetros para generar las muestras
-n <- 300       # tamaño de la muestra
+# Tamaño de la muestra
+n <- 3000
+
+# Parámetros de la muestra
 alpha <- 2     # forma
 beta <- 1      # tasa
 
@@ -650,7 +652,7 @@ skew_sample_comparison_plot <- left_skew_sample_plot +
 skew_sample_comparison_plot
 ```
 
-Constuiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de asimetría muestral para cada una de las muestras generadas anteriormente. 
+Construiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de asimetría muestral para cada una de las muestras generadas anteriormente. 
 
 ```{r}
 #| label: tbl-sample-skewness
@@ -689,15 +691,14 @@ skew_sample_summary_tbl <- tibble(
   )
 )
 
-# Formatear y mostrar la tabla
-# Redondeando a 4 decimales
+# Formatear y mostrar la tabla redondeando a 4 decimales
 kable(
   skew_sample_summary_tbl,
   booktabs = TRUE,
   digits = 4,
 )
 ``` 
-Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores obteni dos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
+Ahora, como sabemos que estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores obtenidos para estos estadísticos muestrales con los valores de las características poblacionales que estamos estimando.
 ```{r}
 #| label: tbl-population-values
 #| tbl-cap: "Tabla de valores poblacionales conocidos para la media, mediana y asimetría de las  distribuciones consideradas con sesgo a la izquierda, simétrica y con sesgo a la derecha."
@@ -726,8 +727,7 @@ population_values_tbl <- tibble(
   )
 )
 
-# Formatear y mostrar la tabla
-# Redondeando a 4 decimales
+# Formatear y mostrar la tabla redondeando a 4 decimales
 kable(
   population_values_tbl,
   booktabs = TRUE,
@@ -761,23 +761,50 @@ G_{2}^{*} = & \frac{\widetilde{M}_4}{S^4} - 3 = \bigg(1 -\frac{1}{n} \bigg)^{2} 
 = & \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = \frac{(n-1)^2}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3. 
 \end{align*}
 
-Notemos que todas estas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero todas estas versiones de la curtosis muestral son consistentes.
+Notemos que todas estas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero todas estas versiones de la curtosis muestral son estimadores consistentes de este valor.
 
 Mostraremos ahora un ejemplo de una muestra que viene de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
 
 ```{r}
-#| fig-cap: "Gráfica comparativa de muestras leptocúrtica, mesocúrtica y platicúrtica. Notemos como la curtosis afecta la forma de la distribución, especialmente en las colas y el pico central."
+#| fig-cap: "Gráfica comparativa de muestras leptocúrtica, mesocúrtica y platicúrtica. Notemos como las muestras con mayor curtosis tienden a tener más valores atípicos en las colas, mientras que las muestras con menor curtosis tienen colas más ligeras."
 #| fig-width: 12
 #| fig-height: 3.5
 # Para asegurar la reproducibilidad de los resultados
 set.seed(123)
-# Parámetros para generar las muestras
-n <- 300       # tamaño de la muestra
 
-# Generamos las muestras
-leptokurtic_sample <- rgnorm(n, mu = 0, scale = 1, shape = 1)
-mesokurtic_sample <- rgnorm(n, mu = 0, scale = 1, shape = 2)
-platykurtic_sample <- rgnorm(n, mu = 0, scale = 1, shape = 3)
+# Tamaño de la muestra
+n <- 3000
+
+# Parámetros de la muestra
+mu <- 0                  # localización
+alpha <- 1               # escala
+beta_leptokurtic <- 1    # forma leptocúrtica
+beta_mesokurtic <- 2     # forma mesocúrtica
+beta_platykurtic <- 3    # forma platicúrtica
+
+# Generamos la muestra leptocúrtica
+leptokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_leptokurtic
+)
+
+# Generamos la muestra mesocúrtica
+mesokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_mesokurtic
+)
+
+# Generamos la muestra platicúrtica
+platykurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_platykurtic
+)
 
 # Generamos un tibble para la muestra leptocúrtica
 leptokurtic_sample_tbl <- tibble(
@@ -855,10 +882,11 @@ kurtosis_sample_comparison_plot <- leptokurtic_sample_plot +
 kurtosis_sample_comparison_plot
 ```
 
-Constuiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de curtosis muestral para cada una de las muestras generadas anteriormente.
+Construiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de curtosis muestral para cada una de las muestras generadas anteriormente.
 ```{r}
 #| label: tbl-sample-kurtosis
 #| tbl-cap: "Tabla de media, varianza y curtosis muestral para las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."
+
 
 # Calcular media, varianza
 # y los tres tipos de curtosis muestral para cada muestra
@@ -911,24 +939,28 @@ population_kurtosis_values_tbl <- tibble(
   `Caraterística` = c(
     "Media",
     "Varianza",
-    "Curtosis"
+    "Curtosis excesiva"
   ),
   `Leptocúrtica` = c(
-    0,
-    2,
-    3
+    mu,
+    alpha^2 * gamma(3 / beta_leptokurtic) / gamma(1 / beta_leptokurtic),
+    gamma(5 / beta_leptokurtic) * gamma(1 / beta_leptokurtic) /
+      (gamma(3 / beta_leptokurtic))^2 - 3
   ),
   `Mesocúrtica` = c(
-    0,
-    1,
-    0
+    mu,
+    alpha^2 * gamma(3 / beta_mesokurtic) / gamma(1 / beta_mesokurtic),
+    gamma(5 / beta_mesokurtic) * gamma(1 / beta_mesokurtic) /
+      (gamma(3 / beta_mesokurtic))^2 - 3
   ),
   `Platicúrtica` = c(
-    0,
-    1.5,
-    -0.6
+    mu,
+    alpha^2 * gamma(3 / beta_platykurtic) / gamma(1 / beta_platykurtic),
+    gamma(5 / beta_platykurtic) * gamma(1 / beta_platykurtic) /
+      (gamma(3 / beta_platykurtic))^2 - 3
   )
 )
+
 # Formatear y mostrar la tabla
 # Redondeando a 4 decimales
 kable(
@@ -937,12 +969,8 @@ kable(
   digits = 4,
 )
 ```
-\begin{observation} Comparando estas tablas, notamos lo siguiente:
-\begin{itemize}
-\item Los valores de los distintos tipos de curtosis muestral son ligeramente diferentes entre sí, pero todos indican correctamente el nivel de curtosis de la distribución de la cual se extrajo la muestra. En particular, cuando el tamaño de la muestra es lo suficientemente grande, los tres tipos de curtosis muestral proporcionan esencialmente la misma información.
-\item Los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta. Esto ilustra la propiedad de consistencia de estos estimadores, pero también ilustra la diferencia entre los valores de los estadísticos de una muestra (que suelen cambiar de una muestra a otra) y los parámetros poblacionales (que son fijos). 
-\end{itemize}
-\end{observation}
+
+Nuevamente notamos que los valores de los distintos tipos de curtosis muestral son ligeramente diferentes entre sí, pero todos indican correctamente el nivel de curtosis de la distribución de la cual se extrajo la muestra. Además, los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta, ilustrando que estos estimadores son, efectivamente, consistentes.
 
 ## Gráficos QQ
 Los gráficos QQ (quantile–quantile) son herramientas para comparar la distribución de un conjunto de datos con una distribución teórica (por ejemplo, la normal). Son especialmente útiles para evaluar la normalidad.
