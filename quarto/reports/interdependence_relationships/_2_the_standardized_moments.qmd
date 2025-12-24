@@ -1158,13 +1158,13 @@ kurtosis_hist_qq_comparison_plot
 Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas y que nos permitan determinar de una manera más precisa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
 
 \begin{enumerate}
-\item \textbf{Shapiro–Wilk.} Evalúa que tan bien los datos ordenados de la muestra se ajustan a los cuantiles esperados de una distribución normal. Es muy usada para muestras pequeñas (menores a 50) pero puede ser demasiado sensible en muestras grandes.
+\item \textbf{Shapiro–Wilk.} Evalúa que tan bien los datos ordenados de la muestra se ajustan a los cuantiles esperados de una distribución normal. Es muy usada para muestras pequeñas (menores a 50) pero puede ser demasiado sensible en muestras grandes. En R, se puede llamar utilizando la función \texttt{shapiro.test()}.
 
-\item \textbf{Kolmogorov–Smirnov.} Compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas; sensible a parámetros de escala y localización.
+\item \textbf{Kolmogorov–Smirnov.} Compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas; sensible a parámetros de escala y localización. Para llamar a esta función en R, se puede usar el comando \texttt{ks.test()}.
 
-\item \textbf{Anderson–Darling.} Similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada.
+\item \textbf{Anderson–Darling.} Similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada. Para utilizar esta prueba en R, se puede usar la función \texttt{ad.test()} del paquete \texttt{nortest}.
 
-\item \textbf{Jarque–Bera.} Basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos.
+\item \textbf{Jarque–Bera.} Basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos. En R, se puede llamar utilizando la función \texttt{jarque.bera.test()} del paquete \texttt{tseries}.
 \end{enumerate}
 
 Aplicamos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.

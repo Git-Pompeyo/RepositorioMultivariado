@@ -1,0 +1,112 @@
+---
+title: "Distribución Gamma — Explorador interactivo (Notebook)"
+format:
+  html:
+    toc: false
+    code-fold: false
+runtime: shiny
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(shiny)
+library(tidyverse)
+library(krulRutils)
+library(latex2exp)
+```
+
+```{r}
+#| label: app
+#| standalone: true
+
+ui <- fluidPage(
+  tags$style(HTML("
+    .control-label { font-weight: 600; }
+    .well { border-radius: 14px; }
+  ")),
+  fluidRow(
+    column(
+      4,
+      wellPanel(
+        tags$h4("Parámetros"),
+        sliderInput("alpha", "α (shape)", min = 0.2, max = 20, value = 2, step = 0.1),
+        sliderInput("beta",  "β (rate)",  min = 0.05, max = 10, value = 1, step = 0.05),
+
+        tags$hr(),
+
+        tags$h4("Visualización"),
+        sliderInput("xmax", "X máximo", min = 5, max = 100, value = 15, step = 1),
+
+        tags$hr(),
+      )
+    ),
+
+    column(
+      8,
+      plotOutput("gammaPlot", height = "520px"),
+      tags$div(style="margin-top: 8px;",
+               verbatimTextOutput("summaryText"))
+    )
+  )
+)
+
+server <- function(input, output, session) {
+
+  gamma_tbl <- reactive({
+    x <- seq(0, input$xmax, length.out = 30)
+    tibble(
+      x = x,
+      fx = dgamma(x, shape = input$alpha, rate = input$beta)
+    )
+  })
+
+  derived <- reactive({
+    alpha <- input$alpha
+    beta  <- input$beta
+
+    mean <- alpha / beta
+    var  <- alpha / (beta^2)
+    sd   <- sqrt(var)
+    skew <- 2 / sqrt(alpha)
+    exk  <- 6 / alpha
+
+
+    list(mean = mean, var = var, sd = sd, skew = skew, exk = exk)
+  })
+
+  output$gammaPlot <- renderPlot({
+    tbl <- gamma_tbl()
+    d <- derived()
+
+    p <- ggplot(tbl, aes(x = x, y = fx)) +
+      geom_line(linewidth = 1) +
+      labs(
+        title = TeX(paste0("Gamma: \\; \\alpha = ", input$alpha, ",\\; \\beta = ", input$beta,
+                           " \\;\\; (\\text{rate})")),
+        x = TeX("$x$"),
+        y = TeX("$f(x)$")
+      )
+
+    p + theme_krul()
+  })
+
+  output$summaryText <- renderText({
+    d <- derived()
+    paste0(
+      "Resumen (con β como rate)\n",
+      "Media = α/β = ", signif(d$mean, 6), "\n",
+      "Varianza = α/β^2 = ", signif(d$var, 6), "    (SD = ", signif(d$sd, 6), ")\n",
+      "Asimetría = 2/sqrt(α) = ", signif(d$skew, 6), "\n",
+      "Curtosis excesiva = 6/α = ", signif(d$exk, 6), "\n"
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
