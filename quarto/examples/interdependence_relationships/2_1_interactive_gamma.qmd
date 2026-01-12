@@ -2,6 +2,7 @@
 title: "Distribución Gamma — Explorador interactivo (Notebook)"
 format:
   html:
+    page-layout: custom
     toc: false
     code-fold: false
 runtime: shiny
@@ -10,6 +11,10 @@ execute:
   warning: false
   message: false
 ---
+
+# The Gamma function
+
+In this notes we will create an interactive app to explore how the parameters of the gamma distribution affect is PDF. Lets start by loading the required packages:
 
 ```{r}
 #| label: setup
@@ -21,19 +26,14 @@ library(krulRutils)
 library(latex2exp)
 ```
 
+We now build the corresponding app:
+
 ```{r}
 #| label: app
-#| standalone: true
 
 ui <- fluidPage(
-  tags$style(HTML("
-    .control-label { font-weight: 600; }
-    .well { border-radius: 14px; }
-  ")),
-  fluidRow(
     column(
       4,
-      wellPanel(
         tags$h4("Parámetros"),
         sliderInput("alpha", "α (shape)", min = 0.2, max = 20, value = 2, step = 0.1),
         sliderInput("beta",  "β (rate)",  min = 0.05, max = 10, value = 1, step = 0.05),
@@ -44,22 +44,18 @@ ui <- fluidPage(
         sliderInput("xmax", "X máximo", min = 5, max = 100, value = 15, step = 1),
 
         tags$hr(),
-      )
     ),
-
     column(
       8,
-      plotOutput("gammaPlot", height = "520px"),
-      tags$div(style="margin-top: 8px;",
-               verbatimTextOutput("summaryText"))
+      plotOutput("gammaPlot"),
+      verbatimTextOutput("summaryText")
     )
   )
-)
 
 server <- function(input, output, session) {
 
   gamma_tbl <- reactive({
-    x <- seq(0, input$xmax, length.out = 30)
+    x <- seq(0, input$xmax, length.out = 1000)
     tibble(
       x = x,
       fx = dgamma(x, shape = input$alpha, rate = input$beta)
@@ -107,6 +103,11 @@ server <- function(input, output, session) {
     )
   })
 }
+```
 
+Notice how as $\alpha$ increases, the distribution becomes more and more symmetric.
+
+```{r}
+#| panel: fill
 shinyApp(ui, server)
 ```
