@@ -10,8 +10,8 @@ ui <- fluidPage(
     # Some light CSS to mimic separators + spacing
     tags$style(HTML("
       .panel-top { margin-top: 10px; }
-      .h-sep { border-top: 1px solid #ddd; margin: 12px 0; }
-      .v-sep { border-left: 1px solid #ddd; height: 100%; }
+      .h-sep { border-top: 3px solid #ddd; margin: 12px 0; }
+      .v-sep { border-left: 3px solid #ddd; height: 100%; }
       .left-box { padding-right: 16px; }
       .right-box { padding-left: 16px; }
       .form-row { margin-bottom: 10px; }
