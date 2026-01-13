@@ -1,7 +1,3 @@
 project:
   type: default
   output-dir: docs
-  render:
-    - "**/*.qmd"
-    - "!quarto/examples/interdependence_relationships/shiny_test.qmd"
-    - "!quarto/examples/interdependence_relationships/2_1_interactive_gamma.qmd"  
