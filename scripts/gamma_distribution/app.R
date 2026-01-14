@@ -1,58 +1,8 @@
-# La distribución Gamma
-
-La distribución Gamma es una distribución de probabilidad continua que modela el tiempo hasta la ocurrencia de un cierto número de eventos en un proceso de Poisson. Es especialmente útil en situaciones donde los eventos ocurren de manera independiente y a una tasa constante. Por ejemplo, puede modelar el tiempo que pasa hasta que una compañía de seguros reciba un cierto número de reclamaciones.
-
-Una de las características más importantes de esta distribución es su asímetría positiva, producto de que los valores posibles de la variable aleatoria son siempre positivos y pueden extenderse indefinidamente hacia la derecha.
-
-**Definición.** Decimos que una variable aleatoria continua $X$ sigue una *distribución Gamma* con parámetro de forma $\alpha > 0$ y parámetro de tasa $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por $$
-f_X(x; \alpha, \beta) = 
-\begin{cases}
-\displaystyle \frac{\beta^\alpha}{\Gamma(\alpha)} \, x^{\alpha - 1} e^{-\beta x}, & x > 0, \\
-0, & x \leq 0,
-\end{cases}
-$$ donde $\Gamma(\alpha)$ denota la función Gamma, definida como $$
-\Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
-$$ En este caso escribimos $$
-X \sim \text{Gamma}(\alpha, \beta).
-$$
-
-La siguiente tabla resume las características poblacionales más importantes de la distribución Gamma:
-
-```{r}
-#| tbl-cap: "Características poblacionales de la distribución Gamma con parámetros $\\alpha$ y $\\beta$."
-#| message: false
-
-library(tidyverse)
-library(magrittr)
-library(kableExtra)
-
-
-# Crear la tabla de características de la distribución Gamma
-gamma_tbl <- tibble(
-  `Característica` = c("Media", "Varianza", "Asimetría", "Curtosis excesiva"),
-  `Valor` = c("$\\alpha/\\beta$", "$\\alpha/\\beta^2$", "$2/\\sqrt\\alpha$", "$6/\\alpha$")
-)
-
-# Formatear y mostrar la tabla
-kable(
-  gamma_tbl,
-  booktabs = TRUE,
-  align = c("l", "c")
-)|>
-  kable_styling(latex_options = "hold_position")
-```
-
-Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme va aumentando el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana de una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
-
-Para visualizar la función de densidad de probabilidad de la distribución Gamma para diferentes valores de sus parámetros, consideraremos la siguiente aplicación construída utilizando Shiny:
-
-```{r}
-#| label: app
-
 library(shiny)
 library(tidyverse)
 library(krulRutils)
 library(latex2exp)
+
 
 ui <- fluidPage(
   withMathJax(),
@@ -188,4 +138,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-```

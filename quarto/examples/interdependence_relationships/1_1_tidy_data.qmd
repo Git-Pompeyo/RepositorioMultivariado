@@ -194,8 +194,7 @@ Queremos usar esta información para analizar el número de casos de tuberculosi
 #| tbl-cap: "Número de casos de tuberculosis por tipo y sexo"
 
 who_type_sex_tbl <- who_factor |>
-  count(Tipo, Sexo, wt = cases, name = "Casos") |>
-  print()
+  count(Tipo, Sexo, wt = cases, name = "Casos")
 
 kable(
   who_type_sex_tbl,
