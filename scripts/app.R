@@ -3,94 +3,29 @@ library(tidyverse)
 library(krulRutils)
 library(latex2exp)
 
+
 ui <- fluidPage(
-  tags$head(
-    tags$title("Aproximaciones con series de Taylor"),
-
-    # Some light CSS to mimic separators + spacing
-    tags$style(HTML("
-      .panel-top { margin-top: 10px; }
-      .h-sep { border-top: 3px solid #ddd; margin: 12px 0; }
-      .v-sep { border-left: 3px solid #ddd; height: 100%; }
-      .left-box { padding-right: 16px; }
-      .right-box { padding-left: 16px; }
-      .form-row { margin-bottom: 10px; }
-      /* Optional: keep content aligned to top like AlignTop */
-      .row.equal-height { display: flex; align-items: flex-start; }
-    "))
-  ),
-
-  # Main Layout (QHBoxLayout)
   fluidRow(
-    class = "equal-height",
-
-    # Left panel (stretch ~2)
     column(
-      width = 4,
-      class = "left-box panel-top",
-
-      # Instructions QLabel (HTML)
-      HTML("
-        <h2>Instrucciones</h2>
-        <p>Esta aplicación nos muestra la gráfica de dos funciones. La primera es la función analítica que deben de aproximar y la segunda es su aproximación utilizando series de Taylor.</p>
-        <p>Para generar la gráfica, necesitamos el rango de los valores de <i>x</i>, el rango de los valores de <i>y</i>, además del número de coeficientes que se utilizarán en la aproximación por series de Taylor.</p>
-      "),
-      div(class = "h-sep"),
-
-      # "Datos de Entrada" header
-      HTML("<h2>Datos de Entrada</h2>"),
-
-      # Inputs (QFormLayout equivalent)
-      fluidRow(
-        column(
-          12,
-          div(
-            class = "form-row",
-            numericInput("xmin", "Valor mínimo de x:", value = -15, step = 0.1)
-          ),
-          div(
-            class = "form-row",
-            numericInput("xmax", "Valor máximo de x:", value = 15, step = 0.1)
-          ),
-          div(
-            class = "form-row",
-            numericInput("ymin", "Valor mínimo de y:", value = -2, step = 0.1)
-          ),
-          div(
-            class = "form-row",
-            numericInput("ymax", "Valor máximo de y:", value = 2, step = 0.1)
-          ),
-          div(
-            class = "form-row",
-            numericInput("ncoef", "Número de coeficientes:", value = 0, min = 0, step = 1)
-          ),
-
-          # Submit button
-          actionButton("calc", "Calcular")
-        )
-      )
+      3,
+      h2("Instrucciones"),
+      HTML("<p>Esta aplicación nos muestra la gráfica de dos funciones...</p>"),
+      hr(),
+      h2("Datos de Entrada"),
+      numericInput("xmin", "Valor mínimo de x:", -15),
+      numericInput("xmax", "Valor máximo de x:", 15),
+      numericInput("ymin", "Valor mínimo de y:", -2),
+      numericInput("ymax", "Valor máximo de y:", 2),
+      numericInput("ncoef", "Número de coeficientes:", 0, min = 0),
+      actionButton("calc", "Calcular")
     ),
-
-    # Vertical separator (QFrame VLine)
     column(
-      width = 1,
-      div(
-        class = "v-sep",
-        style = "
-          margin: 10px auto;
-          height: 600px;
-        "
-      )
-    ),
-
-    # Right panel (stretch ~4)
-    column(
-      width = 7,
-      class = "right-box panel-top",
+      9,
       plotOutput("plot", height = "600px")
     )
   )
 )
+
 
 server <- function(input, output, session) {
   # In Qt you only compute after button click; mimic that with eventReactive
