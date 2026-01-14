@@ -157,7 +157,7 @@ server <- function(input, output, session) {
         hjust = 1.1
       ) +
       labs(
-        x = TeX("$X$"),
+        x = "X",
         y = "Densidad"
       ) +
       theme_krul()
