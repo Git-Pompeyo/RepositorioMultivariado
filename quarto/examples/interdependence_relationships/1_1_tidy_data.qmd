@@ -6,7 +6,7 @@ Todo proyecto de ciencia de datos debe comenzar con la adquisición y organizaci
 
 La idea central detrás del diseño del Tidyverse es la definición de datos ordenados:
 
-**Definicion.** *Datos ordenados* es una forma de estructurar un conjunto de datos para facilitar su uso. En datos ordenados:
+**Definición.** *Datos ordenados* es una forma de estructurar un conjunto de datos para facilitar su uso. En datos ordenados:
 
 1.  Cada variable forma una columna.
 2.  Cada observación forma una fila.
