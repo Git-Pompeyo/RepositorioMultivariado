@@ -47,7 +47,7 @@ f_X(x; \alpha, \beta) =
 0, & x \leq 0,
 \end{cases}
 \end{equation}
-donde $\Gamma(\alpha)$ denota la función Gamma, definida como
+donde $\Gamma(\alpha)$ denota a la función Gamma, definida como
 \begin{equation} \label{eq:gamma_function}
 \Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
 \end{equation}
@@ -366,7 +366,7 @@ kable(
 \begin{equation} \label{eq:laplace_pdf}
 f_X(x; \mu, b) = \frac{1}{2b} e^{-\frac{|x - \mu|}{b}}, \quad x \in \mathbb{R}, 
 \end{equation}
-donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media  $\mu$ y varianza $\alpha^{2}/2$. Finalemente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
+donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media  $\mu$ y varianza $\alpha^{2}/2$. Finalmente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
 \end{observation}
 
 Mostraremos ahora la gráfica de la PDF de la distribución normal generalizada para $\mu = 0$, $\alpha = 1$ y distintos valores de $\beta$, destacando sus colas y la forma del pico central.

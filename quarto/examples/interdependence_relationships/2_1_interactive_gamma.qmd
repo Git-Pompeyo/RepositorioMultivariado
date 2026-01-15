@@ -10,7 +10,7 @@ f_X(x; \alpha, \beta) =
 \displaystyle \frac{\beta^\alpha}{\Gamma(\alpha)} \, x^{\alpha - 1} e^{-\beta x}, & x > 0, \\
 0, & x \leq 0,
 \end{cases}
-$$ donde $\Gamma(\alpha)$ denota la función Gamma, definida como $$
+$$ donde $\Gamma(\alpha)$ denota a la función Gamma, definida como $$
 \Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
 $$ En este caso escribimos $$
 X \sim \text{Gamma}(\alpha, \beta).
@@ -44,10 +44,11 @@ kable(
 
 Notemos que la asimetría siempre es positiva y tiende a cero conforme $\alpha$ aumenta. En otras palabras, la distribución se vuelve más simétrica conforme va aumentando el valor de $\alpha$. Por otro lado, aunque no existe una fórmula cerrada para la mediana de la distribución Gamma, podemos calcularla numéricamente en R usando la función `qgamma()`. La mediana de una distribución Gamma siempre es menor que la media, lo cual es consistente con la asimetría positiva de esta distribución.
 
-Para visualizar la función de densidad de probabilidad de la distribución Gamma para diferentes valores de sus parámetros, consideraremos la siguiente aplicación construída utilizando Shiny:
+Para visualizar la función de densidad de probabilidad de la distribución Gamma para diferentes valores de sus parámetros, consideraremos la siguiente aplicación interactiva:
 
 ```{r}
 #| label: app
+#| message: false
 
 library(shiny)
 library(tidyverse)
@@ -74,7 +75,7 @@ ui <- fluidPage(
       uiOutput("summary_text")
     ),
     column(
-      width = 6,
+      width = 7,
       h2("Función de densidad de probabilidad de la distribución Gamma"),
       plotOutput("plot", height = "600px")
     )
@@ -114,15 +115,15 @@ server <- function(input, output, session) {
     gamma_median <- params()$gamma_median
 
     # Creamos una secuencia de valores para X
-    x_data <- seq(0, xmax, length.out = 500)
+    x_data <- seq(0, xmax, length.out = 1000)
 
     # Calculamos la PDF de la distribución Gamma
-    right_skew_distribution_tbl <- tibble(
+    gamma_distribution_tbl <- tibble(
       x_data = x_data,
       density_data = dgamma(x_data, shape = alpha, rate = beta)
     )
     # Generamos la gráfica de la distribución Gamma
-    right_skew_distribution_plot <- right_skew_distribution_tbl |>
+    gamma_distribution_plot <- gamma_distribution_tbl |>
       ggplot(aes(x = x_data, y = density_data)) +
       geom_line(
         color = c_pal("C blue"),
@@ -157,13 +158,13 @@ server <- function(input, output, session) {
         hjust = 1.1
       ) +
       labs(
-        x = "X",
+        x = TeX("$X$"),
         y = "Densidad"
       ) +
       theme_krul()
 
     # Devolvemos la gráfica
-    right_skew_distribution_plot
+    gamma_distribution_plot
   })
 
   output$summary_text <- renderUI({

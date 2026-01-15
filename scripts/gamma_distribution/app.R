@@ -24,7 +24,7 @@ ui <- fluidPage(
       uiOutput("summary_text")
     ),
     column(
-      width = 6,
+      width = 7,
       h2("Función de densidad de probabilidad de la distribución Gamma"),
       plotOutput("plot", height = "600px")
     )
@@ -67,12 +67,12 @@ server <- function(input, output, session) {
     x_data <- seq(0, xmax, length.out = 500)
 
     # Calculamos la PDF de la distribución Gamma
-    right_skew_distribution_tbl <- tibble(
+    gamma_distribution_tbl <- tibble(
       x_data = x_data,
       density_data = dgamma(x_data, shape = alpha, rate = beta)
     )
     # Generamos la gráfica de la distribución Gamma
-    right_skew_distribution_plot <- right_skew_distribution_tbl |>
+    gamma_distribution_plot <- gamma_distribution_tbl |>
       ggplot(aes(x = x_data, y = density_data)) +
       geom_line(
         color = c_pal("C blue"),
@@ -113,7 +113,7 @@ server <- function(input, output, session) {
       theme_krul()
 
     # Devolvemos la gráfica
-    right_skew_distribution_plot
+    gamma_distribution_plot
   })
 
   output$summary_text <- renderUI({
