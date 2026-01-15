@@ -64,7 +64,7 @@ server <- function(input, output, session) {
     gamma_median <- params()$gamma_median
 
     # Creamos una secuencia de valores para X
-    x_data <- seq(0, xmax, length.out = 500)
+    x_data <- seq(0, xmax, length.out = 1000)
 
     # Calculamos la PDF de la distribución Gamma
     gamma_distribution_tbl <- tibble(
