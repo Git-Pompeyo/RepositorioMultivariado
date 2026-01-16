@@ -314,7 +314,7 @@ skew_sample_comparison_plot <- left_skew_sample_plot +
 skew_sample_comparison_plot
 ```
 
-Como estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores de estas características poblaciones contra los valores obtenidos de las muestras correspondientes. Resumimos estos resultados en las siguientes tablas:
+Como estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores de estas características poblacionales contra los valores obtenidos de las muestras correspondientes. Resumimos estos resultados en las siguientes tablas:
 
 ```{r}
 #| label: tbl-sample-skewness
@@ -354,7 +354,7 @@ skew_sample_summary_tbl <- tibble(
 )
 
 # Formatear la tabla redondeando a 4 decimales
-skew_sample_summary_kbl<- kable(
+skew_sample_summary_kbl <- kable(
   skew_sample_summary_tbl,
   booktabs = TRUE,
   digits = 4,

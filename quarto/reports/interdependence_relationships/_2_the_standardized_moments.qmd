@@ -379,7 +379,7 @@ Mostraremos ahora la gráfica de la PDF de la distribución normal generalizada 
 x_data <- seq(-3.5, 3.5, length.out = 500)
 
 # Seleccionamos los valores de beta a graficar
-beta_values <- c(0.5, 1, 1.5, 2, 3, 8)
+beta_values <- c(0.5, 1, 1.5, 2, 4, 8)
 
 # Calculamos las densidades para cada valor de beta
 dgnorm_distribution_family_tbl <- expand_grid(
@@ -405,7 +405,7 @@ dgnorm_distribution_family_plot <- dgnorm_distribution_family_tbl |>
       TeX("$\\beta$ = 1 (Laplace)"),
       TeX("$\\beta$ = 1.5 (Colas pesadas)"),
       TeX("$\\beta$ = 2 (Normal)"),
-      TeX("$\\beta$ = 3 (Colas ligeras)"),
+      TeX("$\\beta$ = 4 (Colas ligeras)"),
       TeX("$\\beta$ = 8 (Colas muy ligeras)")
     )
   ) +
@@ -421,7 +421,7 @@ dgnorm_distribution_family_plot <- dgnorm_distribution_family_tbl |>
 dgnorm_distribution_family_plot
 ```
 
-Finalmente, utilizaremos la distribución normal generalizada, con parámetros $\mu = 0$, $\alpha = 1$ y $\beta = 1, 2, 3,$ para generar una gráfica comparativa de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
+Finalmente, utilizaremos la distribución normal generalizada, con parámetros $\mu = 0$, $\alpha = 1$ y $\beta = 1, 2, 4,$ para generar una gráfica comparativa de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
 
 ```{r}
 #| fig-cap: "Gráfica comparativa de distribuciones leptocúrtica, mesocúrtica y platicúrtica. Notemos cómo la curtosis afecta la forma de la distribución, especialmente en las colas y el pico central."
@@ -446,7 +446,7 @@ mesokurtic_distribution_tbl <- tibble(
 # Calculamos la PDF de la distribución platicúrtica
 platykurtic_distribution_tbl <- tibble(
   x_data = x_data,
-  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 3)
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 4)
 )
 
 # Generamos la gráfica de la distribución leptocúrtica
@@ -782,7 +782,7 @@ mu <- 0                  # localización
 alpha <- 1               # escala
 beta_leptokurtic <- 1    # forma leptocúrtica
 beta_mesokurtic <- 2     # forma mesocúrtica
-beta_platykurtic <- 3    # forma platicúrtica
+beta_platykurtic <- 4    # forma platicúrtica
 
 # Generamos la muestra leptocúrtica
 leptokurtic_sample <- rgnorm(
@@ -884,7 +884,7 @@ kurtosis_sample_comparison_plot <- leptokurtic_sample_plot +
 kurtosis_sample_comparison_plot
 ```
 
-Construiremos ahora una tabla que nos muestre los valores de la media, la mediana y los tres tipos de curtosis muestral para cada una de las muestras generadas anteriormente.
+Construiremos ahora una tabla que nos muestre los valores de la media, la varianza y los tres tipos de curtosis muestral para cada una de las muestras generadas anteriormente.
 ```{r}
 #| label: tbl-sample-kurtosis
 #| tbl-cap: "Tabla de media, varianza y curtosis muestral para las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."

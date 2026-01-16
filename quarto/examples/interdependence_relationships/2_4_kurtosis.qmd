@@ -1,0 +1,365 @@
+# Curtosis
+
+La curtosis es una medida que describe la forma de una distribución de probabilidad (curtosis poblacional), o de un conjunto de datos (curtosis muestral), en términos del peso de sus colas en comparación con una distribución normal.
+
+## Curtosis poblacional
+
+**Definición.** La *curtosis* de una variable aleatoria $X$ se define como el cuarto momento estandarizado, dado por $$
+\beta_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},
+$$ donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
+
+La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (*leptocúrtica*) suele tener colas más pesadas y un pico más agudo que la normal. En cambio, una distribución con baja curtosis (*platicúrtica*) suele tener colas más ligeras y un pico más plano. La curtosis de la normal es 3, por lo cual es común calcular el *exceso de curtosis* de una distribución la cual está dada por: $$
+\gamma_2 = \beta_2 - 3.
+$$
+
+En la siguiente figura se muestra una gráfica comparativa de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de distribuciones leptocúrtica, mesocúrtica y platicúrtica. Notemos cómo la curtosis afecta la forma de la distribución, especialmente en las colas y el pico central."
+#| fig-width: 12
+#| fig-height: 3.5
+#| message: false
+
+library(tidyverse)
+library(krulRutils)
+library(greybox)
+library(latex2exp)
+library(patchwork)
+library(e1071)
+library(kableExtra)
+
+# Creamos una secuencia de valores para X
+x_data <- seq(-2, 2, length.out = 500)
+
+# Calculamos la PDF de la distribución leptocúrtica
+leptokurtic_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 1)
+)
+
+# Calculamos la PDF de la distribución mesocúrtica
+mesokurtic_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 2)
+)
+
+# Calculamos la PDF de la distribución platicúrtica
+platykurtic_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgnorm(x_data, mu = 0, scale = 1, shape = 4)
+)
+
+# Generamos la gráfica de la distribución leptocúrtica
+leptokurtic_distribution_plot <- leptokurtic_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  labs(
+    title = "Leptocúrtica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución mesocúrtica
+mesokurtic_distribution_plot <- mesokurtic_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  labs(
+    title = "Mesocúrtica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución platicúrtica
+platykurtic_distribution_plot <- platykurtic_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  labs(
+    title = "Platicúrtica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+kurtosis_comparison_plot <- leptokurtic_distribution_plot +
+  mesokurtic_distribution_plot +
+  platykurtic_distribution_plot +
+  plot_annotation(
+    title = "Comparación de distribuciones con distintos niveles de curtosis",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Mostramos la gráfica
+kurtosis_comparison_plot
+```
+
+## Curtosis muestral
+
+Para definir la curtosis muestral, recordemos que dado un *vector muestral* $$
+X = \begin{bmatrix}
+X_1 \\
+X_2 \\
+\vdots \\ 
+X_n
+\end{bmatrix},
+$$ definimos su *media muestral* como $$
+\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.
+$$ Para la varianza muestral, tenemos dos versiones, la *varianza muestral sesgada* $$
+\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,
+$$ y la *varianza muestral insesgada* $$
+S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.
+$$En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la curtosis muestral, definiremos primero el *cuarto momento muestral sesgado* como $$
+\widetilde{M}_4 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4. 
+$$ El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular tres tipos de curtosis a partir de esta definición: la *curtosis muestral de tipo 1* $$
+\widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = n \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3,
+$$ la *curtosis muestral de tipo 2* $$
+\begin{aligned}
+G_{2} = & \frac{(n-1)(n+1)}{(n-2)(n-3)} \, \bigg[\widetilde{G}_{2} + \frac{6}{n+1} \bigg] = \frac{n-1}{(n-2)(n-3)} \, \bigg[ (n+1) \widetilde{G}_{2} + 6 \bigg] \\ 
+  = & \frac{(n-1)n(n+1)}{(n-2)(n-3)} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - \frac{3(n-1)^2}{(n-2)(n-3)},
+\end{aligned}
+$$ y la *curtosis muestral de tipo 3* (que es la opción por default de la función `kurtosis()` del paquete `e1071`) $$
+\begin{aligned}
+G_{2}^{*} = & \frac{\widetilde{M}_4}{S^4} - 3 = \bigg(1 -\frac{1}{n} \bigg)^{2} \, (\widetilde{G}_{2} + 3) - 3 \\
+= & \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = \frac{(n-1)^2}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3. 
+\end{aligned}
+$$Notemos que todas estas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero todas estas versiones de la curtosis muestral son estimadores consistentes de este valor.
+
+Mostraremos ahora un ejemplo de una muestra que viene de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de muestras leptocúrtica, mesocúrtica y platicúrtica. Notemos como las muestras con mayor curtosis tienden a tener más valores atípicos en las colas, mientras que las muestras con menor curtosis tienen colas más ligeras."
+#| fig-width: 12
+#| fig-height: 3.5
+# Para asegurar la reproducibilidad de los resultados
+set.seed(123)
+
+# Tamaño de la muestra
+n <- 3000
+
+# Parámetros de la muestra
+mu <- 0                  # localización
+alpha <- 1               # escala
+beta_leptokurtic <- 1    # forma leptocúrtica
+beta_mesokurtic <- 2     # forma mesocúrtica
+beta_platykurtic <- 4    # forma platicúrtica
+
+# Generamos la muestra leptocúrtica
+leptokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_leptokurtic
+)
+
+# Generamos la muestra mesocúrtica
+mesokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_mesokurtic
+)
+
+# Generamos la muestra platicúrtica
+platykurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_platykurtic
+)
+
+# Generamos un tibble para la muestra leptocúrtica
+leptokurtic_sample_tbl <- tibble(
+  sample = leptokurtic_sample
+)
+
+# Generamos un tibble para la muestra mesocúrtica
+mesokurtic_sample_tbl <- tibble(
+  sample = mesokurtic_sample
+)
+
+# Generamos un tibble para la muestra platicúrtica
+platykurtic_sample_tbl <- tibble(
+  sample = platykurtic_sample
+)
+
+# Generamos la gráfica de la muestra leptocúrtica
+leptokurtic_sample_plot <- leptokurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Leptocúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra mesocúrtica
+mesokurtic_sample_plot <- mesokurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Mesocúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra platicúrtica
+platykurtic_sample_plot <- platykurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Platicúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+kurtosis_sample_comparison_plot <- leptokurtic_sample_plot +
+  mesokurtic_sample_plot +
+  platykurtic_sample_plot +
+  plot_annotation(
+    title = "Comparación de muestras con distintos niveles de curtosis",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Mostramos la gráfica
+kurtosis_sample_comparison_plot
+```
+
+Como estas muestras vienen de distribuciones con media, varianza y curtosis conocida, podemos comparar los valoers de estas características poblacionales contra los valores obtenidos de las muestras correspondientes. Resumimos estos resultados en las siguientes tablas:
+
+```{r}
+#| label: tbl-sample-kurtosis
+#| tbl-cap: "Tabla de media, varianza y curtosis muestral para las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."
+
+
+# Calcular media, varianza
+# y los tres tipos de curtosis muestral para cada muestra
+kurtosis_sample_summary_tbl <- tibble(
+  Estadística = c(
+    "Media",
+    "Varianza",
+    "Curtosis Tipo 1",
+    "Curtosis Tipo 2",
+    "Curtosis Tipo 3"
+  ),
+  `Leptocúrtica` = c(
+    mean(leptokurtic_sample),
+    var(leptokurtic_sample),
+    kurtosis(leptokurtic_sample, type = 1),
+    kurtosis(leptokurtic_sample, type = 2),
+    kurtosis(leptokurtic_sample, type = 3)
+  ),
+  `Mesocúrtica` = c(
+    mean(mesokurtic_sample),
+    var(mesokurtic_sample),
+    kurtosis(mesokurtic_sample, type = 1),
+    kurtosis(mesokurtic_sample, type = 2),
+    kurtosis(mesokurtic_sample, type = 3)
+  ),
+  `Platicúrtica` = c(
+    mean(platykurtic_sample),
+    var(platykurtic_sample),
+    kurtosis(platykurtic_sample, type = 1),
+    kurtosis(platykurtic_sample, type = 2),
+    kurtosis(platykurtic_sample, type = 3)
+  )
+)
+
+# Formatear y mostrar la tabla redondeando a 4 decimales
+kurtosis_sample_summary_kbl <- kable(
+  kurtosis_sample_summary_tbl,
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", "c", "c", "c")
+)
+
+# Valores poblacionales conocidos
+population_kurtosis_values_tbl <- tibble(
+  `Caraterística` = c(
+    "Media",
+    "Varianza",
+    "Curtosis excesiva"
+  ),
+  `Leptocúrtica` = c(
+    mu,
+    alpha^2 * gamma(3 / beta_leptokurtic) / gamma(1 / beta_leptokurtic),
+    gamma(5 / beta_leptokurtic) * gamma(1 / beta_leptokurtic) /
+      (gamma(3 / beta_leptokurtic))^2 - 3
+  ),
+  `Mesocúrtica` = c(
+    mu,
+    alpha^2 * gamma(3 / beta_mesokurtic) / gamma(1 / beta_mesokurtic),
+    gamma(5 / beta_mesokurtic) * gamma(1 / beta_mesokurtic) /
+      (gamma(3 / beta_mesokurtic))^2 - 3
+  ),
+  `Platicúrtica` = c(
+    mu,
+    alpha^2 * gamma(3 / beta_platykurtic) / gamma(1 / beta_platykurtic),
+    gamma(5 / beta_platykurtic) * gamma(1 / beta_platykurtic) /
+      (gamma(3 / beta_platykurtic))^2 - 3
+  )
+)
+
+# Formatear y mostrar la tabla redondeando a 4 decimales
+population_kurtosis_values_kbl <- kable(
+  population_kurtosis_values_tbl,
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", "c", "c", "c")
+)
+
+population_kurtosis_values_kbl
+kurtosis_sample_summary_kbl
+```
+
+Nuevamente notamos que los valores de los distintos tipos de curtosis muestral son ligeramente diferentes entre sí, pero todos indican correctamente el nivel de curtosis de la distribución de la cual se extrajo la muestra. Además, los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta, ilustrando que estos estimadores son, efectivamente, consistentes.
+
+Finalmente, mostraremos una gráfica comparativa tanto de las poblaciones como de las muestras generadas con distintos niveles de curtosis.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de poblaciones y muestras con distintos niveles de curtosis. En la parte superior se muestran las distribuciones poblacionales leptocúrtica, mesocúrtica y platicúrtica, mientras que en la parte inferior se muestran los histogramas de las muestras correspondientes. Notemos cómo la forma de las distribuciones afecta la forma de las muestras generadas a partir de ellas."
+#| fig-width: 14
+#| fig-height: 8
+
+curtosis_comparison_plot <- (leptokurtic_distribution_plot +
+    mesokurtic_distribution_plot +
+    platykurtic_distribution_plot) /
+  (leptokurtic_sample_plot +
+    mesokurtic_sample_plot +
+    platykurtic_sample_plot) +
+    plot_annotation(
+    title = "Comparación de poblaciones y muestras con distintos niveles de curtosis",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+curtosis_comparison_plot
+```
