@@ -1,5 +1,424 @@
 # Asimetría
 
-La asimetría es una medida .
+La asimetría es una medida que nos permite cuantificar el sesgo tanto de una distribución de probabilidad (asimetría poblacional), como de un conjunto de datos (asimetría muestral).
 
-Es importante distinguir
+## Asimetría poblacional
+
+**Definición.** La *asimetría* de una variable aleatoria $X$ se define como el tercer momento estandarizado, dado por $$
+\gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3},
+$$ donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
+
+Una distribución es *positivamente asimétrica* (*sesgo a la derecha*) si posee una cola más larga a la derecha, y *negativamente asimétrica* (*sesgo a la izquierda*) si la cola más larga está a la izquierda. Una distribución perfectamente simétrica tiene asimetría cero.
+
+En la siguiente figura se muestra una distribución con asimetría negativa, una distribución simétrica y una distribución con asimetría positiva.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría afecta la forma de la distribución y la relación entre la media y la mediana."
+#| fig-width: 12
+#| fig-height: 3.5
+#| message: false
+
+library(tidyverse)
+library(patchwork)
+library(latex2exp)
+library(krulRutils)
+library(e1071)
+library(kableExtra)
+
+# Fijamos los parámetros
+alpha <- 2
+beta <- 1
+
+# Calculamos la media, la mediana y la desviación estándar
+gamma_mean <- alpha / beta
+gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_sd <- sqrt(alpha) / beta
+
+# Creamos una secuencia de valores para X
+x_data <- seq(0, 8, length.out = 1000)
+
+# Calculamos la PDF de la distribución con sesgo negativo
+left_skew_distribution_tbl <- tibble(
+  x_data = -x_data,
+  density_data = dgamma(-x_data, shape = alpha, rate = beta)
+)
+
+# Calculamos la PDF de la distribución simétrica
+symmetric_distribution_tbl <- tibble(
+  x_data = x_data - 4,
+  density_data = dnorm(x_data)
+)
+
+# Calculamos la PDF de la distribución con sesgo positivo
+right_skew_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgamma(x_data, shape = alpha, rate = beta)
+)
+
+# Generamos la gráfica de la distribución con sesgo negativo
+left_skew_distribution_plot <- left_skew_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = -gamma_mean,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = -gamma_median,
+    color = c_pal("C green"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = -gamma_mean,
+    y = 0.5,
+    label = "Media",
+    color = c_pal("C red"),
+    hjust = 1.1
+  ) +
+  annotate(
+    "text",
+    x = -gamma_median,
+    y = 0.5,
+    label = "Mediana",
+    color = c_pal("C green"),
+    hjust = -0.1
+  ) +
+  labs(
+    title = "Sesgo a la izquierda",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución simétrica
+symmetric_distribution_plot <- symmetric_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 0,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 0,
+    color = c_pal("C green"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = 0,
+    y = 0.5,
+    label = "Media y Mediana",
+    color = c_pal("C red"),
+    hjust = -0.1
+  ) +
+  labs(
+    title = "Simétrica",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución con sesgo positivo
+right_skew_distribution_plot <- right_skew_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_mean,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_median,
+    color = c_pal("C green"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = gamma_mean,
+    y = 0.5,
+    label = "Media",
+    color = c_pal("C red"),
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = gamma_median,
+    y = 0.5,
+    label = "Mediana",
+    color = c_pal("C green"),
+    hjust = 1.1
+  ) +
+  labs(
+    title = "Sesgo a la derecha",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+skew_comparison_plot <- left_skew_distribution_plot +
+  symmetric_distribution_plot +
+  right_skew_distribution_plot +
+  plot_annotation(
+    title = "Comparación de distribuciones con distintos niveles de asimetría",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Mostramos la gráfica
+skew_comparison_plot
+```
+
+## Asimetría muestral
+
+Para definir la asimetría muestral, recordemos que dado un *vector muestral* $$
+X = \begin{bmatrix}
+X_1 \\
+X_2 \\
+\vdots \\ 
+X_n
+\end{bmatrix},
+$$ definimos su *media muestral* como $$
+\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.
+$$ Para la varianza muestral, tenemos dos versiones, la *varianza muestral sesgada* $$
+\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,
+$$ y la *varianza muestral insesgada* $$
+S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.
+$$En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la asimetría muestral, definiremos primero el tercer momento muestral. Igual que con la varianza muestral, existen dos versiones de esta: el *tercer momento muestral sesgado* $$
+\widetilde{M}_3 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3,
+$$ y el *tercer momento muestral insesgado* $$
+M_3 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3. 
+$$A partir de aquí, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la *asimetría muestral de tipo 1* $$
+\widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \sqrt{n} \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}},
+$$ y la *asimetría muestral de tipo 2* $$
+G_{1} = \frac{M_3}{S^3} = \frac{\frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{n\sqrt{n-1}}{n-2} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \frac{\sqrt{n(n-1)}}{n-2} \widetilde{G}_1.
+$$ Aunque menos común, también podemos definir la *asimetría muestral de tipo 3* como $$
+G_{1}^{*} = \frac{\widetilde{M}_3}{S^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{(n-1)^{3/2}}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \bigg(1 - \frac{1}{n} \bigg)^{3/2} \widetilde{G}_1.
+$$
+
+**Observación.** Es importante destacar que no existe un estimador insesgado de la asimetría poblacional. Sin embargo, todas estas versiones de la asimetría muestral son consistentes, es decir, convergen en probabilidad a la asimetría poblacional conforme el tamaño muestral $n$ tiende a infinito. En particular, para muestras grandes, las tres versiones de la asimetría muestral son aproximadamente iguales.
+
+Mostraremos ahora un ejemplo de una muestra que viene de una distribución con sesgo a la izquierda, una simétrica y una con sesgo a la derecha.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría nos alerta de la existencia de valores atípicos en las colas de la muestra en la dirección del sesgo."
+#| fig-width: 12
+#| fig-height: 3.5
+
+# Para asegurar la reproducibilidad de los resultados
+set.seed(123)
+
+# Tamaño de la muestra
+n <- 3000
+
+# Parámetros de la muestra
+alpha <- 2     # forma
+beta <- 1      # tasa
+
+# Generamos las muestras
+left_skew_sample <- -rgamma(n, shape = alpha, rate = beta)
+symmetric_sample <- rnorm(n)
+right_skew_sample <- rgamma(n, shape = alpha, rate = beta)
+
+
+# Generamos un tibble para la muestra con sesgo a la izquierda
+left_skew_sample_tbl <- tibble(
+  sample = left_skew_sample
+)
+
+# Generamos un tibble para la muestra simétrica
+symmetric_sample_tbl <- tibble(
+  sample = symmetric_sample
+)
+
+# Generamos un tibble para la muestra con sesgo a la derecha
+right_skew_sample_tbl <- tibble(
+  sample = right_skew_sample
+)
+
+# Generamos la gráfica de la muestra con sesgo a la izquierda
+left_skew_sample_plot <- left_skew_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Sesgo a la izquierda",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra simétrica
+symmetric_sample_plot <- symmetric_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Simétrica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra con sesgo a la derecha
+right_skew_sample_plot <- right_skew_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Sesgo a la derecha",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+skew_sample_comparison_plot <- left_skew_sample_plot +
+  symmetric_sample_plot +
+  right_skew_sample_plot +
+  plot_annotation(
+    title = "Comparación de muestras con distintos niveles de asimetría",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Mostramos la gráfica
+skew_sample_comparison_plot
+```
+
+Como estas muestras vienen de distribuciones con media, mediana y asimetría conocida, podemos comparar los valores de estas características poblaciones contra los valores obtenidos de las muestras correspondientes. Resumimos estos resultados en las siguientes tablas:
+
+```{r}
+#| label: tbl-sample-skewness
+#| tbl-cap: "Tablas de media, mediana y asimetría muestral para las poblaciones y muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha."
+
+# Calcular media, mediana
+# y los tres tipos de asimetría muestral para cada muestra
+skew_sample_summary_tbl <- tibble(
+  Estadística = c(
+    "Media",
+    "Mediana",
+    "Asimetría Tipo 1",
+    "Asimetría Tipo 2",
+    "Asimetría Tipo 3"
+  ),
+  `Sesgo a la izquierda` = c(
+    mean(left_skew_sample),
+    median(left_skew_sample),
+    skewness(left_skew_sample, type = 1),
+    skewness(left_skew_sample, type = 2),
+    skewness(left_skew_sample, type = 3)
+  ),
+  `Simétrica` = c(
+    mean(symmetric_sample),
+    median(symmetric_sample),
+    skewness(symmetric_sample, type = 1),
+    skewness(symmetric_sample, type = 2),
+    skewness(symmetric_sample, type = 3)
+  ),
+  `Sesgo a la derecha` = c(
+    mean(right_skew_sample),
+    median(right_skew_sample),
+    skewness(right_skew_sample, type = 1),
+    skewness(right_skew_sample, type = 2),
+    skewness(right_skew_sample, type = 3)
+  )
+)
+
+# Formatear la tabla redondeando a 4 decimales
+skew_sample_summary_kbl<- kable(
+  skew_sample_summary_tbl,
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", "c", "c", "c")
+)
+
+# Valores poblacionales conocidos
+population_values_tbl <- tibble(
+  `Caraterística` = c(
+    "Media",
+    "Mediana",
+    "Asimetría"
+  ),
+  `Sesgo a la izquierda` = c(
+    -alpha / beta,
+    -qgamma(0.5, shape = alpha, rate = beta),
+    -2 / sqrt(alpha)
+  ),
+  `Simétrica` = c(
+    0,
+    0,
+    0
+  ),
+  `Sesgo a la derecha` = c(
+    alpha / beta,
+    qgamma(0.5, shape = alpha, rate = beta),
+    2 / sqrt(alpha)
+  )
+)
+
+# Formatear la tabla redondeando a 4 decimales
+population_values_kbl <- kable(
+  population_values_tbl,
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", "c", "c", "c")
+)
+
+population_values_kbl
+skew_sample_summary_kbl
+```
+
+**Observación.** Comparando estas tablas, notamos lo siguiente:
+
+-   Los valores de los distintos tipos de asimetría muestral son ligeramente distintos entre sí, pero todos indican correctamente la dirección del sesgo de la muestra. En particular, para muestras lo suficientemente grandes, todos proporcionan esencialmente la misma información.
+-   Los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta. Esto ilustra la propiedad de consistencia de estos estimadores, pero también ilustra la diferencia entre los valores de los estadísticos de una muestra (que suelen cambiar de una muestra a otra) y los parámetros poblacionales (que son fijos).
+
+Finalmente, mostraremos una gráfica comparativa tanto de las poblaciones como de las muestras generadas con sesgo a la izquierda, simétrica y con sesgo a la derecha.
+
+```{r}
+#| fig-cap: "Gráfica comparativa de poblaciones y muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha." 
+#| fig-width: 14
+#| fig-height: 8
+
+skew_comparison_plot <- (left_skew_distribution_plot +
+  symmetric_distribution_plot +
+  right_skew_distribution_plot) /
+(left_skew_sample_plot +
+  symmetric_sample_plot +
+  right_skew_sample_plot) +
+  plot_annotation(
+    title = "Comparación de poblaciones y muestras con distintos niveles de asimetría",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+skew_comparison_plot
+```
