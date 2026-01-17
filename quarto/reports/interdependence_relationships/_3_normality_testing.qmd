@@ -1,13 +1,13 @@
 # Escalamiento y transformaciones
 
-El escalamiento y la estandarización de variables aleatorias y muestras son técnicas fundamentales en estadística y ciencia de datos. Estas transformaciones permiten comparar y analizar datos que originalmente pueden estar en diferentes escalas o unidades. En esta sección, exploraremos los conceptos básicos de escalamiento y estandarización, así como algunas de las técnicas más comunes utilizadas en la práctica.
+El escalamiento y las transformaciones de variables aleatorias y muestras son dos maneras en las que podemos cambiar la manera en la que representamos la información contenida en un modelo estadístico. Estas técnicas son útiles en diversas situaciones, como cuando queremos comparar variables con diferentes unidades de medida o cuando buscamos mejorar la normalidad de los datos para cumplir con los supuestos de ciertos análisis estadísticos. La principal diferencia entre ambas es que el escalamiento preserva la forma de la distribución original, mientras que las transformaciones pueden alterar dicha forma así como sus propiedades estadísticas.
 
 ## Escalamiento de variables aleatorias
 
-En muchas situaciones, las unidades con que medimos distintas variables no son comparables (p.ej., estatura en cm y peso en kg). En esos casos conviene \emph{escalar} las variables para hacerlas comparables. En esta sección discutimos los métodos más comunes para escalar y estandarizar variables y muestras.
+Un problema común en el análisis multivariado es que las variables involucradas pueden tener diferentes unidades de medida o rangos de valores. Esto provoca que algunas variables dominen el análisis simplemente por su escala, lo que puede llevar a interpretaciones erróneas. En esta sección discutimos los métodos más comunes para escalar y estandarizar variables y muestras, lo que ayuda a mitigar este tipo de problemas.
 
 \begin{definition} 
-Una \emph{transformación afín} de una variable aleatoria $X$ es de la forma 
+Una \emph{transformación afín} de una variable aleatoria $X$ es una transformación de la forma 
 $$
 Y = aX + b
 $$
@@ -22,14 +22,14 @@ Suponga que $X$ tiene media $\mu$ y desviación estándar $\sigma$. Entonces la 
 $$ 
 Y = aX + b 
 $$
-tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, la variable
+tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, entonces la variable
 $$
 Z = \frac{X - \mu}{\sigma}
 $$
-tendrá media $0$ y desviación estándar $1$. Esta transformación se llama \emph{estandarización}, y $Z$ es la versión \emph{estandarizada} de $X$ (también llamada \emph{puntaje z}).
+tendrá media $0$ y desviación estándar $1$. Esta transformación se conoce como la \emph{estandarización} de la variable $X$ y, en este caso, decimos que $Z$ es la versión \emph{estandarizada} de $X$ (también llamada \emph{puntaje $z$}).
 
 \begin{remark}
-Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en normal.
+Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en una distribución normal.
 \end{remark}
 
 \begin{observation}
