@@ -1,5 +1,6 @@
-# Escalamiento y estandarización 
+# Escalamiento y transformaciones
 
+El escalamiento y la estandarización de variables aleatorias y muestras son técnicas fundamentales en estadística y ciencia de datos. Estas transformaciones permiten comparar y analizar datos que originalmente pueden estar en diferentes escalas o unidades. En esta sección, exploraremos los conceptos básicos de escalamiento y estandarización, así como algunas de las técnicas más comunes utilizadas en la práctica.
 
 ## Escalamiento de variables aleatorias
 
@@ -276,7 +277,7 @@ scaled_gamma_plot <- scaled_gamma_qq_plot + scaled_gamma_histogram +
 scaled_gamma_plot
 ```
 
-# Transformaciones 
+## Transformaciones 
 Para acercar los datos a la normalidad, pueden aplicarse transformaciones. Algunas comunes son:
 \begin{enumerate}
 \item \emph{Transformación de Box–Cox}: familia de transformaciones potenciadas aplicables sólo a datos positivos. Está dada por:
