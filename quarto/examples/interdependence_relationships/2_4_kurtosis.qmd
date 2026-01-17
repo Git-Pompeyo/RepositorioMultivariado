@@ -121,7 +121,7 @@ $$ y la *varianza muestral insesgada* $$
 S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.
 $$En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la curtosis muestral, definiremos primero el *cuarto momento muestral sesgado* como $$
 \widetilde{M}_4 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4. 
-$$ El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular tres tipos de curtosis a partir de esta definición: la *curtosis muestral de tipo 1* $$
+$$El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular tres tipos de curtosis a partir de esta definición: la *curtosis muestral de tipo 1* $$
 \widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = n \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3,
 $$ la *curtosis muestral de tipo 2* $$
 \begin{aligned}
@@ -254,7 +254,7 @@ kurtosis_sample_comparison_plot <- leptokurtic_sample_plot +
 kurtosis_sample_comparison_plot
 ```
 
-Como estas muestras vienen de distribuciones con media, varianza y curtosis conocida, podemos comparar los valoers de estas características poblacionales contra los valores obtenidos de las muestras correspondientes. Resumimos estos resultados en las siguientes tablas:
+Como estas muestras vienen de distribuciones con media, varianza y curtosis conocida, podemos comparar los valores de estas características poblacionales contra los valores obtenidos de las muestras correspondientes. Resumimos estos resultados en las siguientes tablas:
 
 ```{r}
 #| label: tbl-sample-kurtosis
