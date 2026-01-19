@@ -84,7 +84,7 @@ Blanca Rosa Ruiz Hernández}
 # {{< include _10_non_hierarchical_clustering.qmd >}}
 ```
 
-\part{Fundamentos del análisis univariado}
+\part{Fundamentos de análisis univariado}
 
 \pagestyle{multivariate_notes}
 \pagenumbering{arabic}
