@@ -29,7 +29,7 @@ $$
 tendrá media $0$ y desviación estándar $1$. Esta transformación se conoce como la \emph{estandarización} de la variable $X$ y, en este caso, decimos que $Z$ es la versión \emph{estandarizada} de $X$ (también conocida como su \emph{puntaje $z$}).
 
 \begin{remark}
-Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en una distribución normal.
+Si $X$ no es normal, entonces $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en una distribución normal.
 \end{remark}
 
 \begin{observation}
@@ -41,22 +41,26 @@ y
 $$
 \gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
 $$
+En otras palabras, la asimetría y la curtosis en exceso no cambian al estandarizar una variable aleatoria.
 \end{observation}
 
-Como ejemplo, consideremos de nuevo la distribución Gamma con parámetros $\alpha = 2$ y $\beta = 1$. En este caso
-$$
-\mu = \frac{\alpha}{\beta} = 2 \quad \text{y} \quad \sigma = \frac{\sqrt{\alpha}}{\beta} = \sqrt{2}. 
-$$
-Con esta información, generamos la gráfica de la versión estandarizada de la Gamma y la comparamos con la original.
+Como ejemplo, consideremos de nuevo la distribución Gamma con parámetros $\alpha = 2$ y $\beta = 1$. En este caso la media y la desviación estándar están dadas por:
+\begin{align*}
+\mu = & \frac{\alpha}{\beta} = 2 \\
+\sigma = & \frac{\sqrt{\alpha}}{\beta} = \sqrt{2}. 
+\end{align*}
+Usando esta información, podemos generar la gráfica de la versión estandarizada de la distribución Gamma y compararla con la original.
 ```{r}
-#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
+#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada. Notemos que aunque la media y la desviación estándar cambian, la forma de la distribución permanece igual. En particular, se puede observar que la asimetría de la distribución no cambia."
 #| fig-width: 12
-#| fig-height: 3.5
+#| fig-height: 4.5
 
+# Cargamos las librerías necesarias
 library(tidyverse)
 library(patchwork)
 library(krulRutils)
 library(car)
+library(latex2exp)
 
 # Parámetros de la distribución Gamma
 alpha <- 2
@@ -76,7 +80,6 @@ gamma_distribution_tbl <- tibble(
   density_data = dgamma(x_data, shape = alpha, rate = beta)
 )
 
-
 # Calculamos la PDF de la distribución Gamma estandarizada
 z_gamma_distribution_tbl <- gamma_distribution_tbl |>
   mutate(
@@ -88,7 +91,6 @@ z_gamma_distribution_tbl <- gamma_distribution_tbl |>
 # Calculamos la media y mediana estandarizadas
 z_gamma_mean <- 0
 z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
-
 
 # Generamos la gráfica de la distribución Gamma original
 gamma_distribution_plot <- gamma_distribution_tbl |>
@@ -127,11 +129,11 @@ gamma_distribution_plot <- gamma_distribution_tbl |>
   ) +
   coord_cartesian(ylim = c(0, 0.65)) +
   labs(
-    x = "X",
+    title = "Original",
+    x = TeX("$X$"),
     y = "Densidad"
   ) +
   theme_krul()
-
 
 # Generamos la gráfica de la distribución Gamma estandarizada
 z_gamma_distribution_plot <- z_gamma_distribution_tbl |>
@@ -170,19 +172,13 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl |>
   ) +
   coord_cartesian(ylim = c(0, 0.65)) +
   labs(
-    title = paste(
-      "Estandarizada"
-    ),
-    x = "X",
+    title = "Estandarizada",
+    x = TeX("$X$"),
     y = "Densidad"
   ) +
   theme_krul()
 
-gamma_distribution_plot <- gamma_distribution_plot +
-  labs(
-    title = "Original"
-  )
-
+# Combinamos ambas gráficas
 combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
   plot_layout(ncol = 2) +
   plot_annotation(
@@ -195,33 +191,33 @@ combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
     )
   )
 
+# Mostramos la gráfica combinada
 combined_gamma_plot
 ```
 
 
 ## Escalamiento de muestras
 
-Para una muestra dada, no siempre se conoce la distribución subyacente; en particular, pueden desconocerse la media y la desviación poblacionales. Aun así, podemos escalar los datos; hay varios métodos comunes:
+Para una muestra dada, no siempre se conoce la distribución poblacional subyacente. En particular, pueden desconocerse la media y la desviación estándar poblacional. Aun así, existen varios métodos comunes para escalar nuestros datos. Algunos de los más utilizados son:
 
 \begin{enumerate}
-    \item \emph{Estandarización}: Usa la media y desviación muestrales. La muestra estandarizada es
+    \item \emph{Estandarización}: Usa la media y la desviación estándar muestrales. En otras palabras, la muestra estandarizada está dada por
     $$
     T = \frac{X - \bar{X}}{S},
     $$
-    donde $\bar{X}$ es la media muestral y $S$ la desviación muestral. 
+    donde $\bar{X}$ es la media muestral y $S$ es la desviación estándar muestral. 
     
-    \item \emph{Escalamiento Min–Max}: Escala a un rango fijo, usualmente [0,1]. La muestra escalada es
+    \item \emph{Escalamiento Min–Max}: En este caso la muestra escalada está dada por
     $$
     T = \frac{X - \min(X)}{\max(X) - \min(X)},
     $$
-    donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra. Es muy sensible a atípicos al usar extremos.
+    donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra. Este método de escalamiento es muy sensible a valores atípicos, ya que utiliza los valores extremos de la muestra.
     
     \item \emph{Escalamiento robusto}: Usa la mediana y el rango intercuartil (IQR). La muestra escalada es
     $$
-    T = \frac{X - \text{median}(X)}{\text{IQR}(X)},
+    T = \frac{X - \text{mediana}(X)}{\text{IQR}(X)},
     $$
-    donde $\text{IQR}(X) = Q_3 - Q_1$. Es más robusto a atípicos que Min–Max.
-
+    Este método es más robusto frente a valores atípicos en comparación con el escalamiento Min–Max. 
     \item \emph{Normalización}: Divide cada dato por la norma del vector. La muestra normalizada es
     $$
     T = \frac{X}{\|X\|},
@@ -229,15 +225,14 @@ Para una muestra dada, no siempre se conoce la distribución subyacente; en part
     donde $\|X\|$ es la norma. Se usa con menor frecuencia que los anteriores.
 \end{enumerate}
 
-\begin{remark} 
-Como se mencionó, escalar no vuelve normal una distribución no normal. En particular, la asimetría y la curtosis en exceso muestrales no cambian.
-\end{remark}
-
-Como ejemplo, consideraremos los distintos métodos de escalado aplicados a la muestra de la distribución Gamma que generamos anteriormente.  
+Como ejemplo, consideraremos los distintos métodos de escalado aplicados a una muestra proveniente de una distribución Gamma. 
 ```{r}
-#| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a la muestra Gamma. Note que los QQ-plots son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma."
+#| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a una muestra generada a partir de la distribución Gamma. Notemos que todos los gráficos QQ son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma. En particular, no es posible alterar la normalidad de una muestra al aplicar un método de escalamiento."
 #| fig-width: 12
 #| fig-height: 14
+
+# Para asegurar la reproducibilidad de los resultados
+set.seed(123)
 
 scale_lookup_tbl <- tibble(
   code = c(
@@ -248,21 +243,19 @@ scale_lookup_tbl <- tibble(
     "sample_normal"
   ),
   label = c(
-    "Original Sample",
-    "Estandarizada",
-    "Min-Max Scaled",
-    "Robust Scaled",
-    "Normalized"
+    "Muestra Original",
+    "Estandarización",
+    "Escalamiento Min–Max",
+    "Escalamiento Robusto",
+    "Normalización"
   )
 )
 
 # Tamaño de la muestra
-n <- 300
-
-gamma_sample <- rgamma(n, shape = alpha, rate = beta)
+n <- 3000
 
 gamma_sample_tbl <- tibble(
-  sample = gamma_sample
+  sample = rgamma(n, shape = alpha, rate = beta)
 )
 
 scaled_gamma_sample_tbl <- gamma_sample_tbl |>
