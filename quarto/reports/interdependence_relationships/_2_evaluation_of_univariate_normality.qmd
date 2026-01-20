@@ -153,7 +153,7 @@ gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
 gamma_sd <- sqrt(alpha) / beta
 
 # Creamos una secuencia de valores para X
-x_data <- seq(0, 8, length.out = 500)
+x_data <- seq(0, 8, length.out = 1000)
 
 # Calculamos la PDF de la distribución con sesgo negativo
 left_skew_distribution_tbl <- tibble(

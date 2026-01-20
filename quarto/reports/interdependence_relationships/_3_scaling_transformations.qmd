@@ -4,7 +4,7 @@ El escalamiento y las transformaciones de variables aleatorias y muestras son do
 
 ## Escalamiento de variables aleatorias
 
-Un problema común en el análisis multivariado es que las variables involucradas pueden tener diferentes unidades de medida o rangos de valores. Esto provoca que algunas variables dominen el análisis simplemente por su escala, lo que puede llevar a interpretaciones erróneas. En esta sección discutimos los métodos más comunes para escalar y estandarizar variables y muestras, lo que ayuda a mitigar este tipo de problemas.
+Un problema común en el análisis multivariado es que las variables involucradas pueden tener diferentes unidades de medida o rangos de valores. Esto provoca que algunas variables dominen el análisis simplemente por su escala, lo que puede llevar a interpretaciones erróneas. En esta sección discutiremos los métodos más comunes para escalar y estandarizar variables y muestras, lo que ayuda a mitigar este tipo de problemas.
 
 \begin{definition} 
 Una \emph{transformación afín} de una variable aleatoria $X$ es una transformación de la forma 
@@ -26,7 +26,7 @@ tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si 
 $$
 Z = \frac{X - \mu}{\sigma}
 $$
-tendrá media $0$ y desviación estándar $1$. Esta transformación se conoce como la \emph{estandarización} de la variable $X$ y, en este caso, decimos que $Z$ es la versión \emph{estandarizada} de $X$ (también llamada \emph{puntaje $z$}).
+tendrá media $0$ y desviación estándar $1$. Esta transformación se conoce como la \emph{estandarización} de la variable $X$ y, en este caso, decimos que $Z$ es la versión \emph{estandarizada} de $X$ (también conocida como su \emph{puntaje $z$}).
 
 \begin{remark}
 Si $X$ no es normal, $Z$ \emph{no} será normal estándar. La estandarización no transforma una distribución no normal en una distribución normal.
@@ -43,42 +43,98 @@ $$
 $$
 \end{observation}
 
-Como ejemplo, consideremos de nuevo la distribución Gamma. En este caso
+Como ejemplo, consideremos de nuevo la distribución Gamma con parámetros $\alpha = 2$ y $\beta = 1$. En este caso
 $$
-\mu = \frac{\alpha}{\beta} \quad \text{and} \quad \sigma = \frac{\sqrt{\alpha}}{\beta}. 
+\mu = \frac{\alpha}{\beta} = 2 \quad \text{y} \quad \sigma = \frac{\sqrt{\alpha}}{\beta} = \sqrt{2}. 
 $$
 Con esta información, generamos la gráfica de la versión estandarizada de la Gamma y la comparamos con la original.
 ```{r}
 #| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada."
-#| fig-width: 8
-#| fig-height: 5
+#| fig-width: 12
+#| fig-height: 3.5
 
-gamma_sample <- rgamma(n, shape = alpha, rate = beta)
-gamma_sample_tbl <- tibble(
-sample = gamma_sample
-)
+library(tidyverse)
+library(patchwork)
+library(krulRutils)
+library(car)
 
-# Calculamos la PDF de la distribución Gamma para alpha = 2
+# Parámetros de la distribución Gamma
+alpha <- 2
+beta <- 1
+
+# Calculamos la media, la mediana y la desviación estándar
+gamma_mean <- alpha / beta
+gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_sd <- sqrt(alpha) / beta
+
+# Creamos una secuencia de valores para X
+x_data <- seq(0, 8, length.out = 1000)
+
+# Calculamos la PDF de la distribución Gamma original
 gamma_distribution_tbl <- tibble(
   x_data = x_data,
   density_data = dgamma(x_data, shape = alpha, rate = beta)
 )
 
 
-# Calculate density values
-z_gamma_distribution_tbl <- gamma_distribution_tbl %>%
+# Calculamos la PDF de la distribución Gamma estandarizada
+z_gamma_distribution_tbl <- gamma_distribution_tbl |>
   mutate(
     z_data = (x_data - gamma_mean) / gamma_sd,
     z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
-  ) %>%
+  ) |>
   select(z_data, z_density)
 
-# Calculate mean and median
+# Calculamos la media y mediana estandarizadas
 z_gamma_mean <- 0
 z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
 
-# Plot
-z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
+
+# Generamos la gráfica de la distribución Gamma original
+gamma_distribution_plot <- gamma_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_mean,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_median,
+    color = c_pal("C green"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = gamma_mean,
+    y = 0.6,
+    label = "Media",
+    color = c_pal("C red"),
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = gamma_median,
+    y = 0.6,
+    label = "Mediana",
+    color = c_pal("C green"),
+    hjust = 1.1
+  ) +
+  coord_cartesian(ylim = c(0, 0.65)) +
+  labs(
+    x = "X",
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+
+# Generamos la gráfica de la distribución Gamma estandarizada
+z_gamma_distribution_plot <- z_gamma_distribution_tbl |>
   ggplot(aes(x = z_data, y = z_density)) +
   geom_line(
     color = c_pal("C blue"),
@@ -93,13 +149,13 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
   geom_vline(
     xintercept = z_gamma_median,
     color = c_pal("C green"),
-    linetype = "dotted",
+    linetype = "dashed",
     linewidth = 1
   ) +
   annotate(
     "text",
     x = z_gamma_mean,
-    y = 0.55,
+    y = 0.6,
     label = "Media",
     color = c_pal("C red"),
     hjust = -0.1
@@ -107,12 +163,12 @@ z_gamma_distribution_plot <- z_gamma_distribution_tbl %>%
   annotate(
     "text",
     x = z_gamma_median,
-    y = 0.55,
+    y = 0.6,
     label = "Mediana",
     color = c_pal("C green"),
     hjust = 1.1
   ) +
-  coord_cartesian(ylim = c(0, 0.6)) +
+  coord_cartesian(ylim = c(0, 0.65)) +
   labs(
     title = paste(
       "Estandarizada"
@@ -200,18 +256,27 @@ scale_lookup_tbl <- tibble(
   )
 )
 
-scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
+# Tamaño de la muestra
+n <- 300
+
+gamma_sample <- rgamma(n, shape = alpha, rate = beta)
+
+gamma_sample_tbl <- tibble(
+  sample = gamma_sample
+)
+
+scaled_gamma_sample_tbl <- gamma_sample_tbl |>
   mutate(
     sample_standard = standard_scale(sample),
     sample_min_max = min_max_scale(sample),
     sample_robust = robust_scale(sample),
     sample_normal = normal_scale(sample)
-  ) %>%
+  ) |>
   pivot_longer(
     cols = everything(),
     names_to = "scaling_method",
     values_to = "sample_scaled"
-  ) %>%
+  ) |>
   convert_codes_to_factor(
     code_col = scaling_method,
     lookup_tbl = scale_lookup_tbl,
@@ -220,7 +285,7 @@ scaled_gamma_sample_tbl <- gamma_sample_tbl %>%
     new_factor_col_name = scaling_method_factor
   )
 
-scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
+scaled_gamma_qq_plot <- scaled_gamma_sample_tbl |>
   ggplot(aes(sample = sample_scaled)) +
   facet_wrap(
     ~scaling_method_factor,
@@ -242,7 +307,7 @@ scaled_gamma_qq_plot <- scaled_gamma_sample_tbl %>%
   ) +
   theme_krul()
 
-scaled_gamma_histogram <- scaled_gamma_sample_tbl %>%
+scaled_gamma_histogram <- scaled_gamma_sample_tbl |>
   ggplot(aes(x = sample_scaled)) +
   facet_wrap(
     ~scaling_method_factor,
@@ -308,7 +373,7 @@ set.seed(123) # for reproducibility
 # Sample size
 n <- 300
 b <- 1 / sqrt(2)
-
+mu <- 0
 
 # Generate random samples from the Gamma distribution
 gamma_sample <- rgamma(n, shape = alpha, rate = beta)
@@ -350,19 +415,19 @@ box_cox_lookup_tbl <- tibble(
   ),
 )
 
-box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
+box_cox_gamma_sample_tbl <- gamma_sample_tbl |>
   mutate(
     box_cox_0 = bcPower(sample, lambda = 0),
     box_cox_025 = bcPower(sample, lambda = 0.25),
     box_cox_05 = bcPower(sample, lambda = 0.5),
     box_cox_075 = bcPower(sample, lambda = 0.75),
     box_cox_1 = bcPower(sample, lambda = 1)
-  ) %>%
+  ) |>
   pivot_longer(
     starts_with("box_cox_"),
     names_to = "lambda",
     values_to = "transformed_sample"
-  ) %>%
+  ) |>
   convert_codes_to_factor(
     code_col = lambda,
     lookup_tbl = box_cox_lookup_tbl,
@@ -372,7 +437,7 @@ box_cox_gamma_sample_tbl <- gamma_sample_tbl %>%
   )
 
 
-box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
+box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl |>
   ggplot(aes(sample = transformed_sample)) +
   facet_wrap(
     ~lambda_factor,
@@ -390,11 +455,11 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl %>%
   labs(
     title = "Gráficos QQ",
     x = "Cuantiles teóricos",
-    y = "Cuantiles muestrales"
+    y = "Cuantiles  muestrales"
   ) +
   theme_krul()
 
-box_cox_gamma_histogram <- box_cox_gamma_sample_tbl %>%
+box_cox_gamma_histogram <- box_cox_gamma_sample_tbl |>
   ggplot(aes(x = transformed_sample)) +
   facet_wrap(
     ~lambda_factor,
@@ -463,7 +528,7 @@ Finalmente, extraemos el $\lambda$ óptimo y transformamos los datos con ese val
 ```{r}
 optimal_lambda <- bc$lambda
 
-optimal_gamma_sample_tbl <- gamma_sample_tbl %>%
+optimal_gamma_sample_tbl <- gamma_sample_tbl |>
   mutate(
     transformed_sample = bcPower(sample, lambda = optimal_lambda)
   )
@@ -480,7 +545,7 @@ Como se observa, la transformación de Box–Cox con el valor óptimo de $\lambd
 #| fig-cap: "Gráfico QQ e histograma de la transformación Gamma óptima. Nótese el mejor ajuste a la normalidad en comparación con la muestra Gamma original."
 #| fig-width: 10
 #| fig-height: 5
-optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
+optimal_gamma_qq_plot <- optimal_gamma_sample_tbl |>
   ggplot(aes(sample = transformed_sample)) +
   geom_qq(
     color = c_palette["C red"],
@@ -497,7 +562,7 @@ optimal_gamma_qq_plot <- optimal_gamma_sample_tbl %>%
   ) +
   theme_krul()
 
-optimal_gamma_histogram <- optimal_gamma_sample_tbl %>%
+optimal_gamma_histogram <- optimal_gamma_sample_tbl |>
   ggplot(aes(x = transformed_sample)) +
   geom_histogram(
     bins = 30,
