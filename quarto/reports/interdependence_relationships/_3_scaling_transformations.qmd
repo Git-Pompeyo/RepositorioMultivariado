@@ -50,6 +50,7 @@ Como ejemplo, consideremos de nuevo la distribución Gamma con parámetros $\alp
 \sigma = & \frac{\sqrt{\alpha}}{\beta} = \sqrt{2}. 
 \end{align*}
 Usando esta información, podemos generar la gráfica de la versión estandarizada de la distribución Gamma y compararla con la original.
+
 ```{r}
 #| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada. Notemos que aunque la media y la desviación estándar cambian, la forma de la distribución permanece igual. En particular, se puede observar que la asimetría de la distribución no cambia."
 #| fig-width: 12
@@ -226,6 +227,7 @@ Para una muestra dada, no siempre se conoce la distribución poblacional subyace
 \end{enumerate}
 
 Como ejemplo, consideraremos los distintos métodos de escalado aplicados a una muestra proveniente de una distribución Gamma. 
+
 ```{r}
 #| fig-cap: "Comparación de distintos métodos de escalamiento aplicados a una muestra generada a partir de la distribución Gamma. Notemos que todos los gráficos QQ son versiones reescaladas del gráfico QQ original y, por tanto, tienen la misma forma. En particular, no es posible alterar la normalidad de una muestra al aplicar un método de escalamiento."
 #| fig-width: 12
@@ -286,11 +288,11 @@ scaled_gamma_qq_plot <- scaled_gamma_sample_tbl |>
     scales = "free"
   ) +
   geom_qq(
-    color = c_pal("C red"),
+    color = c_pal("C blue"),
     size = 0.3
   ) +
   geom_qq_line(
-    color = c_pal("C blue"),
+    color = c_pal("C magenta"),
     linewidth = 0.5
   ) +
   labs(
@@ -316,7 +318,7 @@ scaled_gamma_histogram <- scaled_gamma_sample_tbl |>
   labs(
     title = "Histogramas",
     x = "Valores muestrales",
-    y = "Densidad"
+    y = "Frecuencia absoluta"
   ) +
   theme_krul()
 
@@ -336,61 +338,44 @@ scaled_gamma_plot
 ```
 
 ## Transformaciones 
-Para acercar los datos a la normalidad, pueden aplicarse transformaciones. Algunas comunes son:
+
+Las transformaciones son otro método que nos permite modificar la manera en la que representamos la información contenida en una muestra. Sin embargo, a diferencia del escalamiento, las transformaciones si pueden alterar la forma de la distribución original y sus propiedades estadísticas. Una aplicación común de estas transformaciones es mejorar la normalidad de nuestros datos, lo cual es útil para cumplir con los supuestos de ciertos análisis estadísticos.
+
+### Familias de transformaciones
+
+Usualmente las transformaciones que aplicamos a una muestra pertenecen a alguna familia de transformaciones que dependen de ciertos parámetros. Dos de las familias más comunes son:
 \begin{enumerate}
-\item \emph{Transformación de Box–Cox}: familia de transformaciones potenciadas aplicables sólo a datos positivos. Está dada por:
+\item \textbf{Transformaciones de Box–Cox.} Esta es una familia de transformaciones que se utiliza comúnmente para corregir asimetrías, pero solo es aplicable a datos positivos. Está dada por:
 $$
 \tilde{X} = \begin{cases}
-\frac{X^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\
-\log(X) & \text{if } \lambda = 0 
+\frac{X^\lambda - 1}{\lambda} & \text{si } \lambda \neq 0 \\
+\log(X) & \text{si } \lambda = 0 
 \end{cases}
 $$
 donde $\lambda$ es un parámetro.
 
-\item \emph{Transformación de Yeo–Johnson}: similar a Box–Cox, pero admite valores negativos; útil con asimetrías positivas o negativas. Está dada por:
+\item \textbf{Transformaciones de Yeo–Johnson.} Similar a las transformaciones de Box–Cox, pero también son aplicables a datos negativos. Están dadas por:
 $$
 \tilde{X} = \begin{cases}
-\frac{((X + 1)^\lambda - 1)}{\lambda} & \text{if } X \geq 0, \lambda \neq 0 \\
-\frac{-((-X + 1)^{2 - \lambda} - 1)}{2 - \lambda} & \text{if } X < 0, \lambda \neq 2 \\
-\log(X + 1) & \text{if } X \geq 0, \lambda = 0 \\
-\log(-X + 1) & \text{if } X < 0, \lambda = 2 
+\frac{((X + 1)^\lambda - 1)}{\lambda} & \text{si } X \geq 0, \lambda \neq 0 \\
+\log(X + 1) & \text{si } X \geq 0, \lambda = 0 \\
+\frac{-((-X + 1)^{2 - \lambda} - 1)}{2 - \lambda} & \text{si } X < 0, \lambda \neq 2 \\
+\log(-X + 1) & \text{si } X < 0, \lambda = 2 
 \end{cases}
 $$
-donde $\lambda$ es un parámetro. 
+donde $\lambda$ nuevamente es nuestro parámetro. 
 \end{enumerate}
 
-Aplicaremos la transformación de Box–Cox a la muestra Gamma con $\lambda = 0$, $0.25$, $0.5$, $0.75$ y $1$:
+Como ilustración, aplicaremos una transformación de Box–Cox a la muestra Gamma que habíamos considerado anteriormente, utilizando los valores del parámetro $\lambda = 0$, $0.25$, $0.5$, $0.75$ y $1$:
 
 ```{r}
-set.seed(123) # for reproducibility
-# Sample size
-n <- 300
-b <- 1 / sqrt(2)
-mu <- 0
-
-# Generate random samples from the Gamma distribution
-gamma_sample <- rgamma(n, shape = alpha, rate = beta)
-gamma_sample_tbl <- tibble(
-sample = gamma_sample
-)
-# Generate uniform random numbers in (0,1)
-u <- runif(n)
-# Apply inverse CDF of Laplace
-laplace_sample <- ifelse(u < 0.5,
-mu + b * log(2 * u),
-mu - b * log(2 * (1 - u))
-)
-laplace_sample_tbl <- tibble(
-sample = laplace_sample
-)
-```
-
-```{r}
-#| fig-cap: "Comparación de distintas transformaciones de Box–Cox aplicadas a la muestra Gamma, con parámetro lambda = 0, 0.25, 0.5, 0.75 y 1."
+#| fig-cap: "Comparación de distintas transformaciones de Box–Cox aplicadas a la muestra Gamma, con parámetro lambda = 0, 0.25, 0.5, 0.75 y 1. Notemos como la forma de los gráficos QQ e histogramas cambia significativamente con cada transformación, lo que indica que la normalidad de la muestra puede mejorarse o empeorarse dependiendo del valor de lambda seleccionado."
 #| fig-width: 12
 #| fig-height: 14
 
-
+# Generamos una tabla de búsqueda para los valores de lambda
+# Esta tabla nos ayudará a etiquetar las facetas de las gráficas
+# que generaremos más adelante
 box_cox_lookup_tbl <- tibble(
   code = c(
     "box_cox_0",
@@ -408,6 +393,8 @@ box_cox_lookup_tbl <- tibble(
   ),
 )
 
+# Generamos un tibble con las transformaciones de Box-Cox
+# aplicadas a la muestra Gamma que ya teníamos
 box_cox_gamma_sample_tbl <- gamma_sample_tbl |>
   mutate(
     box_cox_0 = bcPower(sample, lambda = 0),
@@ -429,7 +416,8 @@ box_cox_gamma_sample_tbl <- gamma_sample_tbl |>
     new_factor_col_name = lambda_factor
   )
 
-
+# Generamos las gráficas QQ. Notemos que estamos utilizando
+# los diversos valores de lambda para etiquetar las facetas
 box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl |>
   ggplot(aes(sample = transformed_sample)) +
   facet_wrap(
@@ -438,11 +426,11 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl |>
     scales = "free"
   ) +
   geom_qq(
-    color = c_palette["C red"],
+    color = c_pal("C blue"),
     size = 0.3
   ) +
   geom_qq_line(
-    color = c_palette["C blue"],
+    color = c_pal("C magenta"),
     linewidth = 0.5
   ) +
   labs(
@@ -452,6 +440,8 @@ box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl |>
   ) +
   theme_krul()
 
+# Generamos los histogramas. Nuevamente estamos utilizando
+# los diversos valores de lambda para etiquetar las facetas
 box_cox_gamma_histogram <- box_cox_gamma_sample_tbl |>
   ggplot(aes(x = transformed_sample)) +
   facet_wrap(
@@ -461,21 +451,22 @@ box_cox_gamma_histogram <- box_cox_gamma_sample_tbl |>
   ) +
   geom_histogram(
     bins = 30,
-    fill = c_palette["C blue"],
+    fill = c_pal("C blue"),
     color = "black",
     alpha = 0.7
   ) +
   labs(
     title = "Histogramas",
     x = "Valores muestrales",
-    y = "Densidad"
+    y = "Frecuencia absoluta"
   ) +
   theme_krul()
 
-box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
+# Combinamos las gráficas
+box_cox_gamma_plot <- (box_cox_gamma_qq_plot + box_cox_gamma_histogram) +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Transformaciones Box–Cox con distintos valores de lambda",
+    title = "Transformaciones Box–Cox para distintos valores de lambda",
     theme = theme(
       plot.title = element_text(
         size = 24,
@@ -484,107 +475,225 @@ box_cox_gamma_plot <- box_cox_gamma_qq_plot + box_cox_gamma_histogram +
     )
   )
 
+# Mostramos la gráfica combinada
 box_cox_gamma_plot
 ```
 
-## Optimización de normalidad (Box–Cox)
+### Perfil de log-verosimilitud y transformación óptima
 
-Como vimos, la transformación de Box–Cox puede acercar los datos a la normalidad. La elección de $\lambda$ es crucial: buscamos el valor que maximiza la log‑verosimilitud. Esto puede realizarse con `car::powerTransform`, que estima el $\lambda$ óptimo. La figura muestra el perfil de log‑verosimilitud para la muestra Gamma:
+Una manera de cuantificar la normalidad de una muestra es mediante el cálculo de su máxima verosimilitud bajo el supuesto de normalidad. (O, de manera equivalente, el cálculo de su máxima log‑verosimilitud.) Recordemos que dada una muestra $X_1, X_2, \ldots, X_n$ proveniente de una distribución normal $\mathcal{N}(\mu, \sigma^2)$, su log‑verosimilitud está dada por:
+$$
+\ell(\mu, \sigma^2) = -\frac{n}{2} \log(2 \pi) - n \log(\sigma) - \frac{1}{2 \sigma^2} \sum_{i=1}^{n} (X_i - \mu)^2.
+$$
+Notemos que este valor depende de los parámetros $\mu$ y $\sigma^2$, los cuales son desconocidos cuando trabajamos solamente con una muestra. Sin embargo, podemos estimar estos parámetros usando los estimadores de máxima verosimilitud:
+\begin{align*}
+\hat{\mu} = & \bar{X} = \frac{1}{n} \sum_{i=1}^{n} X_i, \\
+\hat{\sigma}^2 = & \widetilde{S}^{2} = \frac{1}{n} \sum_{i=1}^{n} (X_i - \bar{X})^2.
+\end{align*}
+Utilizando estos estimadores, podemos asignar a cada muestra el valor máximo de su log‑verosimilitud:
+$$
+\text{MLE} = \ell(\hat{\mu}, \hat{\sigma}^2) = -\frac{n}{2} \log(2 \pi) - n \log(\hat{\sigma}) - \frac{n}{2}.
+$$
+Entre mayor sea este valor, mejor será el ajuste de nuestra muestra a una distribución normal. Por otro lado, hemos visto que las transformaciones de Box–Cox pueden mejorar o empeorar la normalidad de una muestra dependiendo del valor del parámetro $\lambda$ utilizado. Se sigue que, para sacar el mayor provecho posible a estas transformaciones, debemos buscar el valor de $\lambda$ que maximice la log‑verosimilitud de la muestra transformada, obteniendo así la \emph{transformación óptima} de Box–Cox para nuestros datos.
+
+Para ilustrar este proceso, en la siguiente figura mostraremos el perfil de log‑verosimilitud para distintos valores de $\lambda$ aplicados a la muestra Gamma que hemos estado utilizando, resaltando el valor óptimo de este parámetro:
+
 ```{r}
-#| fig-cap: "Perfil de log-verosimilitud para la transformación de Box–Cox aplicada a la muestra Gamma. La línea discontinua indica el valor óptimo de lambda."
-#| fig-width: 14
+#| fig-cap: "Perfil de log-verosimilitud para la transformación de Box–Cox aplicada a la muestra Gamma. El valor óptimo de lambda se indica con una línea discontinua verde, mientras que las líneas discontinuas rojas indican el intervalo de confianza al 95% para lambda."
+#| fig-width: 12
 #| fig-height: 6
 
-# Intercept-only model
-fit <- lm(sample ~ 1, data = gamma_sample_tbl)
+# Las transformaciones de Box-Cox pueden verse como parte
+# de un modelo lineal generalizado. En nuestro caso
+# no hay variables explicativas, por lo que ajustamos
+# un modelo con solo el intercepto
+gamma_sample_lm_fit <- lm(
+  sample ~ 1,
+  data = gamma_sample_tbl
+)
 
-# Estimate lambda
-bc <- powerTransform(fit)
+# Para completar el ajuste, estimamos el valor óptimo de lambda.
+gamma_sample_bc_estimate <- powerTransform(
+  gamma_sample_lm_fit,
+  family = "bcPower"
+)
 
-# Extract log-likelihood profile
-bc_prof <- boxCox(fit, lambda = seq(-2, 2, 0.1), plotit = FALSE)
+# Extraemos el valor óptimo de lambda
+gamma_sample_optimal_lambda <- gamma_sample_bc_estimate$lambda
 
-# Convert to tibble for ggplot
-df <- tibble(lambda = bc_prof$x, loglik = bc_prof$y)
+# Extraemos el intervalo de confianza al 95% para lambda
+gamma_sample_lambda_confint <- as.numeric(confint(
+  gamma_sample_bc_estimate,
+  level = 0.95
+))
 
-ggplot(df, aes(x = lambda, y = loglik)) +
-  geom_line(color = c_pal("C blue"), linewidth = 1) +
-  geom_vline(xintercept = bc$lambda, linetype = "dashed", color = c_pal("C red")) +
+# Calculamos el perfil de log-verosimilitud
+gamma_sample_bc_profile <- boxCox(
+  gamma_sample_lm_fit,
+  lambda = seq(-2, 2, 0.1),
+  plotit = FALSE
+)
+
+# Generamos el tibble con los datos del perfil de log-verosimilitud
+gamma_sample_bc_tbl <- tibble(
+  lambda = gamma_sample_bc_profile$x,
+  log_likehood = gamma_sample_bc_profile$y
+)
+
+# Generamos la gráfica del perfil de log-verosimilitud
+gamma_sample_bc_plot <- gamma_sample_bc_tbl |>
+  ggplot(aes(x = lambda, y = log_likehood)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_sample_optimal_lambda,
+    linetype = "dashed",
+    color = c_pal("C green"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_sample_lambda_confint,
+    linetype = "dashed",
+    color = c_pal("C red"),
+    linewidth = 1
+  ) +
   labs(
-    title = "Transformación de Box–Cox",
-    x = expression(lambda),
-    y = "Log-verosimilitud"
+    title = "Perfil de log-verosimilitud para la transformación Box–Cox",
+    x = TeX("$\\lambda$"),
+    y = "MLE"
   ) +
   theme_krul()
-```
-Finalmente, extraemos el $\lambda$ óptimo y transformamos los datos con ese valor:
-```{r}
-optimal_lambda <- bc$lambda
 
-optimal_gamma_sample_tbl <- gamma_sample_tbl |>
+# Mostramos la gráfica
+gamma_sample_bc_plot
+```
+
+Con esta información, podemos comparar la muestra original con su transformación de Box–Cox utilizando el valor óptimo de $\lambda$:
+```{r}
+#| fig-cap: "Comparación de la muestra Gamma original y su transformación de Box–Cox con el valor óptimo de lambda. Notemos la mejora significativa en la normalidad de los datos tras aplicar la transformación."
+#| fig-width: 12
+#| fig-height: 7
+
+# Generamos la tabla de búsqueda
+box_cox_lookup_tbl <- tibble(
+  code = c(
+    "box_cox_1",
+    "box_cox_optimal"
+  ),
+  label = c(
+    "Muestra original",
+    "Transformación óptima"
+  )
+)
+
+# Generamos el tibble con la muestra original y transformada
+box_cox_gamma_sample_tbl <- gamma_sample_tbl |>
   mutate(
-    transformed_sample = bcPower(sample, lambda = optimal_lambda)
+    box_cox_1 = sample,
+    box_cox_optimal = bcPower(sample, lambda = gamma_sample_optimal_lambda)
+  ) |>
+  pivot_longer(
+    starts_with("box_cox_"),
+    names_to = "lambda",
+    values_to = "transformed_sample"
+  ) |>
+  convert_codes_to_factor(
+    code_col = lambda,
+    lookup_tbl = box_cox_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = lambda_factor
   )
 
-
-compute_normality_pvalues(
-  data = optimal_gamma_sample_tbl,
-  value_col = transformed_sample,
-  sample_name = "p-value"
-)
-```
-Como se observa, la transformación de Box–Cox con el valor óptimo de $\lambda$ mejora significativamente la normalidad de los datos, pues todas las pruebas arrojan valores $p$ altos. A continuación se presentan el gráfico QQ y el histograma de los datos transformados:
-```{r}
-#| fig-cap: "Gráfico QQ e histograma de la transformación Gamma óptima. Nótese el mejor ajuste a la normalidad en comparación con la muestra Gamma original."
-#| fig-width: 10
-#| fig-height: 5
-optimal_gamma_qq_plot <- optimal_gamma_sample_tbl |>
+# Generamos las gráficas QQ.
+box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl |>
   ggplot(aes(sample = transformed_sample)) +
+  facet_wrap(~lambda_factor, nrow = 2, scales = "free") +
   geom_qq(
-    color = c_palette["C red"],
+    color = c_pal("C blue"),
     size = 0.3
   ) +
   geom_qq_line(
-    color = c_palette["C blue"],
+    color = c_pal("C magenta"),
     linewidth = 0.5
   ) +
   labs(
-    title = "Gráfico QQ",
+    title = "Gráficos QQ",
     x = "Cuantiles teóricos",
-    y = "Cuantiles muestrales"
+    y = "Cuantiles  muestrales"
   ) +
   theme_krul()
 
-optimal_gamma_histogram <- optimal_gamma_sample_tbl |>
+# Generamos los histogramas.
+box_cox_gamma_histogram <- box_cox_gamma_sample_tbl |>
   ggplot(aes(x = transformed_sample)) +
+  facet_wrap(~lambda_factor, nrow = 2, scales = "free") +
   geom_histogram(
     bins = 30,
-    fill = c_palette["C blue"],
+    fill = c_pal("C blue"),
     color = "black",
     alpha = 0.7
   ) +
   labs(
-    title = "Histograma",
+    title = "Histogramas",
     x = "Valores muestrales",
-    y = "Densidad"
+    y = "Frecuencia absoluta"
   ) +
   theme_krul()
 
-optimal_gamma_plot <- optimal_gamma_qq_plot + optimal_gamma_histogram +
+# Combinamos las gráficas
+box_cox_gamma_plot <- (box_cox_gamma_qq_plot + box_cox_gamma_histogram) +
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "Transformación Gamma óptima",
-    theme = theme(
-      plot.title = element_text(
-        size = 24,
-        face = "bold"
-      )
-    )
+    title = "Comparación de la muestra original y su transformación óptima",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
   )
 
-optimal_gamma_plot
+# Mostramos la gráfica combinada
+box_cox_gamma_plot
 ```
 
+Esta figura muestra gráficamente la mejora significativa en la normalidad de la muestra tras aplicar la transformación de Box–Cox con el valor óptimo de $\lambda$. Esta misma mejora se puede cuantificar también aplicando las pruebas de normalidad que conocemos a la muestra original y a la transformada:
+
+```{r}
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a la muestra original y a su transformación de Box–Cox con el valor óptimo de lambda. Notemos la mejora significativa en los valores $p$ tras aplicar la transformación, lo que indica un mejor ajuste a la normalidad."
+#| label: tbl-comparative-normality
+#| tbl-pos: H
+
+# Generamos el tibble con la muestra transformada
+optimal_gamma_sample_tbl <- gamma_sample_tbl |>
+  mutate(
+    transformed_sample = bcPower(sample, lambda = gamma_sample_optimal_lambda)
+  )
+
+# Generamos la tabla de resultados de las pruebas de normalidad
+# tanto para la muestra original como para la transformada
+comparative_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = gamma_sample_tbl,
+    value_col = sample,
+    sample_name = "Muestra original"
+  ),
+  compute_normality_pvalues(
+    data = optimal_gamma_sample_tbl,
+    value_col = transformed_sample,
+    sample_name = "Transformación óptima"
+  )
+) |>
+  reduce(full_join, by = "Prueba")
+
+# Formateamos y mostramos la tabla redondeando a 4 decimales
+kable(
+  comparative_normality_results_tbl,
+  format = "latex",
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(comparative_normality_results_tbl) - 1))
+) |>
+  kable_styling(latex_options = "hold_position")
+```
 
 ## Actividad: Visualizando la no normalidad de muestras
 
