@@ -1155,7 +1155,7 @@ kurtosis_hist_qq_comparison_plot
 
 ## Pruebas de normalidad
 
-Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas y que nos permitan determinar de una manera más precisa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
+Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas y que nos permitan determinar de una manera cuantitativa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
 
 \begin{enumerate}
 \item \textbf{Shapiro–Wilk.} Evalúa que tan bien los datos ordenados de la muestra se ajustan a los cuantiles esperados de una distribución normal. Es muy usada para muestras pequeñas (menores a 50) pero puede ser demasiado sensible en muestras grandes. En R, se puede llamar utilizando la función \texttt{shapiro.test()}.
@@ -1167,7 +1167,7 @@ Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad
 \item \textbf{Jarque–Bera.} Basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos. En R, se puede llamar utilizando la función \texttt{jarque.bera.test()} del paquete \texttt{tseries}.
 \end{enumerate}
 
-Aplicamos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.
+Como ilustración, aplicamos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.
 
 ```{r}
 #| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos."
@@ -1206,9 +1206,66 @@ kable(
   kable_styling(latex_options = "hold_position")
 ```
 
-Cabe mencionar que todas estas pruebas suelen rechazar la hipótesis de normalidad para muestras muy grandes, incluso si la desviación de la normalidad es mínima. Por lo tanto, es importante complementar los resultados de estas pruebas con gráficos QQ y análisis adicionales para tomar decisiones informadas sobre la normalidad de los datos.
+Notemos que todas estas pruebas rechazan la hipótesis de normalidad de manera contundente para las muestras con sesgo a la izquierda y con sesgo a la derecha, mientras que no logran rechazar esta hipótesis para la muestra simétrica. En general, todas estas pruebas suelen rechazar la hipótesis de normalidad para muestras muy grandes, incluso si la desviación de la normalidad es mínima. Es por esto que es importante complementar los resultados de estas pruebas con gráficos QQ y análisis adicionales para tomar decisiones informadas sobre la viabilidad de nuestros datos. Como ejemplo, consideramos ahora estas mismas pruebas aplicadas a muestras mucho más pequeñas extraídas de las mismas distribuciones consideradas anteriormente.
+```{r}
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha." 
+#| label: tbl-small-skewness-normality
+#| tbl-pos: H
+#| message: false
 
-Ahora hacemos lo mismo para las muestras leptocúrtica, mesocúrtica y platicúrtica. 
+# Para asegurar la reproducibilidad de los resultados
+set.seed(173)
+
+# Tamaño de la muestra
+n <- 30
+
+# Parámetros de la muestra
+alpha <- 2     # forma
+beta <- 1      # tasa
+
+# Generamos las muestras
+left_skew_sample <- -rgamma(n, shape = alpha, rate = beta)
+symmetric_sample <- rnorm(n)
+right_skew_sample <- rgamma(n, shape = alpha, rate = beta)
+
+# Generamos los tibbles para las muestras
+left_skew_sample_tbl <- tibble(sample = left_skew_sample)
+symmetric_sample_tbl <- tibble(sample = symmetric_sample)
+right_skew_sample_tbl <- tibble(sample = right_skew_sample)
+
+# Generamos la tabla de resultados de las pruebas de normalidad
+skew_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = left_skew_sample_tbl,
+    value_col = sample,
+    sample_name = "Sesgo a la izquierda"
+  ),
+  compute_normality_pvalues(
+    data = symmetric_sample_tbl,
+    value_col = sample,
+    sample_name = "Simétrica"
+  ),
+  compute_normality_pvalues(
+    data = right_skew_sample_tbl,
+    value_col = sample,
+    sample_name = "Sesgo a la derecha"
+  )
+) |>
+  reduce(full_join, by = "Prueba")
+
+# Formatear y mostrar la tabla redondeando a 4 decimales
+kable(
+  skew_normality_results_tbl,
+  format = "latex",
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(skew_normality_results_tbl) - 1))
+) |>
+  kable_styling(latex_options = "hold_position")
+```
+
+Notemos que en este caso, las pruebas de normalidad no logran rechazar la hipótesis nula de normalidad para ninguna de las muestras consideradas. Esto ilustra cómo el tamaño de la muestra puede influir significativamente en los resultados de estas pruebas, y refuerza la importancia de considerar el contexto del análisis estadístico al interpretar estos resultados. Como ejemplo adicional, consideremos ahora estas mismas pruebas aplicadas a las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos anteriormente.
+
 ```{r}
 #| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."
 #| label: tbl-kurtosis-normality
@@ -1245,4 +1302,87 @@ kable(
   kable_styling(latex_options = "hold_position")
 ```
 
-Nuevamente notamos que todas estas pruebas son muy sensibles a desviaciones de la normalidad para muestras grandes. En general, es difícil esperar que una muestra obtenida a partir de datos reales siga exactamente una distribución normal, por lo que hay que ser cautelosos al interpretar los resultados de estas pruebas y considerar el contexto del análisis estadístico que se esté realizando.
+Nuevamente notamos que todas estas pruebas son muy sensibles a desviaciones de la normalidad para muestras grandes. En general, es difícil esperar que una muestra obtenida a partir de datos reales siga exactamente una distribución normal, por lo que hay que ser cautelosos al interpretar los resultados de estas pruebas. Como ejemplo final, consideremos ahora estas mismas pruebas aplicadas a muestras mucho más pequeñas extraídas de estas mismas distribuciones.
+
+```{r}
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones leptocúrtica, mesocúrtica y platicúrtica."
+#| label: tbl-small-kurtosis-normality
+#| tbl-pos: H 
+
+# Para asegurar la reproducibilidad de los resultados
+set.seed(136)
+
+# Tamaño de la muestra
+n <- 30
+
+# Parámetros de la muestra
+mu <- 0                  # localización
+alpha <- 1               # escala
+beta_leptokurtic <- 1    # forma leptocúrtica
+beta_mesokurtic <- 2     # forma mesocúrtica
+beta_platykurtic <- 4    # forma platicúrtica
+
+# Generamos la muestra leptocúrtica
+leptokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_leptokurtic
+)
+
+# Generamos la muestra mesocúrtica
+mesokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_mesokurtic
+)
+
+# Generamos la muestra platicúrtica
+platykurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_platykurtic
+)
+
+# Generamos los tibbles para las muestras
+leptokurtic_sample_tbl <- tibble(sample = leptokurtic_sample)
+mesokurtic_sample_tbl <- tibble(sample = mesokurtic_sample)
+platykurtic_sample_tbl <- tibble(sample = platykurtic_sample)
+
+# Generamos la tabla de resultados de las pruebas de normalidad
+kurtosis_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = leptokurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Leptocúrtica"
+  ),
+  compute_normality_pvalues(
+    data = mesokurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Mesocúrtica"
+  ),
+  compute_normality_pvalues(
+    data = platykurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Platicúrtica"
+  )
+) |>
+  reduce(full_join, by = "Prueba")
+
+# Formatear y mostrar la tabla redondeando a 4 decimales
+kable(
+  kurtosis_normality_results_tbl,
+  format = "latex",
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(kurtosis_normality_results_tbl) - 1))
+) |>
+  kable_styling(latex_options = "hold_position")
+```
+
+Como podemos notar, en este caso las pruebas de normalidad tampoco lograron rechazar la hipótesis nula de normalidad para ninguna de las muestras pequeñas consideradas. En conclusión, aunque estas pruebas son herramientas útiles para evaluar la normalidad de los datos, es crucial interpretar siempre sus resultados en el contexto del análisis estadístico que se está realizando y considerar otros factores como el tamaño de la muestra y el propósito del estudio.
+
+
+
