@@ -141,6 +141,7 @@ Mostraremos ahora un ejemplo de una muestra que viene de una distribución lepto
 #| fig-cap: "Gráfica comparativa de muestras leptocúrtica, mesocúrtica y platicúrtica. Notemos como las muestras con mayor curtosis tienden a tener más valores atípicos en las colas, mientras que las muestras con menor curtosis tienen colas más ligeras."
 #| fig-width: 12
 #| fig-height: 3.5
+
 # Para asegurar la reproducibilidad de los resultados
 set.seed(123)
 

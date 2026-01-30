@@ -1,0 +1,439 @@
+# Pruebas de normalidad
+
+Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas, y que nos permitan determinar de una manera cuantitativa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
+
+1.  **Shapiro–Wilk.** Evalúa que tan bien los datos ordenados de la muestra se ajustan a los cuantiles esperados de una distribución normal. Es muy usada para muestras pequeñas (menores a 50) pero puede ser demasiado sensible en muestras grandes. En R, se puede llamar utilizando la función `shapiro.test()`.
+
+2.  **Kolmogorov–Smirnov.** Compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas. Para llamar a esta función en R, se puede usar el comando `ks.test()`.
+
+3.  **Anderson–Darling.** Similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada. Para utilizar esta prueba en R, se puede usar la función `ad.test()` del paquete `nortest`.
+
+4.  **Jarque–Bera.** Basada en la asimetría y curtosis de los datos. Es potente en muestras grandes, pero en muestras pequeñas puede ser demasiado sensible a leves desvíos. En R, se puede llamar utilizando la función `jarque.bera.test()` del paquete `tseries`.
+
+Como ilustración, aplicaremos estas pruebas a muestras generadas a partir de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha. Además, para facilitar la interpretación de estos resultados, agregaremos sus histogramas y gráficos QQ correspondientes.
+
+```{r}
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos."
+#| label: tbl-skewness-normality
+#| tbl-pos: H
+#| fig-width: 12
+#| fig-height: 7
+#| message: false
+
+library(tidyverse)
+library(krulRutils)
+library(kableExtra)
+library(greybox)
+library(patchwork)
+
+# Para asegurar la reproducibilidad de los resultados
+set.seed(173)
+
+# Tamaño de la muestra
+n <- 30
+
+# Número de intervalos
+bins <- 15
+
+# Parámetros de la muestra
+alpha <- 2     # forma
+beta <- 1      # tasa
+
+# Generamos las muestras
+left_skew_sample <- -rgamma(n, shape = alpha, rate = beta)
+symmetric_sample <- rnorm(n)
+right_skew_sample <- rgamma(n, shape = alpha, rate = beta)
+
+
+# Generamos un tibble para la muestra con sesgo a la izquierda
+left_skew_sample_tbl <- tibble(
+  sample = left_skew_sample
+)
+
+# Generamos un tibble para la muestra simétrica
+symmetric_sample_tbl <- tibble(
+  sample = symmetric_sample
+)
+
+# Generamos un tibble para la muestra con sesgo a la derecha
+right_skew_sample_tbl <- tibble(
+  sample = right_skew_sample
+)
+
+# Generamos la gráfica de la muestra con sesgo a la izquierda
+left_skew_sample_plot <- left_skew_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = bins,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Sesgo a la izquierda",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra simétrica
+symmetric_sample_plot <- symmetric_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = bins,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Simétrica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra con sesgo a la derecha
+right_skew_sample_plot <- right_skew_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = bins,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Sesgo a la derecha",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+skew_sample_comparison_plot <- left_skew_sample_plot +
+  symmetric_sample_plot +
+  right_skew_sample_plot +
+  plot_annotation(
+    title = "Comparación de muestras con distintos niveles de asimetría",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+
+# Generamos el gráfico QQ para la muestra con sesgo a la izquierda
+left_skew_qq_plot <- left_skew_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra simétrica
+symmetric_qq_plot <- symmetric_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra con sesgo a la derecha
+right_skew_qq_plot <- right_skew_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Combinamos los gráficos QQ
+skew_sample_qq_comparison_plot <- left_skew_qq_plot +
+  symmetric_qq_plot +
+  right_skew_qq_plot
+
+# Combinamos los gráficos QQ con los histogramas
+skew_hist_qq_comparison_plot <- skew_sample_comparison_plot /
+  skew_sample_qq_comparison_plot +
+  plot_annotation(
+    title = paste0(
+      "Comparación de histogramas y gráficos QQ\n",
+      "de muestras con distintos niveles de asimetría"
+    ),
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Generamos la tabla de resultados de las pruebas de normalidad
+skew_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = left_skew_sample_tbl,
+    value_col = sample,
+    sample_name = "Sesgo a la izquierda"
+  ),
+  compute_normality_pvalues(
+    data = symmetric_sample_tbl,
+    value_col = sample,
+    sample_name = "Simétrica"
+  ),
+  compute_normality_pvalues(
+    data = right_skew_sample_tbl,
+    value_col = sample,
+    sample_name = "Sesgo a la derecha"
+  )
+) |>
+  reduce(full_join, by = "Prueba")
+
+# Formatear y mostrar la tabla redondeando a 4 decimales
+skew_normality_results_kbl <- kable(
+  skew_normality_results_tbl,
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(skew_normality_results_tbl) - 1))
+)
+
+# Mostramos los gráficos QQ con los histogramas
+skew_hist_qq_comparison_plot
+
+# Mostramos la tabla de resultados de las pruebas de normalidad
+skew_normality_results_kbl
+
+```
+
+Notemos como el tamaño de la muestra afecta a los resultados de las pruebas. En general, todas estas pruebas suelen rechazar la hipótesis nula para muestras muy grandes, incluso si la desviación de la normalidad es mínima.
+
+Aplicaremos ahora estas pruebas a muestras generadas a partir de distribuciones que sean leptocúrtica, mesocúrtica y platicúrtica. Nuevamente, agregaremos también sus histogramas y gráficos QQ correspondientes.
+
+```{r}
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones leptocúrtica, mesocúrtica y platicúrtica."
+#| label: tbl-small-kurtosis-normality
+#| tbl-pos: H
+#| fig-width: 12
+#| fig-height: 7
+
+# Para asegurar la reproducibilidad de los resultados
+set.seed(136)
+
+# Tamaño de la muestra
+n <- 30
+
+# Número de intervalos
+bins <- 15
+
+# Parámetros de la muestra
+mu <- 0                  # localización
+alpha <- 1               # escala
+beta_leptokurtic <- 1    # forma leptocúrtica
+beta_mesokurtic <- 2     # forma mesocúrtica
+beta_platykurtic <- 4    # forma platicúrtica
+
+# Generamos la muestra leptocúrtica
+leptokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_leptokurtic
+)
+
+# Generamos la muestra mesocúrtica
+mesokurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_mesokurtic
+)
+
+# Generamos la muestra platicúrtica
+platykurtic_sample <- rgnorm(
+  n = n,
+  mu = mu,
+  scale = alpha,
+  shape = beta_platykurtic
+)
+
+# Generamos los tibbles para las muestras
+leptokurtic_sample_tbl <- tibble(sample = leptokurtic_sample)
+mesokurtic_sample_tbl <- tibble(sample = mesokurtic_sample)
+platykurtic_sample_tbl <- tibble(sample = platykurtic_sample)
+
+# Generamos la gráfica de la muestra leptocúrtica
+leptokurtic_sample_plot <- leptokurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = bins,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Leptocúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra mesocúrtica
+mesokurtic_sample_plot <- mesokurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = bins,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Mesocúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la muestra platicúrtica
+platykurtic_sample_plot <- platykurtic_sample_tbl |>
+  ggplot(aes(x = sample)) +
+  geom_histogram(
+    bins = bins,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Platicúrtica",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+kurtosis_sample_comparison_plot <- leptokurtic_sample_plot +
+  mesokurtic_sample_plot +
+  platykurtic_sample_plot +
+  plot_annotation(
+    title = "Comparación de muestras con distintos niveles de curtosis",
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Generamos el gráfico QQ para la muestra leptocúrtica
+leptokurtic_qq_plot <- leptokurtic_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra mesocúrtica
+mesokurtic_qq_plot <- mesokurtic_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Generamos el gráfico QQ para la muestra platicúrtica
+platykurtic_qq_plot <- platykurtic_sample_tbl |>
+  ggplot(aes(sample = sample)) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  theme_krul()
+
+# Combinamos los gráficos QQ
+kurtosis_sample_qq_comparison_plot <- leptokurtic_qq_plot +
+  mesokurtic_qq_plot +
+  platykurtic_qq_plot
+
+# Combinamos los gráficos QQ con los histogramas
+kurtosis_hist_qq_comparison_plot <- kurtosis_sample_comparison_plot /
+  kurtosis_sample_qq_comparison_plot +
+  plot_annotation(
+    title = paste0(
+      "Comparación de histogramas y gráficos QQ\n",
+      "de muestras con distintos niveles de curtosis"
+    ),
+    theme = theme(plot.title = element_text(size = 24, face = "bold"))
+  )
+
+# Generamos la tabla de resultados de las pruebas de normalidad
+kurtosis_normality_results_tbl <- list(
+  compute_normality_pvalues(
+    data = leptokurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Leptocúrtica"
+  ),
+  compute_normality_pvalues(
+    data = mesokurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Mesocúrtica"
+  ),
+  compute_normality_pvalues(
+    data = platykurtic_sample_tbl,
+    value_col = sample,
+    sample_name = "Platicúrtica"
+  )
+) |>
+  reduce(full_join, by = "Prueba")
+
+# Formatear y mostrar la tabla redondeando a 4 decimales
+kurtosis_normality_results_kbl <- kable(
+  kurtosis_normality_results_tbl,
+  booktabs = TRUE,
+  digits = 4,
+  align = c("l", rep("c", ncol(kurtosis_normality_results_tbl) - 1))
+)
+
+# Mostramos los gráficos QQ con los histogramas
+kurtosis_hist_qq_comparison_plot
+
+# Mostramos la tabla de resultados de las pruebas de normalidad
+kurtosis_normality_results_kbl
+```
+
+Notemos nuevamente como el tamaño de la muestra afecta a los resultados. En conclusión, aunque estas pruebas son herramientas útiles para evaluar la normalidad de los datos, es crucial interpretar siempre sus resultados en el contexto del análisis estadístico que se está realizando y considerar otros factores como el tamaño de la muestra y el propósito del estudio.

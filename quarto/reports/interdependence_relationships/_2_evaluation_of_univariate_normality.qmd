@@ -975,6 +975,7 @@ kable(
 Nuevamente notamos que los valores de los distintos tipos de curtosis muestral son ligeramente diferentes entre sí, pero todos indican correctamente el nivel de curtosis de la distribución de la cual se extrajo la muestra. Además, los valores de estos estadísticos son ligeramente diferentes a los valores poblacionales conocidos, pero se acercan más conforme el tamaño de la muestra aumenta, ilustrando que estos estimadores son, efectivamente, consistentes.
 
 ## Gráficos QQ
+
 Los gráficos QQ (quantile–quantile) son una herramienta que nos permite comparar la distribución de un conjunto de datos dado contra una distribución teórica. Cuando tomamos esta distribución teórica como la normal estándar, estos gráficos nos permiten evaluar de manera visual la normalidad de nuestros datos.
 
 Para construir un gráfico QQ, debemos seguir los siguientes pasos:
@@ -1155,19 +1156,19 @@ kurtosis_hist_qq_comparison_plot
 
 ## Pruebas de normalidad
 
-Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas y que nos permitan determinar de una manera cuantitativa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
+Aunque los gráficos QQ son una buena forma de evaluar visualmente la normalidad de nuestros datos, muchas veces es necesario contar con pruebas estadísticas más objetivas, y que nos permitan determinar de una manera cuantitativa si estos datos siguen o no una distribución normal. Algunas de las pruebas más usadas para este propósito son las siguientes:
 
 \begin{enumerate}
 \item \textbf{Shapiro–Wilk.} Evalúa que tan bien los datos ordenados de la muestra se ajustan a los cuantiles esperados de una distribución normal. Es muy usada para muestras pequeñas (menores a 50) pero puede ser demasiado sensible en muestras grandes. En R, se puede llamar utilizando la función \texttt{shapiro.test()}.
 
-\item \textbf{Kolmogorov–Smirnov.} Compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas; sensible a parámetros de escala y localización. Para llamar a esta función en R, se puede usar el comando \texttt{ks.test()}.
+\item \textbf{Kolmogorov–Smirnov.} Compara la función de distribución empírica con la acumulada de la normal. Es no paramétrica y aplicable a cualquier tamaño, pero menos potente que Shapiro–Wilk en muestras pequeñas. Para llamar a esta función en R, se puede usar el comando \texttt{ks.test()}.
 
 \item \textbf{Anderson–Darling.} Similar a Kolmogorov–Smirnov, pero da mayor peso a las colas. Potente en muestras pequeñas y ampliamente utilizada. Para utilizar esta prueba en R, se puede usar la función \texttt{ad.test()} del paquete \texttt{nortest}.
 
-\item \textbf{Jarque–Bera.} Basada en la asimetría y curtosis de los datos. Potente en muestras grandes; en muestras pequeñas puede ser demasiado sensible a leves desvíos. En R, se puede llamar utilizando la función \texttt{jarque.bera.test()} del paquete \texttt{tseries}.
+\item \textbf{Jarque–Bera.} Basada en la asimetría y curtosis de los datos. Es potente en muestras grandes, pero en muestras pequeñas puede ser demasiado sensible a leves desvíos. En R, se puede llamar utilizando la función \texttt{jarque.bera.test()} del paquete \texttt{tseries}.
 \end{enumerate}
 
-Como ilustración, aplicamos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.
+Como ilustración, aplicaremos estas pruebas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos anteriormente.
 
 ```{r}
 #| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras con sesgo a la izquierda, simétrica y con sesgo a la derecha que generamos."
@@ -1206,7 +1207,7 @@ kable(
   kable_styling(latex_options = "hold_position")
 ```
 
-Notemos que todas estas pruebas rechazan la hipótesis de normalidad de manera contundente para las muestras con sesgo a la izquierda y con sesgo a la derecha, mientras que no logran rechazar esta hipótesis para la muestra simétrica. En general, todas estas pruebas suelen rechazar la hipótesis de normalidad para muestras muy grandes, incluso si la desviación de la normalidad es mínima. Es por esto que es importante complementar los resultados de estas pruebas con gráficos QQ y análisis adicionales para tomar decisiones informadas sobre la viabilidad de nuestros datos. Como ejemplo, consideramos ahora estas mismas pruebas aplicadas a muestras mucho más pequeñas extraídas de las mismas distribuciones consideradas anteriormente.
+Notemos que todas estas pruebas rechazan la hipótesis de normalidad de manera contundente para las muestras con sesgo a la izquierda y con sesgo a la derecha, mientras que no rechazan esta hipótesis para la muestra simétrica. En general, todas estas pruebas suelen rechazar la hipótesis nula para muestras muy grandes, incluso si la desviación de la normalidad es mínima. Es por esto que es importante complementar los resultados de estas pruebas con gráficos QQ y análisis adicionales para tomar decisiones informadas sobre la viabilidad de nuestros datos. Como ejemplo, consideraremos ahora estas mismas pruebas aplicadas a muestras mucho más pequeñas extraídas de las mismas distribuciones consideradas anteriormente.
 ```{r}
 #| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha." 
 #| label: tbl-small-skewness-normality
@@ -1264,7 +1265,7 @@ kable(
   kable_styling(latex_options = "hold_position")
 ```
 
-Notemos que en este caso, las pruebas de normalidad no logran rechazar la hipótesis nula de normalidad para ninguna de las muestras consideradas. Esto ilustra cómo el tamaño de la muestra puede influir significativamente en los resultados de estas pruebas, y refuerza la importancia de considerar el contexto del análisis estadístico al interpretar estos resultados. Como ejemplo adicional, consideremos ahora estas mismas pruebas aplicadas a las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos anteriormente.
+Notemos que en este caso, las pruebas de normalidad no logran rechazar la hipótesis de normalidad para ninguna de las muestras consideradas. Esto ilustra cómo el tamaño de la muestra puede influir significativamente en los resultados de estas pruebas, y refuerza la importancia de considerar el contexto del análisis estadístico al interpretar estos resultados. Como ejemplo adicional, consideraremos ahora estas mismas pruebas aplicadas a las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos anteriormente.
 
 ```{r}
 #| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras leptocúrtica, mesocúrtica y platicúrtica que generamos."
@@ -1383,6 +1384,3 @@ kable(
 ```
 
 Como podemos notar, en este caso las pruebas de normalidad tampoco lograron rechazar la hipótesis nula de normalidad para ninguna de las muestras pequeñas consideradas. En conclusión, aunque estas pruebas son herramientas útiles para evaluar la normalidad de los datos, es crucial interpretar siempre sus resultados en el contexto del análisis estadístico que se está realizando y considerar otros factores como el tamaño de la muestra y el propósito del estudio.
-
-
-
