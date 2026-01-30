@@ -15,7 +15,7 @@ donde $a$ y $b$ son constantes.
 \end{definition}
 
 \begin{remark}
-En estadística, a menudo se habla de \emph{escalamiento} (aunque incluya traslación) para referirse a transformaciones afines.
+En estadística, a menudo se habla de \emph{escalamientos} (aunque incluyan traslaciones) para referirse a transformaciones afines.
 \end{remark}
 
 Suponga que $X$ tiene media $\mu$ y desviación estándar $\sigma$. Entonces la variable
@@ -202,24 +202,24 @@ combined_gamma_plot
 Para una muestra dada, no siempre se conoce la distribución poblacional subyacente. En particular, pueden desconocerse la media y la desviación estándar poblacional. Aun así, existen varios métodos comunes para escalar nuestros datos. Algunos de los más utilizados son:
 
 \begin{enumerate}
-    \item \emph{Estandarización}: Usa la media y la desviación estándar muestrales. En otras palabras, la muestra estandarizada está dada por
+    \item \textbf{Estandarización.} Usa la media y la desviación estándar muestrales. En otras palabras, la muestra estandarizada está dada por
     $$
     T = \frac{X - \bar{X}}{S},
     $$
     donde $\bar{X}$ es la media muestral y $S$ es la desviación estándar muestral. 
     
-    \item \emph{Escalamiento Min–Max}: En este caso la muestra escalada está dada por
+    \item \textbf{Escalamiento Min–Max.} En este caso la muestra escalada está dada por
     $$
     T = \frac{X - \min(X)}{\max(X) - \min(X)},
     $$
     donde $\min(X)$ y $\max(X)$ son el mínimo y máximo de la muestra. Este método de escalamiento es muy sensible a valores atípicos, ya que utiliza los valores extremos de la muestra.
     
-    \item \emph{Escalamiento robusto}: Usa la mediana y el rango intercuartil (IQR). La muestra escalada es
+    \item \textbf{Escalamiento robusto.} Usa la mediana y el rango intercuartil (IQR). La muestra escalada es
     $$
     T = \frac{X - \text{mediana}(X)}{\text{IQR}(X)},
     $$
     Este método es más robusto frente a valores atípicos en comparación con el escalamiento Min–Max. 
-    \item \emph{Normalización}: Divide cada dato por la norma del vector. La muestra normalizada es
+    \item \textbf{Normalización.} Divide cada dato por la norma del vector. La muestra normalizada es
     $$
     T = \frac{X}{\|X\|},
     $$

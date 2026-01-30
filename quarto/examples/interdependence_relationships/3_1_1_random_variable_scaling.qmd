@@ -1,0 +1,174 @@
+# Escalamiento de variables aleatorias
+
+Un problema común en el análisis multivariado es que las variables involucradas pueden tener diferentes unidades de medida o rangos de valores. Esto provoca que algunas variables dominen el análisis simplemente por su escala, lo que puede llevar a interpretaciones erróneas.
+
+**Definición.** Una *transformación afín* de una variable aleatoria $X$ es una transformación de la forma $$
+Y = aX + b
+$$ donde $a$ y $b$ son constantes.
+
+**Observación.** En estadística, a menudo se habla de *escalamientos* (aunque incluyan traslaciones) para referirse a transformaciones afines.
+
+Suponga que $X$ tiene media $\mu$ y desviación estándar $\sigma$. Entonces la variable $$ 
+Y = aX + b 
+$$tendrá media $a\mu + b$ y desviación estándar $|a|\sigma$. En particular, si elegimos $a = 1/\sigma$ y $b = -\mu/\sigma$, entonces la variable $$
+Z = \frac{X - \mu}{\sigma}
+$$tendrá media $0$ y desviación estándar $1$. Esta transformación se conoce como la *estandarización* de la variable $X$ y, en este caso, decimos que $Z$ es la versión *estandarizada* de $X$ (también conocida como su *puntaje* $z$).
+
+**Observación.** Si $X$ no es normal, entonces $Z$ *no* será normal estándar. La estandarización no transforma una distribución no normal en una distribución normal. Notemos además que, por definición, $$
+\gamma_{1}(Z) =\mathbb{E}[Z^{3}] = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3} = \gamma_{1}(X)
+$$ y $$
+\gamma_{2}(Z) =\mathbb{E}[Z^{4}] - 3 = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4} -3 = \gamma_{2}(X).
+$$En otras palabras, la asimetría y la curtosis en exceso no cambian al estandarizar una variable aleatoria.
+
+Como ejemplo, consideraremos la distribución Gamma con parámetros $\alpha = 2$ y $\beta = 1$. En este caso la media y la desviación estándar están dadas por: $$
+\begin{aligned}
+\mu = & \frac{\alpha}{\beta} = 2 \\
+\sigma = & \frac{\sqrt{\alpha}}{\beta} = \sqrt{2} 
+\end{aligned} 
+$$Usando esta información, podemos generar la gráfica de la versión estandarizada de la distribución Gamma y compararla con la original.
+
+```{r}
+#| fig-cap: "Comparación de la función de densidad (PDF) de la distribución Gamma original y su versión estandarizada. Notemos que aunque la media y la desviación estándar cambian, la forma de la distribución permanece igual. En particular, se puede observar que la asimetría de la distribución no cambia."
+#| fig-width: 12
+#| fig-height: 4.5
+#| message: false
+
+# Cargamos las librerías necesarias
+library(tidyverse)
+library(patchwork)
+library(krulRutils)
+library(car)
+library(latex2exp)
+
+# Parámetros de la distribución Gamma
+alpha <- 2
+beta <- 1
+
+# Calculamos la media, la mediana y la desviación estándar
+gamma_mean <- alpha / beta
+gamma_median <- qgamma(0.5, shape = alpha, rate = beta)
+gamma_sd <- sqrt(alpha) / beta
+
+# Creamos una secuencia de valores para X
+x_data <- seq(0, 8, length.out = 1000)
+
+# Calculamos la PDF de la distribución Gamma original
+gamma_distribution_tbl <- tibble(
+  x_data = x_data,
+  density_data = dgamma(x_data, shape = alpha, rate = beta)
+)
+
+# Calculamos la PDF de la distribución Gamma estandarizada
+z_gamma_distribution_tbl <- gamma_distribution_tbl |>
+  mutate(
+    z_data = (x_data - gamma_mean) / gamma_sd,
+    z_density = dgamma(x_data, shape = alpha, rate = beta) * gamma_sd
+  ) |>
+  select(z_data, z_density)
+
+# Calculamos la media y mediana estandarizadas
+z_gamma_mean <- 0
+z_gamma_median <- (gamma_median - gamma_mean) / gamma_sd
+
+# Generamos la gráfica de la distribución Gamma original
+gamma_distribution_plot <- gamma_distribution_tbl |>
+  ggplot(aes(x = x_data, y = density_data)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_mean,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = gamma_median,
+    color = c_pal("C green"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = gamma_mean,
+    y = 0.6,
+    label = "Media",
+    color = c_pal("C red"),
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = gamma_median,
+    y = 0.6,
+    label = "Mediana",
+    color = c_pal("C green"),
+    hjust = 1.1
+  ) +
+  coord_cartesian(ylim = c(0, 0.65)) +
+  labs(
+    title = "Original",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Generamos la gráfica de la distribución Gamma estandarizada
+z_gamma_distribution_plot <- z_gamma_distribution_tbl |>
+  ggplot(aes(x = z_data, y = z_density)) +
+  geom_line(
+    color = c_pal("C blue"),
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_mean,
+    color = c_pal("C red"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = z_gamma_median,
+    color = c_pal("C green"),
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_mean,
+    y = 0.6,
+    label = "Media",
+    color = c_pal("C red"),
+    hjust = -0.1
+  ) +
+  annotate(
+    "text",
+    x = z_gamma_median,
+    y = 0.6,
+    label = "Mediana",
+    color = c_pal("C green"),
+    hjust = 1.1
+  ) +
+  coord_cartesian(ylim = c(0, 0.65)) +
+  labs(
+    title = "Estandarizada",
+    x = TeX("$X$"),
+    y = "Densidad"
+  ) +
+  theme_krul()
+
+# Combinamos ambas gráficas
+combined_gamma_plot <- gamma_distribution_plot + z_gamma_distribution_plot +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Distribución Gamma: original y estandarizada",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+# Mostramos la gráfica combinada
+combined_gamma_plot
+```
