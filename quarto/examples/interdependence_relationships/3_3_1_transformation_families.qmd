@@ -1,0 +1,150 @@
+# Familias de transformaciones
+
+Las transformaciones nos permiten modificar la manera en la que representamos la información contenida en una muestra. A diferencia del escalamiento, las transformaciones si pueden alterar la forma de la distribución original y sus propiedades estadísticas. Una aplicación común de estas transformaciones es mejorar la normalidad de nuestros datos, lo cual es útil para cumplir con los supuestos de ciertos análisis estadísticos. Usualmente, las transformaciones que aplicamos a una muestra pertenecen a alguna familia de transformaciones que dependen de ciertos parámetros. Dos de las familias más comunes son:
+
+1.  **Transformaciones de Box–Cox.** Esta es una familia de transformaciones que se utiliza comúnmente para corregir asimetrías, pero solo es aplicable a datos positivos. Está dada por: $$
+    \tilde{X} = \begin{cases}
+    \frac{X^\lambda - 1}{\lambda} & \text{si } \lambda \neq 0 \\
+    \log(X) & \text{si } \lambda = 0 
+    \end{cases}
+    $$ donde $\lambda$ es un parámetro.
+
+2.  **Transformaciones de Yeo–Johnson.** Similar a las transformaciones de Box–Cox, pero también son aplicables a datos negativos. Están dadas por: $$
+    \tilde{X} = \begin{cases}
+    \frac{((X + 1)^\lambda - 1)}{\lambda} & \text{si } X \geq 0, \lambda \neq 0 \\
+    \log(X + 1) & \text{si } X \geq 0, \lambda = 0 \\
+    \frac{-((-X + 1)^{2 - \lambda} - 1)}{2 - \lambda} & \text{si } X < 0, \lambda \neq 2 \\
+    \log(-X + 1) & \text{si } X < 0, \lambda = 2 
+    \end{cases}
+    $$ donde $\lambda$ nuevamente es nuestro parámetro.
+
+Como ilustración, aplicaremos una transformación de Box–Cox a la muestra Gamma que habíamos considerado anteriormente, utilizando los valores del parámetro $\lambda = 0$, $0.25$, $0.5$, $0.75$ y $1$:
+
+```{r}
+#| fig-cap: "Comparación de distintas transformaciones de Box–Cox aplicadas a la muestra Gamma, con parámetro lambda = 0, 0.25, 0.5, 0.75 y 1. Notemos como la forma de los gráficos QQ e histogramas cambia significativamente con cada transformación, lo que indica que la normalidad de la muestra puede mejorarse o empeorarse dependiendo del valor de lambda seleccionado."
+#| fig-width: 12
+#| fig-height: 14
+#| message: false
+
+library(tidyverse)
+library(car)
+library(krulRutils)
+library(patchwork)
+
+# Parámetros de la distribución Gamma
+alpha <- 2
+beta <- 1
+
+# Tamaño de la muestra
+n <- 3000
+
+gamma_sample_tbl <- tibble(
+  sample = rgamma(n, shape = alpha, rate = beta)
+)
+
+
+# Generamos una tabla de búsqueda para los valores de lambda
+# Esta tabla nos ayudará a etiquetar las facetas de las gráficas
+# que generaremos más adelante
+box_cox_lookup_tbl <- tibble(
+  code = c(
+    "box_cox_0",
+    "box_cox_025",
+    "box_cox_05",
+    "box_cox_075",
+    "box_cox_1"
+  ),
+  label = c(
+    "lambda = 0",
+    "lambda = 0.25",
+    "lambda = 0.5",
+    "lambda = 0.75",
+    "lambda = 1"
+  ),
+)
+
+# Generamos un tibble con las transformaciones de Box-Cox
+# aplicadas a la muestra Gamma que ya teníamos
+box_cox_gamma_sample_tbl <- gamma_sample_tbl |>
+  mutate(
+    box_cox_0 = bcPower(sample, lambda = 0),
+    box_cox_025 = bcPower(sample, lambda = 0.25),
+    box_cox_05 = bcPower(sample, lambda = 0.5),
+    box_cox_075 = bcPower(sample, lambda = 0.75),
+    box_cox_1 = bcPower(sample, lambda = 1)
+  ) |>
+  pivot_longer(
+    starts_with("box_cox_"),
+    names_to = "lambda",
+    values_to = "transformed_sample"
+  ) |>
+  convert_codes_to_factor(
+    code_col = lambda,
+    lookup_tbl = box_cox_lookup_tbl,
+    lookup_code_col = code,
+    lookup_label_col = label,
+    new_factor_col_name = lambda_factor
+  )
+
+# Generamos las gráficas QQ. Notemos que estamos utilizando
+# los diversos valores de lambda para etiquetar las facetas
+box_cox_gamma_qq_plot <- box_cox_gamma_sample_tbl |>
+  ggplot(aes(sample = transformed_sample)) +
+  facet_wrap(
+    ~lambda_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_qq(
+    color = c_pal("C blue"),
+    size = 0.3
+  ) +
+  geom_qq_line(
+    color = c_pal("C magenta"),
+    linewidth = 0.5
+  ) +
+  labs(
+    title = "Gráficos QQ",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles  muestrales"
+  ) +
+  theme_krul()
+
+# Generamos los histogramas. Nuevamente estamos utilizando
+# los diversos valores de lambda para etiquetar las facetas
+box_cox_gamma_histogram <- box_cox_gamma_sample_tbl |>
+  ggplot(aes(x = transformed_sample)) +
+  facet_wrap(
+    ~lambda_factor,
+    nrow = 5,
+    scales = "free"
+  ) +
+  geom_histogram(
+    bins = 30,
+    fill = c_pal("C blue"),
+    color = "black",
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Histogramas",
+    x = "Valores muestrales",
+    y = "Frecuencia absoluta"
+  ) +
+  theme_krul()
+
+# Combinamos las gráficas
+box_cox_gamma_plot <- (box_cox_gamma_qq_plot + box_cox_gamma_histogram) +
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Transformaciones Box–Cox para distintos valores de lambda",
+    theme = theme(
+      plot.title = element_text(
+        size = 24,
+        face = "bold"
+      )
+    )
+  )
+
+# Mostramos la gráfica combinada
+box_cox_gamma_plot
+```
