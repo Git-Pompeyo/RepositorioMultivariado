@@ -4,17 +4,16 @@ La distribución Gamma es una distribución de probabilidad continua que modela 
 
 Una de las características más importantes de esta distribución es su asímetría positiva, producto de que los valores posibles de la variable aleatoria son siempre positivos y pueden extenderse indefinidamente hacia la derecha.
 
-**Definición.** Decimos que una variable aleatoria continua $X$ sigue una *distribución Gamma* con parámetro de forma $\alpha > 0$ y parámetro de tasa $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por $$
-f_X(x; \alpha, \beta) = 
+**Definición.** Decimos que una variable aleatoria continua $X$ sigue una *distribución Gamma* con parámetro de forma $\alpha > 0$ y parámetro de tasa $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por
+$$f_X(x; \alpha, \beta) = 
 \begin{cases}
 \displaystyle \frac{\beta^\alpha}{\Gamma(\alpha)} \, x^{\alpha - 1} e^{-\beta x}, & x > 0, \\
 0, & x \leq 0,
-\end{cases}
-$$ donde $\Gamma(\alpha)$ denota a la función Gamma, definida como $$
-\Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
-$$ En este caso escribimos $$
-X \sim \text{Gamma}(\alpha, \beta).
-$$
+\end{cases}$$
+donde $\Gamma(\alpha)$ denota a la función Gamma, definida como
+$$\Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.$$
+En este caso escribimos
+$$X \sim \text{Gamma}(\alpha, \beta).$$
 
 La siguiente tabla resume las características poblacionales más importantes de la distribución Gamma:
 

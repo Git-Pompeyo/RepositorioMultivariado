@@ -22,32 +22,32 @@ El concepto de la *gramática de los gráficos* proporciona un marco para entend
 
 2.  **Estéticas:** Mapeos que relacionan variables con propiedades visuales, por ejemplo:
 
-    -   Posición en los ejes $x$ e $y$.
+    - Posición en los ejes $x$ e $y$.
 
-    -   Color, relleno.
+    - Color, relleno.
 
-    -   Tamaño, forma.
+    - Tamaño, forma.
 
-    -   Transparencia.
+    - Transparencia.
 
     Estos mapeos definen *qué* datos se muestran y *cómo* se representan visualmente.
 
 3.  **Geometrías:** Objetos geométricos que muestran los datos; por ejemplo:
 
-    -   `geom_point()` para diagramas de dispersión.
+    - `geom_point()` para diagramas de dispersión.
 
-    -   `geom_line()` para gráficas de líneas.
+    - `geom_line()` para gráficas de líneas.
 
-    -   `geom_col()` para barras.
+    - `geom_col()` para barras.
 
-    -   `geom_histogram()` para histogramas.
+    - `geom_histogram()` para histogramas.
 
     La geometría controla *cómo* se dibujan los datos.
 
 4.  **Transformaciones estadísticas:** Cálculos opcionales aplicados a los datos antes de graficar, como:
 
-    -   `stat_bin()` para agrupar en histogramas.
-    -   `stat_smooth()` para ajustar curvas suaves.
+    - `stat_bin()` para agrupar en histogramas.
+    - `stat_smooth()` para ajustar curvas suaves.
 
     Estos son pasos de preprocesamiento para la visualización.
 
@@ -57,8 +57,8 @@ El concepto de la *gramática de los gráficos* proporciona un marco para entend
 
 7.  **Facetado:** Métodos para dividir los datos en subconjuntos y mostrar múltiples gráficas en una cuadrícula:
 
-    -   `facet_wrap()`
-    -   `facet_grid()`
+    - `facet_wrap()`
+    - `facet_grid()`
 
 8.  **Etiquetas:** `labs()` agrega títulos, etiquetas de ejes y pies.
 
