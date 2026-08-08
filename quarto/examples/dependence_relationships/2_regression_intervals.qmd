@@ -2,13 +2,9 @@
 
 ## Cómputo de las bandas de confianza y predicción
 
-**Ejemplo.** Supongamos que tenemos el vector $$
-x = \begin{bmatrix}
+**Ejemplo.** Supongamos que tenemos el vector $$x = \begin{bmatrix}
 1 \\ 2 \\ 3
-\end{bmatrix}
-$$ Para generar el vector de las observaciones dependientes, consideraremos un modelo de la forma $$
-Y_{0} = b_0 + b_1 X_{0} + \epsilon_{0}
-$$ con $b_0 = 0$, $b_1 = 1$ y suponiendo que $\epsilon_{0} \sim N(\mu,\sigma^{2})$ es una distribución normal con parámetros $\mu = 0$ y $\sigma = 0.3$ Redondeando a dos decimales, el vector resultante es:
+\end{bmatrix}$$ Para generar el vector de las observaciones dependientes, consideraremos un modelo de la forma $$Y_{0} = b_0 + b_1 X_{0} + \epsilon_{0}$$ con $b_0 = 0$, $b_1 = 1$ y suponiendo que $\epsilon_{0} \sim N(\mu,\sigma^{2})$ es una distribución normal con parámetros $\mu = 0$ y $\sigma = 0.3$ Redondeando a dos decimales, el vector resultante es:
 
 ```{r}
 #| message: false
@@ -24,21 +20,16 @@ sample_data_tbl <- tibble(
 round(y_data,2)
 ```
 
-Así que para este ejemplo, consideraremos el vector de observaciones dependientes $$
-x = \begin{bmatrix}
+Así que para este ejemplo, consideraremos el vector de observaciones dependientes $$x = \begin{bmatrix}
 1 \\ 2 \\ 3
 \end{bmatrix} \qquad
 y = \begin{bmatrix}
 0.83 \\ 1.93 \\ 3.47
-\end{bmatrix}
-$$ Nos gustaría encontrar la recta que mejor se ajusta a estos datos de acuerdo al método de mínimos cuadrados y calcular sus bandas de confianza y predicción. Para esto empezaremos por considerar la matriz de diseño $$
-\Phi = \begin{bmatrix}
+\end{bmatrix}$$ Nos gustaría encontrar la recta que mejor se ajusta a estos datos de acuerdo al método de mínimos cuadrados y calcular sus bandas de confianza y predicción. Para esto empezaremos por considerar la matriz de diseño $$\Phi = \begin{bmatrix}
 1 & 1 \\
 1 & 2 \\
 1 & 3
-\end{bmatrix}
-$$ Necesitamos ahora calcular la matriz de coeficientes dada por $D^{2} = (\Phi^{T} \Phi)^{-1}$, empezaremos por calcular $$
-\Phi^{T} \Phi = 
+\end{bmatrix}$$ Necesitamos ahora calcular la matriz de coeficientes dada por $D^{2} = (\Phi^{T} \Phi)^{-1}$, empezaremos por calcular $$\Phi^{T} \Phi = 
 \begin{bmatrix}
 1 & 1 & 1 \\
 1 & 2 & 3
@@ -50,16 +41,10 @@ $$ Necesitamos ahora calcular la matriz de coeficientes dada por $D^{2} = (\Phi^
 \end{bmatrix} 
  = \begin{bmatrix} 3 & 6 \\
                                 6 & 14
-                                \end{bmatrix}
-$$ Su inversa está entonces dada por: $$
-D^{2} = (\Phi^{T} \Phi)^{-1} = \frac{1}{3(14)-6(6)}\begin{bmatrix} 14 & -6 \\
+                                \end{bmatrix}$$ Su inversa está entonces dada por: $$D^{2} = (\Phi^{T} \Phi)^{-1} = \frac{1}{3(14)-6(6)}\begin{bmatrix} 14 & -6 \\
                                 -6 & 3 \end{bmatrix} 
                               = \frac{1}{6}\begin{bmatrix} 14 & -6 \\
-                                -6 & 3 \end{bmatrix}
-$$ En particular, $$
-d_{0}^{2} = \frac{14}{6} = \frac{7}{2} \qquad d_{1}^{2} = \frac{3}{6} = \frac{1}{2}
-$$ Calculamos ahora la matriz de estimadores de mínimos cuadrados $$
-A = D^{2}\Phi^{T} = \frac{1}{6} \begin{bmatrix}
+                                -6 & 3 \end{bmatrix}$$ En particular, $$d_{0}^{2} = \frac{14}{6} = \frac{7}{2} \qquad d_{1}^{2} = \frac{3}{6} = \frac{1}{2}$$ Calculamos ahora la matriz de estimadores de mínimos cuadrados $$A = D^{2}\Phi^{T} = \frac{1}{6} \begin{bmatrix}
 14 & -6 \\
 -6 & 3 
 \end{bmatrix} 
@@ -69,9 +54,7 @@ A = D^{2}\Phi^{T} = \frac{1}{6} \begin{bmatrix}
 \end{bmatrix} = \frac{1}{6} \begin{bmatrix}
 8 & 2 & -4 \\
 -3 & 0 & 3
-\end{bmatrix}
-$$ y la matriz sombrero $$
-H = \Phi A =  \frac{1}{6} \begin{bmatrix}
+\end{bmatrix}$$ y la matriz sombrero $$H = \Phi A =  \frac{1}{6} \begin{bmatrix}
 1 & 1 \\
 1 & 2 \\
 1 & 3
@@ -84,9 +67,7 @@ H = \Phi A =  \frac{1}{6} \begin{bmatrix}
 5 & 2 & -1 \\
 2 & 2 & 2 \\
 -1 & 2 & 5
-\end{bmatrix}
-$$ Con estas matrices podemos calcular ahora los estimadores puntuales $$
-\hat{\beta} = Ay = \frac{1}{6} 
+\end{bmatrix}$$ Con estas matrices podemos calcular ahora los estimadores puntuales $$\hat{\beta} = Ay = \frac{1}{6} 
 \begin{bmatrix}
 8 & 2 & -4 \\
 -3 & 0 & 3
@@ -97,13 +78,11 @@ $$ Con estas matrices podemos calcular ahora los estimadores puntuales $$
 \begin{bmatrix}
 -0.56 \\
 1.32
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 Además de
 
-$$
-\hat{y} = Hy = \frac{1}{6} \begin{bmatrix}
+$$\hat{y} = Hy = \frac{1}{6} \begin{bmatrix}
 5 & 2 & -1 \\
 2 & 2 & 2 \\
 -1 & 2 & 5
@@ -114,14 +93,11 @@ $$
 0.76 \\
 2.08 \\
 3.40
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 Finalmente, podemos calcular
 
-$$
-\mbox{SSE} = \|y-\hat{y}\|^{2} = 0.032
-$$
+$$\mbox{SSE} = \|y-\hat{y}\|^{2} = 0.032$$
 
 Si comparamos ahora estos resultados con los obtenidos por R:
 
@@ -139,18 +115,15 @@ podemos notar que (salvo errores de rendondeo) los resultados son idénticos.
 
 Ahora nos gustaría poder calcular los intervalos de confianza para $\hat{\beta}_{0}$ y $\hat{\beta}_{1}.$ Para poder lograr este objetivo, necesitamos convertir los cálculos que hemos hecho hasta ahora de manera puntual en cálculos que involucren variables aleatorias. Empezamos por introducir la variable de las observaciones dependientes
 
-$$
-Y=\begin{bmatrix}
+$$Y=\begin{bmatrix}
 Y_{1} \\
 Y_{2} \\
 Y_{3}
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 Construirmos ahora las variables
 
-$$
-\hat{B}=\begin{bmatrix}
+$$\hat{B}=\begin{bmatrix}
 \hat{B}_{1} \\
 \hat{B}_{2}
 \end{bmatrix} 
@@ -158,46 +131,36 @@ $$
 \begin{bmatrix}
 8Y_{1} + 2 Y_{2} - 4 Y_{3} \\
 -3Y_{1} + 3Y_{3}
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 Sabemos que esta variable aleatoria tiene distribución
 
-$$
-\hat{B} \sim \mathcal{N}(b,\sigma^{2}D^{2})
-$$
+$$\hat{B} \sim \mathcal{N}(b,\sigma^{2}D^{2})$$
 
 donde
 
-$$
-b=\begin{bmatrix}
+$$b=\begin{bmatrix}
 b_{0} \\
 b_{1}
 \end{bmatrix} = 
 \begin{bmatrix}
 0 \\
 1
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 En particular,
 
-$$
-\hat{B}_{0} \sim \mathcal{N}(b_0,\sigma^{2}d_{0}^{2})=
-\mathcal{N}(0,0.21)
-$$
+$$\hat{B}_{0} \sim \mathcal{N}(b_0,\sigma^{2}d_{0}^{2})=
+\mathcal{N}(0,0.21)$$
 
 y
 
-$$
-\hat{B}_{1}\sim \mathcal(b_{1},\sigma^{2}d_{1}^{2})=
-\mathcal(1,0.045)
-$$
+$$\hat{B}_{1}\sim \mathcal(b_{1},\sigma^{2}d_{1}^{2})=
+\mathcal(1,0.045)$$
 
 Para continuar con nuestros cálculos, necesitamos ahora introducir el vector aleatorio
 
-$$
-\hat{Y} = HY=\frac{1}{6}
+$$\hat{Y} = HY=\frac{1}{6}
 \begin{bmatrix}
 5 & 2 & -1 \\
 2 & 2 & 2 \\
@@ -211,116 +174,79 @@ Y_{3}
 5Y_{1} + 2 Y_{2} - Y_{3} \\
 2Y_{1} + 2Y_{2} +2 Y_{3} \\
 -Y_{1} + 2Y_{2} + 5Y_{3}
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 el cual podemos utilizar para construir el siguiente estimador para la varianza $\sigma^{2}$
 
-$$
-\hat{S}^{2} = \frac{1}{n-2}\|Y-\hat{Y}\|^{2} = \|Y-\hat{Y}\|^{2}
-$$
+$$\hat{S}^{2} = \frac{1}{n-2}\|Y-\hat{Y}\|^{2} = \|Y-\hat{Y}\|^{2}$$
 
 en donde estamos utilizando que nuestros vectores tienen dimensión $n=3$ y por tanto tenemos solamente un grado de libertad. Notemos que cuando $Y=y$ es el vector de valores observados esta variable aleatoria toma el valor
 
-$$
-\hat{s}^{2}= \mbox{SSE} = 0.032
-$$
+$$\hat{s}^{2}= \mbox{SSE} = 0.032$$
 
 En particular,
 
-$$
-\hat{s} = 0.18
-$$
+$$\hat{s} = 0.18$$
 
 Por tanto, podemos utilizar este valor para calcular los estádísticos
 
-$$
-T_{0} = \frac{\hat{B}_{0}-b_{0}}{\hat{S}d_{0}} \sim t_{n-2}=t_{1}
-$$
+$$T_{0} = \frac{\hat{B}_{0}-b_{0}}{\hat{S}d_{0}} \sim t_{n-2}=t_{1}$$
 
 y
 
-$$
-T_{1} = \frac{\hat{B}_{1}-b_{1}}{\hat{S}d_{1}} \sim t_{n-2}=t_{1}
-$$
+$$T_{1} = \frac{\hat{B}_{1}-b_{1}}{\hat{S}d_{1}} \sim t_{n-2}=t_{1}$$
 
 los valores obtenidos son:
 
-$$
-t_{0} = -4.75
-$$
+$$t_{0} = -4.75$$
 
 y
 
-$$
-t_{1} = 1.26
-$$
+$$t_{1} = 1.26$$
 
 Los valores $p$ asociados a estos estadísticos son:
 
-$$
-p_{t_{0}} = 0.13 \qquad p_{t_{1}} = 0.41
-$$
+$$p_{t_{0}} = 0.13 \qquad p_{t_{1}} = 0.41$$
 
 Para construir los intervalos de confianza, tomaremos $\alpha = 0.05$ y calculamos el estadístico $t$ asociado a este nivel de significancia para una prueba de dos colas:
 
-$$
-t_{\alpha/2,1} = 12.71 
-$$
+$$t_{\alpha/2,1} = 12.71 $$
 
 Se sigue que el intervalo de confianza para $b_{0}$ está dado por
 
-$$
-(\hat{\beta}_{0} - t_{\alpha/2, 1}\, d_{0}\, \hat{s}, \hat{\beta}_{0} + t_{\alpha/2, 1}\, d_{0}\, \hat{s}) = (-4.03, 2.91)
-$$
+$$(\hat{\beta}_{0} - t_{\alpha/2, 1}\, d_{0}\, \hat{s}, \hat{\beta}_{0} + t_{\alpha/2, 1}\, d_{0}\, \hat{s}) = (-4.03, 2.91)$$
 
 Mientras que el intervalo de confianza para $b_{1}$ está dado por
 
-$$
-(\hat{\beta}_{1} - t_{\alpha/2, 1}\, d_{1}\, \hat{s}, \hat{\beta}_{1} + t_{\alpha/2, 1}\, d_{1}\, \hat{s}) = (-0.29, 2.93)
-$$
+$$(\hat{\beta}_{1} - t_{\alpha/2, 1}\, d_{1}\, \hat{s}, \hat{\beta}_{1} + t_{\alpha/2, 1}\, d_{1}\, \hat{s}) = (-0.29, 2.93)$$
 
 Para construir ahora las bandas de confianza y predicción, notemos que para nuestro vector $x$ tenemos que
 
-$$
-\bar{x} = 2 \qquad s_{xx} = 2
-$$
+$$\bar{x} = 2 \qquad s_{xx} = 2$$
 
 Como
 
-$$
-\hat{Y}_{0} \sim \mathcal{N}(b_{0}+b_{1}X_{0}, \sigma^{2}d_c^{2})
-$$
+$$\hat{Y}_{0} \sim \mathcal{N}(b_{0}+b_{1}X_{0}, \sigma^{2}d_c^{2})$$
 
 donde
 
-$$
-d_{c}^{2} = \frac{1}{n}+\frac{(X_{0}-\bar{x})^{2}}{s_{xx}} = \frac{1}{3}+\frac{(X_{0}-2)^{2}}{2}
-$$
+$$d_{c}^{2} = \frac{1}{n}+\frac{(X_{0}-\bar{x})^{2}}{s_{xx}} = \frac{1}{3}+\frac{(X_{0}-2)^{2}}{2}$$
 
 Se sigue que el estadístico
 
-$$
-T_{c} = \frac{\hat{Y}_{0}-(b_{0}+b_{1}X_{0})}{\hat{s} d_{c}} \sim t_{n-2}=t_{1}
-$$
+$$T_{c} = \frac{\hat{Y}_{0}-(b_{0}+b_{1}X_{0})}{\hat{s} d_{c}} \sim t_{n-2}=t_{1}$$
 
 En particular, el intervalo de confianza para la media en un punto dado $X_{0} = x_{0}$ está dado por
 
-$$
-(\hat{\beta_{0}} + \hat{\beta_{1}}\, x_{0} -  \hat{s}\, t_{\alpha/2,1}d_{c},\hat{\beta_{0}} + \hat{\beta}_{1}\, x_{0} +  \hat{s}\, t_{\alpha/2,1} d_{c}) 
-$$
+$$(\hat{\beta_{0}} + \hat{\beta_{1}}\, x_{0} -  \hat{s}\, t_{\alpha/2,1}d_{c},\hat{\beta_{0}} + \hat{\beta}_{1}\, x_{0} +  \hat{s}\, t_{\alpha/2,1} d_{c}) $$
 
 que en nuestro caso corresponde al intervalo
 
-$$
- (-0.56 + 1.32x_{0} - 0.93\, \sqrt{2+3(x_{0}-2)^{2}}, -0.56 + 1.32x_{0} + 0.93\, \sqrt{2+3(x_{0}-2)^{2}}
-$$
+$$ (-0.56 + 1.32x_{0} - 0.93\, \sqrt{2+3(x_{0}-2)^{2}}, -0.56 + 1.32x_{0} + 0.93\, \sqrt{2+3(x_{0}-2)^{2}}$$
 
 Similarmente, el intervalo de predicción está dado por
 
-$$
- (-0.56 + 1.32x_{0} - 0.93\, \sqrt{8+3(x_{0}-2)^{2}}, -0.56 + 1.32x_{0} + 0.93\, \sqrt{8+3(x_{0}-2)^{2}}
-$$
+$$ (-0.56 + 1.32x_{0} - 0.93\, \sqrt{8+3(x_{0}-2)^{2}}, -0.56 + 1.32x_{0} + 0.93\, \sqrt{8+3(x_{0}-2)^{2}}$$
 
 ```{r}
 #| fig-cap: "Ajuste por mínimos cuadrados"

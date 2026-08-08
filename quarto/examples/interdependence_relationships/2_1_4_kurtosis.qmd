@@ -4,12 +4,9 @@ La curtosis es una medida que describe la forma de una distribución de probabil
 
 ## Curtosis poblacional
 
-**Definición.** La *curtosis* de una variable aleatoria $X$ se define como el cuarto momento estandarizado, dado por
-$$\beta_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},$$
-donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
+**Definición.** La *curtosis* de una variable aleatoria $X$ se define como el cuarto momento estandarizado, dado por $$\beta_2 = \frac{\mu_4}{\sigma^4} = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4},$$ donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 
-La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (*leptocúrtica*) suele tener colas más pesadas y un pico más agudo que la normal. En cambio, una distribución con baja curtosis (*platicúrtica*) suele tener colas más ligeras y un pico más plano. La curtosis de la normal es 3, por lo cual es común calcular el *exceso de curtosis* de una distribución la cual está dada por:
-$$\gamma_2 = \beta_2 - 3.$$
+La curtosis mide el grosor de las colas de una distribución. Una distribución con alta curtosis (*leptocúrtica*) suele tener colas más pesadas y un pico más agudo que la normal. En cambio, una distribución con baja curtosis (*platicúrtica*) suele tener colas más ligeras y un pico más plano. La curtosis de la normal es 3, por lo cual es común calcular el *exceso de curtosis* de una distribución la cual está dada por: $$\gamma_2 = \beta_2 - 3.$$
 
 En la siguiente figura se muestra una gráfica comparativa de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
 
@@ -105,34 +102,18 @@ kurtosis_comparison_plot
 
 ## Curtosis muestral
 
-Para definir la curtosis muestral, recordemos que dado un *vector muestral*
-$$X = \begin{bmatrix}
+Para definir la curtosis muestral, recordemos que dado un *vector muestral* $$X = \begin{bmatrix}
 X_1 \\
 X_2 \\
 \vdots \\ 
 X_n
-\end{bmatrix},$$
-definimos su *media muestral* como
-$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.$$
-Para la varianza muestral, tenemos dos versiones, la *varianza muestral sesgada*
-$$\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,$$
-y la *varianza muestral insesgada*
-$$S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.$$
-En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la curtosis muestral, definiremos primero el *cuarto momento muestral sesgado* como
-$$\widetilde{M}_4 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4. $$
-El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular tres tipos de curtosis a partir de esta definición: la *curtosis muestral de tipo 1*
-$$\widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = n \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3,$$
-la *curtosis muestral de tipo 2*
-$$\begin{aligned}
+\end{bmatrix},$$ definimos su *media muestral* como $$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.$$ Para la varianza muestral, tenemos dos versiones, la *varianza muestral sesgada* $$\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,$$ y la *varianza muestral insesgada* $$S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.$$ En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la curtosis muestral, definiremos primero el *cuarto momento muestral sesgado* como $$\widetilde{M}_4 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4. $$ El paquete `e1071`, a través de la función `kurtosis()`, nos permite calcular tres tipos de curtosis a partir de esta definición: la *curtosis muestral de tipo 1* $$\widetilde{G}_{2} = \frac{\widetilde{M}_4}{\widetilde{S}^4} - 3 = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = n \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3,$$ la *curtosis muestral de tipo 2* $$\begin{aligned}
 G_{2} = & \frac{(n-1)(n+1)}{(n-2)(n-3)} \, \bigg[\widetilde{G}_{2} + \frac{6}{n+1} \bigg] = \frac{n-1}{(n-2)(n-3)} \, \bigg[ (n+1) \widetilde{G}_{2} + 6 \bigg] \\ 
   = & \frac{(n-1)n(n+1)}{(n-2)(n-3)} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - \frac{3(n-1)^2}{(n-2)(n-3)},
-\end{aligned}$$
-y la *curtosis muestral de tipo 3* (que es la opción por default de la función `kurtosis()` del paquete `e1071`)
-$$\begin{aligned}
+\end{aligned}$$ y la *curtosis muestral de tipo 3* (que es la opción por default de la función `kurtosis()` del paquete `e1071`) $$\begin{aligned}
 G_{2}^{*} = & \frac{\widetilde{M}_4}{S^4} - 3 = \bigg(1 -\frac{1}{n} \bigg)^{2} \, (\widetilde{G}_{2} + 3) - 3 \\
 = & \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^4}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{2}} - 3 = \frac{(n-1)^2}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^4}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{2}} - 3. 
-\end{aligned}$$
-Notemos que todas estas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero todas estas versiones de la curtosis muestral son estimadores consistentes de este valor.
+\end{aligned}$$ Notemos que todas estas definiciones estiman el exceso de curtosis. Al igual que con la asimetría muestral, no existe un estimador insesgado de la curtosis poblacional, pero todas estas versiones de la curtosis muestral son estimadores consistentes de este valor.
 
 Mostraremos ahora un ejemplo de una muestra que viene de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
 

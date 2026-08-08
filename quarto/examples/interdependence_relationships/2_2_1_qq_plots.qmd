@@ -7,12 +7,13 @@ Para construir un gráfico QQ, debemos seguir los siguientes pasos:
 1.  **Ordenar los datos muestrales.** Coloque los datos en orden creciente:\
 
     $$X_{(1)} \leq X_{(2)} \leq \cdots \leq X_{(n)}.$$
+
 2.  **Calcular las probabilidades a considerar.** Para cada valor ordenado $X_{(i)}$, calcule la probabilidad correspondiente\
 
     $$P_i = \frac{2i - 1}{2n}, \quad i = 1, 2, \ldots, n.$$
-3.  **Obtener los cuantiles teóricos de la normal.** Usando la función cuantil de la normal estándar, podemos obtener los cuantiles teóricos correspondientes a las probabilidades calculadas en el paso anterior:
-    $$Q_i = \Phi^{-1}(P_i),$$
-    donde $\Phi^{-1}$ es la función cuantil de la normal estándar.\
+
+3.  **Obtener los cuantiles teóricos de la normal.** Usando la función cuantil de la normal estándar, podemos obtener los cuantiles teóricos correspondientes a las probabilidades calculadas en el paso anterior: $$Q_i = \Phi^{-1}(P_i),$$ donde $\Phi^{-1}$ es la función cuantil de la normal estándar.\
+
 4.  **Generar el gráfico.** Una vez obtenidos estos valores, debemos graficar los pares $(Q_i, X_{(i)})$ para $i = 1, 2, \ldots, n$, en un mismo plano cartesiano. También es común agregar una recta de referencia que pase por el primer y tercer cuartil de los datos muestrales.
 
 En general, entre más cerca se encuentren los puntos del gráfico QQ a la recta de referencia, más evidencia tendremos de que los datos muestrales provienen de una distribución normal. Por el contrario, si los puntos se alejan significativamente de esta recta, tendremos evidencia en contra de la normalidad de nuestros datos.

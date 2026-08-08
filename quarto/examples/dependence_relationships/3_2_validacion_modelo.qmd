@@ -63,9 +63,7 @@ Estadístico de prueba
 La ecuación para el estadístico de Durbin-Watson es:
 ```
 
-$$
-DW = \frac{\sum_{t=2}^{n} (e_t - e_{t-1})^2}{\sum_{t=1}^{n} e_t^2}
-$$
+$$DW = \frac{\sum_{t=2}^{n} (e_t - e_{t-1})^2}{\sum_{t=1}^{n} e_t^2}$$
 
 Un valor cercano a 2 sugiere independencia.
 

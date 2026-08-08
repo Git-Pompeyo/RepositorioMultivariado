@@ -4,9 +4,7 @@ La asimetría es una medida que nos permite cuantificar el sesgo tanto de una di
 
 ## Asimetría poblacional
 
-**Definición.** La *asimetría* de una variable aleatoria $X$ se define como el tercer momento estandarizado, dado por
-$$\gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3},$$
-donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
+**Definición.** La *asimetría* de una variable aleatoria $X$ se define como el tercer momento estandarizado, dado por $$\gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3},$$ donde $\mu = \mathbb{E}[X]$ es la media y $\sigma = \sqrt{\mathbb{E}[(X - \mu)^2]}$ es la desviación estándar de $X$.
 
 Una distribución es *positivamente asimétrica* (*sesgo a la derecha*) si posee una cola más larga a la derecha, y *negativamente asimétrica* (*sesgo a la izquierda*) si la cola más larga está a la izquierda. Una distribución perfectamente simétrica tiene asimetría cero.
 
@@ -188,29 +186,12 @@ skew_comparison_plot
 
 ## Asimetría muestral
 
-Para definir la asimetría muestral, recordemos que dado un *vector muestral*
-$$X = \begin{bmatrix}
+Para definir la asimetría muestral, recordemos que dado un *vector muestral* $$X = \begin{bmatrix}
 X_1 \\
 X_2 \\
 \vdots \\ 
 X_n
-\end{bmatrix},$$
-definimos su *media muestral* como
-$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.$$
-Para la varianza muestral, tenemos dos versiones, la *varianza muestral sesgada*
-$$\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,$$
-y la *varianza muestral insesgada*
-$$S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.$$
-En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la asimetría muestral, definiremos primero el tercer momento muestral. Igual que con la varianza muestral, existen dos versiones de esta: el *tercer momento muestral sesgado*
-$$\widetilde{M}_3 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3,$$
-y el *tercer momento muestral insesgado*
-$$M_3 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3. $$
-A partir de aquí, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la *asimetría muestral de tipo 1*
-$$\widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \sqrt{n} \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}},$$
-y la *asimetría muestral de tipo 2*
-$$G_{1} = \frac{M_3}{S^3} = \frac{\frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{n\sqrt{n-1}}{n-2} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \frac{\sqrt{n(n-1)}}{n-2} \widetilde{G}_1.$$
-Aunque menos común, también podemos definir la *asimetría muestral de tipo 3* como
-$$G_{1}^{*} = \frac{\widetilde{M}_3}{S^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{(n-1)^{3/2}}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \bigg(1 - \frac{1}{n} \bigg)^{3/2} \widetilde{G}_1.$$
+\end{bmatrix},$$ definimos su *media muestral* como $$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i.$$ Para la varianza muestral, tenemos dos versiones, la *varianza muestral sesgada* $$\widetilde{S}^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2,$$ y la *varianza muestral insesgada* $$S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2.$$ En estadística, es más común utilizar la varianza muestral insesgada ya que, como su nombre lo indica, esta resulta ser un estimador insesgado de la varianza poblacional. Para definir la asimetría muestral, definiremos primero el tercer momento muestral. Igual que con la varianza muestral, existen dos versiones de esta: el *tercer momento muestral sesgado* $$\widetilde{M}_3 = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3,$$ y el *tercer momento muestral insesgado* $$M_3 = \frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3. $$ A partir de aquí, hay varias posibles definiciones de la asimetría muestral que podemos considerar. Las más comunes son la *asimetría muestral de tipo 1* $$\widetilde{G}_{1} = \frac{\widetilde{M}_3}{\widetilde{S}^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \sqrt{n} \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}},$$ y la *asimetría muestral de tipo 2* $$G_{1} = \frac{M_3}{S^3} = \frac{\frac{n}{(n-1)(n-2)} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{n\sqrt{n-1}}{n-2} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \frac{\sqrt{n(n-1)}}{n-2} \widetilde{G}_1.$$ Aunque menos común, también podemos definir la *asimetría muestral de tipo 3* como $$G_{1}^{*} = \frac{\widetilde{M}_3}{S^3} = \frac{\frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^3}{\left( \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \right)^{3/2}} = \frac{(n-1)^{3/2}}{n} \, \frac{\sum_{i=1}^n (X_i - \bar{X})^3}{\left[\sum_{i=1}^n (X_i - \bar{X})^2 \right]^{3/2}} = \bigg(1 - \frac{1}{n} \bigg)^{3/2} \widetilde{G}_1.$$
 
 **Observación.** Es importante destacar que no existe un estimador insesgado de la asimetría poblacional. Sin embargo, todas estas versiones de la asimetría muestral son consistentes, es decir, convergen en probabilidad a la asimetría poblacional conforme el tamaño muestral $n$ tiende a infinito. En particular, para muestras grandes, las tres versiones de la asimetría muestral son aproximadamente iguales.
 
