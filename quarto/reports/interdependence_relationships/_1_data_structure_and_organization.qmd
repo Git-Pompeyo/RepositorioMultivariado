@@ -45,6 +45,8 @@ who |>
 
 Es por eso que necesitamos separar estas variables e introducir nombres más claros para ellas y para sus valores asociados. 
 ```{r}
+#| message: false
+#| warning: false
 # Empezamos creando la variable "who_tidy"
 # que contiene el conjunto de datos de la OMS ya limpio
 who_tidy <- who |>
