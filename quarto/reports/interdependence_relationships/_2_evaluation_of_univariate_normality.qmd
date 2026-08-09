@@ -139,7 +139,9 @@ gamma_distribution_plot
 ```
 
 Finalmente, usaremos la distribución Gamma para generar una gráfica comparativa de una distribución con sesgo a la izquierda, una simétrica y una con sesgo a la derecha.
+
 ```{r}
+#| warning: false
 #| fig-cap: "Gráfica comparativa de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha. Notemos como la asimetría afecta la forma de la distribución y la relación entre la media y la mediana."
 #| fig-width: 12
 #| fig-height: 3.5
@@ -332,6 +334,8 @@ $$
 Las características poblacionales más importantes de la distribución normal generalizada se muestran en la siguiente tabla:
 
 ```{r}
+#| warning: false
+#| message: false
 #| tbl-cap: "Características de la distribución normal generalizada con parámetros $\\mu$, $\\alpha$ y $\\beta$."
 #| label: tbl-generalized-normal-characteristics
 
@@ -424,6 +428,8 @@ dgnorm_distribution_family_plot
 Finalmente, utilizaremos la distribución normal generalizada, con parámetros $\mu = 0$, $\alpha = 1$ y $\beta = 1, 2, 4,$ para generar una gráfica comparativa de una distribución leptocúrtica, una mesocúrtica y una platicúrtica.
 
 ```{r}
+#| message: false
+#| warning: false
 #| fig-cap: "Gráfica comparativa de distribuciones leptocúrtica, mesocúrtica y platicúrtica. Notemos cómo la curtosis afecta la forma de la distribución, especialmente en las colas y el pico central."
 #| fig-width: 12
 #| fig-height: 3.5
@@ -567,8 +573,8 @@ set.seed(123)
 n <- 3000
 
 # Parámetros de la muestra
-alpha <- 2     # forma
-beta <- 1      # tasa
+alpha <- 2 # forma
+beta <- 1 # tasa
 
 # Generamos las muestras
 left_skew_sample <- -rgamma(n, shape = alpha, rate = beta)
@@ -778,11 +784,11 @@ set.seed(123)
 n <- 3000
 
 # Parámetros de la muestra
-mu <- 0                  # localización
-alpha <- 1               # escala
-beta_leptokurtic <- 1    # forma leptocúrtica
-beta_mesokurtic <- 2     # forma mesocúrtica
-beta_platykurtic <- 4    # forma platicúrtica
+mu <- 0 # localización
+alpha <- 1 # escala
+beta_leptokurtic <- 1 # forma leptocúrtica
+beta_mesokurtic <- 2 # forma mesocúrtica
+beta_platykurtic <- 4 # forma platicúrtica
 
 # Generamos la muestra leptocúrtica
 leptokurtic_sample <- rgnorm(
@@ -1209,7 +1215,7 @@ kable(
 
 Notemos que todas estas pruebas rechazan la hipótesis de normalidad de manera contundente para las muestras con sesgo a la izquierda y con sesgo a la derecha, mientras que no rechazan esta hipótesis para la muestra simétrica. En general, todas estas pruebas suelen rechazar la hipótesis nula para muestras muy grandes, incluso si la desviación de la normalidad es mínima. Es por esto que es importante complementar los resultados de estas pruebas con gráficos QQ y análisis adicionales para tomar decisiones informadas sobre la viabilidad de nuestros datos. Como ejemplo, consideraremos ahora estas mismas pruebas aplicadas a muestras mucho más pequeñas extraídas de las mismas distribuciones consideradas anteriormente.
 ```{r}
-#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha." 
+#| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones con sesgo a la izquierda, simétrica y con sesgo a la derecha."
 #| label: tbl-small-skewness-normality
 #| tbl-pos: H
 #| message: false
@@ -1221,8 +1227,8 @@ set.seed(173)
 n <- 30
 
 # Parámetros de la muestra
-alpha <- 2     # forma
-beta <- 1      # tasa
+alpha <- 2 # forma
+beta <- 1 # tasa
 
 # Generamos las muestras
 left_skew_sample <- -rgamma(n, shape = alpha, rate = beta)
@@ -1308,7 +1314,7 @@ Nuevamente notamos que todas estas pruebas son muy sensibles a desviaciones de l
 ```{r}
 #| tbl-cap: "Tabla de valores $p$ de las pruebas de normalidad aplicadas a las muestras pequeñas generadas a partir de distribuciones leptocúrtica, mesocúrtica y platicúrtica."
 #| label: tbl-small-kurtosis-normality
-#| tbl-pos: H 
+#| tbl-pos: H
 
 # Para asegurar la reproducibilidad de los resultados
 set.seed(136)
@@ -1317,11 +1323,11 @@ set.seed(136)
 n <- 30
 
 # Parámetros de la muestra
-mu <- 0                  # localización
-alpha <- 1               # escala
-beta_leptokurtic <- 1    # forma leptocúrtica
-beta_mesokurtic <- 2     # forma mesocúrtica
-beta_platykurtic <- 4    # forma platicúrtica
+mu <- 0 # localización
+alpha <- 1 # escala
+beta_leptokurtic <- 1 # forma leptocúrtica
+beta_mesokurtic <- 2 # forma mesocúrtica
+beta_platykurtic <- 4 # forma platicúrtica
 
 # Generamos la muestra leptocúrtica
 leptokurtic_sample <- rgnorm(
