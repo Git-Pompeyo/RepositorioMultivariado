@@ -1,4 +1,53 @@
-# Método de mínimos cuadrados
+# Regresión lineal
+
+## Intervalos de confianza
+
+Supongamos que tenemos una variable aleatoria $Y_{0}$ que sigue una distribución normal con media $\mu$ y varianza $\sigma^2$, es decir,
+$$
+Y_{0} \sim N(\mu, \sigma^2)
+$$
+Supongamos además que queremos recolectar una muestra de tamaño $n$ de esta variable aleatoria, que utilizaremos para estimar el valor de la media $\mu$. Utilizaremos las variables aleatorias $Y_1, Y_2, \ldots, Y_n$ para denotar los posibles valores de la muestra. Notemos que estas variables aleatorias son independientes e idénticamente distribuidas (i.i.d.) y que cada una de ellas sigue la misma distribución normal que $Y_{0}$, es decir,
+$$
+Y_i \sim N(\mu, \sigma^2) \qquad i = 1, 2, \ldots, n
+$$
+Para estimar el valor de $\mu$, utilizaremos la media muestral, definida como
+$$
+\bar{Y} = \frac{1}{n} \sum_{i=1}^{n} Y_i
+$$
+Notemos que la media muestral $\bar{Y}$ es una variable aleatoria que también sigue una distribución normal, con media $\mu$ y varianza $\sigma^2 / n$, es decir,
+$$
+\bar{Y} \sim N(\mu, \sigma^2 / n)
+$$
+En particular, $E[\bar{Y}] = \mu$ es decir, la media muestral es un estimador insesgado de la media poblacional $\mu$. Además, la varianza de la media muestral es $\sigma^2 / n$, lo que significa que a medida que aumentamos el tamaño de la muestra $n$, la varianza de la media muestral disminuye, y por lo tanto, la media muestral se vuelve más precisa como estimador de $\mu$. Además, si definimos la variable aleatoria 
+$$
+S^2 = \frac{1}{n-1} \sum_{i=1}^{n} (Y_i - \bar{Y})^2
+$$
+entonces $S^2$ es un estimador insesgado de la varianza poblacional $\sigma^2$, es decir, $E[S^2] = \sigma^2$. Notemos que la variable aleatoria $S^2$ sigue una distribución chi-cuadrado con $n-1$ grados de libertad, es decir,
+$$
+\frac{(n-1) S^2}{\sigma^2} \sim \chi^2_{n-1}
+$$
+Además las variables aleatorias $\bar{Y}$ y $S^2$ son independientes, por lo tanto podemos definir la variable aleatoria
+$$
+T = \frac{\bar{Y} - \mu}{S / \sqrt{n}} \sim t_{n-1}
+$$
+donde $t_{n-1}$ denota la distribución $t$ de Student con $n-1$ grados de libertad. Notemos que la variable aleatoria $T$ es una función de la media muestral $\bar{Y}$, la varianza muestral $S^2$ y el tamaño de la muestra $n$, y que su distribución no depende del valor de $\mu$ ni de $\sigma^2$. Sea ahora $t_{\alpha/2, n-1}$ el cuantil de orden $1 - \alpha/2$ de la distribución $t$ de Student con $n-1$ grados de libertad, en otras palabras,
+$$
+P(-t_{\alpha/2, n-1} \leq T \leq t_{\alpha/2, n-1}) = 1 - \alpha
+$$
+Reescribiendo esta desigualdad en términos de $\mu$, obtenemos
+$$
+P\left(\bar{Y} - t_{\alpha/2, n-1}
+\frac{S}{\sqrt{n}} \leq \mu \leq \bar{Y} + t_{\alpha/2, n-1} \frac{S}{\sqrt{n}}\right) = 1 - \alpha
+$$
+Supongamos ahora que realizamos el muestreo correspondiente y obtenemos los valores de la muestra $y_1, y_2, \ldots, y_n$. Calculamos entonces la media muestral $\bar{y}$ y la varianza muestral $s^2$, y obtenemos el intervalo de confianza para $\mu$ dado por
+$$
+\left(\bar{y} - t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}, \bar{y} + t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}\right)
+$$
+con una significancia de $\alpha$. Notemos que este intervalo de confianza es un intervalo aleatorio, ya que depende de los valores de la muestra. Sin embargo, si repetimos el muestreo muchas veces y calculamos el intervalo de confianza correspondiente para cada muestra, entonces aproximadamente el $100(1 - \alpha)\%$ de estos intervalos de confianza contendrán el valor verdadero de $\mu$.
+
+
+
+## Regresión lineal simple
 
 Supongamos que tenemos un conjunto de datos 
 $$
