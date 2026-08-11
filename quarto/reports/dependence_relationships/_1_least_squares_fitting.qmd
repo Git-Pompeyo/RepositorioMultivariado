@@ -18,7 +18,7 @@ Notemos que la media muestral $\bar{Y}$ es una variable aleatoria que también s
 $$
 \bar{Y} \sim N(\mu, \sigma^2 / n)
 $$
-En particular, $E[\bar{Y}] = \mu$ es decir, la media muestral es un estimador insesgado de la media poblacional $\mu$. Además, la varianza de la media muestral es $\sigma^2 / n$, lo que significa que a medida que aumentamos el tamaño de la muestra $n$, la varianza de la media muestral disminuye, y por lo tanto, la media muestral se vuelve más precisa como estimador de $\mu$. Además, si definimos la variable aleatoria 
+En particular, $E[\bar{Y}] = \mu$, es decir, la media muestral es un estimador insesgado de la media poblacional $\mu$. Además, la varianza de la media muestral es $\sigma^2 / n$, lo que significa que a medida que aumentamos el tamaño de la muestra $n$, la varianza de la media muestral disminuye, y por lo tanto, la media muestral se vuelve más precisa como estimador de $\mu$. Además, si definimos la variable aleatoria 
 $$
 S^2 = \frac{1}{n-1} \sum_{i=1}^{n} (Y_i - \bar{Y})^2
 $$
@@ -43,7 +43,9 @@ Supongamos ahora que realizamos el muestreo correspondiente y obtenemos los valo
 $$
 \left(\bar{y} - t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}, \bar{y} + t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}\right)
 $$
-con una significancia de $\alpha$. Notemos que este intervalo de confianza es un intervalo aleatorio, ya que depende de los valores de la muestra. Sin embargo, si repetimos el muestreo muchas veces y calculamos el intervalo de confianza correspondiente para cada muestra, entonces aproximadamente el $100(1 - \alpha)\%$ de estos intervalos de confianza contendrán el valor verdadero de $\mu$.
+con un nivel de confianza del $100(1 - \alpha)\%$. Notemos que este intervalo de confianza es un intervalo aleatorio, ya que depende de los valores de la muestra, y que si repetimos el muestreo muchas veces, aproximadamente el $100(1 - \alpha)\%$ de los intervalos de confianza obtenidos contendrán el valor verdadero de $\mu$.
+
+De manera más explícita, 
 
 
 
