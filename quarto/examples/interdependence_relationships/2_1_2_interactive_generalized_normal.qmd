@@ -2,13 +2,12 @@
 
 La distribución normal generalizada es una extensión de la distribución normal que introduce un parámetro adicional para controlar la forma de la distribución. En particular, permite ajustar la curtosis, lo que afecta la forma del pico alrededor de la media y el peso de las colas.
 
-**Definición.** Decimos que una variable aleatoria $X$ sigue una *distribución normal generalizada* con parámetros de localización $\mu \in \mathbb{R}$, escala $\alpha > 0$ y forma $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por $$
-f_X(x; \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma(1/\beta)} e^{-\left( \frac{|x - \mu|}{\alpha} \right)^\beta}, \quad x \in \mathbb{R},
-$$ donde $\Gamma(\alpha)$ denota a la función Gamma, definida como $$
-\Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.
-$$ En este caso escribimos $$
-X \sim \text{NormalGeneralizada}(\mu, \alpha, \beta).
-$$
+**Definición.** Decimos que una variable aleatoria $X$ sigue una *distribución normal generalizada* con parámetros de localización $\mu \in \mathbb{R}$, escala $\alpha > 0$ y forma $\beta > 0$, si su función de densidad de probabilidad (PDF) está dada por
+$$f_X(x; \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma(1/\beta)} e^{-\left( \frac{|x - \mu|}{\alpha} \right)^\beta}, \quad x \in \mathbb{R},$$
+donde $\Gamma(\alpha)$ denota a la función Gamma, definida como
+$$\Gamma(\alpha) = \int_0^\infty t^{\alpha - 1} e^{-t} \, dt.$$
+En este caso escribimos
+$$X \sim \text{NormalGeneralizada}(\mu, \alpha, \beta).$$
 
 Las características poblacionales más importantes de la distribución normal generalizada se muestran en la siguiente tabla:
 
@@ -46,9 +45,9 @@ kable(
   kable_styling(latex_options = "hold_position")
 ```
 
-**Observación.** Notemos que para $\beta = 1$ la distribución normal generalizada coincide con la distribución de Laplace cuya PDF está dada por $$
-f_X(x; \mu, b) = \frac{1}{2b} e^{-\frac{|x - \mu|}{b}}, \quad x \in \mathbb{R}, 
-$$donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media $\mu$ y varianza $\alpha^{2}/2$. Finalmente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
+**Observación.** Notemos que para $\beta = 1$ la distribución normal generalizada coincide con la distribución de Laplace cuya PDF está dada por
+$$f_X(x; \mu, b) = \frac{1}{2b} e^{-\frac{|x - \mu|}{b}}, \quad x \in \mathbb{R}, $$
+donde $b > 0$ es un parámetro de escala (que correspnde al valor de $\alpha$ en la normal generalizada). En este caso, la curtosis excesiva es 3, indicando colas más pesadas que la normal. Por otro lado, cuando $\beta = 2$ obtenemos la distribución normal con media $\mu$ y varianza $\alpha^{2}/2$. Finalmente, a medida que $\beta$ tiende a infinito, la distribución normal generalizada converge a una distribución uniforme en el intervalo $(\mu - \alpha, \mu + \alpha)$, la cual tiene curtosis excesiva de $-1.2$, indicando colas más ligeras que la normal.
 
 Para visualizar la función de densidad de probabilidad de la distribución normal generalizada para diferentes valores de sus parámetros, consideraremos la siguiente aplicación interactiva:
 
