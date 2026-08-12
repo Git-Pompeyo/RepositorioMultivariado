@@ -1,55 +1,10 @@
-# Regresión lineal
+# Intervalos de confianza
 
-## Intervalos de confianza
+Supongamos que tenemos una variable aleatoria $Y_{0}$ que sigue una distribución normal con media $\mu$ y varianza $\sigma^2$, es decir, $$Y_{0} \sim \mathcal{N}(\mu, \sigma^2)$$ Supongamos además que queremos recolectar una muestra de tamaño $n$ de esta variable aleatoria, que utilizaremos para estimar el valor de la media $\mu$. Utilizaremos las variables aleatorias $Y_1, Y_2, \ldots, Y_n$ para denotar los posibles valores de esta muestra. Notemos que estas variables aleatorias son independientes e idénticamente distribuidas (i.i.d.) y que cada una de ellas sigue la misma distribución normal que $Y_{0}$, es decir, $$Y_i \sim \mathcal{N}(\mu, \sigma^2) \qquad i = 1, 2, \ldots, n$$ Para estimar el valor de $\mu$, utilizaremos la media muestral, definida como $$\bar{Y} = \frac{1}{n} \sum_{i=1}^{n} Y_i$$ Notemos que la media muestral $\bar{Y}$ es una variable aleatoria que también sigue una distribución normal, con media $\mu$ y varianza $\sigma^2 / n$, es decir, $$\bar{Y} \sim \mathcal{N}(\mu, \sigma^2 / n)$$ En particular, $E[\bar{Y}] = \mu$, en otras palabras, la media muestral es un estimador insesgado de la media poblacional $\mu$. Además, el que la varianza de la media muestral sea $\sigma^2 / n$ significa que a medida que aumentamos el tamaño de la muestra $n$, la varianza de la media muestral disminuye y, por lo tanto, la media muestral se vuelve más precisa como estimador de $\mu$. Aún más, si definimos la variable aleatoria $$S^2 = \frac{1}{n-1} \sum_{i=1}^{n} (Y_i - \bar{Y})^2$$ entonces $S^2$ es un estimador insesgado de la varianza poblacional $\sigma^2$, es decir, $E[S^2] = \sigma^2$. Notemos que la variable aleatoria $S^2$ sigue una distribución chi-cuadrada con $n-1$ grados de libertad, es decir, $$\frac{(n-1) S^2}{\sigma^2} \sim \chi^2_{n-1}$$ Además, las variables aleatorias $\bar{Y}$ y $S^2$ son independientes, por lo que la variable aleatoria $$T = \frac{\bar{Y} - \mu}{S / \sqrt{n}} \sim t_{n-1}$$ donde $t_{n-1}$ denota la distribución $t$ de Student con $n-1$ grados de libertad. Notemos que la variable aleatoria $T$ es una función de la media muestral $\bar{Y}$, la varianza muestral $S^2$ y el tamaño de la muestra $n$, y que su distribución no depende del valor de $\mu$ ni de $\sigma^2$. Sea ahora $t_{\alpha/2, n-1}$ el cuantil de orden $1 - \alpha/2$ de la distribución $t$ de Student con $n-1$ grados de libertad, en otras palabras, $$P(-t_{\alpha/2, n-1} < T < t_{\alpha/2, n-1}) = 1 - \alpha$$ Reescribiendo esta desigualdad en términos de $\mu$, obtenemos $$P\left(\bar{Y} - t_{\alpha/2, n-1}
+\frac{S}{\sqrt{n}} < \mu < \bar{Y} + t_{\alpha/2, n-1} \frac{S}{\sqrt{n}}\right) = 1 - \alpha$$ Supongamos ahora que realizamos el muestreo correspondiente y que obtenemos $y_1, y_2, \ldots, y_n$ como los valores de la muestra. Podemos entonces calcular la media muestral $\bar{y}$ y la varianza muestral $s^2$, y podemos utilizar estos valores para construir el intervalo de confianza $$\left(\bar{y} - t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}, \bar{y} + t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}\right)$$ para $\mu$ con un nivel de confianza del $100(1 - \alpha)\%$. Notemos que esto significa que si repitiéramos este procedimiento muchas veces, entonces esperaríamos que alrededor del $100(1 - \alpha)\%$ de los intervalos de confianza obtenidos de esta manera contendrían el valor verdadero de $\mu$.
 
-Supongamos que tenemos una variable aleatoria $Y_{0}$ que sigue una distribución normal con media $\mu$ y varianza $\sigma^2$, es decir,
-$$
-Y_{0} \sim \mathcal{N}(\mu, \sigma^2)
-$$
-Supongamos además que queremos recolectar una muestra de tamaño $n$ de esta variable aleatoria, que utilizaremos para estimar el valor de la media $\mu$. Utilizaremos las variables aleatorias $Y_1, Y_2, \ldots, Y_n$ para denotar los posibles valores de esta muestra. Notemos que estas variables aleatorias son independientes e idénticamente distribuidas (i.i.d.) y que cada una de ellas sigue la misma distribución normal que $Y_{0}$, es decir,
-$$
-Y_i \sim \mathcal{N}(\mu, \sigma^2) \qquad i = 1, 2, \ldots, n
-$$
-Para estimar el valor de $\mu$, utilizaremos la media muestral, definida como
-$$
-\bar{Y} = \frac{1}{n} \sum_{i=1}^{n} Y_i
-$$
-Notemos que la media muestral $\bar{Y}$ es una variable aleatoria que también sigue una distribución normal, con media $\mu$ y varianza $\sigma^2 / n$, es decir,
-$$
-\bar{Y} \sim \mathcal{N}(\mu, \sigma^2 / n)
-$$
-En particular, $E[\bar{Y}] = \mu$, en otras palabras, la media muestral es un estimador insesgado de la media poblacional $\mu$. Además, el que la varianza de la media muestral sea $\sigma^2 / n$ significa que a medida que aumentamos el tamaño de la muestra $n$, la varianza de la media muestral disminuye y, por lo tanto, la media muestral se vuelve más precisa como estimador de $\mu$. Aún más, si definimos la variable aleatoria 
-$$
-S^2 = \frac{1}{n-1} \sum_{i=1}^{n} (Y_i - \bar{Y})^2
-$$
-entonces $S^2$ es un estimador insesgado de la varianza poblacional $\sigma^2$, es decir, $E[S^2] = \sigma^2$. Notemos que la variable aleatoria $S^2$ sigue una distribución chi-cuadrada con $n-1$ grados de libertad, es decir,
-$$
-\frac{(n-1) S^2}{\sigma^2} \sim \chi^2_{n-1}
-$$
-Además, las variables aleatorias $\bar{Y}$ y $S^2$ son independientes, por lo que la variable aleatoria
-$$
-T = \frac{\bar{Y} - \mu}{S / \sqrt{n}} \sim t_{n-1}
-$$
-donde $t_{n-1}$ denota la distribución $t$ de Student con $n-1$ grados de libertad. Notemos que la variable aleatoria $T$ es una función de la media muestral $\bar{Y}$, la varianza muestral $S^2$ y el tamaño de la muestra $n$, y que su distribución no depende del valor de $\mu$ ni de $\sigma^2$. Sea ahora $t_{\alpha/2, n-1}$ el cuantil de orden $1 - \alpha/2$ de la distribución $t$ de Student con $n-1$ grados de libertad, en otras palabras,
-$$
-P(-t_{\alpha/2, n-1} < T < t_{\alpha/2, n-1}) = 1 - \alpha
-$$
-Reescribiendo esta desigualdad en términos de $\mu$, obtenemos
-$$
-P\left(\bar{Y} - t_{\alpha/2, n-1}
-\frac{S}{\sqrt{n}} < \mu < \bar{Y} + t_{\alpha/2, n-1} \frac{S}{\sqrt{n}}\right) = 1 - \alpha
-$$
-Supongamos ahora que realizamos el muestreo correspondiente y que obtenemos $y_1, y_2, \ldots, y_n$ como los valores de la muestra. Podemos entonces calcular la media muestral $\bar{y}$ y la varianza muestral $s^2$, y podemos utilizar estos valores para construir el intervalo de confianza 
-$$
-\left(\bar{y} - t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}, \bar{y} + t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}\right)
-$$
-para $\mu$ con un nivel de confianza del $100(1 - \alpha)\%$. Notemos que esto significa que si repitiéramos este procedimiento muchas veces, entonces esperaríamos que alrededor del $100(1 - \alpha)\%$ de los intervalos de confianza obtenidos de esta manera contendrían el valor verdadero de $\mu$.
+De manera más explícita, supongamos que $Y_{0}$ tiene una distribución normal estándar, es decir, $\mu = 0$ y $\sigma^2 = 1$. Supongamos además que queremos considerar muestras de tamaño $n = 10$. Notemos que en este caso tenemos que $$\bar{Y} = \frac{1}{10} \sum_{i=1}^{10} Y_i \sim \mathcal{N}(0, 1/10)$$ Para comparar las variables aleatorias $Y_{0}$ y $\bar{Y}$, tomaremos una muestra de tamaño $50$ para $Y_{0}$ y tomaremos una colección de $50$ muestras de tamaño $10$ para $\bar{Y}$.
 
-De manera más explícita, supongamos que $Y_{0}$ tiene una distribución normal estándar, es decir, $\mu = 0$ y $\sigma^2 = 1$. Supongamos además que queremos considerar muestras de tamaño $n = 10$. Notemos que en este caso tenemos que
-$$
-\bar{Y} = \frac{1}{10} \sum_{i=1}^{10} Y_i \sim \mathcal{N}(0, 1/10)
-$$
-Para comparar las variables aleatorias $Y_{0}$ y $\bar{Y}$, tomaremos una muestra de tamaño $50$ para $Y_{0}$ y tomaremos una colección de $50$ muestras de tamaño $10$ para $\bar{Y}$. 
 ```{r}
 #| fig-cap: "Comparación entre la variable aleatoria original y la media muestral."
 #| fig-width: 12
@@ -181,14 +136,9 @@ combined_y_plot <- ((y0_density_plot | y0_hist) /
 # Mostramos el gráfico combinado
 combined_y_plot
 ```
-Tomaremos ahora un valor de $\alpha = 0.2$. Entonces el valor del cuantil de orden $1 - \alpha/2 = 0.9$ de la distribución $t$ de Student con $n-1 = 9$ grados de libertad es
-$$
-t_{\alpha/2, n-1} = t_{0.1, 9} \approx `r round(qt(0.1, df = 9, lower.tail = FALSE), 4)`
-$$
-En otras palabras,
-$$
-P(-t_{\alpha/2, n-1} < T < t_{\alpha/2, n-1}) = 1 - \alpha = 0.8
-$$
+
+Tomaremos ahora un valor de $\alpha = 0.2$. Entonces el valor del cuantil de orden $1 - \alpha/2 = 0.9$ de la distribución $t$ de Student con $n-1 = 9$ grados de libertad es $$t_{\alpha/2, n-1} = t_{0.1, 9} \approx `r round(qt(0.1, df = 9, lower.tail = FALSE), 4)`$$ En otras palabras, $$P(-t_{\alpha/2, n-1} < T < t_{\alpha/2, n-1}) = 1 - \alpha = 0.8$$
+
 ```{r}
 #| fig-cap: "Densidad de la distribución $t$ de Student con $n-1=9$ grados de libertad, con los valores críticos para $\\alpha = 0.2$."
 #| fig-width: 12
@@ -256,7 +206,9 @@ t_density_plot <- t_density_tbl |>
 # Mostramos el gráfico de densidad de la distribución t de Student
 t_density_plot
 ```
+
 Usando este valor crítico, podemos construir los intervalos de confianza para $\mu$ con un nivel de confianza del $80\%$ asociados a cada una de las $50$ muestras de tamaño $10$ que tomamos para $\bar{Y}$. La siguiente figura ilustra estos intervalos de confianza, donde la línea horizontal azul representa el valor verdadero de $\mu = 0$.
+
 ```{r}
 #| fig-cap: "Intervalos de confianza para $\\mu$ con un nivel de confianza del $80\\%$ asociados a cada una de las $50$ muestras de tamaño $10$ construidas para $\\bar{Y}$. La línea horizontal azul representa el valor verdadero de $\\mu = 0$."
 #| fig-width: 12
@@ -302,4 +254,3 @@ confidence_intervals_plot <- confidence_intervals_tbl |>
 
 confidence_intervals_plot
 ```
-
