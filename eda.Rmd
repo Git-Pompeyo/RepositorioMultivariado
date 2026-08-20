@@ -480,6 +480,7 @@ print(colSums(df[columnas_criticas] < 0, na.rm = TRUE))
 ```
 
 
+
 ## Escalamiento y Transformación
 
 ```{r}
@@ -566,9 +567,15 @@ for (v in variables) {
 
 # RobustScaler (Median / IQR)
 for (v in variables) {
-  med <- median(data[[v]], na.rm = TRUE)
-  iqr_val <- IQR(data[[v]], na.rm = TRUE)
-  data[[v]] <- (data[[v]] - med) / iqr_val
+  med <- median(df[[v]], na.rm = TRUE)
+  iqr_val <- IQR(df[[v]], na.rm = TRUE)
+  
+  if (iqr_val == 0 || is.na(iqr_val)) {
+    std_val <- sd(df[[v]], na.rm = TRUE)
+    df[[v]] <- if (std_val > 0) (df[[v]] - med) / std_val else 0
+  } else {
+    df[[v]] <- (df[[v]] - med) / iqr_val
+  }
 }
 
 head(data)
@@ -576,9 +583,122 @@ head(data)
 
 
 
+
+
 ```{r}
-#write.csv(data, "data/df_CE_PM10_scaled_transformed.csv", row.names = FALSE)
+write.csv(data, "data/df_CE_PM10_scaled_transformed.csv", row.names = FALSE)
 ```
+
+
+
+
+
+```{r}
+
+nrow(df)
+```
+
+```{r}
+# Porcentaje de NaN por columna de la estación Centro Monterrey
+porcentaje_por_columna <- sort(colMeans(is.na(df)) * 100, decreasing = TRUE)
+
+print(round(porcentaje_por_columna, 2))
+```
+
+
+```{r}
+df <- df %>%
+  mutate(date = as.POSIXct(date)) %>%
+  arrange(date)
+
+cols <- setdiff(names(df), "date")
+
+grupos <- split(seq_len(nrow(df)), as.Date(df$date))
+filas_validas <- list()
+
+for (idx in grupos) {
+  grupo <- df[idx, ]
+  descartar <- FALSE
+  
+  for (col in cols) {
+    nulos <- is.na(grupo[[col]])
+    if (!any(nulos)) next
+    
+    rle_res <- rle(nulos)
+    if (any(rle_res$lengths[rle_res$values] > 5)) {
+      descartar <- TRUE
+      break
+    }
+    
+    idx_prev <- max(1, idx[1] - 1)
+    idx_post <- min(nrow(df), tail(idx, 1) + 1)
+    
+    ventana <- na.approx(df[[col]][idx_prev:idx_post], na.rm = FALSE)
+    pos_relativa <- seq(from = idx[1] - idx_prev + 1, length.out = length(idx))
+    grupo[[col]] <- ventana[pos_relativa]
+    
+    if (any(is.na(grupo[[col]]))) {
+      descartar <- TRUE
+      break
+    }
+  }
+  
+  if (!descartar) {
+    filas_validas[[length(filas_validas) + 1]] <- grupo
+  }
+}
+
+df <- bind_rows(filas_validas) %>%
+  drop_na()
+
+print(nrow(df))
+print(colSums(is.na(df)))
+```
+
+
+```{r}
+head(df)
+sapply(df, max, na.rm = TRUE)
+```
+
+
+
+
+```{r}
+variables <- setdiff(names(df)[sapply(df, is.numeric)], "year")
+
+# Yeo-Johnson (standardize = FALSE)
+for (v in variables) {
+  pt <- yeojohnson(df[[v]], standardize = FALSE)
+  df[[v]] <- predict(pt)
+}
+
+
+# RobustScaler (Median / IQR)
+for (v in variables) {
+  med <- median(df[[v]], na.rm = TRUE)
+  iqr_val <- IQR(df[[v]], na.rm = TRUE)
+  
+  if (iqr_val == 0 || is.na(iqr_val)) {
+    std_val <- sd(df[[v]], na.rm = TRUE)
+    df[[v]] <- if (std_val > 0) (df[[v]] - med) / std_val else 0
+  } else {
+    df[[v]] <- (df[[v]] - med) / iqr_val
+  }
+}
+
+
+head(df)
+```
+
+
+
+```{r}
+write.csv(df, "data/scaled_transformed.csv", row.names = FALSE)
+```
+
+
+
 
 
 
