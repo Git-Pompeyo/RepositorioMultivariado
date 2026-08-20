@@ -1,0 +1,598 @@
+---
+title: "EDA"
+author: "Equipo 5"
+date: "2026-08-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Importar librerias
+
+```{r}
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+library(plotly)
+library(moments)
+library(zoo)
+library(bestNormalize)
+```
+
+
+# Importar datos
+
+```{r}
+importarDatos <- function(year) {
+  archivo <- sprintf("data/BD %s.xlsx", year)
+  hojas_nombres <- excel_sheets(archivo)
+  
+  df <- map_dfr(hojas_nombres, function(hoja) {
+    read_excel(archivo, sheet = hoja) %>%
+      mutate(estacion = hoja)
+  }) %>%
+    relocate(estacion)
+  
+  if ("Fecha y hora" %in% colnames(df)) {
+    df <- df %>% rename(date = `Fecha y hora`)
+  }
+  
+  if ("date" %in% colnames(df)) {
+    df <- df %>% mutate(date = as.POSIXct(date))
+  }
+  
+  return(df)
+}
+```
+
+```{r}
+df2020 <- importarDatos("2020")
+cat("2020 Importado\n")
+
+df2021 <- importarDatos("2021")
+cat("2021 Importado\n")
+
+df2022 <- importarDatos("2022")
+cat("2022 Importado\n")
+
+df2023 <- importarDatos("2023")
+cat("2023 Importado\n")
+
+df2024 <- importarDatos("2024")
+cat("2024 Importado\n")
+
+df2025 <- importarDatos("2025")
+cat("2025 Importado\n")
+```
+
+
+```{r}
+df <- bind_rows(
+  df2020 %>% mutate(year = 2020),
+  df2021 %>% mutate(year = 2021),
+  df2022 %>% mutate(year = 2022),
+  df2023 %>% mutate(year = 2023),
+  df2024 %>% mutate(year = 2024),
+  df2025 %>% mutate(year = 2025)
+)
+```
+
+
+
+# Exploración de los datos
+
+
+## Estructura del dataset
+
+
+```{r}
+head(df, 10)
+```
+
+
+
+## Datos faltantes
+
+```{r}
+cols <- setdiff(colnames(df), c("year", "estacion", "date"))
+nulos <- is.na(df[cols])
+
+
+resumen <- df %>%
+  group_by(year) %>%
+  summarise(
+    Total_Filas = n(),
+    Total_Datos = n() * length(cols),
+    Total_Datos_Faltantes = sum(is.na(pick(all_of(cols)))),
+    .groups = "drop"
+  ) %>%
+  mutate(year = as.character(year))
+
+
+
+fila_global <- tibble(
+  year = "Global",
+  Total_Filas = nrow(df),
+  Total_Datos = length(nulos),
+  Total_Datos_Faltantes = sum(nulos)
+)
+
+resumen <- bind_rows(resumen, fila_global) %>%
+  mutate(`%_Datos_Faltantes` = sprintf("%.2f%%", (Total_Datos_Faltantes / Total_Datos) * 100)) %>%
+  mutate(
+    Total_Filas = format(Total_Filas, big.mark = ","),
+    Total_Datos = format(Total_Datos, big.mark = ","),
+    Total_Datos_Faltantes = format(Total_Datos_Faltantes, big.mark = ",")
+  )
+
+
+print(resumen)
+```
+
+
+
+
+
+```{r}
+cols <- setdiff(colnames(df), c("year", "estacion", "date"))
+
+tabla_long <- df %>%
+  mutate(pct_faltante = rowMeans(is.na(select(., all_of(cols)))) * 100) %>%
+  group_by(estacion, year) %>%
+  summarise(mean_faltante = mean(pct_faltante), .groups = "drop")
+
+
+
+ggplot(tabla_long, aes(x = factor(year), y = estacion, fill = mean_faltante)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sprintf("%.1f", mean_faltante))) +
+  scale_fill_gradientn(colors = c("#FFFFCC", "#FEB24C", "#BD0026"), name = "% Faltante") +
+  labs(title = "Porcentaje de Datos Faltantes por Estación y Año", x = "year", y = "estacion") +
+  theme_minimal()
+```
+Notamos que la estacion NE3 no existía en 2020, y la estacion NO3 no exístio durante 2020 ni 2021.
+
+```{r}
+# Porcentaje de filas con al menos un NaN
+porcentaje_filas_nan <- mean(apply(is.na(df), 1, any)) * 100
+
+cat(sprintf("%.2f%% de las filas tienen al menos un NaN\n", porcentaje_filas_nan))
+```
+
+```{r}
+# Porcentaje de NaN por columna 
+porcentaje_por_columna <- sort(colMeans(is.na(df)) * 100, decreasing = TRUE)
+
+print(round(porcentaje_por_columna, 2))
+```
+
+
+
+## Datos atípicos
+
+```{r}
+contaminantes <- setdiff(colnames(df), c("year", "estacion", "date"))
+
+detectar_atipicos_iqr <- function(grupo) {
+  atipicos <- tibble(.rows = nrow(grupo))
+  for (col in contaminantes) {
+    q1 <- quantile(grupo[[col]], 0.25, na.rm = TRUE)
+    q3 <- quantile(grupo[[col]], 0.75, na.rm = TRUE)
+    iqr <- q3 - q1
+    l_inf <- q1 - 1.5 * iqr
+    l_sup <- q3 + 1.5 * iqr
+    atipicos[[col]] <- (!is.na(grupo[[col]])) & ((grupo[[col]] < l_inf) | (grupo[[col]] > l_sup))
+  }
+  atipicos$estacion <- grupo$estacion
+  return(atipicos)
+}
+
+df_atipicos_iqr <- df %>%
+  group_split(estacion) %>%
+  map_dfr(detectar_atipicos_iqr)
+
+resumen_atipicos <- df_atipicos_iqr %>%
+  group_by(estacion) %>%
+  summarise(across(all_of(contaminantes), sum), .groups = "drop")
+
+print(resumen_atipicos)
+```
+
+
+```{r}
+# Parámetros
+estacion_elegida <- "CE"
+contaminante <- "CO"
+
+df_plot <- df %>%
+  filter(estacion == estacion_elegida) %>%
+  select(date, all_of(contaminante)) %>%
+  drop_na() %>%
+  arrange(date)
+
+q1 <- quantile(df_plot[[contaminante]], 0.25)
+q3 <- quantile(df_plot[[contaminante]], 0.75)
+iqr <- q3 - q1
+l_sup <- q3 + 1.5 * iqr
+
+df_plot <- df_plot %>%
+  mutate(outliers = if_else(.data[[contaminante]] > l_sup, .data[[contaminante]], NA_real_))
+
+# Gráfico
+fig <- plot_ly() %>%
+
+  add_trace(
+    data = df_plot,
+    x = ~date,
+    y = df_plot[[contaminante]],
+    type = "scatter",
+    mode = "lines",
+    name = "Normal",
+    line = list(color = "lightgray", width = 1.5)
+  ) %>%
+
+  add_trace(
+    data = df_plot,
+    x = ~date,
+    y = ~outliers,
+    type = "scatter",
+    mode = "markers",
+    name = "Atípicos",
+    marker = list(color = "red", size = 4)
+  ) %>%
+
+  add_segments(
+    x = min(df_plot$date),
+    xend = max(df_plot$date),
+    y = l_sup,
+    yend = l_sup,
+    line = list(color = "red", dash = "dash", width = 1.5),
+    showlegend = FALSE
+  ) %>%
+
+  layout(
+    font = list(color = "black"), 
+    title = list(
+      text = sprintf("Evolución de %s en la estación Centro Monterrey", contaminante),
+      font = list(size = 20, color = "black")
+    ),
+    xaxis = list(title = "Fecha", rangeslider = list(visible = TRUE)),
+    yaxis = list(title = sprintf("Concentración de %s", contaminante)),
+    template = "plotly_white"
+  )
+
+fig
+```
+
+
+```{r}
+cols <- setdiff(colnames(df), c("year", "estacion", "date"))
+
+calcular_atipicos <- function(grupo) {
+  sapply(cols, function(col) {
+    q1 <- quantile(grupo[[col]], 0.25, na.rm = TRUE)
+    q3 <- quantile(grupo[[col]], 0.75, na.rm = TRUE)
+    iqr <- q3 - q1
+    sum((grupo[[col]] < (q1 - 1.5 * iqr)) | (grupo[[col]] > (q3 + 1.5 * iqr)), na.rm = TRUE)
+  })
+}
+
+total_atipicos <- df %>%
+  group_split(estacion) %>%
+  map(calcular_atipicos) %>%
+  reduce(`+`) %>%
+  sum()
+
+total_datos <- sum(!is.na(df[cols]))
+pct <- (total_atipicos / total_datos) * 100
+
+cat(sprintf("Total datos atípicos: %s\n", format(total_atipicos, big.mark = ",")))
+cat(sprintf("Porcentaje del total: %.2f%%\n", pct))
+```
+
+
+
+
+
+
+## Normalidad de los datos
+
+```{r}
+# Seelección de las columnas con valores numéricos
+cols <- setdiff(colnames(df), c("year", "estacion", "date"))
+print(cols)
+```
+
+
+
+```{r}
+col <- cols[6] 
+print(col)
+```
+
+
+
+
+```{r Gráfica de distribución}
+datos <- na.omit(df[[col]])
+mu <- mean(datos)
+sigma <- sd(datos)
+l_inf <- mu - 3 * sigma
+l_sup <- mu + 3 * sigma
+
+x_min <- min(min(datos), l_inf) - sigma
+x_max <- max(max(datos), l_sup) + sigma
+
+x <- seq(x_min, x_max, length.out = 1000)
+kde_fit <- density(datos, from = x_min, to = x_max, n = 1000)
+kde_y <- approx(kde_fit$x, kde_fit$y, xout = x)$y
+norm_y <- dnorm(x, mean = mu, sd = sigma)
+
+fig <- plot_ly() %>%
+  add_trace(x = x, y = kde_y, name = "Real", type = 'scatter', mode = 'lines', line = list(color = '#88CCEE', width = 3)) %>%
+  add_trace(x = x, y = norm_y, name = "Normal", type = 'scatter', mode = 'lines', line = list(color = 'gray', dash = 'dot')) %>%
+  add_segments(x = l_inf, xend = l_inf, y = 0, yend = max(c(kde_y, norm_y), na.rm = TRUE), line = list(color = 'red', dash = 'dash'), showlegend = FALSE) %>%
+  add_segments(x = l_sup, xend = l_sup, y = 0, yend = max(c(kde_y, norm_y), na.rm = TRUE), line = list(color = 'red', dash = 'dash'), showlegend = FALSE) %>%
+  add_annotations(x = l_inf, y = max(c(kde_y, norm_y), na.rm = TRUE), text = "-3σ", showarrow = FALSE) %>%
+  add_annotations(x = l_sup, y = max(c(kde_y, norm_y), na.rm = TRUE), text = "+3σ", showarrow = FALSE) %>%
+  layout(
+    title = paste("Distribución:", col),
+    xaxis = list(title = paste0(col, " "), range = c(x_min, x_max)),
+    yaxis = list(title = "Densidad"),
+    template = "plotly_white"
+  )
+
+fig
+
+```
+
+
+```{r}
+cat(sprintf("Media: %.2f%% | SD: %.2f%% | Rango 3σ: [%.2f%%, %.2f%%]\n", mu, sigma, l_inf, l_sup))
+
+# Shapiro-Wilk
+set.seed(42)
+muestra <- sample(datos, min(length(datos), 5000))
+p_val <- shapiro.test(muestra)$p.value
+cat("Normalidad (Shapiro):", ifelse(p_val > 0.05, "Es normal", "No es normal"), "\n")
+
+# Sesgo
+val_skew <- skewness(datos)
+if (val_skew > 0.5) {
+  tipo_skew <- "Sesgada a la derecha (Positiva)"
+} else if (val_skew < -0.5) {
+  tipo_skew <- "Sesgada a la izquierda (Negativa)"
+} else {
+  tipo_skew <- "Aproximadamente simétrica"
+}
+
+cat(sprintf("Sesgo: %.2f -> %s\n", val_skew, tipo_skew))
+
+# Curtosis
+val_kurt <- kurtosis(datos) - 3
+if (val_kurt > 0.5) {
+  tipo_kurt <- "Leptocúrtica"
+} else if (val_kurt < -0.5) {
+  tipo_kurt <- "Platicúrtica"
+} else {
+  tipo_kurt <- "Mesocúrtica"
+}
+
+cat(sprintf("Curtosis: %.2f -> %s\n", val_kurt, tipo_kurt))
+```
+
+
+
+
+
+```{r normalidad de los datos global}
+cols <- setdiff(colnames(df), c("year", "estacion", "date"))
+filas <- list()
+
+for (col in cols) {
+  datos <- na.omit(df[[col]])
+  if (length(datos) < 3) {
+    next
+  }
+
+  # Shapiro-Wilk
+  set.seed(42)
+  muestra <- sample(datos, min(length(datos), 5000))
+  p_val <- shapiro.test(muestra)$p.value
+  es_normal <- ifelse(p_val > 0.05, "Sí", "No")
+
+  # Sesgo
+  s <- skewness(datos)
+  tipo_sesgo <- if (s > 0.5) {
+    "Positiva (Derecha)"
+  } else if (s < -0.5) {
+    "Negativa (Izquierda)"
+  } else {
+    "Simétrica"
+  }
+
+  # Curtosis
+  k <- kurtosis(datos) - 3
+  tipo_kurt <- if (k > 0.5) {
+    "Leptocúrtica"
+  } else if (k < -0.5) {
+    "Platicúrtica"
+  } else {
+    "Mesocúrtica"
+  }
+
+  filas[[length(filas) + 1]] <- tibble(
+    Columna = col,
+    `Normal?` = es_normal,
+    Sesgo = sprintf("%.2f", s),
+    Tipo_Sesgo = tipo_sesgo,
+    Curtosis = sprintf("%.2f", k),
+    Tipo_Curtosis = tipo_kurt
+  )
+}
+
+tabla_resumen <- bind_rows(filas)
+print(tabla_resumen)
+```
+
+
+## Manejo de datos erróneos
+
+```{r}
+# Ver valores mínimos
+print(sapply(df, function(x) min(x, na.rm = TRUE)))
+
+# Ver los valores más problemáticos
+columnas_criticas <- c('RAINF', 'TOUT', 'WSR', 'RH', 'SR', 'NOX', 'WDR')
+for (col in columnas_criticas) {
+  cat(col, head(sort(df[[col]]), 5), "\n")
+}
+
+# Ver la cantidad de valores negativos
+print(colSums(df[columnas_criticas] < 0, na.rm = TRUE))
+```
+
+
+
+```{r}
+# Reemplazar todos los -9999.0 por NaN
+df[df == -9999.0] <- NA
+```
+
+
+```{r}
+# Ver valores mínimos
+print(sapply(df, function(x) min(x, na.rm = TRUE)))
+
+# Ver los valores más problemáticos
+columnas_criticas <- c('RAINF', 'TOUT', 'WSR', 'RH', 'SR', 'NOX', 'WDR')
+for (col in columnas_criticas) {
+  cat(col, head(sort(df[[col]]), 5), "\n")
+}
+
+# Ver la cantidad de valores negativos
+print(colSums(df[columnas_criticas] < 0, na.rm = TRUE))
+```
+
+
+## Escalamiento y Transformación
+
+```{r}
+df_CE <- df %>%
+  filter(estacion == "CE")
+nrow(df_CE)
+```
+
+```{r}
+# Porcentaje de NaN por columna de la estación Centro Monterrey
+porcentaje_por_columna <- sort(colMeans(is.na(df_CE)) * 100, decreasing = TRUE)
+
+print(round(porcentaje_por_columna, 2))
+```
+
+
+```{r}
+df_CE_PM10 <- df_CE %>%
+  select(date, PM10, RH, WSR, PRS, WDR, TOUT, RAINF, SR) %>%
+  mutate(date = as.POSIXct(date)) %>%
+  arrange(date)
+
+cols <- c('PM10', 'RH', 'WSR', 'PRS', 'WDR', 'TOUT', 'RAINF', 'SR')
+
+grupos <- split(seq_len(nrow(df_CE_PM10)), as.Date(df_CE_PM10$date))
+filas_validas <- list()
+
+for (idx in grupos) {
+  grupo <- df_CE_PM10[idx, ]
+  descartar <- FALSE
+  
+  for (col in cols) {
+    nulos <- is.na(grupo[[col]])
+    if (!any(nulos)) next
+    
+    rle_res <- rle(nulos)
+    if (any(rle_res$lengths[rle_res$values] > 5)) {
+      descartar <- TRUE
+      break
+    }
+    
+    idx_prev <- max(1, idx[1] - 1)
+    idx_post <- min(nrow(df_CE_PM10), tail(idx, 1) + 1)
+    
+    ventana <- na.approx(df_CE_PM10[[col]][idx_prev:idx_post], na.rm = FALSE)
+    pos_relativa <- seq(from = idx[1] - idx_prev + 1, length.out = length(idx))
+    grupo[[col]] <- ventana[pos_relativa]
+    
+    if (any(is.na(grupo[[col]]))) {
+      descartar <- TRUE
+      break
+    }
+  }
+  
+  if (!descartar) {
+    filas_validas[[length(filas_validas) + 1]] <- grupo
+  }
+}
+
+df_CE_PM10 <- bind_rows(filas_validas) %>%
+  drop_na()
+
+print(nrow(df_CE_PM10))
+print(colSums(is.na(df_CE_PM10)))
+```
+
+
+```{r}
+head(df_CE_PM10)
+sapply(df_CE_PM10, max, na.rm = TRUE)
+```
+
+
+
+```{r}
+variables <- c('PM10', 'RH', 'WSR', 'PRS', 'WDR', 'TOUT', 'RAINF', 'SR')
+data <- df_CE_PM10
+
+# Yeo-Johnson (standardize = FALSE)
+for (v in variables) {
+  pt <- yeojohnson(df_CE_PM10[[v]], standardize = FALSE)
+  data[[v]] <- predict(pt)
+}
+
+# RobustScaler (Median / IQR)
+for (v in variables) {
+  med <- median(data[[v]], na.rm = TRUE)
+  iqr_val <- IQR(data[[v]], na.rm = TRUE)
+  data[[v]] <- (data[[v]] - med) / iqr_val
+}
+
+head(data)
+```
+
+
+
+```{r}
+#write.csv(data, "data/df_CE_PM10_scaled_transformed.csv", row.names = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
