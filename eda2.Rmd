@@ -1,0 +1,349 @@
+---
+title: "eda2"
+author: "Pompeyo Alexander Pérez Marín"
+date: "2026-08-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+
+# Importar librerias
+
+```{r}
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+library(plotly)
+library(moments)
+library(zoo)
+library(bestNormalize)
+library(transport)
+```
+
+
+# Importar datos
+
+```{r}
+importarDatos <- function(year) {
+  archivo <- sprintf("data/BD %s.xlsx", year)
+  hojas_nombres <- excel_sheets(archivo)
+  
+  df <- map_dfr(hojas_nombres, function(hoja) {
+    read_excel(archivo, sheet = hoja) %>%
+      mutate(estacion = hoja)
+  }) %>%
+    relocate(estacion)
+  
+  if ("Fecha y hora" %in% colnames(df)) {
+    df <- df %>% rename(date = `Fecha y hora`)
+  }
+  
+  if ("date" %in% colnames(df)) {
+    df <- df %>% mutate(date = as.POSIXct(date))
+  }
+  
+  return(df)
+}
+```
+
+```{r}
+df2020 <- importarDatos("2020")
+cat("2020 Importado\n")
+
+df2021 <- importarDatos("2021")
+cat("2021 Importado\n")
+
+df2022 <- importarDatos("2022")
+cat("2022 Importado\n")
+
+df2023 <- importarDatos("2023")
+cat("2023 Importado\n")
+
+df2024 <- importarDatos("2024")
+cat("2024 Importado\n")
+
+df2025 <- importarDatos("2025")
+cat("2025 Importado\n")
+```
+
+
+```{r}
+df <- bind_rows(
+  df2020 %>% mutate(year = 2020),
+  df2021 %>% mutate(year = 2021),
+  df2022 %>% mutate(year = 2022),
+  df2023 %>% mutate(year = 2023),
+  df2024 %>% mutate(year = 2024),
+  df2025 %>% mutate(year = 2025)
+)
+```
+
+```{r}
+rangos <- tibble::tribble(
+  ~year, ~variable, ~min, ~max,
+  2020, "PM10", 0, 800,    2020, "PM2.5", 0, 205.94, 2020, "O3", 0, 153,   2020, "NO", 0, 500,
+  2020, "NO2", 0, 200,    2020, "NOX", 0, 500,      2020, "SO2", 0, 200,  2020, "CO", 0, 20,
+  2020, "RH", 0, 100,     2020, "WS", 0, 75,        2020, "TEMP", 0, 41,  2020, "SR", 0, 1,
+  2020, "BP", 690, 750,   2020, "WD", 0, 360,       2020, "RAINF", 0, 30,
+
+  2021, "PM10", 0, 800,   2021, "PM2.5", 0, 325,    2021, "O3", 0, 175,   2021, "NO", 0, 350,
+  2021, "NO2", 0, 100,    2021, "NOX", 0, 400,      2021, "SO2", 0, 300,  2021, "CO", 0, 10,
+  2021, "RH", 0, 100,     2021, "WS", 0, 40,        2021, "TEMP", -6.5, 45, 2021, "SR", 0, 1,
+  2021, "BP", 690, 740,   2021, "WD", 0, 360,       2021, "RAINF", 0, 80,
+
+  2022, "PM10", 0, 999,   2022, "PM2.5", 0, 450,    2022, "O3", 0, 160,   2022, "NO", 0, 400,
+  2022, "NO2", 0, 175,    2022, "NOX", 0, 420,      2022, "SO2", 0, 200,  2022, "CO", 0, 8,
+  2022, "RH", 0, 100,     2022, "WS", 0, 35,        2022, "TEMP", -5, 45, 2022, "SR", 0, 1.25,
+  2022, "BP", 700, 740,   2022, "WD", 0, 360,       2022, "RAINF", 0, 25,
+
+  2023, "PM10", 0, 900,   2023, "PM2.5", 0, 800,    2023, "O3", 0, 175,   2023, "NO", 0, 500,
+  2023, "NO2", 0, 175,    2023, "NOX", 0, 500,      2023, "SO2", 0, 250,  2023, "CO", 0, 14,
+  2023, "RH", 0, 100,     2023, "WS", 0, 40,        2023, "TEMP", 0, 45,  2023, "SR", 0, 1,
+  2023, "BP", 690, 740,   2023, "WD", 0, 360,       2023, "RAINF", 0, 70,
+
+  2024, "PM10", 0, 999,   2024, "PM2.5", 0, 999,    2024, "O3", 0, 180,   2024, "NO", 0, 400,
+  2024, "NO2", 0, 130,    2024, "NOX", 0, 500,      2024, "SO2", 0, 150,  2024, "CO", 0, 18,
+  2024, "RH", 0, 100,     2024, "WS", 0, 38,        2024, "TEMP", -4, 45.5, 2024, "SR", 0, 1.26,
+  2024, "BP", 687.5, 740, 2024, "WD", 0, 360,       2024, "RAINF", 0, 50,
+
+  2025, "PM10", 0, 820,   2025, "PM2.5", 0, 350,    2025, "O3", 0, 185,   2025, "NO", 0, 350,
+  2025, "NO2", 0, 175,    2025, "NOX", 0, 400,      2025, "SO2", 0, 405,  2025, "CO", 0, 10,
+  2025, "RH", 0, 100,     2025, "WS", 0, 40,        2025, "TEMP", -4.5, 45, 2025, "SR", 0, 1.2,
+  2025, "BP", 688, 740,   2025, "WD", 0, 360,       2025, "RAINF", 0, 25
+)
+
+for (i in seq_len(nrow(rangos))) {
+  col <- rangos$variable[i]
+  yr  <- rangos$year[i]
+  mn  <- rangos$min[i]
+  mx  <- rangos$max[i]
+  
+  if (col %in% colnames(df)) {
+    df[[col]] <- if_else(df$year == yr & (df[[col]] < mn | df[[col]] > mx), NA_real_, df[[col]])
+  }
+}
+```
+
+
+
+
+
+```{r}
+df_CE <- df %>% filter(estacion == "CE")
+df_NO  <- df %>% filter(estacion == "NO")
+df_SUR <- df %>% filter(estacion == "SUR")
+df_mty <- df %>% 
+  filter(estacion %in% c("CE", "NO", "SUR"))
+```
+
+
+
+```{r}
+df_CE
+```
+
+
+
+
+# Datos Faltantes
+
+```{r}
+resumen_faltantes <- function(df, cols_excluir = c("year", "estacion", "date")) {
+  cols <- setdiff(colnames(df), cols_excluir)
+  
+  df %>%
+    group_by(year = as.character(year)) %>%
+    summarise(
+      Total_Filas = n(),
+      Filas_Con_Faltantes = sum(if_any(all_of(cols), is.na)),
+      Total_Datos = n() * length(cols),
+      Total_Datos_Faltantes = sum(is.na(pick(all_of(cols)))),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      `%_Filas_1+_Faltantes` = sprintf("%.2f%%", (Filas_Con_Faltantes / Total_Filas) * 100),
+      `%_Datos_Faltantes` = sprintf("%.2f%%", (Total_Datos_Faltantes / Total_Datos) * 100),
+      across(c(Total_Filas, Filas_Con_Faltantes, Total_Datos, Total_Datos_Faltantes), ~ format(.x, big.mark = ","))
+    )
+}
+```
+
+
+
+
+```{r}
+resumen_faltantes(df_SUR)
+```
+
+
+
+
+# Exploración de datos
+
+## Medidas de tendencia central
+
+### Variables cuantitativas
+
+```{r}
+medidas_cuantitativas <- function(df, col, estaciones = c("CE", "NO", "SUR")) {
+  calcular_stats <- function(x) {
+    ux <- unique(x)
+    moda <- ux[which.max(tabulate(match(x, ux)))]
+    
+    tibble(
+      Media     = mean(x),
+      Mediana   = median(x),
+      Moda      = moda,
+      Minimo    = min(x),
+      Maximo    = max(x),
+      Rango     = max(x) - min(x),
+      Varianza  = var(x),
+      SD        = sd(x),
+      IQR       = IQR(x),
+      Sesgo     = skewness(x),
+      Curtosis  = kurtosis(x) - 3
+    )
+  }
+
+  df_filtrado <- df %>%
+    filter(estacion %in% estaciones) %>%
+    select(estacion, all_of(col)) %>%
+    drop_na()
+
+  resumen_estaciones <- df_filtrado %>%
+    group_by(estacion) %>%
+    group_modify(~ calcular_stats(.x[[col]])) %>%
+    ungroup()
+
+  resumen_global <- calcular_stats(df_filtrado[[col]]) %>%
+    mutate(estacion = "Global") %>%
+    relocate(estacion)
+
+  bind_rows(resumen_estaciones, resumen_global)
+}
+
+medidas_cuantitativas(df_mty, "O3")
+```
+
+
+
+### Variables cualitativas
+
+
+
+```{r}
+analizar_ordinal <- function(df, contaminante, estaciones = c("CE", "NO", "SUR")) {
+  niveles <- c("Buena", "Aceptable", "Mala", "Muy Mala", "Extremadamente Mala")
+  colores <- c("Buena" = "#00E400", "Aceptable" = "#FFFF00", "Mala" = "#FF7E00", 
+               "Muy Mala" = "#FF0000", "Extremadamente Mala" = "#8F3F97")
+  
+  cortes <- list(
+    PM10  = c(-Inf, 45, 50, 132, 213, Inf),
+    PM2.5 = c(-Inf, 15, 25, 79, 130, Inf),
+    O3    = c(-Inf, 0.058, 0.090, 0.135, 0.175, Inf),
+    NO2   = c(-Inf, 0.053, 0.106, 0.160, 0.213, Inf),
+    SO2   = c(-Inf, 0.035, 0.075, 0.185, 0.304, Inf),
+    CO    = c(-Inf, 5.00, 9.00, 12.00, 16.00, Inf)
+  )
+  
+  if (!contaminante %in% names(cortes)) {
+    stop("Contaminante no válido. Opciones: PM10, PM2.5, O3, NO2, SO2, CO")
+  }
+  
+  df_base <- df %>%
+    filter(estacion %in% estaciones) %>%
+    select(estacion, all_of(contaminante)) %>%
+    drop_na()
+  
+  df_todo <- bind_rows(
+    df_base,
+    df_base %>% mutate(estacion = "Global")
+  ) %>%
+    mutate(
+      Categoria = cut(.data[[contaminante]], breaks = cortes[[contaminante]], labels = niveles, ordered_result = TRUE)
+    )
+  
+  # 1. Tabla de Porcentajes y Mediana
+  tabla_resumen <- df_todo %>%
+    count(estacion, Categoria, .drop = FALSE) %>%
+    group_by(estacion) %>%
+    mutate(Porcentaje = sprintf("%.2f%%", (n / sum(n)) * 100)) %>%
+    select(-n) %>%
+    pivot_wider(names_from = Categoria, values_from = Porcentaje, values_fill = "0.00%") %>%
+    left_join(
+      df_todo %>%
+        group_by(estacion) %>%
+        summarise(
+          Mediana_Ordinal = as.character(sort(Categoria)[ceiling(n() / 2)]),
+          .groups = "drop"
+        ),
+      by = "estacion"
+    ) %>%
+    relocate(estacion, Mediana_Ordinal)
+  
+  # 2. Gráfico
+  grafico <- df_todo %>%
+    count(estacion, Categoria) %>%
+    ggplot(aes(x = estacion, y = n, fill = Categoria)) +
+    geom_col(position = "fill", color = "black", linewidth = 0.2) +
+    scale_y_continuous(labels = scales::percent) +
+    scale_fill_manual(values = colores, drop = FALSE) +
+    labs(
+      title = paste("Distribución de Calidad del Aire -", contaminante),
+      x = "Estación",
+      y = "Proporción",
+      fill = "Categoría"
+    ) +
+    theme_minimal()
+  
+  print(tabla_resumen)
+  print(grafico)
+}
+```
+
+
+
+
+
+
+```{r}
+analizar_ordinal(df_mty, "PM10")
+```
+
+
+# Explora los datos usando herramientas de visualización
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
