@@ -319,16 +319,216 @@ analizar_ordinal(df_mty, "PM10")
 ```
 
 
-# Explora los datos usando herramientas de visualización
+## Explora los datos usando herramientas de visualización
+
+# 2020
+```{r}
+library(dplyr)
+
+# Unir todos los DataFrames en un único dataset consolidado
+df_todos = bind_rows(df2020, df2021, df2022, df2023, df2024, df2025)
 
 
+variables = c("CO", "NO", "NO2", "NOX", "O3", "PM10", 
+               "PM2.5", "PRS", "RAINF", "RH", "SO2", "SR", "TOUT")
+
+for (var in variables) {
+  ylab_text <- if (var == "SR") "CSR" else var
+  
+  boxplot(df_todos[[var]], 
+          main = paste("Boxplot Consolidado de", var, "(2020-2025)"), 
+          ylab = ylab_text, 
+          col = "lightblue")
+}
+```
 
 
+```{r}
+par(mfrow = c(4, 4), mar = c(3, 3, 2, 1))
+
+cat("Histogramas de contaminantes 2020-2025")
+
+# Generar histogramas
+for (var in variables) {
+  hist(df_todos[[var]], 
+       main = paste("Histograma de", var), 
+       xlab = var, 
+       col = "skyblue", 
+       border = "white",
+       breaks = 30) # Número de barras
+}
+
+# Restaurar la vista gráfica normal
+par(mfrow = c(1, 1))
+```
+
+```{r}
+# Matriz de correlación
+matriz_cor <- cor(df_todos[, variables], use = "complete.obs")
+
+# Heatmap básico nativo
+heatmap(matriz_cor, 
+        Rowv = NA, Colv = NA, # Evita el reagrupamiento por dendrograma
+        col = colorRampPalette(c("blue", "white", "red"))(100),
+        scale = "none",
+        margins = c(5,5),
+        main = "Heatmap de Correlación")
+```
 
 
+```{r}
+# 2. Función genérica para aplicar la limpieza por rango
+limpiar_rangos <- function(dataset, tabla_rangos) {
+  for (i in seq_len(nrow(tabla_rangos))) {
+    col <- tabla_rangos$variable[i]
+    yr  <- tabla_rangos$year[i]
+    mn  <- tabla_rangos$min[i]
+    mx  <- tabla_rangos$max[i]
+    
+    if (col %in% colnames(dataset)) {
+      # Si el dataset tiene columna 'year', se filtra por año y rango
+      if ("year" %in% colnames(dataset)) {
+        dataset[[col]] <- if_else(
+          dataset$year == yr & (dataset[[col]] < mn | dataset[[col]] > mx), 
+          NA_real_, 
+          dataset[[col]]
+        )
+      } else {
+        # Si es un dataset individual de un solo año sin columna 'year'
+        dataset[[col]] <- if_else(
+          dataset[[col]] < mn | dataset[[col]] > mx, 
+          NA_real_, 
+          dataset[[col]]
+        )
+      }
+    }
+  }
+  return(dataset)
+}
+
+# ==========================================
+# APLICAR A LOS DATAFRAMES INDIVIDUALES
+# ==========================================
+
+# Asegurar columna 'year' en cada df si no existe previamente
+df2020$year <- 2020
+df2021$year <- 2021
+df2022$year <- 2022
+df2023$year <- 2023
+df2024$year <- 2024
+df2025$year <- 2025
+
+df2020 <- limpiar_rangos(df2020, rangos)
+df2021 <- limpiar_rangos(df2021, rangos)
+df2022 <- limpiar_rangos(df2022, rangos)
+df2023 <- limpiar_rangos(df2023, rangos)
+df2024 <- limpiar_rangos(df2024, rangos)
+df2025 <- limpiar_rangos(df2025, rangos)
+
+# ==========================================
+# APLICAR AL DATAFRAME CONSOLIDADO (df_todos)
+# ==========================================
+
+# Si ya tienes df_todos creado a partir de los limpios:
+df_todos <- bind_rows(df2020, df2021, df2022, df2023, df2024, df2025)
+
+# O si tienes un df_todos previamente sin limpiar con columna 'year':
+# df_todos <- limpiar_rangos(df_todos, rangos)
 
 
+```
 
+
+```{r}
+# Función para generar un boxplot por cada variable numérica de un DataFrame
+generar_boxplots <- function(datos, titulo_prefix = "Boxplot de", col_color = "lightblue") {
+  # 1. Filtrar solo las columnas numéricas del DataFrame
+  columnas_num <- names(datos)[sapply(datos, is.numeric)]
+  
+  # Excluir la columna 'year' o 'anio' si existe, para no graficarla
+  columnas_num <- setdiff(columnas_num, c("year", "anio", "Año"))
+  
+  if (length(columnas_num) == 0) {
+    warning("El DataFrame no contiene columnas numéricas para graficar.")
+    return(NULL)
+  }
+  
+  # 2. Generar un boxplot por cada columna numérica
+  for (var in columnas_num) {
+    # Ajuste de etiqueta para la variable SR si aplica
+    ylab_text <- if (var == "SR") "CSR" else var
+    
+    boxplot(datos[[var]], 
+            main = paste(titulo_prefix, var), 
+            ylab = ylab_text, 
+            col = col_color,
+            na.rm = TRUE) # Ignora los valores NA generados en la limpieza
+  }
+}
+
+generar_boxplots(df_todos, titulo_prefix = "Boxplots de verificacion de Rango" )
+```
+
+```{r}
+library(dplyr)
+
+# Función para limpiar valores ilógicos en las variables meteorológicas especificadas
+limpiar_meteorologicas <- function(df) {
+  df_clean <- df
+  
+  # 1. Temperatura exterior (TOUT): Reemplazar valores mayores a 60 o menores a -20
+  if ("TOUT" %in% colnames(df_clean)) {
+    df_clean$TOUT <- ifelse(df_clean$TOUT > 60 | df_clean$TOUT < -20, NA, df_clean$TOUT)
+  }
+  
+  # 2. Velocidad del viento (WSR / WS): Reemplazar valores mayores a 100
+  col_ws <- intersect(c("WSR", "WS"), colnames(df_clean))
+  for (col in col_ws) {
+    df_clean[[col]] <- ifelse(df_clean[[col]] > 100 | df_clean[[col]] < 0, NA, df_clean[[col]])
+  }
+  
+  # 3. Dirección del viento (WDR / WD): Debe estar estrictamente entre 0° y 360°
+  col_wd <- intersect(c("WDR", "WD"), colnames(df_clean))
+  for (col in col_wd) {
+    df_clean[[col]] <- ifelse(df_clean[[col]] > 360 | df_clean[[col]] < 0, NA, df_clean[[col]])
+  }
+  
+  return(df_clean)
+}
+
+# Aplicar a tu DataFrame consolidado o individuales:
+df_todos <- limpiar_meteorologicas(df_todos)
+```
+
+```{r}
+# Función para generar un boxplot por cada variable numérica de un DataFrame
+generar_boxplots <- function(datos, titulo_prefix = "Boxplot de", col_color = "lightblue") {
+  # 1. Filtrar solo las columnas numéricas del DataFrame
+  columnas_num <- names(datos)[sapply(datos, is.numeric)]
+  
+  # Excluir la columna 'year' o 'anio' si existe, para no graficarla
+  columnas_num <- setdiff(columnas_num, c("year", "anio", "Año"))
+  
+  if (length(columnas_num) == 0) {
+    warning("El DataFrame no contiene columnas numéricas para graficar.")
+    return(NULL)
+  }
+  
+  # 2. Generar un boxplot por cada columna numérica
+  for (var in columnas_num) {
+    # Ajuste de etiqueta para la variable SR si aplica
+    ylab_text <- if (var == "SR") "CSR" else var
+    
+    boxplot(datos[[var]], 
+            main = paste(titulo_prefix, var), 
+            ylab = ylab_text, 
+            col = col_color,
+            na.rm = TRUE) # Ignora los valores NA generados en la limpieza
+  }
+}
+
+generar_boxplots(df_todos, titulo_prefix = "Boxplots de verificacion de Rango" )
+```
 
 
 
