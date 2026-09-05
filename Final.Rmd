@@ -1,0 +1,749 @@
+---
+title: "Final"
+author: "Pompeyo Alexander Pérez Marín"
+date: "2026-08-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# Importar librerias
+
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+library(plotly)
+library(moments)
+library(zoo)
+library(bestNormalize)
+library(transport)
+
+```
+
+# Importar datos
+
+```{r}
+importarDatos <- function(year) {
+  archivo <- sprintf("data/BD %s.xlsx", year)
+  hojas_nombres <- excel_sheets(archivo)
+  
+  df <- map_dfr(hojas_nombres, function(hoja) {
+    read_excel(archivo, sheet = hoja) %>%
+      mutate(estacion = hoja)
+  }) %>%
+    relocate(estacion)
+  
+  if ("Fecha y hora" %in% colnames(df)) {
+    df <- df %>% rename(date = `Fecha y hora`)
+  }
+  
+  if ("date" %in% colnames(df)) {
+    df <- df %>% mutate(date = as.POSIXct(date))
+  }
+  
+  return(df)
+}
+
+df2020 <- importarDatos("2020")
+cat("2020 Importado\n")
+
+df2021 <- importarDatos("2021")
+cat("2021 Importado\n")
+
+df2022 <- importarDatos("2022")
+cat("2022 Importado\n")
+
+df2023 <- importarDatos("2023")
+cat("2023 Importado\n")
+
+df2024 <- importarDatos("2024")
+cat("2024 Importado\n")
+
+df2025 <- importarDatos("2025")
+cat("2025 Importado\n")
+
+```
+
+```{r}
+df <- bind_rows(
+  df2020 %>% mutate(year = 2020),
+  df2021 %>% mutate(year = 2021),
+  df2022 %>% mutate(year = 2022),
+  df2023 %>% mutate(year = 2023),
+  df2024 %>% mutate(year = 2024),
+  df2025 %>% mutate(year = 2025)
+)
+```
+
+## Estandarizar unidades
+
+```{r}
+gases_ppb <- c("O3", "SO2", "NO2", "NO", "NOX")
+
+df <- df %>%
+  mutate(across(any_of(gases_ppb), ~ .x / 1000))
+
+```
+
+## Limites Sensor
+
+```{r}
+limites <- read.csv("data/limites.csv") %>%
+  pivot_longer(
+    cols = -year,
+    names_to = c("variable", ".value"),
+    names_pattern = "(.*)_(min|max)"
+  )
+
+for (i in seq_len(nrow(limites))) {
+  col <- limites$variable[i]
+  yr  <- limites$year[i]
+  mn  <- limites$min[i]
+  mx  <- limites$max[i]
+  
+  if (col %in% colnames(df)) {
+    df[[col]] <- if_else(df$year == yr & (df[[col]] < mn | df[[col]] > mx), NA_real_, df[[col]])
+  }
+}
+
+```
+
+## Clasificaciones Categorias Aire
+
+```{r}
+niveles <- c("Buena", "Aceptable", "Mala", "Muy Mala", "Extremadamente Mala")
+
+# Por Estacion
+df <- df %>%
+  arrange(estacion, date) %>%
+  group_by(estacion) %>%
+  mutate(
+    m_pm10 = rollmean(PM10, 12, fill = NA, align = "right"),
+    m_pm25 = rollmean(`PM2.5`, 12, fill = NA, align = "right"),
+    m_co   = rollmean(CO, 8, fill = NA, align = "right")
+  )
+
+#  Clasificación por fila
+df <- df %>%
+  mutate(
+    c_O3    = ordered(cut(O3,     c(-Inf, 0.058, 0.090, 0.135, 0.175, Inf), labels = niveles), levels = niveles),
+    c_PM10  = ordered(cut(m_pm10, c(-Inf, 45,    50,    132,   213,   Inf), labels = niveles), levels = niveles),
+    c_PM2.5 = ordered(cut(m_pm25, c(-Inf, 15,    25,    79,    130,   Inf), labels = niveles), levels = niveles),
+    c_NO    = ordered(cut(NO2,    c(-Inf, 0.053, 0.106, 0.160, 0.213, Inf), labels = niveles), levels = niveles),
+    c_SO2   = ordered(cut(SO2,    c(-Inf, 0.035, 0.075, 0.185, 0.304, Inf), labels = niveles), levels = niveles),
+    c_CO    = ordered(cut(m_co,   c(-Inf, 5.00,  9.00,  12.00, 16.00, Inf), labels = niveles), levels = niveles)
+  )
+
+# Asignar el peor valor al día completo y limpiar
+df <- df %>%
+  group_by(estacion, dia = as.Date(date)) %>%
+  mutate(
+    calidad_O3    = as.character(max(c_O3, na.rm = TRUE)),
+    calidad_PM10  = as.character(max(c_PM10, na.rm = TRUE)),
+    calidad_PM2.5 = as.character(max(c_PM2.5, na.rm = TRUE)),
+    calidad_NO    = as.character(max(c_NO, na.rm = TRUE)),
+    calidad_SO2   = as.character(max(c_SO2, na.rm = TRUE)),
+    calidad_CO    = as.character(max(c_CO, na.rm = TRUE))
+  ) %>%
+  ungroup() %>%
+  mutate(across(starts_with("calidad_"), ~ if_else(.x == "-Inf", NA_character_, .x))) %>%
+  dplyr::select(-dia, -m_pm10, -m_pm25, -m_co, -starts_with("c_"))
+
+```
+
+## df por estacion en uno solo
+
+```{r}
+df_CE <- df %>% filter(estacion == "CE")
+df_NO  <- df %>% filter(estacion == "NO")
+df_SUR <- df %>% filter(estacion == "SUR")
+df_mty <- df %>% 
+  filter(estacion %in% c("CE", "NO", "SUR"))
+
+df_mty
+```
+
+
+
+
+
+# Parametros y filtros
+
+```{r}
+library(nnet)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(plotly)
+library(htmltools)
+
+# Rango de predicción
+fecha_inicio <- as.Date("2025-01-01")
+fecha_fin    <- as.Date("2025-12-31")
+
+# Límites de muestras
+limite_muestras <- c(
+  "Buena"               = 50,
+  "Aceptable"           = 50,
+  "Mala"                = 20,
+  "Muy Mala"            = 20,
+  "Extremadamente Mala" = 10
+)
+niveles <- names(limite_muestras)
+
+# Horas activas
+vector_horas <- c(
+  "00:00:00" = FALSE, "01:00:00" = FALSE, "02:00:00" = FALSE, "03:00:00" = FALSE,
+  "04:00:00" = FALSE, "05:00:00" = FALSE, "06:00:00" = FALSE, "07:00:00" = TRUE,
+  "08:00:00" = TRUE,  "09:00:00" = TRUE,  "10:00:00" = TRUE,  "11:00:00" = TRUE,
+  "12:00:00" = TRUE,  "13:00:00" = TRUE,  "14:00:00" = TRUE,  "15:00:00" = TRUE,
+  "16:00:00" = TRUE,  "17:00:00" = TRUE,  "18:00:00" = TRUE,  "19:00:00" = TRUE,
+  "20:00:00" = TRUE,  "21:00:00" = TRUE,  "22:00:00" = TRUE,  "23:00:00" = TRUE
+)
+horas_activas <- as.numeric(substr(names(vector_horas)[vector_horas], 1, 2))
+
+# Predictores del modelo
+predictores_modelo <- c(
+  "hora", "O3", "O3_pico_lag1", "O3_pico_lag2", "O3_pico_lag3",
+  "O3_pico_diff_1_2", "O3_pico_diff_2_1",
+  "TOUT_max_lag1", "WSR_auc_lag1", "NO2_auc_lag1"
+)
+
+# Ponderaciones horarias por categoría
+pesos_horas_hist <- tibble(
+  hora = 0:23,
+  Buena               = c(2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.8, 3.0, 3.2, 3.5, 4.0, 4.5, 5.2, 5.8, 6.2, 6.5, 6.2, 5.5, 4.5, 3.8, 3.2, 2.8, 2.5, 2.5),
+  Aceptable           = c(2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.8, 3.0, 3.2, 3.5, 4.0, 4.5, 5.2, 5.8, 6.2, 6.5, 6.2, 5.5, 4.5, 3.8, 3.2, 2.8, 2.5, 2.5),
+  Mala                = c(2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.8, 3.0, 3.2, 3.5, 4.0, 4.5, 5.2, 5.8, 6.2, 6.5, 6.2, 5.5, 4.5, 3.8, 3.2, 2.8, 2.5, 2.5),
+  `Muy Mala`          = c(2.3, 2.3, 2.3, 2.3, 2.3, 2.3, 2.6, 2.8, 3.0, 3.3, 3.8, 4.3, 5.0, 5.5, 5.9, 6.2, 5.9, 5.2, 4.3, 3.6, 3.0, 2.6, 2.3, 2.3),
+  `Extremadamente Mala` = c(2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.4, 2.6, 2.8, 3.1, 3.6, 4.1, 4.8, 5.2, 5.6, 5.9, 5.6, 4.9, 4.1, 3.4, 2.8, 2.4, 2.1, 2.1)
+)
+
+# Función de decisión categorica diaria
+resolver_categoria_dia <- function(matriz_probs, niveles_calidad, horas_obs) {
+  if (nrow(matriz_probs) == 0) return("Sin info suficiente")
+  
+  sub_pesos <- pesos_horas_hist %>%
+    filter(hora %in% horas_obs) %>%
+    arrange(match(hora, horas_obs))
+  
+  W <- sub_pesos %>%
+    dplyr::select(all_of(niveles_calidad)) %>%
+    as.matrix()
+  
+  col_sums <- colSums(W)
+  col_sums[col_sums == 0] <- 1
+  W_norm <- sweep(W, 2, col_sums, FUN = "/")
+  
+  p_ponderadas <- colSums(matriz_probs * W_norm, na.rm = TRUE)
+  cat_ganadora <- names(which.max(p_ponderadas))
+  prob_max     <- max(p_ponderadas)
+  
+  if (prob_max > 0.30) {
+    return(cat_ganadora)
+  } else {
+    return("Sin info suficiente")
+  }
+}
+
+```
+
+
+
+
+
+
+# Balanceo y Entrenamiento
+
+```{r}
+df_diario <- df %>%
+  filter(estacion == "CE") %>%
+  mutate(dia_base = as.Date(date)) %>%
+  group_by(dia_base) %>%
+  summarise(
+    O3_pico  = suppressWarnings(max(O3, na.rm = TRUE)),
+    TOUT_max = suppressWarnings(max(TOUT, na.rm = TRUE)),
+    WSR_auc  = sum(WSR, na.rm = TRUE),
+    NO2_auc  = sum(NO2, na.rm = TRUE),
+    .groups  = "drop"
+  ) %>%
+  mutate(
+    O3_pico  = if_else(is.infinite(O3_pico), NA_real_, O3_pico),
+    TOUT_max = if_else(is.infinite(TOUT_max), NA_real_, TOUT_max)
+  ) %>%
+  arrange(dia_base) %>%
+  mutate(across(where(is.numeric), ~ zoo::na.locf(.x, na.rm = FALSE))) %>%
+  mutate(across(where(is.numeric), ~ zoo::na.locf(.x, fromLast = TRUE, na.rm = FALSE))) %>%
+  mutate(across(where(is.numeric), ~ if_else(is.na(.x), mean(.x, na.rm = TRUE), .x))) %>%
+  mutate(
+    O3_pico_lag1     = dplyr::lag(O3_pico, 1),
+    O3_pico_lag2     = dplyr::lag(O3_pico, 2),
+    O3_pico_lag3     = dplyr::lag(O3_pico, 3),
+    O3_pico_diff_1_2 = O3_pico_lag1 - O3_pico_lag2,
+    O3_pico_diff_2_1 = O3_pico_lag2 - O3_pico_lag1,
+    TOUT_max_lag1    = dplyr::lag(TOUT_max, 1),
+    WSR_auc_lag1     = dplyr::lag(WSR_auc, 1),
+    NO2_auc_lag1     = dplyr::lag(NO2_auc, 1)
+  ) %>%
+  mutate(across(where(is.numeric), ~ zoo::na.locf(.x, fromLast = TRUE, na.rm = FALSE))) %>%
+  mutate(across(where(is.numeric), ~ if_else(is.na(.x), 0, .x))) %>%
+  dplyr::select(-O3_pico, -TOUT_max, -WSR_auc, -NO2_auc)
+
+vars_nuevas <- setdiff(names(df_diario), "dia_base")
+df <- df %>%
+  dplyr::select(-any_of(vars_nuevas)) %>%
+  mutate(dia_base = as.Date(date)) %>%
+  left_join(df_diario, by = "dia_base") %>%
+  dplyr::select(-dia_base)
+
+calidad_diaria <- df %>%
+  filter(estacion == "CE") %>%
+  distinct(dia = as.Date(date), calidad_obj = calidad_O3) %>%
+  filter(!is.na(calidad_obj))
+
+dias_balanceados <- calidad_diaria %>%
+  filter(format(dia, "%Y") <= "2024") %>%
+  group_by(calidad_obj) %>%
+  group_modify(~ dplyr::slice_head(.x, n = limite_muestras[.y$calidad_obj])) %>%
+  ungroup()
+
+# Guardar parámetros originales de O3 calculados exclusivamente en el periodo <= 2024
+datos_train_stats <- df %>% filter(year <= 2024)
+media_O3_orig     <- mean(datos_train_stats$O3, na.rm = TRUE)
+sd_O3_orig        <- sd(datos_train_stats$O3, na.rm = TRUE)
+
+# Estandarización de covariables usando únicamente medias y desviaciones de <= 2024
+vars_a_escalar <- setdiff(predictores_modelo, "hora")
+for (v in vars_a_escalar) {
+  media_v <- mean(datos_train_stats[[v]], na.rm = TRUE)
+  sd_v    <- sd(datos_train_stats[[v]], na.rm = TRUE)
+  if (is.na(sd_v) || sd_v == 0) sd_v <- 1
+  df[[v]] <- as.numeric((df[[v]] - media_v) / sd_v)
+}
+
+formula_indep <- as.formula(paste("clase ~", paste(predictores_modelo, collapse = " + ")))
+
+# Modelos a 1 y 2 días
+datos_m1 <- df %>%
+  filter(estacion == "CE", !is.na(O3)) %>%
+  mutate(dia_obj = as.Date(date) + 1, hora = as.numeric(format(date, "%H"))) %>%
+  inner_join(dias_balanceados, by = c("dia_obj" = "dia")) %>%
+  mutate(clase = factor(calidad_obj, levels = niveles)) %>%
+  filter(complete.cases(across(all_of(predictores_modelo))))
+
+modelo_1dia <- multinom(formula_indep, data = datos_m1, trace = FALSE, MaxNWts = 3000)
+
+datos_m2 <- df %>%
+  filter(estacion == "CE", !is.na(O3)) %>%
+  mutate(dia_obj = as.Date(date) + 2, hora = as.numeric(format(date, "%H"))) %>%
+  inner_join(dias_balanceados, by = c("dia_obj" = "dia")) %>%
+  mutate(clase = factor(calidad_obj, levels = niveles)) %>%
+  filter(complete.cases(across(all_of(predictores_modelo))))
+
+modelo_2dias <- multinom(formula_indep, data = datos_m2, trace = FALSE, MaxNWts = 3000)
+
+```
+
+# Predicciones 2025
+
+```{r}
+datos_ce_horas <- df %>%
+  filter(estacion == "CE", !is.na(O3)) %>%
+  mutate(dia = as.Date(date), hora = as.numeric(format(date, "%H"))) %>%
+  filter(hora %in% horas_activas)
+
+dias_eval_seleccionados <- calidad_diaria %>%
+  filter(dia >= fecha_inicio & dia <= fecha_fin) %>%
+  pull(dia)
+
+predicciones <- map_dfr(dias_eval_seleccionados, function(target_day) {
+  d1_raw <- datos_ce_horas %>% filter(dia == target_day - 1)
+  d2_raw <- datos_ce_horas %>% filter(dia == target_day - 2)
+  if (nrow(d1_raw) == 0 || nrow(d2_raw) == 0) return(NULL)
+  
+  horas_comunes <- intersect(d1_raw$hora, d2_raw$hora)
+  if (length(horas_comunes) == 0) return(NULL)
+  
+  d1 <- d1_raw %>% filter(hora %in% horas_comunes) %>% arrange(hora)
+  d2 <- d2_raw %>% filter(hora %in% horas_comunes) %>% arrange(hora)
+  
+  p1 <- predict(modelo_1dia, newdata = d1, type = "probs")
+  p2 <- predict(modelo_2dias, newdata = d2, type = "probs")
+  
+  m1 <- matrix(0, nrow = nrow(d1), ncol = length(niveles), dimnames = list(NULL, niveles))
+  m2 <- matrix(0, nrow = nrow(d2), ncol = length(niveles), dimnames = list(NULL, niveles))
+  
+  if (is.matrix(p1)) m1[, colnames(p1)] <- p1 else m1[, names(p1)] <- matrix(rep(p1, each = nrow(d1)), nrow = nrow(d1))
+  if (is.matrix(p2)) m2[, colnames(p2)] <- p2 else m2[, names(p2)] <- matrix(rep(p2, each = nrow(d2)), nrow = nrow(d2))
+  
+  m_pond <- (0.7 * m1) + (0.3 * m2)
+  
+  tibble(
+    dia           = target_day,
+    pred_parcial  = resolver_categoria_dia(m1, niveles, horas_comunes),
+    pred_completa = resolver_categoria_dia(m_pond, niveles, horas_comunes)
+  )
+}) %>%
+  inner_join(calidad_diaria, by = "dia")
+
+```
+
+# Evaluación modelo
+
+```{r}
+calcular_metricas_matriz <- function(eval_df, col_pred) {
+  R <- tibble(categoria = niveles) %>%
+    rowwise() %>%
+    mutate(
+      prediccion_totales             = sum(eval_df[[col_pred]] == categoria),
+      `Verdadero Bueno`               = sum(eval_df[[col_pred]] == categoria & eval_df$calidad_obj == "Buena"),
+      `Verdadero Aceptable`           = sum(eval_df[[col_pred]] == categoria & eval_df$calidad_obj == "Aceptable"),
+      `Verdadero Malo`                = sum(eval_df[[col_pred]] == categoria & eval_df$calidad_obj == "Mala"),
+      `Verdadero Muy Malo`            = sum(eval_df[[col_pred]] == categoria & eval_df$calidad_obj == "Muy Mala"),
+      `Verdadero Extremadamente Malo` = sum(eval_df[[col_pred]] == categoria & eval_df$calidad_obj == "Extremadamente Mala"),
+      aciertos_clase                  = sum(eval_df[[col_pred]] == categoria & eval_df$calidad_obj == categoria),
+      `% de acierto`                  = ifelse(prediccion_totales > 0, round((aciertos_clase / prediccion_totales) * 100, 2), 0)
+    ) %>%
+    ungroup() %>%
+    dplyr::select(-aciertos_clase) %>%
+    as.data.frame()
+  
+  mat_p <- matrix(NA, nrow = length(niveles), ncol = length(niveles), dimnames = list(niveles, niveles))
+  for (i in 1:(length(niveles) - 1)) {
+    for (j in (i + 1):length(niveles)) {
+      c1 <- niveles[i]
+      c2 <- niveles[j]
+      r1 <- R %>% filter(categoria == c1)
+      r2 <- R %>% filter(categoria == c2)
+      
+      acierto1 <- sum(eval_df[[col_pred]] == c1 & eval_df$calidad_obj == c1)
+      acierto2 <- sum(eval_df[[col_pred]] == c2 & eval_df$calidad_obj == c2)
+      
+      if (r1$prediccion_totales > 0 && r2$prediccion_totales > 0) {
+        pval <- suppressWarnings(prop.test(x = c(acierto1, acierto2), n = c(r1$prediccion_totales, r2$prediccion_totales))$p.value)
+        mat_p[c1, c2] <- round(pval, 4)
+        mat_p[c2, c1] <- round(pval, 4)
+      }
+    }
+  }
+  
+  attr(R, "sin_info") <- sum(eval_df[[col_pred]] == "Sin info suficiente")
+  list(R = R, R_pvalue = as.data.frame(mat_p))
+}
+
+evaluar_efectividad <- function(eval_df, col_pred, nombre_modelo) {
+  df_ef <- eval_df %>%
+    filter(!.data[[col_pred]] %in% c("Sin info suficiente", "Muy Mala"),
+           !calidad_obj %in% c("Muy Mala")) %>%
+    mutate(
+      grupo_real = if_else(calidad_obj %in% c("Buena", "Aceptable"), "Favorable", "Crítico"),
+      grupo_pred = if_else(.data[[col_pred]] %in% c("Buena", "Aceptable"), "Favorable", "Crítico"),
+      acierto_efectivo = (grupo_real == grupo_pred)
+    )
+  
+  n_importan <- nrow(df_ef)
+  n_aciertos <- sum(df_ef$acierto_efectivo)
+  n_errores  <- sum(!df_ef$acierto_efectivo)
+  pct        <- ifelse(n_importan > 0, round((n_aciertos / n_importan) * 100, 2), 0)
+  
+  tibble(
+    Modelo                 = nombre_modelo,
+    Casos_Relevantes       = n_importan,
+    Aciertos_Efectivos     = n_aciertos,
+    Errores_Graves         = n_errores,
+    Pct_Acierto_Efectivo   = pct
+  )
+}
+
+res_completo <- calcular_metricas_matriz(predicciones, "pred_completa")
+res_parcial  <- calcular_metricas_matriz(predicciones, "pred_parcial")
+
+R <- res_completo$R
+R_pvalue <- res_completo$R_pvalue
+R_parcial <- res_parcial$R
+R_parcial_pvalue <- res_parcial$R_pvalue
+
+R_efectivo <- bind_rows(
+  evaluar_efectividad(predicciones, "pred_parcial", "Solo Ayer"),
+  evaluar_efectividad(predicciones, "pred_completa", "Ayer y Antier")
+)
+
+```
+
+## Analisis de casos
+
+```{r}
+casos_riesgo_ayer <- predicciones %>%
+  summarise(
+    # Falsa alarma
+    asusto_pero_bueno_o_aceptable = sum(pred_parcial %in% c("Mala", "Muy Mala", "Extremadamente Mala") & calidad_obj %in% c("Buena", "Aceptable")),
+    asusto_pero_era_bueno         = sum(pred_parcial == "Mala" & calidad_obj == "Buena"),
+    
+    # No detectado
+    dijo_bien_pero_era_malo       = sum(pred_parcial %in% c("Buena", "Aceptable") & calidad_obj %in% c("Mala", "Muy Mala", "Extremadamente Mala"))
+  )
+
+cat("--- Desglose de Casos de Riesgo e Impacto ---\n")
+cat(sprintf("- Días que te dijo que todo bien, pero no debías salir: %d\n", casos_riesgo_ayer$dijo_bien_pero_era_malo))
+cat(sprintf("- Días que te asustó (predijo Malo/Muy Malo/Extr. Malo), pero era Aceptable o Bueno: %d\n", casos_riesgo_ayer$asusto_pero_bueno_o_aceptable))
+cat(sprintf("- Días que te dijo que era Malo y era Bueno: %d\n", casos_riesgo_ayer$asusto_pero_era_bueno))
+
+```
+
+## Tablas de contingencias
+
+```{r}
+# Ventana 1
+tagList(
+  tags$b("Resultados usando ayer y antier"),
+  tags$pre(paste(capture.output(print(R)), collapse = "\n")),
+  tags$p(paste("Días sin info suficiente:", attr(R, "sin_info"))),
+  tags$b("Valores p de Significancia por pares"),
+  tags$pre(paste(capture.output(print(R_pvalue)), collapse = "\n"))
+)
+
+# Ventana 2
+tagList(
+  tags$b("Resultados usando ayer"),
+  tags$pre(paste(capture.output(print(R_parcial)), collapse = "\n")),
+  tags$p(paste("Días sin info suficiente:", attr(R_parcial, "sin_info"))),
+  tags$b("Valores p de Significancia por pares"),
+  tags$pre(paste(capture.output(print(R_parcial_pvalue)), collapse = "\n"))
+)
+
+# Ventana 3
+tagList(
+  tags$b("Resultado Efectivo (Casos que importan: Bueno/Aceptable vs Malo/Extremadamente Malo)"),
+  tags$pre(paste(capture.output(print(as.data.frame(R_efectivo))), collapse = "\n"))
+)
+
+```
+
+## Resultado 2025
+
+```{r}
+df_eval_horario <- df %>%
+  filter(estacion == "CE", as.Date(date) >= fecha_inicio & as.Date(date) <= fecha_fin, !is.na(O3)) %>%
+  mutate(
+    dia = as.Date(date),
+    hora = as.numeric(format(date, "%H")),
+    O3_ppm = (O3 * sd_O3_orig) + media_O3_orig
+  )
+
+
+
+df_ayer <- df %>%
+  filter(estacion == "CE") %>%
+  mutate(dia_siguiente = as.Date(date) + 1, hora = as.numeric(format(date, "%H"))) %>%
+  dplyr::select(dia_siguiente, all_of(predictores_modelo)) %>%
+  filter(complete.cases(.))
+
+
+
+
+probs_ayer_mat <- predict(modelo_1dia, newdata = df_ayer, type = "probs")
+mat_h <- matrix(0, nrow = nrow(df_ayer), ncol = length(niveles), dimnames = list(NULL, niveles))
+
+if (is.matrix(probs_ayer_mat)) {
+  mat_h[, colnames(probs_ayer_mat)] <- probs_ayer_mat
+} else {
+  mat_h[, names(probs_ayer_mat)] <- matrix(rep(probs_ayer_mat, each = nrow(df_ayer)), nrow = nrow(df_ayer))
+}
+
+df_ayer_probs <- bind_cols(
+  df_ayer %>% dplyr::select(dia_siguiente, hora),
+  as_tibble(mat_h * 100) %>% rename_with(~ paste0("p_", .x))
+)
+
+
+
+
+df_plot <- df_eval_horario %>%
+  inner_join(df_ayer_probs, by = c("dia" = "dia_siguiente", "hora" = "hora")) %>%
+  inner_join(predicciones, by = "dia") %>%
+  rowwise() %>%
+  mutate(
+    prob_h_max = max(c_across(starts_with("p_"))),
+    pred_h = niveles[which.max(c_across(starts_with("p_")))],
+    pred_h_final = if_else(prob_h_max > 30, pred_h, "Sin info suficiente"),
+    
+    es_rojo = (calidad_obj %in% c("Mala", "Muy Mala", "Extremadamente Mala") & pred_h_final %in% c("Aceptable", "Buena")) |
+              (calidad_obj %in% c("Buena", "Aceptable") & pred_h_final %in% c("Mala", "Muy Mala", "Extremadamente Mala")),
+    
+    color_punto = if_else(es_rojo, "red", "gray"),
+    
+    hover_text = paste0(
+      "<b>Fecha:</b> ", date, "<br>",
+      "<b>O3:</b> ", round(O3_ppm, 4), " ppm<br>",
+      "<b>REAL:</b> ", calidad_obj, "<br>",
+      "<b>Pred:</b> ", pred_h_final, " (", round(prob_h_max, 1), "%)<br><br>",
+      "<b>Probabilidades hora (modelo ayer):</b><br>",
+      "Buena: ", round(p_Buena, 1), "%<br>",
+      "Aceptable: ", round(p_Aceptable, 1), "%<br>",
+      "Mala: ", round(p_Mala, 1), "%<br>",
+      "Muy Mala: ", round(`p_Muy Mala`, 1), "%<br>",
+      "Extremadamente Mala: ", round(`p_Extremadamente Mala`, 1), "%"
+    )
+  ) %>%
+  ungroup()
+
+
+
+
+grafica_2025 <- plot_ly(data = df_plot, x = ~date) %>%
+  add_lines(
+    y = ~O3_ppm,
+    line = list(color = "rgba(180, 180, 180, 0.6)", width = 1),
+    name = "O3 (ppm)",
+    hoverinfo = "none"
+  ) %>%
+  add_trace(
+    y = ~O3_ppm,
+    type = "scatter",
+    mode = "markers",
+    marker = list(
+      color = ~color_punto,
+      size = 5,
+      opacity = 0.8
+    ),
+    text = ~hover_text,
+    hoverinfo = "text",
+    name = "Evaluación (Rojo: Error Crítico / Gris: Válido o No Relevante)"
+  ) %>%
+  layout(
+    title = sprintf("Monitoreo Horario O3 y Detección de Errores Críticos (CE: %s a %s)", fecha_inicio, fecha_fin),
+    xaxis = list(title = "Fecha y Hora"),
+    yaxis = list(title = "O3 (ppm)"),
+    showlegend = TRUE
+  )
+
+grafica_2025
+
+```
+
+```{r}
+df_lineas <- df_plot %>%
+  arrange(date) %>%
+  mutate(
+    tipo_error = case_when(
+      pred_h_final %in% c("Mala", "Muy Mala", "Extremadamente Mala") & calidad_obj %in% c("Buena", "Aceptable") ~ "Falsa Alarma (Amarillo)",
+      pred_h_final %in% c("Buena", "Aceptable") & calidad_obj %in% c("Mala", "Muy Mala", "Extremadamente Mala") ~ "Peligro No Detectado (Rojo)",
+      TRUE ~ "Sin Error Crítico (Gris)"
+    )
+  )
+
+
+
+
+df_lineas <- df_lineas %>%
+  mutate(
+    cambio = tipo_error != lag(tipo_error, default = first(tipo_error)),
+    segmento_id = cumsum(cambio)
+  )
+
+# Conectar puntos frontera entre segmentos
+df_segmentos <- df_lineas %>%
+  group_split(segmento_id) %>%
+  map_dfr(function(seg) {
+    id_seg <- seg$segmento_id[1]
+    if (id_seg > 0) {
+      punto_previo <- df_lineas %>% filter(segmento_id == id_seg - 1) %>% slice_tail(n = 1)
+      seg <- bind_rows(punto_previo, seg)
+    }
+    seg
+  })
+
+
+
+
+grafica_lineas_error <- plot_ly()
+
+paleta_colores <- c(
+  "Sin Error Crítico (Gris)"       = "#A0A0A0",
+  "Falsa Alarma (Amarillo)"        = "#E5B800",
+  "Peligro No Detectado (Rojo)"    = "#D9381E"
+)
+
+
+
+
+
+for (estado in names(paleta_colores)) {
+  df_sub <- df_segmentos %>% filter(tipo_error == estado | is.na(tipo_error))
+  
+  if (nrow(df_sub) > 0) {
+    pto_dummy <- df_sub %>% filter(!is.na(O3_ppm)) %>% slice_head(n = 1)
+    
+    grafica_lineas_error <- grafica_lineas_error %>%
+      add_trace(
+        x = pto_dummy$date,
+        y = pto_dummy$O3_ppm,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = paleta_colores[estado], width = 2),
+        name = estado,
+        legendgroup = estado,
+        showlegend = TRUE,
+        hoverinfo = "none"
+      ) %>%
+      add_lines(
+        data = df_sub,
+        x = ~date,
+        y = ~O3_ppm,
+        split = ~segmento_id,
+        line = list(color = paleta_colores[estado], width = 1.8),
+        legendgroup = estado,
+        showlegend = FALSE,
+        hovertext = ~hover_text,
+        hoverinfo = "text"
+      )
+  }
+}
+
+
+
+grafica_lineas_error <- grafica_lineas_error %>%
+  layout(
+    title = list(text = sprintf("Errores en Predicción de O3", fecha_inicio, fecha_fin), y = 0.98),
+    xaxis = list(title = "Fecha y Hora"),
+    yaxis = list(
+      title = "O3 (ppm)",
+      rangemode = "tozero"
+    ),
+    legend = list(
+      orientation = "h",
+      x = 0.5,
+      xanchor = "center",
+      y = 1.05
+    ),
+    margin = list(t = 70, b = 40)
+  )
+
+grafica_lineas_error
+
+```
+
+```{r}
+conteo_ce_periodo <- df %>%
+  filter(estacion == "CE", as.Date(date) >= fecha_inicio & as.Date(date) <= fecha_fin) %>%
+  distinct(dia = as.Date(date), calidad = calidad_O3) %>%
+  filter(!is.na(calidad)) %>%
+  count(calidad, name = "total_dias") %>%
+  mutate(
+    calidad = factor(calidad, levels = niveles),
+    porcentaje = round((total_dias / sum(total_dias)) * 100, 2)
+  ) %>%
+  complete(calidad = factor(niveles, levels = niveles), fill = list(total_dias = 0, porcentaje = 0)) %>%
+  arrange(calidad)
+
+print(as.data.frame(conteo_ce_periodo), row.names = FALSE)
+
+```
+
